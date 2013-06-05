@@ -1,3 +1,24 @@
 [submodule "ActionBarSherlock"]
 	path = ActionBarSherlock
 	url = https://github.com/JakeWharton/ActionBarSherlock
+[submodule "Android-Universal-Image-Loader"]
+	path = Android-Universal-Image-Loader
+	url = https://github.com/nostra13/Android-Universal-Image-Loader.git
+[submodule "Android-ViewPagerIndicator"]
+	path = Android-ViewPagerIndicator
+	url = https://github.com/JakeWharton/Android-ViewPagerIndicator.git
+[submodule "Crouton"]
+	path = Crouton
+	url = https://github.com/keyboardsurfer/Crouton.git
+[submodule "drag-sort-listview"]
+	path = drag-sort-listview
+	url = https://github.com/bauerca/drag-sort-listview.git
+[submodule "ListViewAnimations"]
+	path = ListViewAnimations
+	url = https://github.com/nhaarman/ListViewAnimations.git
+[submodule "SlidingMenu"]
+	path = SlidingMenu
+	url = https://github.com/jfeinstein10/SlidingMenu.git
+[submodule "aFileChooser"]
+	path = aFileChooser
+	url = https://github.com/iPaulPro/aFileChooser.git
