@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="@dimen/main_layout_padding">
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="fill"
+		android:padding="8dp"
+		android:background="#FFFFFF"
+		android:orientation="vertical">
+
+		<net.bicou.redmine.widget.RobotoThinTextView
+			android:gravity="center_horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/setup_welcome"
+			android:textStyle="bold|italic"
+			android:textSize="36sp"
+			android:textAppearance="@android:style/TextAppearance.Large" />
+
+		<View
+			android:layout_width="wrap_content"
+			android:layout_height="25dp" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/help_text" />
+
+		<View
+			android:layout_width="wrap_content"
+			android:layout_height="40dp" />
+
+		<Button
+			android:id="@+id/setup_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:text="@string/setup_button" />
+
+		<View
+			android:layout_width="wrap_content"
+			android:layout_height="40dp" />
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/setup_notice"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	</LinearLayout>
+
+</ScrollView>

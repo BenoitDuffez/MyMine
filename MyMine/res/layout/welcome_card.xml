@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_height="wrap_content"
+              android:layout_width="match_parent"
+              android:layout_marginBottom="20dp"
+              android:background="@drawable/card_background_shadow"
+              android:orientation="vertical"
+              android:clickable="true">
+
+    <net.bicou.redmine.widget.RobotoThinTextView
+            android:id="@+id/overview_card_title"
+            android:text="@string/menu_projects"
+            android:textSize="28sp"
+            android:paddingLeft="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <TextView
+            android:id="@+id/overview_card_subtitle"
+            android:text="Card subtitle"
+            android:gravity="center_vertical"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:background="@drawable/card_foreground"
+            android:paddingLeft="8dp"
+            android:paddingBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <FrameLayout
+            android:id="@+id/overview_card_image_holder"
+            android:foreground="@drawable/card_foreground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="abcdef"
+            android:clickable="true"
+            android:focusable="true">
+
+        <ImageView
+                android:id="@+id/overview_card_image"
+                android:src="@drawable/card_project"
+                android:focusable="true"
+                android:clickable="true"
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </FrameLayout>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_foreground"
+            android:orientation="horizontal">
+
+        <ImageView
+                android:id="@+id/overview_card_action_image"
+                android:layout_width="@dimen/overview_card_icon_size"
+                android:layout_height="@dimen/overview_card_icon_size"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_projects"
+                android:layout_margin="4dp"/>
+
+        <Button
+                android:layout_toRightOf="@+id/overview_card_action_image"
+                android:layout_alignParentTop="true"
+                android:id="@+id/overview_card_action"
+                android:text="Card action"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                android:textColor="@color/pressed_mymine"
+                android:background="@null"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:id="@+id/overview_card_second_action_layout"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:background="@drawable/card_foreground"
+            android:layout_height="wrap_content">
+
+        <ImageView
+                android:id="@+id/overview_card_second_action_image"
+                android:layout_width="@dimen/overview_card_icon_size"
+                android:layout_height="@dimen/overview_card_icon_size"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_projects"
+                android:layout_margin="4dp"/>
+
+        <Button
+                android:layout_toRightOf="@+id/overview_card_second_action_image"
+                android:layout_alignParentTop="true"
+                android:id="@+id/overview_card_second_action"
+                android:text="Card action"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                android:textColor="@color/pressed_mymine"
+                android:background="@null"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

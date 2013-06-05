@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/main_layout_padding"
+    android:background="#FFFFFF" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="8dp" >
+
+        <LinearLayout
+            android:id="@+id/add_cert_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical" >
+
+            <net.bicou.redmine.widget.RobotoThinTextView
+                android:id="@+id/add_cert_settings_cert_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/server_auth_settings_cert_hint"
+                android:textSize="16sp" />
+            
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/add_cert_settings_cert_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignBottom="@+id/add_cert_select_button"
+            android:layout_alignTop="@+id/add_cert_select_button"
+            android:layout_toLeftOf="@+id/add_cert_select_button"
+            android:gravity="center_vertical"
+            android:text="@string/server_auth_settings_no_cert"
+            android:textColor="#666666" />
+
+        <Button
+            android:id="@+id/add_cert_select_button"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/add_cert_layout"
+            android:text="@string/server_auth_settings_select_cert" />
+
+        <Button
+            android:id="@+id/add_cert_ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/add_cert_settings_cert_info"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:minWidth="120dp"
+            android:text="@string/cert_save"
+            android:typeface="sans" />
+
+    </RelativeLayout>
+
+</ScrollView>

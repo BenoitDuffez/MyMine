@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="slidingmenu_offset">400dp</dimen>
+
+    <integer name="issues_order_pick_column_gridview_nb_columns">4</integer>
+
+    <integer name="issues_list_item_nb_lines">4</integer>
+
+</resources>

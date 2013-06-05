@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="@dimen/main_layout_padding">
+
+	<TableLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="8dp"
+		android:background="#FFFFFF">
+
+		<TableRow style="@style/IssueTableRow">
+			<net.bicou.redmine.widget.RobotoThinTextView
+				android:id="@+id/issue_subject"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:layout_span="2"
+				android:textSize="32sp" />
+		</TableRow>
+
+		<TableRow style="@style/IssueTableRow">
+
+			<net.bicou.redmine.widget.RobotoTextView
+				android:id="@+id/issue_parent"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_span="2"
+				android:layout_weight="1"
+				android:textAppearance="?android:attr/textAppearanceSmall" />
+		</TableRow>
+
+		<TableRow style="@style/IssueTableRow">
+
+			<net.bicou.redmine.widget.RobotoTextView
+				style="@style/IssueLabel"
+				android:layout_weight="1"
+				android:text="@string/issue_status" />
+			<net.bicou.redmine.widget.RobotoTextView
+				android:id="@+id/issue_status"
+				android:layout_weight="1"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</TableRow>
+
+		<TableRow style="@style/IssueTableRow">
+			<net.bicou.redmine.widget.RobotoTextView
+				style="@style/IssueLabel"
+				android:layout_weight="1"
+				android:text="@string/issue_priority" />
+			<net.bicou.redmine.widget.RobotoTextView
+				android:layout_weight="1"
+				android:id="@+id/issue_priority"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</TableRow>
+
+		<TableRow style="@style/IssueTableRow">
+			<net.bicou.redmine.widget.RobotoTextView
+				android:layout_weight="1"
+				style="@style/IssueLabel"
+				android:text="@string/issue_assignee" />
+			<net.bicou.redmine.widget.RobotoTextView
+				android:id="@+id/issue_assignee"
+				android:layout_weight="1"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</TableRow>
+
+		<TableRow style="@style/IssueTableRow">
+			<net.bicou.redmine.widget.RobotoTextView
+				android:layout_weight="1"
+				style="@style/IssueLabel"
+				android:text="@string/issue_category" />
+			<net.bicou.redmine.widget.RobotoTextView
+				android:layout_weight="1"
+				android:id="@+id/issue_category"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</TableRow>
+
+		<TableRow style="@style/IssueTableRow">
+			<net.bicou.redmine.widget.RobotoTextView
+				style="@style/IssueLabel"
+				android:layout_weight="1"
+				android:text="@string/issue_target_version" />
+			<net.bicou.redmine.widget.RobotoTextView
+				android:id="@+id/issue_target_version"
+				android:layout_weight="1"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</TableRow>
+
+
+		<TableRow style="@style/IssueTableRow">
+
+			<View
+				android:layout_weight="1"
+				android:layout_span="2"
+				android:layout_width="match_parent"
+				android:layout_height="12dp" />
+
+		</TableRow>
+
+		<TableRow style="@style/IssueTableRow">
+
+			<net.bicou.redmine.widget.RobotoTextView
+				style="@style/IssueLabel"
+				android:layout_weight="1"
+				android:text="@string/issue_description"
+				android:layout_span="2" />
+
+		</TableRow>
+
+		<TableRow
+			style="@style/IssueTableRow"
+			android:layout_marginTop="8dp">
+			<View
+				android:background="#CC0000"
+				android:layout_marginBottom="12dp"
+				android:layout_weight="1"
+				android:layout_span="2"
+				android:layout_width="match_parent"
+				android:layout_height="4dp" />
+		</TableRow>
+
+		<TableRow style="@style/IssueTableRow">
+
+			<WebView
+				android:id="@+id/issue_description"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:layout_span="2" />
+		</TableRow>
+
+	</TableLayout>
+</ScrollView>

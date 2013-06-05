@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="net.bicou.redmine"
+          android:versionCode="294"
+          android:versionName="0.8.2">
+
+    <uses-sdk
+            android:minSdkVersion="8"
+            android:targetSdkVersion="17"/>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <supports-screens
+            android:anyDensity="true"
+            android:largeScreens="true"
+            android:normalScreens="true"
+            android:smallScreens="true"
+            android:xlargeScreens="true"/>
+
+    <application
+            android:name="net.bicou.redmine.MyMineApplication"
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:logo="@drawable/logo_ab"
+            android:label="@string/app_name"
+            android:theme="@style/MyMineTheme">
+        <activity
+                android:name="net.bicou.redmine.app.misc.MainActivity"
+                android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="net.bicou.redmine.app.issues.IssuesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.app.searchable"
+                    android:resource="@xml/search"/>
+        </activity>
+
+        <activity android:name="net.bicou.redmine.app.projects.ProjectsActivity"/>
+        <activity android:name="net.bicou.redmine.app.roadmap.RoadmapActivity"/>
+        <activity android:name="net.bicou.redmine.app.wiki.WikiActivity"/>
+        <activity android:name="net.bicou.redmine.app.misc.AboutActivity"/>
+        <activity android:name="net.bicou.redmine.app.ssl.AddNewCertificateActivity"/>
+        <activity android:name="net.bicou.redmine.app.ssl.KeyStoreManagerActivity">
+            <intent-filter>
+                <action android:name="net.bicou.redmine.MANAGE_SSL_CERTIFICATES"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name="net.bicou.redmine.app.settings.SettingsActivity"
+                android:configChanges="orientation|keyboardHidden"
+                android:label="@string/title_activity_settings"
+                android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.misc.MainActivity"/>
+        </activity>
+
+        <!-- File Chooser -->
+        <activity
+                android:name="com.ipaulpro.afilechooser.FileChooserActivity"
+                android:icon="@drawable/ic_chooser"
+                android:exported="false"
+                android:label="@string/server_auth_settings_select_cert_activity">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
+
+        <!-- The authenticator service -->
+        <service
+                android:name="net.bicou.redmine.auth.AuthenticationService"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.accounts.AccountAuthenticator"
+                    android:resource="@xml/authenticator"/>
+        </service>
+
+        <!-- The projects sync service -->
+        <service
+                android:name="net.bicou.redmine.sync.ProjectsSyncAdapterService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter_projects"/>
+        </service>
+
+        <!-- The issues sync service -->
+        <service
+                android:name="net.bicou.redmine.sync.IssuesSyncAdapterService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter_issues"/>
+        </service>
+
+        <!-- The wiki sync service -->
+        <service
+                android:name="net.bicou.redmine.sync.WikiSyncAdapterService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter_wiki"/>
+        </service>
+
+        <!-- The users sync service -->
+        <service
+                android:name="net.bicou.redmine.sync.UsersSyncAdapterService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter_users"/>
+        </service>
+
+        <!-- The sync providers -->
+        <provider
+                android:name="net.bicou.redmine.data.ProjectsSyncContentProvider"
+                android:authorities="net.bicou.redmine.sync.Projects"
+                android:label="@string/sync_projects"/>
+        <provider
+                android:name="net.bicou.redmine.data.IssuesSyncContentProvider"
+                android:authorities="net.bicou.redmine.sync.Issues"
+                android:label="@string/sync_issues"/>
+        <provider
+                android:name="net.bicou.redmine.data.WikiSyncContentProvider"
+                android:authorities="net.bicou.redmine.sync.Wiki"
+                android:label="@string/sync_wiki"/>
+        <provider
+                android:name="net.bicou.redmine.data.UsersSyncContentProvider"
+                android:authorities="net.bicou.redmine.sync.Users"
+                android:label="@string/sync_users"/>
+
+        <!-- The view notification service -->
+        <service
+                android:name="net.bicou.redmine.notifier.NotifierService"
+                android:exported="true">
+        </service>
+
+        <activity
+                android:name="net.bicou.redmine.auth.AuthenticatorActivity"
+                android:configChanges="orientation"
+                android:excludeFromRecents="true"
+                android:label="@string/setup_title"
+                android:theme="@style/MyMineTheme">
+        </activity>
+    </application>
+
+</manifest>
