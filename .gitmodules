@@ -1,0 +1,24 @@
+[submodule "ActionBarSherlock"]
+	path = ActionBarSherlock
+	url = ssh://ssh.alwaysdata.com/home/bicou/git/ActionBarSherlock
+[submodule "SlidingMenu"]
+	path = SlidingMenu
+	url = ssh://ssh.alwaysdata.com/home/bicou/git/SlidingMenu
+[submodule "drag-sort-listview"]
+	path = drag-sort-listview
+	url = ssh://ssh.alwaysdata.com/home/bicou/git/drag-sort-listview
+[submodule "Crouton"]
+	path = Crouton
+	url = ssh://ssh.alwaysdata.com/home/bicou/git/Crouton
+[submodule "aFileChooser"]
+	path = aFileChooser
+	url = ssh://ssh.alwaysdata.com/home/bicou/git/aFileChooser
+[submodule "ListViewAnimations"]
+	path = ListViewAnimations
+	url = ssh://ssh.alwaysdata.com/home/bicou/git/ListViewAnimations
+[submodule "Android-Universal-Image-Loader"]
+	path = Android-Universal-Image-Loader
+	url = ssh://ssh.alwaysdata.com/home/bicou/git/Android-Universal-Image-Loader
+[submodule "Android-ViewPagerIndicator"]
+	path = Android-ViewPagerIndicator
+	url = ssh://ssh.alwaysdata.com/home/bicou/git/Android-ViewPagerIndicator
