@@ -1,14 +1,5 @@
 package net.bicou.redmine.app;
 
-import java.util.ArrayList;
-
-import net.bicou.redmine.Constants;
-import net.bicou.redmine.R;
-import net.bicou.redmine.app.misc.SlidingMenuFragment;
-import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.Project;
-import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
-import net.bicou.redmine.util.L;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,17 +9,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.slidingmenu.lib.SlidingMenu;
-import com.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import net.bicou.redmine.Constants;
+import net.bicou.redmine.R;
+import net.bicou.redmine.app.misc.SlidingMenuFragment;
+import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
+import net.bicou.redmine.util.L;
+
+import java.util.ArrayList;
 
 public abstract class AbsMyMineActivity extends SlidingFragmentActivity implements ActionBar.OnNavigationListener {
 	/**
 	 * Must return true if the projects spinner in the action bar is required for this activity
-	 * 
+	 *
 	 * @return whether the activity should load the projects list
 	 */
 	abstract protected boolean shouldDisplayProjectsSpinner();
@@ -229,7 +228,9 @@ public abstract class AbsMyMineActivity extends SlidingFragmentActivity implemen
 				mAdapter.notifyDataSetChanged();
 			}
 		}
-	};
+	}
+
+	;
 
 	public void refreshProjectsList() {
 		if (mProjects.size() > 0 || shouldDisplayProjectsSpinner() == false) {
