@@ -3,8 +3,6 @@
   <component name="FacetManager">
     <facet type="android" name="Android">
       <configuration>
-        <option name="UPDATE_PROPERTY_FILES" value="true" />
-        <includeAssetsFromLibraries>true</includeAssetsFromLibraries>
         <notImportedProperties>
           <property>MANIFEST_FILE_PATH</property>
           <property>RESOURCES_DIR_PATH</property>
@@ -22,18 +20,22 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ActionBarSherlock" />
+    <orderEntry type="module" module-name="actionbarsherlock" />
     <orderEntry type="module" module-name="aFileChooser" />
     <orderEntry type="module" module-name="AUIL" />
-    <orderEntry type="module" module-name="VPI" />
     <orderEntry type="module" module-name="Crouton" />
+    <orderEntry type="module" module-name="DSLV" />
+    <orderEntry type="module" module-name="ListViewAnimations" />
+    <orderEntry type="module" module-name="SlidingMenu" />
     <orderEntry type="library" name="acra-4.3.0" level="project" />
     <orderEntry type="library" name="android-support-v4" level="project" />
     <orderEntry type="library" name="gson-2.2.2" level="project" />
     <orderEntry type="library" name="textile-j-2.2" level="project" />
-    <orderEntry type="module" module-name="DSLV" />
-    <orderEntry type="module" module-name="ListViewAnimations" />
-    <orderEntry type="module" module-name="SlidingMenu" />
+    <orderEntry type="module" module-name="VPI" />
+    <orderEntry type="module" module-name="Crouton" />
+    <orderEntry type="module" module-name="Crouton" />
+    <orderEntry type="module" module-name="Crouton" />
+    <orderEntry type="module" module-name="Crouton" />
   </component>
 </module>
 
