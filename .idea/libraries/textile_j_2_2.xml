@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="textile-j-2.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/MyMine/libs/textile-j-2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/MyMine/libs/textile-j-2.2.jar!/" />
+    </SOURCES>
+  </library>
+</component>

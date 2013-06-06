@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Android-Universal-Image-Loader/library/AUIL.iml" filepath="$PROJECT_DIR$/Android-Universal-Image-Loader/library/AUIL.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Crouton/library/Crouton.iml" filepath="$PROJECT_DIR$/Crouton/library/Crouton.iml" />
+      <module fileurl="file://$PROJECT_DIR$/drag-sort-listview/library/DSLV.iml" filepath="$PROJECT_DIR$/drag-sort-listview/library/DSLV.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ListViewAnimations/library/ListViewAnimations.iml" filepath="$PROJECT_DIR$/ListViewAnimations/library/ListViewAnimations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MyMine/MyMine.iml" filepath="$PROJECT_DIR$/MyMine/MyMine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SlidingMenu/library/SlidingMenu.iml" filepath="$PROJECT_DIR$/SlidingMenu/library/SlidingMenu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Android-ViewPagerIndicator/library/VPI.iml" filepath="$PROJECT_DIR$/Android-ViewPagerIndicator/library/VPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/aFileChooser/aFileChooser/aFileChooser.iml" filepath="$PROJECT_DIR$/aFileChooser/aFileChooser/aFileChooser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" filepath="$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" />
+    </modules>
+  </component>
+</project>
+
