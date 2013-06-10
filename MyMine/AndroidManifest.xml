@@ -32,7 +32,7 @@
             android:icon="@drawable/ic_launcher"
             android:logo="@drawable/logo_ab"
             android:label="@string/app_name"
-            android:theme="@style/MyMineTheme">
+            android:theme="@style/MyMineTheme.VPI">
         <activity
                 android:name="net.bicou.redmine.app.misc.MainActivity"
                 android:label="@string/app_name">
