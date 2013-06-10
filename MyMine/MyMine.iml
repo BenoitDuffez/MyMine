@@ -32,10 +32,6 @@
     <orderEntry type="library" name="gson-2.2.2" level="project" />
     <orderEntry type="library" name="textile-j-2.2" level="project" />
     <orderEntry type="module" module-name="VPI" />
-    <orderEntry type="module" module-name="Crouton" />
-    <orderEntry type="module" module-name="Crouton" />
-    <orderEntry type="module" module-name="Crouton" />
-    <orderEntry type="module" module-name="Crouton" />
   </component>
 </module>
 
