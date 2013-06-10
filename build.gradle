@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.4'
+    }
+}
+apply plugin: 'android'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile project(':SlidingMenu:library')
+    compile project(':Android-ViewPagerIndicator:library')
+    compile project(':aFileChooser:aFileChooser')
+    compile project(':Crouton:library')
+    compile project(':ActionBarSherlock:actionbarsherlock')
+    compile project(':ListViewAnimations:library')
+    compile project(':Android-Universal-Image-Loader:library')
+    compile project(':drag-sort-listview:library')
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+    sourceSets {
+        main {
+            manifest.srcFile 'MyMine/AndroidManifest.xml'
+            java.srcDirs = ['MyMine/src']
+            resources.srcDirs = ['MyMine/src']
+            aidl.srcDirs = ['MyMine/src']
+            renderscript.srcDirs = ['MyMine/src']
+            res.srcDirs = ['MyMine/res']
+            assets.srcDirs = ['MyMine/assets']
+        }
+
+        instrumentTest.setRoot('tests')
+    }
+}
