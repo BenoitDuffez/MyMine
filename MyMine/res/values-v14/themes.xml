@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- Generated with http://android-holo-colors.com -->
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style
             name="MyMineTheme"
@@ -36,6 +36,7 @@
         <item name="android:actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
         <item name="actionBarStyle">@style/mymine_solid_ActionBar</item>
         <item name="android:actionBarStyle">@style/mymine_solid_ActionBar</item>
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_mymine</item>
 
         <item name="actionDropDownStyle">@style/mymine_DropDownNav</item>
         <item name="android:actionDropDownStyle">@style/mymine_DropDownNav</item>

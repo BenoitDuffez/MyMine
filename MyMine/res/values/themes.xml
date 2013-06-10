@@ -1,33 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- Generated with http://android-holo-colors.com -->
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
-	<style
-		name="MyMineTheme"
-		parent="@style/Theme.Sherlock.Light">
+    <style
+            name="MyMineTheme"
+            parent="@style/Theme.Sherlock.Light">
 
-		<item name="android:windowBackground">@color/grey_window_background</item>
+        <item name="android:windowBackground">@color/grey_window_background</item>
 
-		<item name="android:editTextStyle">@style/EditTextMyMineTheme</item>
-		<item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMyMineTheme</item>
-		<item name="android:checkboxStyle">@style/CheckBoxMyMineTheme</item>
-		<item name="android:radioButtonStyle">@style/RadioButtonMyMineTheme</item>
-		<item name="android:buttonStyle">@style/ButtonMyMineTheme</item>
-		<item name="android:imageButtonStyle">@style/ImageButtonMyMineTheme</item>
-		<item name="android:spinnerStyle">@style/SpinnerMyMineTheme</item>
-		<item name="android:dropDownSpinnerStyle">@style/SpinnerMyMineTheme.DropDown</item>
-		<item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemMyMineTheme</item>
-		<item name="android:progressBarStyleHorizontal">@style/ProgressBarMyMineTheme</item>
-		<item name="android:seekBarStyle">@style/SeekBarMyMineTheme</item>
-		<item name="android:ratingBarStyle">@style/RatingBarMyMineTheme</item>
-		<item name="android:ratingBarStyleIndicator">@style/RatingBarBigMyMineTheme</item>
-		<item name="android:ratingBarStyleSmall">@style/RatingBarSmallMyMineTheme</item>
-		<item name="android:buttonStyleToggle">@style/ToggleMyMineTheme</item>
-		<item name="android:listViewStyle">@style/ListViewMyMineTheme</item>
-		<item name="android:listViewWhiteStyle">@style/ListViewMyMineTheme.White</item>
-		<item name="android:spinnerItemStyle">@style/SpinnerItemMyMineTheme</item>
+        <item name="android:editTextStyle">@style/EditTextMyMineTheme</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMyMineTheme</item>
+        <item name="android:checkboxStyle">@style/CheckBoxMyMineTheme</item>
+        <item name="android:radioButtonStyle">@style/RadioButtonMyMineTheme</item>
+        <item name="android:buttonStyle">@style/ButtonMyMineTheme</item>
+        <item name="android:imageButtonStyle">@style/ImageButtonMyMineTheme</item>
+        <item name="android:spinnerStyle">@style/SpinnerMyMineTheme</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemMyMineTheme</item>
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarMyMineTheme</item>
+        <item name="android:seekBarStyle">@style/SeekBarMyMineTheme</item>
+        <item name="android:ratingBarStyle">@style/RatingBarMyMineTheme</item>
+        <item name="android:ratingBarStyleIndicator">@style/RatingBarBigMyMineTheme</item>
+        <item name="android:ratingBarStyleSmall">@style/RatingBarSmallMyMineTheme</item>
+        <item name="android:buttonStyleToggle">@style/ToggleMyMineTheme</item>
+        <item name="android:listViewStyle">@style/ListViewMyMineTheme</item>
+        <item name="android:listViewWhiteStyle">@style/ListViewMyMineTheme.White</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItemMyMineTheme</item>
 
-	</style>
+    </style>
+
+    <style name="MyMineTheme.VPI" parent="MyMineTheme">
+        <!-- VPI -->
+        <item name="vpiTitlePageIndicatorStyle">@style/MyMineTitlePageIndicator</item>
+        <item name="vpiTabPageIndicatorStyle">@style/MyMineTabPageIndicator</item>
+    </style>
 
 </resources>
