@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidLayoutPreviewToolWindow">
+    <option name="state">
+      <GlobalState />
+    </option>
+  </component>
   <component name="AndroidLayouts">
     <shared>
       <config />
@@ -7,32 +12,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="702ffcf7-471e-4547-8198-a0d599fdf2a9" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/acra_4_3_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/android_support_v4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/gson_2_2_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/nineoldandroids_2_4_0.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/textile_j_2_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ActionBarSherlock" afterPath="$PROJECT_DIR$/ActionBarSherlock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Android-Universal-Image-Loader" afterPath="$PROJECT_DIR$/Android-Universal-Image-Loader" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SlidingMenu" afterPath="$PROJECT_DIR$/SlidingMenu" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/drag-sort-listview" afterPath="$PROJECT_DIR$/drag-sort-listview" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/AndroidManifest.xml" afterPath="$PROJECT_DIR$/MyMine/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/drag-sort-listview/library/AndroidManifest.xml" afterPath="$PROJECT_DIR$/drag-sort-listview/library/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/AbsMyMineActivity.java" afterPath="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/AbsMyMineActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/MainActivity.java" afterPath="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/MainActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/MyMine.iml" afterPath="$PROJECT_DIR$/MyMine/MyMine.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Android-Universal-Image-Loader/sample/project.properties" afterPath="$PROJECT_DIR$/Android-Universal-Image-Loader/sample/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/res/values-v11/styles.xml" afterPath="$PROJECT_DIR$/MyMine/res/values-v11/styles.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/res/values/themes.xml" afterPath="$PROJECT_DIR$/MyMine/res/values/themes.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/res/values-v11/themes.xml" afterPath="$PROJECT_DIR$/MyMine/res/values-v11/themes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/WaitForSyncFragment.java" afterPath="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/WaitForSyncFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MyMine/project.properties" afterPath="$PROJECT_DIR$/MyMine/project.properties" />
     </list>
     <ignored path="MyMine.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -96,28 +80,84 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="styles.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MyMine/res/values/styles.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2070">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="styles_mymine.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MyMine/res/values/styles_mymine.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="themes.xml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="themes.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MyMine/res/values/themes.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="0" selection-start="1996" selection-end="1996" vertical-scroll-proportion="0.62913907" vertical-offset="0" max-vertical-offset="906">
+            <state line="38" column="0" selection-start="1996" selection-end="1996" vertical-scroll-proportion="0.0" vertical-offset="555" max-vertical-offset="660">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbsMyMineActivity.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/AbsMyMineActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="76" column="56" selection-start="2366" selection-end="2366" vertical-scroll-proportion="0.8278146" vertical-offset="390" max-vertical-offset="4200">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MyMine/AndroidManifest.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="60" selection-start="1601" selection-end="1601" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="2925">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/MainActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="88" column="44" selection-start="3155" selection-end="3155" vertical-scroll-proportion="0.0" vertical-offset="1027" max-vertical-offset="6060">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="slidingmenu_item.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MyMine/res/layout/slidingmenu_item.xml">
+          <provider editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="26" column="0" selection-start="1092" selection-end="1092" vertical-scroll-proportion="0.0" vertical-offset="375" max-vertical-offset="510">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="WaitForSyncFragment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/WaitForSyncFragment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="52" column="0" selection-start="1883" selection-end="1883" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="870">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MyMine/res/layout/main.xml">
+          <provider editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="23" column="0" selection-start="868" selection-end="868" vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="435">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="slidingmenu_listview.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MyMine/res/layout/slidingmenu_listview.xml">
+          <provider editor-type-id="android-designer">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="35" selection-start="220" selection-end="533" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="375">
               <folding />
             </state>
           </provider>
@@ -135,7 +175,7 @@
       <file leaf-file-name="themes.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MyMine/res/values-v11/themes.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="44" column="12" selection-start="2750" selection-end="2750" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="795">
+            <state line="44" column="12" selection-start="2750" selection-end="2750" vertical-scroll-proportion="0.0" vertical-offset="645" max-vertical-offset="795">
               <folding />
             </state>
           </provider>
@@ -149,23 +189,97 @@
     </FindUsagesManager>
   </component>
   <component name="Git.Settings">
+    <option name="SYNC_SETTING" value="DONT" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
   </component>
   <component name="GitLogSettings">
     <option name="myDateState">
       <MyDateState />
     </option>
   </component>
+  <component name="GradleLocalSettings">
+    <option name="tasksExpandState">
+      <map>
+        <entry key="" value="true" />
+      </map>
+    </option>
+    <option name="availableProjects">
+      <map>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
+              <option name="name" value="MyMine" />
+              <option name="path" value="$PROJECT_DIR$/build.gradle" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="MyMine" />
+                <option name="path" value="$PROJECT_DIR$/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="Crouton" />
+                <option name="path" value="$PROJECT_DIR$/Crouton/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="actionbarsherlock" />
+                <option name="path" value="$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="SlidingMenu-library" />
+                <option name="path" value="$PROJECT_DIR$/SlidingMenu/library/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="Crouton-library" />
+                <option name="path" value="$PROJECT_DIR$/Crouton/library/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="aFileChooser-aFileChooser" />
+                <option name="path" value="$PROJECT_DIR$/aFileChooser/aFileChooser/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="library" />
+                <option name="path" value="$PROJECT_DIR$/Android-Universal-Image-Loader/library/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="ListViewAnimations-library" />
+                <option name="path" value="$PROJECT_DIR$/ListViewAnimations/library/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="Android-ViewPagerIndicator-library" />
+                <option name="path" value="$PROJECT_DIR$/Android-ViewPagerIndicator/library/build.gradle" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="drag-sort-listview-library" />
+                <option name="path" value="$PROJECT_DIR$/drag-sort-listview/library/build.gradle" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/AbsMyMineActivity.java" />
         <option value="$PROJECT_DIR$/SlidingMenu/SlidingMenu/src/com/jeremyfeinstein/slidingmenu/lib/app/SlidingFragmentActivity.java" />
         <option value="$PROJECT_DIR$/SlidingMenu/library/src/com/jeremyfeinstein/slidingmenu/lib/app/SlidingFragmentActivity.java" />
         <option value="$PROJECT_DIR$/settings.gradle" />
         <option value="$PROJECT_DIR$/MyMine/res/values-v11/styles.xml" />
         <option value="$PROJECT_DIR$/MyMine/res/values-v11/themes.xml" />
         <option value="$PROJECT_DIR$/MyMine/res/values/themes.xml" />
+        <option value="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/SlidingMenuFragment.java" />
+        <option value="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/WaitForSyncFragment.java" />
+        <option value="$PROJECT_DIR$/MyMine/res/layout/main.xml" />
+        <option value="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/MainActivity.java" />
+        <option value="$PROJECT_DIR$/MyMine/res/layout/slidingmenu_item.xml" />
+        <option value="$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/AbsMyMineActivity.java" />
       </list>
     </option>
   </component>
@@ -200,11 +314,11 @@
     <OptionsSetting value="true" id="Update" />
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="1" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectReloadState">
-    <option name="STATE" value="0" />
+    <option name="STATE" value="2" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
@@ -220,6 +334,7 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -237,11 +352,9 @@
               <option name="myItemId" value="MyMine" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="MyMine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="MyMine" />
@@ -255,10 +368,18 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="MyMine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MyMine" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="redmine" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -269,14 +390,22 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="MyMine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MyMine" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="values-v11" />
+              <option name="myItemId" value="redmine" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -287,44 +416,34 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="MyMine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="values" />
+              <option name="myItemId" value="MyMine" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.last.edited" value="Modules" />
-    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.proportion" value="0.0" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
-    <property name="options.lastSelected" value="reference.settingsdialog.project.gradle" />
+    <property name="options.lastSelected" value="vcs.Subversion" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/SlidingMenu/library" />
-    <property name="project.structure.side.proportion" value="0.2" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="014994860201300A" />
+    <property name="project.structure.side.proportion" value="0.0" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="N4" />
-    <property name="restartRequiresConfirmation" value="true" />
-    <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
-  <component name="RunManager" selected="Groovy.build">
+  <component name="RunManager" selected="Android Application.MyMine">
     <configuration default="false" name="settings" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
       <module name="" />
       <setting name="path" value="file://$PROJECT_DIR$/settings.gradle" />
@@ -569,18 +688,20 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2497332" sideWeight="0.32869378" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32869378" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.32976446" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2497332" sideWeight="0.6359743" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2497332" sideWeight="0.6702356" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.32976446" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.6702356" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32976446" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32976446" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -645,77 +766,90 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/src/com/actionbarsherlock/internal/app/ActionBarWrapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="29" selection-start="227" selection-end="227" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/test/com/actionbarsherlock/internal/ResourcesCompatTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="16" selection-start="57" selection-end="57" vertical-scroll-proportion="0.033039648" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/aFileChooser/aFileChooser/src/com/ipaulpro/afilechooser/FileChooserActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="29" selection-start="924" selection-end="924" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Android-ViewPagerIndicator/library/src/com/viewpagerindicator/CirclePageIndicator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="30" selection-start="1011" selection-end="1011" vertical-scroll-proportion="0.30050084" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/drag-sort-listview/library/src/com/mobeta/android/dslv/DragSortCursorAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="32" selection-start="252" selection-end="252" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Crouton/library/src/de/keyboardsurfer/android/widget/crouton/Manager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="37" selection-start="1368" selection-end="1368" vertical-scroll-proportion="0.23178808" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SlidingMenu/library/src/com/jeremyfeinstein/slidingmenu/lib/app/SlidingFragmentActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="53" selection-start="345" selection-end="345" vertical-scroll-proportion="0.10016695" vertical-offset="0" max-vertical-offset="0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/AbsMyMineActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="54" selection-start="939" selection-end="939" vertical-scroll-proportion="0.17529215" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="100" selection-end="100" vertical-scroll-proportion="0.01655629" vertical-offset="0" max-vertical-offset="906">
-          <folding />
-        </state>
+        <state line="1" column="0" selection-start="100" selection-end="100" vertical-scroll-proportion="0.01655629" vertical-offset="0" max-vertical-offset="906" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/settings.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="335" selection-end="335" vertical-scroll-proportion="0.14900662" vertical-offset="0" max-vertical-offset="906">
-          <folding />
-        </state>
+        <state line="9" column="0" selection-start="335" selection-end="335" vertical-scroll-proportion="0.14900662" vertical-offset="0" max-vertical-offset="906" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SlidingMenu/library/src/com/jeremyfeinstein/slidingmenu/lib/CustomViewAbove.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="30" selection-start="247" selection-end="247" vertical-scroll-proportion="0.14900662" vertical-offset="0" max-vertical-offset="15180">
-          <folding />
-        </state>
+        <state line="9" column="30" selection-start="247" selection-end="247" vertical-scroll-proportion="0.14900662" vertical-offset="0" max-vertical-offset="15180" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MyMine/res/values/styles.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2070">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2070" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MyMine/res/values/styles_mymine.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MyMine/res/values/themes.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="0" selection-start="1996" selection-end="1996" vertical-scroll-proportion="0.0" vertical-offset="555" max-vertical-offset="660">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MyMine/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="60" selection-start="1601" selection-end="1601" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="2925">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="44" selection-start="3155" selection-end="3155" vertical-scroll-proportion="0.0" vertical-offset="1027" max-vertical-offset="6060">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MyMine/res/layout/slidingmenu_item.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="0" selection-start="1092" selection-end="1092" vertical-scroll-proportion="0.0" vertical-offset="375" max-vertical-offset="510">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/misc/WaitForSyncFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="0" selection-start="1883" selection-end="1883" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="870">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MyMine/res/layout/main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="868" selection-end="868" vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="435">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MyMine/res/layout/slidingmenu_listview.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="35" selection-start="220" selection-end="533" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="375">
           <folding />
         </state>
       </provider>
@@ -729,15 +863,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MyMine/res/values-v11/themes.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="12" selection-start="2750" selection-end="2750" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="795">
+        <state line="44" column="12" selection-start="2750" selection-end="2750" vertical-scroll-proportion="0.0" vertical-offset="645" max-vertical-offset="795">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MyMine/res/values/themes.xml">
+    <entry file="file://$PROJECT_DIR$/MyMine/src/net/bicou/redmine/app/AbsMyMineActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="0" selection-start="1996" selection-end="1996" vertical-scroll-proportion="0.62913907" vertical-offset="0" max-vertical-offset="906">
-          <folding />
+        <state line="76" column="56" selection-start="2366" selection-end="2366" vertical-scroll-proportion="0.8278146" vertical-offset="390" max-vertical-offset="4200">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -758,7 +894,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>Detection</last-edited>
+          <last-edited>Android</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -781,7 +917,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>Android 4.2.2</last-edited>
+          <last-edited>1.6</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -793,12 +929,11 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>Crouton</last-edited>
+          <last-edited>MyMine</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>
@@ -818,7 +953,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>nineoldandroids-2.4.0</last-edited>
+          <last-edited>acra-4.3.0</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
