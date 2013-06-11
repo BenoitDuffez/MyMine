@@ -265,5 +265,8 @@
     <string name="roadmap_percent_complete">%1$d %% complete</string>
     <string name="roadmap_issues_count">Issues: %1$d (incl. %2$d open)</string>
     <string name="roadmap_due_date">Due date: %1$s</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
+    <string name="drawer_title">drawer_title</string>
 
 </resources>
