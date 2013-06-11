@@ -2,12 +2,7 @@
   <library name="android-support-v4">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/MyMine/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/build/exploded-bundles/library.aar/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/build/exploded-bundles/aFileChooser.aar/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/build/exploded-bundles/actionbarsherlock.aar/libs/android-support-v4.jar!/" />
       <root url="jar://$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SlidingMenu/library/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/SlidingMenu/library/build/exploded-bundles/actionbarsherlock.aar/libs/android-support-v4.jar!/" />
       <root url="jar://$PROJECT_DIR$/Crouton/library/libs/android-support-v4.jar!/" />
       <root url="jar://$PROJECT_DIR$/aFileChooser/aFileChooser/libs/android-support-v4.jar!/" />
       <root url="jar://$PROJECT_DIR$/Android-ViewPagerIndicator/library/libs/android-support-v4.jar!/" />

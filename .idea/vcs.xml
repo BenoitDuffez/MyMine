@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="svn" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ActionBarSherlock" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/Android-Universal-Image-Loader" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Android-Universal-Image-Loader/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/Android-ViewPagerIndicator" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Android-ViewPagerIndicator/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/Crouton" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ListViewAnimations" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/SlidingMenu" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/SlidingMenu/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/aFileChooser" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/aFileChooser/aFileChooser" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/drag-sort-listview" vcs="Git" />
   </component>
 </project>

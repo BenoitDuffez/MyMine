@@ -3,6 +3,10 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/MyMine/build.gradle" />
+        <option name="preferLocalInstallationToWrapper" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/build.gradle" />
       </GradleProjectSettings>
     </option>
