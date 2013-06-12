@@ -41,21 +41,56 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="net.bicou.redmine.app.issues.IssuesActivity">
+        <activity android:name="net.bicou.redmine.app.issues.IssuesActivity" android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
+
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.misc.MainActivity"/>
 
             <meta-data
                     android:name="android.app.searchable"
                     android:resource="@xml/search"/>
         </activity>
 
-        <activity android:name="net.bicou.redmine.app.projects.ProjectsActivity"/>
-        <activity android:name="net.bicou.redmine.app.roadmap.RoadmapActivity"/>
-        <activity android:name="net.bicou.redmine.app.wiki.WikiActivity"/>
-        <activity android:name="net.bicou.redmine.app.misc.AboutActivity"/>
-        <activity android:name="net.bicou.redmine.app.ssl.AddNewCertificateActivity"/>
+        <activity
+                android:name="net.bicou.redmine.app.projects.ProjectsActivity"
+                android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.misc.MainActivity"/>
+        </activity>
+        <activity
+                android:name="net.bicou.redmine.app.roadmap.RoadmapActivity"
+                android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.misc.MainActivity"/>
+        </activity>
+        <activity
+                android:name="net.bicou.redmine.app.wiki.WikiActivity"
+                android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.misc.MainActivity"/>
+        </activity>
+        <activity
+                android:name="net.bicou.redmine.app.misc.AboutActivity"
+                android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.misc.MainActivity"/>
+        </activity>
+        <activity
+                android:name="net.bicou.redmine.app.ssl.AddNewCertificateActivity"
+                android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.misc.MainActivity"/>
+        </activity>
+
         <activity android:name="net.bicou.redmine.app.ssl.KeyStoreManagerActivity">
             <intent-filter>
                 <action android:name="net.bicou.redmine.MANAGE_SSL_CERTIFICATES"/>
