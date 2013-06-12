@@ -14,6 +14,7 @@ import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 import com.google.gson.Gson;
 import net.bicou.redmine.R;
@@ -22,6 +23,7 @@ import net.bicou.redmine.app.AbsMyMineActivity.SplitScreenBehavior;
 import net.bicou.redmine.app.issues.IssuesActivity.GetNavigationModeAdapterTask.NavigationModeAdapterCallback;
 import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
 import net.bicou.redmine.app.issues.IssuesOrderingFragment.IssuesOrderSelectionListener;
+import net.bicou.redmine.app.misc.DrawerActivity;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
@@ -33,18 +35,19 @@ import net.bicou.redmine.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IssuesActivity extends AbsMyMineActivity implements SplitScreenBehavior {
+public class IssuesActivity extends DrawerActivity implements SplitScreenBehavior {
 	int mNavMode;
 	ArrayList<OrderColumn> mCurrentOrder;
-
-	@Override
-	public void onPreCreate() {
-		prepareIndeterminateProgressActionBar();
-	}
+	boolean mIsSplitScreen;//TODO
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
+
 		setContentView(R.layout.activity_issues);
 
 		mIsSplitScreen = findViewById(R.id.issues_pane_issue) != null;
@@ -95,8 +98,8 @@ public class IssuesActivity extends AbsMyMineActivity implements SplitScreenBeha
 		// Screen rotation on 7" tablets
 		if (savedInstanceState != null && mIsSplitScreen != savedInstanceState.getBoolean(KEY_IS_SPLIT_SCREEN)) {
 			final Fragment f = getSupportFragmentManager().findFragmentById(R.id.issues_pane_list);
-			if (f != null && f instanceof SplitScreenFragmentConfigurationChangesListener) {
-				((SplitScreenFragmentConfigurationChangesListener) f).updateSplitScreenState(mIsSplitScreen);
+			if (f != null && f instanceof AbsMyMineActivity.SplitScreenFragmentConfigurationChangesListener) {
+				((AbsMyMineActivity.SplitScreenFragmentConfigurationChangesListener) f).updateSplitScreenState(mIsSplitScreen);
 			}
 		}
 	}
@@ -136,16 +139,15 @@ public class IssuesActivity extends AbsMyMineActivity implements SplitScreenBeha
 	}
 
 	@Override
-	protected boolean shouldDisplayProjectsSpinner() {
-		return false;
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		final int id = mIsSplitScreen ? R.id.issues_pane_issue : R.id.issues_pane_list;
 		final Fragment frag = getSupportFragmentManager().findFragmentById(id);
 
 		switch (item.getItemId()) {
+		/*case android.R.id.home:
+			finish();
+			return true;
+		*/
 		case R.id.menu_issue_browser:
 			if (frag instanceof IssueFragment) {
 				final Issue issue = ((IssueFragment) frag).getIssue();
@@ -190,7 +192,7 @@ public class IssuesActivity extends AbsMyMineActivity implements SplitScreenBeha
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
+	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.menu_issues, menu);
 
@@ -203,25 +205,7 @@ public class IssuesActivity extends AbsMyMineActivity implements SplitScreenBeha
 			searchPlate.setBackgroundResource(R.drawable.issues_search_background);
 		}
 
-		return true;
-	}
-
-	@Override
-	protected void onCurrentProjectChanged() {
-		final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.issues_pane_list);
-		final Bundle args = new Bundle(getIntent().getExtras());
-		args.putBoolean(KEY_IS_SPLIT_SCREEN, mIsSplitScreen);
-		if (frag instanceof IssuesListFragment) {
-			((IssuesListFragment) frag).updateCurrentProject(mProjects.get(mCurrentProjectPosition).id);
-			if (mIsSplitScreen) {
-				final Fragment f = getSupportFragmentManager().findFragmentById(R.id.issues_pane_issue);
-				if (f != null) {
-					getSupportFragmentManager().beginTransaction().remove(f).commit();
-				}
-			}
-		} else if (frag instanceof IssueFragment) {
-			getSupportFragmentManager().beginTransaction().replace(R.id.issues_pane_list, IssuesListFragment.newInstance(args)).commit();
-		}
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override

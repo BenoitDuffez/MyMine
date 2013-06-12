@@ -3,31 +3,15 @@ package net.bicou.redmine.app.misc;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences.Editor;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
-import net.bicou.redmine.app.issues.IssuesActivity;
-import net.bicou.redmine.app.projects.ProjectsActivity;
-import net.bicou.redmine.app.roadmap.RoadmapActivity;
-import net.bicou.redmine.app.settings.SettingsActivity;
-import net.bicou.redmine.app.wiki.WikiActivity;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
@@ -36,74 +20,17 @@ import net.bicou.redmine.util.L;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AbsMyMineActivity {
+public class MainActivity extends DrawerActivity {
 	private static final String ALPHA_SHARED_PREFERENCES_FILE = "alpha";
 	private static final String KEY_ALPHA_VERSION_DISCLAIMER = "IS_DISCLAIMER_ACCEPTED";
 
 	public static final String MYMINE_PREFERENCES_FILE = "mymine";
 	public static final String KEY_IS_FIRST_LAUNCH = "IS_FIRST_LAUNCH";
 
-	DrawerLayout mDrawerLayout;
-	ListView mDrawerList;
-	private String mTitle, mTitleDrawer;
-	ActionBarDrawerToggle mDrawerToggle;
-
-	static class SlidingMenuItem {
-		int image, text;
-
-		public SlidingMenuItem(final int image, final int text) {
-			this.image = image;
-			this.text = text;
-		}
-	}
-
-	static class SlidingMenuItemViewsHolder {
-		ImageView icon;
-		TextView text;
-	}
-
-	public static final SlidingMenuItem[] mMenu = {
-			new SlidingMenuItem(R.drawable.icon_projects, R.string.menu_projects),
-			new SlidingMenuItem(R.drawable.icon_issues, R.string.menu_issues),
-			new SlidingMenuItem(R.drawable.icon_roadmaps, R.string.menu_roadmap),
-			new SlidingMenuItem(R.drawable.icon_wiki, R.string.menu_wiki),
-			new SlidingMenuItem(R.drawable.icon_about, R.string.menu_about),
-			new SlidingMenuItem(R.drawable.icon_settings, R.string.menu_settings),
-	};
-
-	@Override
-	public void onPreCreate() {
-		prepareIndeterminateProgressActionBar();
-	}
-
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
-		mDrawerList = (ListView) findViewById(android.R.id.list);
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
-		mDrawerList.setAdapter(new SlidingMenuItemsAdapter(this, R.layout.slidingmenu_item, R.id.slidingmenu_item_text, mMenu));
-		mDrawerList.setOnItemClickListener(mListItemClickListener);
-
-		mTitle = getString(R.string.app_name);
-		mTitleDrawer = getString(R.string.drawer_title);
-
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
-			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
-				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-			}
-
-			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mTitleDrawer);
-				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-			}
-		};
-
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
 
 		showAlphaVersionAlert();
 		final boolean isFirstLaunch = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).getBoolean(KEY_IS_FIRST_LAUNCH, true);
@@ -122,103 +49,12 @@ public class MainActivity extends AbsMyMineActivity {
 	}
 
 	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		mDrawerToggle.onConfigurationChanged(newConfig);
-	}
-
-	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		// Sync the toggle state after onRestoreInstanceState has occurred.
+
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		mDrawerToggle.syncState();
 	}
-
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		// If the nav drawer is open, hide action items related to the content view
-		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		//menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
-		return super.onPrepareOptionsMenu(menu);
-	}
-
-	public static class SlidingMenuItemsAdapter extends ArrayAdapter<SlidingMenuItem> {
-		public SlidingMenuItemsAdapter(final Context context, final int resource, final int textViewResourceId, final SlidingMenuItem[] objects) {
-			super(context, resource, textViewResourceId, objects);
-		}
-
-		@Override
-		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final SlidingMenuItemViewsHolder h;
-			final View v;
-
-			if (convertView == null) {
-				v = LayoutInflater.from(getContext()).inflate(R.layout.slidingmenu_item, null);
-				h = new SlidingMenuItemViewsHolder();
-				h.icon = (ImageView) v.findViewById(R.id.slidingmenu_item_icon);
-				h.text = (TextView) v.findViewById(R.id.slidingmenu_item_text);
-				v.setTag(h);
-			} else {
-				v = convertView;
-				h = (SlidingMenuItemViewsHolder) v.getTag();
-			}
-
-			final SlidingMenuItem item = getItem(position);
-			if (item != null) {
-				h.icon.setImageResource(item.image);
-				h.text.setText(item.text);
-			}
-
-			return v;
-		}
-	}
-
-	AdapterView.OnItemClickListener mListItemClickListener = new AdapterView.OnItemClickListener() {
-		@Override
-		public void onItemClick(final AdapterView listView, final View v, final int position, final long id) {
-			final Bundle args = new Bundle();
-			final Intent intent;
-			final AbsMyMineActivity act = MainActivity.this;
-			args.putInt(Constants.KEY_PROJECT_POSITION, act.mCurrentProjectPosition);
-
-			switch (mMenu[position].text) {
-			case R.string.menu_issues:
-				intent = new Intent(act, IssuesActivity.class);
-				intent.putExtras(args);
-				break;
-
-			case R.string.menu_projects:
-				intent = new Intent(act, ProjectsActivity.class);
-				intent.putExtras(args);
-				break;
-
-			case R.string.menu_roadmap:
-				intent = new Intent(act, RoadmapActivity.class);
-				intent.putExtras(args);
-				break;
-
-			case R.string.menu_wiki:
-				intent = new Intent(act, WikiActivity.class);
-				intent.putExtras(args);
-				break;
-
-			case R.string.menu_about:
-				intent = new Intent(act, AboutActivity.class);
-				break;
-
-			case R.string.menu_settings:
-				intent = new Intent(act, SettingsActivity.class);
-				break;
-
-			default:
-				intent = new Intent(act, MainActivity.class);
-				break;
-			}
-
-			startActivity(intent);
-			mDrawerLayout.closeDrawer(mDrawerList);
-		}
-	};
-
 
 	@Override
 	public void onResume() {
@@ -232,8 +68,6 @@ public class MainActivity extends AbsMyMineActivity {
 		WAIT_FOR_SYNC,
 		DEFAULT,
 	}
-
-	;
 
 	private void refreshContents() {
 		new AsyncTask<Void, Void, FragmentToDisplay>() {
@@ -373,26 +207,6 @@ public class MainActivity extends AbsMyMineActivity {
 		// return true;
 		default:
 			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	@Override
-	protected boolean shouldDisplayProjectsSpinner() {
-		return false;
-	}
-
-	@Override
-	protected void onCurrentProjectChanged() {
-		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
-
-		// Already loaded?
-		if (f instanceof WelcomeFragment) {
-			((WelcomeFragment) f).refreshUI();
-		}
-		// Likely to be the loading fragment. Change that.
-		else {
-			final Bundle args = new Bundle();
-			getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container, WelcomeFragment.newInstance(args)).commit();
 		}
 	}
 }

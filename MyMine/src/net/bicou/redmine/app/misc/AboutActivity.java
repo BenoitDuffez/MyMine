@@ -1,22 +1,21 @@
 package net.bicou.redmine.app.misc;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
-import net.bicou.redmine.util.L;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.TextView;
+import net.bicou.redmine.R;
+import net.bicou.redmine.util.L;
 
-public class AboutActivity extends AbsMyMineActivity {
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+public class AboutActivity extends DrawerActivity {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,14 +50,5 @@ public class AboutActivity extends AbsMyMineActivity {
 
 		final TextView version = (TextView) findViewById(R.id.about_version);
 		version.setText(getString(R.string.about_version, versionName, buildDate));
-	}
-
-	@Override
-	protected void onCurrentProjectChanged() {
-	}
-
-	@Override
-	protected boolean shouldDisplayProjectsSpinner() {
-		return false;
 	}
 }

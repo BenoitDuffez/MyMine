@@ -14,9 +14,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.projects.ProjectsActivity;
 import net.bicou.redmine.app.roadmap.RoadmapActivity;
@@ -147,12 +145,10 @@ public class WelcomeFragment extends Fragment {
 		L.d("");
 		nowLayout = (ViewGroup) v.findViewById(R.id.overview_nowlayout);
 
-		final AbsMyMineActivity act = (AbsMyMineActivity) getActivity();
 		Intent intent;
 
 		// Issues
 		intent = new Intent(getActivity(), IssuesActivity.class);
-		intent.putExtra(Constants.KEY_PROJECT_POSITION, act.mCurrentProjectPosition);
 		mCards.add(new OverviewCard() //
 				.setTitle(R.string.overview_card_issues_title, RESID_ISSUES, R.drawable.card_issues) //
 				.addAction(R.drawable.icon_issues, R.string.overview_card_issues_action, intent));
@@ -174,7 +170,7 @@ public class WelcomeFragment extends Fragment {
 
 		// Add the cards views
 		for (final OverviewCard card : mCards) {
-			nowLayout.addView(card.getView(act, container));
+			nowLayout.addView(card.getView(getActivity(), container));
 			nowLayout.addView(getSpacer());
 		}
 
