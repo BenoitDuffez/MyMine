@@ -42,6 +42,9 @@
 
         <item name="android:popupMenuStyle">@style/mymine_PopupMenu</item>
         <item name="android:panelBackground">@drawable/menu_hardkey_panel_mymine</item>
+
+        <item name="android:selectableItemBackground">@drawable/ab_background</item>
+        <item name="selectableItemBackground">@drawable/ab_background</item>
     </style>
 
 </resources>

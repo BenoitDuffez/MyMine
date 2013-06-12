@@ -27,6 +27,8 @@
         <item name="android:listViewWhiteStyle">@style/ListViewMyMineTheme.White</item>
         <item name="android:spinnerItemStyle">@style/SpinnerItemMyMineTheme</item>
 
+        <item name="selectableItemBackground">@drawable/ab_background</item>
+
     </style>
 
     <style name="MyMineTheme.VPI" parent="MyMineTheme">

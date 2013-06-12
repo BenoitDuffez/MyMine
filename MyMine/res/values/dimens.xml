@@ -6,20 +6,20 @@
 
 <resources>
 
-	<dimen name="slidingmenu_offset">60dp</dimen>
-	<dimen name="shadow_width">15dp</dimen>
+    <dimen name="navigation_drawer_width">240dp</dimen>
+    <dimen name="shadow_width">15dp</dimen>
 
-	<integer name="config_slide_time">400</integer>
+    <integer name="config_slide_time">400</integer>
 
-	<dimen name="title_font_size">34sp</dimen>
+    <dimen name="title_font_size">34sp</dimen>
 
-	<dimen name="main_layout_padding">8dp</dimen>
-	<dimen name="content_layout_padding">4dp</dimen>
+    <dimen name="main_layout_padding">8dp</dimen>
+    <dimen name="content_layout_padding">4dp</dimen>
 
-	<dimen name="overview_card_spacer_size">20dp</dimen>
-	<dimen name="overview_card_icon_size">32dp</dimen>
+    <dimen name="overview_card_spacer_size">20dp</dimen>
+    <dimen name="overview_card_icon_size">32dp</dimen>
 
-	<integer name="issues_order_pick_column_gridview_nb_columns">3</integer>
+    <integer name="issues_order_pick_column_gridview_nb_columns">3</integer>
 
     <integer name="issues_list_item_nb_lines">3</integer>
 
