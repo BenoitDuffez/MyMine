@@ -3,20 +3,17 @@ package net.bicou.redmine.app;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.misc.SlidingMenuFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
@@ -24,7 +21,7 @@ import net.bicou.redmine.util.L;
 
 import java.util.ArrayList;
 
-public abstract class AbsMyMineActivity extends SlidingFragmentActivity implements ActionBar.OnNavigationListener {
+public abstract class AbsMyMineActivity extends SherlockFragmentActivity implements ActionBar.OnNavigationListener {
 	/**
 	 * Must return true if the projects spinner in the action bar is required for this activity
 	 *
@@ -57,7 +54,6 @@ public abstract class AbsMyMineActivity extends SlidingFragmentActivity implemen
 
 	}
 
-	protected SlidingMenu mSlidingMenu;
 
 	public static final String KEY_REDMINE_PROJECTS_LIST = "net.bicou.mymine.RedmineProjectsList";
 
@@ -75,18 +71,6 @@ public abstract class AbsMyMineActivity extends SlidingFragmentActivity implemen
 
 		onPreCreate();
 
-		// Configure the SlidingMenu
-		final View menuView = LayoutInflater.from(this).inflate(R.layout.slidingmenu, null);
-		setBehindContentView(menuView);
-		mSlidingMenu = getSlidingMenu();
-		mSlidingMenu.setMode(SlidingMenu.LEFT);
-		mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-		mSlidingMenu.setShadowWidthRes(R.dimen.shadow_width);
-		mSlidingMenu.setShadowDrawable(R.drawable.shadow);
-		mSlidingMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-		mSlidingMenu.setFadeDegree(0.35f);
-		mSlidingMenu.setFadeEnabled(true);
-
 		mCurrentProjectPosition = -1;
 		if (savedInstanceState == null) {
 			mProjects = new ArrayList<Project>();
@@ -95,10 +79,8 @@ public abstract class AbsMyMineActivity extends SlidingFragmentActivity implemen
 
 		// Don't duplicate fragments if they're already created
 		if (savedInstanceState == null) {
-			// Create menu fragment
-			getSupportFragmentManager().beginTransaction().replace(R.id.slidingmenu_menu, SlidingMenuFragment.newInstance()).commit();
-
 			// Show up button
+			//TODO: handle proper use of the up button
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 
@@ -107,24 +89,6 @@ public abstract class AbsMyMineActivity extends SlidingFragmentActivity implemen
 		if (args != null && args.containsKey(Constants.KEY_PROJECT_POSITION)) {
 			mCurrentProjectPosition = args.getInt(Constants.KEY_PROJECT_POSITION);
 		}
-	}
-
-	public void bounceMenu() {
-		// Bounce menu
-		final Runnable toggle2 = new Runnable() {
-			@Override
-			public void run() {
-				toggle();
-			}
-		};
-		final Runnable toggle = new Runnable() {
-			@Override
-			public void run() {
-				toggle();
-				new Handler().postDelayed(toggle2, 3000);
-			}
-		};
-		new Handler().postDelayed(toggle, 1000);
 	}
 
 	protected void prepareIndeterminateProgressActionBar() {
@@ -137,8 +101,8 @@ public abstract class AbsMyMineActivity extends SlidingFragmentActivity implemen
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			toggle();
-			return true;
+			//TODO
+			finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -170,14 +134,6 @@ public abstract class AbsMyMineActivity extends SlidingFragmentActivity implemen
 		}
 	}
 
-	@Override
-	public void onBackPressed() {
-		if (mSlidingMenu != null && mSlidingMenu.isMenuShowing()) {
-			mSlidingMenu.showContent();
-		} else {
-			super.onBackPressed();
-		}
-	}
 
 	public Project getCurrentProject() {
 		if (mProjects != null && mCurrentProjectPosition >= 0 && mCurrentProjectPosition < mProjects.size()) {
@@ -229,8 +185,6 @@ public abstract class AbsMyMineActivity extends SlidingFragmentActivity implemen
 			}
 		}
 	}
-
-	;
 
 	public void refreshProjectsList() {
 		if (mProjects.size() > 0 || shouldDisplayProjectsSpinner() == false) {
