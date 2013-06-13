@@ -270,5 +270,6 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_title">@string/app_name</string>
+    <string name="drawer_menu_customize">Customize this menu&#8230;</string>
 
 </resources>

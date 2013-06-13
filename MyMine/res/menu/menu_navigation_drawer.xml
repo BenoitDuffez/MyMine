@@ -3,6 +3,7 @@
     <item
             android:id="@+id/menu_drawer_customize"
             android:icon="@android:drawable/ic_menu_preferences"
+            android:title="@string/drawer_menu_customize"
             android:showAsAction="always"/>
 </menu>
 

@@ -26,16 +26,22 @@
         <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
         <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
 
-        <item name="actionBarItemBackground">@drawable/selectable_background_mymine</item>
         <item name="popupMenuStyle">@style/mymine_PopupMenu</item>
         <item name="dropDownListViewStyle">@style/mymine_DropDownListView</item>
         <item name="android:dropDownListViewStyle">@style/mymine_DropDownListView</item>
 
+
         <!-- ActionBar related stuff -->
+
         <item name="actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
         <item name="android:actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
+
         <item name="actionBarStyle">@style/mymine_solid_ActionBar</item>
         <item name="android:actionBarStyle">@style/mymine_solid_ActionBar</item>
+
+        <item name="android:selectableItemBackground">@drawable/ab_background</item>
+        <item name="selectableItemBackground">@drawable/ab_background</item>
+        <item name="actionBarItemBackground">@drawable/selectable_background_mymine</item>
         <item name="android:actionBarItemBackground">@drawable/selectable_background_mymine</item>
 
         <item name="actionDropDownStyle">@style/mymine_DropDownNav</item>

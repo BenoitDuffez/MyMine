@@ -4,14 +4,17 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.settings.SettingsActivity;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
@@ -196,6 +199,12 @@ public class MainActivity extends DrawerActivity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.menu_main_activity, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
 		if (f == null) {
@@ -203,6 +212,14 @@ public class MainActivity extends DrawerActivity {
 		}
 
 		switch (item.getItemId()) {
+		case R.id.menu_main_settings:
+			startActivity(new Intent(this, SettingsActivity.class));
+			return true;
+
+		case R.id.menu_main_about:
+			startActivity(new Intent(this, AboutActivity.class));
+			return true;
+
 		// case R.id.menu_refresh:
 		// return true;
 		default:

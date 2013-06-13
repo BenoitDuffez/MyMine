@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -95,9 +97,15 @@ public class DrawerActivity extends SherlockFragmentActivity {
 		};
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		getSupportActionBar().setDisplayShowHomeEnabled(false);
+
+		ActionBar actionBar = getSupportActionBar();
+
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayShowTitleEnabled(true);
+		actionBar.setDisplayShowHomeEnabled(!getClass().equals(MainActivity.class));
+		//actionBar.setDisplayUseLogoEnabled(!getClass().equals(MainActivity.class));
+
 		// Sync the toggle state after onRestoreInstanceState has occurred.
 		mDrawerToggle.syncState();
 	}
@@ -105,10 +113,16 @@ public class DrawerActivity extends SherlockFragmentActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// If the nav drawer is open, hide action items related to the content view
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		if (drawerOpen) {
-			getSupportMenuInflater().inflate(R.menu.menu_navigation_drawer, menu);
+
+		MenuItem menuItem = menu.findItem(R.id.menu_drawer_customize);
+		if (menuItem == null) {
+			if (drawerOpen) {
+				getSupportMenuInflater().inflate(R.menu.menu_navigation_drawer, menu);
+			}
+		} else {
+			menuItem.setVisible(drawerOpen);
 		}
-		//menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -118,12 +132,12 @@ public class DrawerActivity extends SherlockFragmentActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			if (!this.getClass().equals(MainActivity.class)) {
-				finish();
+				NavUtils.navigateUpFromSameTask(this);
 				return true;
 			} else {
 				if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
 					mDrawerLayout.closeDrawer(mDrawerList);
-				}else{
+				} else {
 					mDrawerLayout.openDrawer(mDrawerList);
 				}
 			}
