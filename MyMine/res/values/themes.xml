@@ -31,10 +31,4 @@
 
     </style>
 
-    <style name="MyMineTheme.VPI" parent="MyMineTheme">
-        <!-- VPI -->
-        <item name="vpiTitlePageIndicatorStyle">@style/MyMineTitlePageIndicator</item>
-        <item name="vpiTabPageIndicatorStyle">@style/MyMineTabPageIndicator</item>
-    </style>
-
 </resources>

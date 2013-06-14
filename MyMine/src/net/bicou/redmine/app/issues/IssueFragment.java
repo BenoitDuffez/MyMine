@@ -14,7 +14,6 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
-import com.viewpagerindicator.TitlePageIndicator;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AbsMyMineActivity;
@@ -123,9 +122,9 @@ public class IssueFragment extends SherlockFragment {
 		final IssueTabsAdapter mAdapter = new IssueTabsAdapter(getChildFragmentManager(), args);
 		pager.setAdapter(mAdapter);
 
-		// Bind the title indicator to the adapter
-		final TitlePageIndicator titleIndicator = (TitlePageIndicator) v.findViewById(R.id.issue_pager_titles);
-		titleIndicator.setViewPager(pager);
+		// TODO Bind the title indicator to the adapter
+		//final TitlePageIndicator titleIndicator = (TitlePageIndicator) v.findViewById(R.id.issue_pager_titles);
+		//titleIndicator.setViewPager(pager);
 
 		// Listener
 		mListener = new OnPageChangeListener() {
@@ -145,7 +144,7 @@ public class IssueFragment extends SherlockFragment {
 			public void onPageScrollStateChanged(final int arg0) {
 			}
 		};
-		titleIndicator.setOnPageChangeListener(mListener);
+		//titleIndicator.setOnPageChangeListener(mListener);
 
 		setHasOptionsMenu(true);
 

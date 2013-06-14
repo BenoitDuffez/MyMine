@@ -2,14 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/vendor/Android-Universal-Image-Loader/library/AUIL.iml" filepath="$PROJECT_DIR$/vendor/Android-Universal-Image-Loader/library/AUIL.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vendor/Crouton/library/Crouton.iml" filepath="$PROJECT_DIR$/vendor/Crouton/library/Crouton.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vendor/drag-sort-listview/library/DSLV.iml" filepath="$PROJECT_DIR$/vendor/drag-sort-listview/library/DSLV.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vendor/ListViewAnimations/library/LVA.iml" filepath="$PROJECT_DIR$/vendor/ListViewAnimations/library/LVA.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyMine/MyMine.iml" filepath="$PROJECT_DIR$/MyMine/MyMine.iml" />
-      <module fileurl="file://$PROJECT_DIR$/aFileChooser/aFileChooser/aFileChooser.iml" filepath="$PROJECT_DIR$/aFileChooser/aFileChooser/aFileChooser.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" filepath="$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" />
-      <module fileurl="file://$PROJECT_DIR$/drag-sort-listview/library/library.iml" filepath="$PROJECT_DIR$/drag-sort-listview/library/library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ListViewAnimations/library/library1.iml" filepath="$PROJECT_DIR$/ListViewAnimations/library/library1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Android-Universal-Image-Loader/library/library2.iml" filepath="$PROJECT_DIR$/Android-Universal-Image-Loader/library/library2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Crouton/library/library3.iml" filepath="$PROJECT_DIR$/Crouton/library/library3.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Android-ViewPagerIndicator/library/library4.iml" filepath="$PROJECT_DIR$/Android-ViewPagerIndicator/library/library4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vendor/aFileChooser/aFileChooser/aFileChooser.iml" filepath="$PROJECT_DIR$/vendor/aFileChooser/aFileChooser/aFileChooser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vendor/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" filepath="$PROJECT_DIR$/vendor/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" />
     </modules>
   </component>
 </project>

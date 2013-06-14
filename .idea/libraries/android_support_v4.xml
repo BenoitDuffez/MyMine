@@ -2,11 +2,6 @@
   <library name="android-support-v4">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/MyMine/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/ActionBarSherlock/actionbarsherlock/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/Crouton/library/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/aFileChooser/aFileChooser/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/Android-ViewPagerIndicator/library/libs/android-support-v4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/drag-sort-listview/library/libs/android-support-v4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
