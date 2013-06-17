@@ -33,18 +33,14 @@
         <item name="android:textIsSelectable">true</item>
     </style>
 
-    <style name="NavigationDrawerListViewStyle">
-        <item name="android:id">@android:id/list</item>
+    <style name="NavigationDrawerStyle">
         <item name="android:layout_width">@dimen/navigation_drawer_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_gravity">start</item>
-        <item name="android:choiceMode">singleChoice</item>
         <item name="android:background">#AA111111</item>
-        <item name="android:divider">@android:color/transparent</item>
-        <item name="android:dividerHeight">0dp</item>
     </style>
 
-    <style name="NavigationDrawerStyle">
+    <style name="NavigationDrawerContainerStyle">
         <item name="android:id">@id/main_drawer_layout</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
