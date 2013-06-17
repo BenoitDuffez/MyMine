@@ -1,26 +1,24 @@
 package net.bicou.redmine.app.misc;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssuesActivity;
-import net.bicou.redmine.app.projects.ProjectsActivity;
-import net.bicou.redmine.app.roadmap.RoadmapActivity;
-import net.bicou.redmine.app.settings.SettingsActivity;
-import net.bicou.redmine.app.wiki.WikiActivity;
+import net.bicou.redmine.app.drawers.DrawerMenuFragment;
 import net.bicou.redmine.util.L;
 
 /**
@@ -28,7 +26,7 @@ import net.bicou.redmine.util.L;
  */
 public class DrawerActivity extends SherlockFragmentActivity {
 	DrawerLayout mDrawerLayout;
-	ListView mDrawerList;
+	View mDrawerMenu;
 	private String mTitle, mTitleDrawer;
 	ActionBarDrawerToggle mDrawerToggle;
 
@@ -67,22 +65,42 @@ public class DrawerActivity extends SherlockFragmentActivity {
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
+	/**
+	 * Can be overriden by subclasses
+	 * @return
+	 */
+	protected Fragment getDrawerFragment() {
+		return new DrawerMenuFragment();
+	}
 
-		mDrawerList = (ListView) findViewById(android.R.id.list);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.activity_drawer);
+
+		mDrawerMenu = findViewById(R.id.navigation_drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
 
-		if (mDrawerList == null || mDrawerLayout == null) {
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction().add(R.id.content, getDrawerFragment()).commit();
+		}
+
+		if (mDrawerMenu == null || mDrawerLayout == null) {
 			throw new IllegalStateException("a DrawerActivity must have a drawer layout id=main_drawer_layout and a drawer list id=android.R.id.list");
 		}
 
-		mDrawerList.setAdapter(new SlidingMenuItemsAdapter(this, R.layout.slidingmenu_item, R.id.slidingmenu_item_text, mMenu));
-		mDrawerList.setOnItemClickListener(mListItemClickListener);
-
 		mTitle = getString(R.string.app_name);
 		mTitleDrawer = getString(R.string.drawer_title);
+	}
+
+	public void closeDrawer() {
+		mDrawerLayout.closeDrawer(mDrawerMenu);
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
@@ -112,7 +130,7 @@ public class DrawerActivity extends SherlockFragmentActivity {
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// If the nav drawer is open, hide action items related to the content view
-		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerMenu);
 
 		MenuItem menuItem = menu.findItem(R.id.menu_drawer_customize);
 		if (menuItem == null) {
@@ -135,10 +153,10 @@ public class DrawerActivity extends SherlockFragmentActivity {
 				NavUtils.navigateUpFromSameTask(this);
 				return true;
 			} else {
-				if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-					mDrawerLayout.closeDrawer(mDrawerList);
+				if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
+					mDrawerLayout.closeDrawer(mDrawerMenu);
 				} else {
-					mDrawerLayout.openDrawer(mDrawerList);
+					mDrawerLayout.openDrawer(mDrawerMenu);
 				}
 			}
 		}
@@ -175,49 +193,4 @@ public class DrawerActivity extends SherlockFragmentActivity {
 			return v;
 		}
 	}
-
-	AdapterView.OnItemClickListener mListItemClickListener = new AdapterView.OnItemClickListener() {
-		@Override
-		public void onItemClick(final AdapterView listView, final View v, final int position, final long id) {
-			final Bundle args = new Bundle();
-			final Intent intent;
-
-			switch (mMenu[position].text) {
-			case R.string.menu_issues:
-				intent = new Intent(listView.getContext(), IssuesActivity.class);
-				intent.putExtras(args);
-				break;
-
-			case R.string.menu_projects:
-				intent = new Intent(listView.getContext(), ProjectsActivity.class);
-				intent.putExtras(args);
-				break;
-
-			case R.string.menu_roadmap:
-				intent = new Intent(listView.getContext(), RoadmapActivity.class);
-				intent.putExtras(args);
-				break;
-
-			case R.string.menu_wiki:
-				intent = new Intent(listView.getContext(), WikiActivity.class);
-				intent.putExtras(args);
-				break;
-
-			case R.string.menu_about:
-				intent = new Intent(listView.getContext(), AboutActivity.class);
-				break;
-
-			case R.string.menu_settings:
-				intent = new Intent(listView.getContext(), SettingsActivity.class);
-				break;
-
-			default:
-				intent = new Intent(listView.getContext(), MainActivity.class);
-				break;
-			}
-
-			startActivity(intent);
-			mDrawerLayout.closeDrawer(mDrawerList);
-		}
-	};
 }

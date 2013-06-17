@@ -75,7 +75,7 @@ public class RoadmapActivity extends AbsMyMineActivity implements RoadmapsListFr
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final int id = mIsSplitScreen ? R.id.issues_pane_issue : R.id.issues_pane_list;
+		final int id = mIsSplitScreen ? R.id.content : R.id.content; // TODO
 		final Fragment frag = getSupportFragmentManager().findFragmentById(id);
 
 		switch (item.getItemId()) {
@@ -89,7 +89,7 @@ public class RoadmapActivity extends AbsMyMineActivity implements RoadmapsListFr
 						rf.setNewIssuesOrder(orderColumns);
 
 						final FragmentManager fm = getSupportFragmentManager();
-						final Fragment frag = fm.findFragmentById(R.id.issues_pane_list);
+						final Fragment frag = fm.findFragmentById(R.id.content);
 					}
 				});
 				issuesOrder.show(getSupportFragmentManager(), "issues_order");

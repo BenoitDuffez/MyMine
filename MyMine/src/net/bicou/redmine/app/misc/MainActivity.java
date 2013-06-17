@@ -33,7 +33,7 @@ public class MainActivity extends DrawerActivity {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.activity_drawer);
 
 		showAlphaVersionAlert();
 		final boolean isFirstLaunch = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).getBoolean(KEY_IS_FIRST_LAUNCH, true);
@@ -157,7 +157,7 @@ public class MainActivity extends DrawerActivity {
 				}
 
 				try {
-					getSupportFragmentManager().beginTransaction().replace(R.id.main_fragment_container, contents).commit();
+					getSupportFragmentManager().beginTransaction().replace(R.id.content, contents).commit();
 				} catch (final Exception e) {
 					// FATAL EXCEPTION: main
 					// java.lang.RuntimeException: Unable to resume activity {net.bicou.redmine/net.bicou.redmine.app.MainActivity}:
@@ -206,7 +206,7 @@ public class MainActivity extends DrawerActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
+		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.content);
 		if (f == null) {
 			return super.onOptionsItemSelected(item);
 		}

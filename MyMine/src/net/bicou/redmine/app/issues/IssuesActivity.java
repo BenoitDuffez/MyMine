@@ -48,9 +48,9 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
 
-		setContentView(R.layout.activity_issues);
+		setContentView(R.layout.activity_drawer);
 
-		mIsSplitScreen = findViewById(R.id.issues_pane_issue) != null;
+		mIsSplitScreen = false;// TODO findViewById(R.id.content) != null;
 
 		final Intent intent = getIntent();
 
@@ -86,18 +86,18 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 		// Setup fragments
 		if (savedInstanceState == null) {
 			// Setup list view
-			getSupportFragmentManager().beginTransaction().replace(R.id.issues_pane_list, IssuesListFragment.newInstance(args)).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.content, IssuesListFragment.newInstance(args)).commit();
 		} else if (savedInstanceState.containsKey(IssueFragment.KEY_ISSUE_JSON)) {
 			// Setup content view, if possible
 			if (mIsSplitScreen) {
 				// TODO: necessary?!
-				getSupportFragmentManager().beginTransaction().replace(R.id.issues_pane_issue, IssueFragment.newInstance(args)).commit();
+				getSupportFragmentManager().beginTransaction().replace(R.id.content, IssueFragment.newInstance(args)).commit();
 			}
 		}
 
 		// Screen rotation on 7" tablets
 		if (savedInstanceState != null && mIsSplitScreen != savedInstanceState.getBoolean(KEY_IS_SPLIT_SCREEN)) {
-			final Fragment f = getSupportFragmentManager().findFragmentById(R.id.issues_pane_list);
+			final Fragment f = getSupportFragmentManager().findFragmentById(R.id.content);
 			if (f != null && f instanceof AbsMyMineActivity.SplitScreenFragmentConfigurationChangesListener) {
 				((AbsMyMineActivity.SplitScreenFragmentConfigurationChangesListener) f).updateSplitScreenState(mIsSplitScreen);
 			}
@@ -132,7 +132,7 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 	public void onBackPressed() {
 		super.onBackPressed();
 		final FragmentManager fm = getSupportFragmentManager();
-		if (mIsSplitScreen == false && fm.findFragmentById(R.id.issues_pane_list) instanceof IssuesListFragment) {
+		if (mIsSplitScreen == false && fm.findFragmentById(R.id.content) instanceof IssuesListFragment) {
 			getSupportActionBar().setTitle(R.string.issues_activity_title);
 		}
 		supportInvalidateOptionsMenu();
@@ -140,7 +140,7 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final int id = mIsSplitScreen ? R.id.issues_pane_issue : R.id.issues_pane_list;
+		final int id = mIsSplitScreen ? R.id.content : R.id.content;
 		final Fragment frag = getSupportFragmentManager().findFragmentById(id);
 
 		switch (item.getItemId()) {
@@ -175,7 +175,7 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 					saveNewColumnsOrder(orderColumns);
 
 					final FragmentManager fm = getSupportFragmentManager();
-					final Fragment frag = fm.findFragmentById(R.id.issues_pane_list);
+					final Fragment frag = fm.findFragmentById(R.id.content);
 					if (frag instanceof IssuesListFragment) {
 						((IssuesListFragment) frag).updateColumnsOrder(orderColumns);
 					} else {
@@ -221,7 +221,7 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 		@Override
 		public boolean onNavigationItemSelected(final int itemPosition, final long itemId) {
 			final FragmentManager fm = getSupportFragmentManager();
-			final Fragment frag = fm.findFragmentById(R.id.issues_pane_list);
+			final Fragment frag = fm.findFragmentById(R.id.content);
 			if (mSpinnerAdapter.isSeparator(itemPosition)) {
 				getSupportActionBar().setSelectedNavigationItem(lastPosition);
 			} else {
