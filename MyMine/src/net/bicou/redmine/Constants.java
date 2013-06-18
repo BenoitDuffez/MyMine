@@ -11,6 +11,7 @@ public class Constants {
 	 */
 	public static final String AUTHTOKEN_TYPE = "net.bicou.redmine.sync";
 
+	public static final String KEY_PROJECT = "net.bicou.redmine.Project";
 	public static final String KEY_PROJECT_ID = "net.bicou.redmine.ProjectID";
 	public static final String KEY_PROJECT_POSITION = "net.bicou.redmine.ProjectPosition";
 	public static final String KEY_ISSUE_ID = "net.bicou.redmine.IssueID";

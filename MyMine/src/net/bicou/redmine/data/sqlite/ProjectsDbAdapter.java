@@ -1,14 +1,14 @@
 package net.bicou.redmine.data.sqlite;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.Project;
-import net.bicou.redmine.util.Util;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.util.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProjectsDbAdapter extends DbAdapter {
 	public static final String TABLE_PROJECTS = "projects";
@@ -36,12 +36,12 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 * 
+	 *
 	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
-			"CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
+				"CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
 		};
 	}
 
@@ -161,7 +161,7 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes absolutely all projects
-	 * 
+	 *
 	 * @return
 	 */
 	public int deleteAll() {
@@ -170,19 +170,19 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes all the projects linked to this server ID
-	 * 
+	 *
 	 * @param rowId
 	 * @return
 	 */
 	public int deleteAll(final long serverId) {
 		return mDb.delete(TABLE_PROJECTS, KEY_SERVER_ID + "=?", new String[] {
-			Long.toString(serverId)
+				Long.toString(serverId)
 		});
 	}
 
 	/**
 	 * Deletes a single project
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
@@ -202,7 +202,7 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	public int getNumProjects() {
 		final Cursor c = mDb.query(TABLE_PROJECTS, new String[] {
-			"COUNT(*)"
+				"COUNT(*)"
 		}, null, null, null, null, null);
 
 		int nb = 0;

@@ -1,16 +1,5 @@
 package net.bicou.redmine.app.ssl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-
-import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
-import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -21,13 +10,22 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
-
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import net.bicou.redmine.R;
+import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 
-public class AddNewCertificateActivity extends AbsMyMineActivity {
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
+public class AddNewCertificateActivity extends SherlockFragmentActivity {
 	Uri mFileUri;
 	TextView mFileUriInfo;
 	ViewGroup mCroutonHolder;
@@ -71,7 +69,7 @@ public class AddNewCertificateActivity extends AbsMyMineActivity {
 					if (cert != null) {
 						final KeyStoreDiskStorage ks = new KeyStoreDiskStorage(AddNewCertificateActivity.this);
 						final X509Certificate[] chain = new X509Certificate[] {
-							cert
+								cert
 						};
 						ks.storeCert(chain);
 					}
@@ -117,15 +115,6 @@ public class AddNewCertificateActivity extends AbsMyMineActivity {
 				mFileUriInfo.setText(R.string.server_auth_settings_no_cert);
 			}
 		}
-	}
-
-	@Override
-	protected boolean shouldDisplayProjectsSpinner() {
-		return false;
-	}
-
-	@Override
-	protected void onCurrentProjectChanged() {
 	}
 
 	@Override

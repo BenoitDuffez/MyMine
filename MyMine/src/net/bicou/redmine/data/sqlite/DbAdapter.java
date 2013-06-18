@@ -36,6 +36,8 @@ public abstract class DbAdapter {
 	public DbAdapter(final DbAdapter other) {
 		mContext = other.mContext;
 		mDb = other.mDb;
+		mLock = other.mLock;
+		mDbManager = other.mDbManager;
 	}
 
 	public static class DbManager extends SQLiteOpenHelper {
@@ -253,6 +255,7 @@ public abstract class DbAdapter {
 	public void close() {
 		mLock.unlock();
 		mDbManager.close();
+		mDbManager = null;
 		mDb = null;
 	}
 

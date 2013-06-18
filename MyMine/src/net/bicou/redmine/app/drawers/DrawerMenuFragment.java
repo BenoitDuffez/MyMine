@@ -12,7 +12,6 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.misc.AboutActivity;
-import net.bicou.redmine.app.misc.DrawerActivity;
 import net.bicou.redmine.app.misc.MainActivity;
 import net.bicou.redmine.app.projects.ProjectsActivity;
 import net.bicou.redmine.app.roadmap.RoadmapActivity;
@@ -37,7 +36,7 @@ public class DrawerMenuFragment extends SherlockListFragment {
 		public View fillView(View convertView, ViewGroup parent) {
 			View v;
 			if (convertView == null) {
-				v = getActivity().getLayoutInflater().inflate(R.layout.slidingmenu_item, parent, false);
+				v = getActivity().getLayoutInflater().inflate(R.layout.drawer_menu_separator, parent, false);
 			} else {
 				v = convertView;
 			}
@@ -83,7 +82,7 @@ public class DrawerMenuFragment extends SherlockListFragment {
 			VH vh;
 
 			if (convertView == null) {
-				v = getActivity().getLayoutInflater().inflate(R.layout.slidingmenu_item, parent, false);
+				v = getActivity().getLayoutInflater().inflate(R.layout.drawer_menu_item, parent, false);
 				vh = new VH();
 				vh.icon = (ImageView) v.findViewById(R.id.slidingmenu_item_icon);
 				vh.text = (TextView) v.findViewById(R.id.slidingmenu_item_text);
@@ -124,6 +123,7 @@ public class DrawerMenuFragment extends SherlockListFragment {
 			add(new Item(R.drawable.icon_issues, R.string.menu_issues));
 			add(new Item(R.drawable.icon_roadmaps, R.string.menu_roadmap));
 			add(new Item(R.drawable.icon_wiki, R.string.menu_wiki));
+			add(new Separator(R.string.app_name));
 			add(new Item(R.drawable.icon_about, R.string.menu_about));
 			add(new Item(R.drawable.icon_settings, R.string.menu_settings));
 		}

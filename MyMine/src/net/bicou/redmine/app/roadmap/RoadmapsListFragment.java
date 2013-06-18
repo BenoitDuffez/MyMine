@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
+import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.util.L;
@@ -31,6 +31,10 @@ public class RoadmapsListFragment extends SherlockListFragment {
 
 	public interface RoadmapSelectionListener {
 		public void onRoadmapSelected(Version version);
+	}
+
+	public interface CurrentProjectInfo {
+		public Project getCurrentProject();
 	}
 
 	@Override
@@ -61,33 +65,34 @@ public class RoadmapsListFragment extends SherlockListFragment {
 		mAdapter = new RoadmapsAdapter(getActivity(), mList);
 		setListAdapter(mAdapter);
 
-		final AbsMyMineActivity activity = (AbsMyMineActivity) getActivity();
-		if (activity.getCurrentServer() != null && activity.getCurrentProject() != null) {
-			updateRoadmapsList();
-		}
+		updateRoadmapsList();
 
 		return v;
 	}
 
 	public void updateRoadmapsList() {
-		final AbsMyMineActivity activity = (AbsMyMineActivity) getActivity();
+		final CurrentProjectInfo info = (CurrentProjectInfo) getActivity();
 		mList.clear();
 
-		new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... contexts) {
-				VersionsDbAdapter db = new VersionsDbAdapter(activity);
-				db.open();
-				mList.addAll(db.selectAll(activity.getCurrentServer(), activity.getCurrentProject()));
-				db.close();
-				return null;
-			}
+		if (info == null) {
+			L.e("shouldn't happen", null);
 
-			@Override
-			protected void onPostExecute(Void aVoid) {
-				mAdapter.notifyDataSetChanged();
-			}
-		}.execute();
+			new AsyncTask<Void, Void, Void>() {
+				@Override
+				protected Void doInBackground(Void... contexts) {
+					VersionsDbAdapter db = new VersionsDbAdapter(getActivity());
+					db.open();
+					mList.addAll(db.selectAll(info.getCurrentProject().server, info.getCurrentProject()));
+					db.close();
+					return null;
+				}
+
+				@Override
+				protected void onPostExecute(Void aVoid) {
+					mAdapter.notifyDataSetChanged();
+				}
+			}.execute();
+		}
 	}
 
 	private static class RoadmapListItemViewsHolder {

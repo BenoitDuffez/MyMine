@@ -19,7 +19,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
 import net.bicou.redmine.app.issues.*;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.DbAdapter;
@@ -192,9 +191,9 @@ public class RoadmapFragment extends SherlockListFragment implements LoaderManag
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		if (activity instanceof AbsMyMineActivity) {
-			AbsMyMineActivity act = (AbsMyMineActivity) activity;
-			mCurrentServerId = act.getCurrentServer().rowId;
+		if (activity instanceof RoadmapsListFragment.CurrentProjectInfo) {
+			RoadmapsListFragment.CurrentProjectInfo info = (RoadmapsListFragment.CurrentProjectInfo) activity;
+			mCurrentServerId = info.getCurrentProject() == null ? 0 : info.getCurrentProject().server == null ? 0 : info.getCurrentProject().server.rowId;
 		}
 	}
 

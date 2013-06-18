@@ -14,6 +14,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.drawers.DrawerActivity;
+import net.bicou.redmine.app.drawers.DrawerMenuFragment;
 import net.bicou.redmine.app.settings.SettingsActivity;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
@@ -38,17 +40,14 @@ public class MainActivity extends DrawerActivity {
 		showAlphaVersionAlert();
 		final boolean isFirstLaunch = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).getBoolean(KEY_IS_FIRST_LAUNCH, true);
 
-		// Create contents fragment
-		if (savedInstanceState == null) {
-			// loadFragment();
-
-			if (isFirstLaunch) {
-				// No longer the first launch
-				final Editor editor = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).edit();
-				editor.putBoolean(KEY_IS_FIRST_LAUNCH, false);
-				editor.commit();
-			}
+		if (savedInstanceState == null && isFirstLaunch) {
+			// No longer the first launch
+			final Editor editor = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).edit();
+			editor.putBoolean(KEY_IS_FIRST_LAUNCH, false);
+			editor.commit();
 		}
+
+		getSupportFragmentManager().beginTransaction().replace(R.id.navigation_drawer, new DrawerMenuFragment()).commit();
 	}
 
 	@Override

@@ -1,11 +1,5 @@
 package net.bicou.redmine.app.issues;
 
-import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
-import net.bicou.redmine.app.wiki.WikiPageFragment;
-import net.bicou.redmine.data.json.Issue;
-import net.bicou.redmine.util.L;
-import net.bicou.redmine.util.Util;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,8 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
-
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.gson.Gson;
+import net.bicou.redmine.R;
+import net.bicou.redmine.app.wiki.WikiPageFragment;
+import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.Util;
 
 public class IssueOverviewFragment extends Fragment {
 	TextView mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion;
@@ -50,7 +49,7 @@ public class IssueOverviewFragment extends Fragment {
 		mTargetVersion.setText(mIssue.fixed_version != null ? mIssue.fixed_version.name : "-");
 
 		String textile = mIssue.description != null ? mIssue.description : "";
-		textile = WikiPageFragment.handleMarkupReplacements((AbsMyMineActivity) getActivity(), textile);
+		textile = WikiPageFragment.handleMarkupReplacements(mIssue.server, mIssue.project, (SherlockFragmentActivity) getActivity(), textile);
 		mDescription.loadData(Util.htmlFromTextile(textile), "text/html; charset=UTF-8", null);
 
 		return v;

@@ -1,26 +1,21 @@
 package net.bicou.redmine.app.projects;
 
-import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import net.bicou.redmine.R;
+import net.bicou.redmine.app.drawers.DrawerActivity;
 
-public class ProjectsActivity extends AbsMyMineActivity {
+public class ProjectsActivity extends DrawerActivity {
 	/** Whether the screen is split into a list + an item. Likely the case on tablets and/or in landscape orientation */
 	public static final String KEY_IS_SPLIT_SCREEN = "net.bicou.redmine.projects.SplitScreen";
 	boolean mIsSplitScreen;
 
-	@Override
-	public void onPreCreate() {
-		prepareIndeterminateProgressActionBar();
-	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_projects);
+		setContentView(R.layout.activity_drawer);//TODO:split
 
 		mIsSplitScreen = findViewById(R.id.projects_pane_project) != null;
 		final Bundle args = new Bundle();
@@ -47,16 +42,6 @@ public class ProjectsActivity extends AbsMyMineActivity {
 	}
 
 	@Override
-	protected boolean shouldDisplayProjectsSpinner() {
-		return false;
-	}
-
-	@Override
-	protected void onCurrentProjectChanged() {
-		// TODO
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 		final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.projects_pane_list);
@@ -80,11 +65,4 @@ public class ProjectsActivity extends AbsMyMineActivity {
 		super.onSaveInstanceState(outState);
 		outState.putBoolean(KEY_IS_SPLIT_SCREEN, mIsSplitScreen);
 	}
-
-	// @Override
-	// public boolean onCreateOptionsMenu(final Menu menu) {
-	// final MenuInflater inflater = getSupportMenuInflater();
-	// inflater.inflate(R.menu.menu_project, menu);
-	// return true;
-	// }
 }

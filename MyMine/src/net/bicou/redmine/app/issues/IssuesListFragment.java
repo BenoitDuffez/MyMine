@@ -18,21 +18,19 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity.SplitScreenBehavior;
-import net.bicou.redmine.app.AbsMyMineActivity.SplitScreenFragmentConfigurationChangesListener;
 import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 
 import java.util.ArrayList;
 
-public class IssuesListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor>, SplitScreenFragmentConfigurationChangesListener {
+public class IssuesListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {//TODO }, SplitScreenFragmentConfigurationChangesListener {
 	View mFragmentView;
 
 	private IssuesListCursorAdapter mAdapter;
 	private IssuesDbAdapter mIssuesDbAdapter;
 
-	boolean mIsSplitScreen;
+	//TODO boolean mIsSplitScreen;
 	boolean mHasFilter;
 	boolean mHasSearchQuery;
 
@@ -50,7 +48,7 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		super.onCreate(savedInstanceState);
 
 		final Bundle args = getArguments();
-		mIsSplitScreen = args.getBoolean(SplitScreenBehavior.KEY_IS_SPLIT_SCREEN);
+		//TODO mIsSplitScreen = args.getBoolean(SplitScreenBehavior.KEY_IS_SPLIT_SCREEN);
 		mHasFilter = args.getBoolean(IssuesListFilter.KEY_HAS_FILTER, false);
 		mHasSearchQuery = args.containsKey(IssuesOrderingFragment.KEY_COLUMNS_ORDER);
 		final boolean emptyLoader = mHasFilter == false && mHasSearchQuery == false;
@@ -70,19 +68,6 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		super.onResume();
 		final int navMode = mHasFilter ? ActionBar.NAVIGATION_MODE_STANDARD : ActionBar.NAVIGATION_MODE_LIST;
 		getSherlockActivity().getSupportActionBar().setNavigationMode(navMode);
-	}
-
-	@Override
-	public void updateSplitScreenState(final boolean isSplitScreen) {
-		mIsSplitScreen = isSplitScreen;
-	}
-
-	@Override
-	public void updateCurrentProject(final long newProjectId) {
-		// final Bundle args = new Bundle();
-		// args.putLong(Constants.KEY_PROJECT_ID, newProjectId);
-		// args.putParcelable(Constants.KEY_SERVER, ((AbsMyMineActivity) getActivity()).getCurrentServer());
-		// getLoaderManager().restartLoader(0, args, this);
 	}
 
 	public void updateFilter(final IssuesListFilter filter) {
@@ -174,12 +159,12 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 
 		// Open issue in the right pane
 		// TODO
-		if (mIsSplitScreen) {
-			getFragmentManager().beginTransaction().replace(R.id.content, frag).commit();
-		} else {
-			getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-			getFragmentManager().beginTransaction().replace(R.id.content, frag).addToBackStack("prout").commit();
-		}
+		//	if (mIsSplitScreen) {
+		//		getFragmentManager().beginTransaction().replace(R.id.content, frag).commit();
+		//	} else {
+		getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		getFragmentManager().beginTransaction().replace(R.id.content, frag).addToBackStack("prout").commit();
+		//	}
 	}
 
 	@Override

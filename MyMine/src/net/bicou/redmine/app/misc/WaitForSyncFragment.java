@@ -1,6 +1,7 @@
 package net.bicou.redmine.app.misc;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -10,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
 import net.bicou.redmine.sync.SyncUtils;
 import net.bicou.redmine.util.L;
 
@@ -44,9 +44,14 @@ public class WaitForSyncFragment extends SherlockFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (getActivity() != null && getActivity() instanceof AbsMyMineActivity && getActivity().getSharedPreferences(MainActivity.MYMINE_PREFERENCES_FILE,
-				0).getBoolean(MainActivity.KEY_IS_FIRST_LAUNCH, false)) {
-			//TODO : ((AbsMyMineActivity) getActivity()).bounceMenu();
+
+		if (getActivity() != null) {
+			SharedPreferences sharedPreferences = getActivity().getSharedPreferences(MainActivity.MYMINE_PREFERENCES_FILE, 0);
+			boolean isFirstLaunch = sharedPreferences.getBoolean(MainActivity.KEY_IS_FIRST_LAUNCH, false);
+
+			if (isFirstLaunch) {
+				//TODO : ((AbsMyMineActivity) getActivity()).bounceMenu();
+			}
 		}
 	}
 }

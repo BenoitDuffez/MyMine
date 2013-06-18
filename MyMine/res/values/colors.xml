@@ -23,4 +23,8 @@
     <color name="dark_background">#333333</color>
     <color name="light_text">#EEEEEE</color>
     <color name="faded_text">#666666</color>
+
+    <color name="drawer_separator_underline">#FFF</color>
+    <color name="drawer_vertical_border">#FFF</color>
+    <color name="drawer_background">#111</color>
 </resources>

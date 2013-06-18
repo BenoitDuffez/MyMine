@@ -4,7 +4,7 @@
           android:orientation="vertical"
           android:layout_gravity="start"
           android:choiceMode="singleChoice"
-          android:background="#AA111111"
+          android:background="@drawable/drawer_background"
           android:divider="@android:color/transparent"
           android:dividerHeight="0dp"
           android:layout_width="match_parent"

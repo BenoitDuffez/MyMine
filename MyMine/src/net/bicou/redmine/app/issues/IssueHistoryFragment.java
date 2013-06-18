@@ -12,7 +12,6 @@ import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnim
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
 import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
 import net.bicou.redmine.app.issues.IssueHistoryDownloadTask.JournalsDownloadCallbacks;
 import net.bicou.redmine.data.json.Issue;
@@ -88,25 +87,22 @@ public class IssueHistoryFragment extends SherlockListFragment implements Fragme
 	@Override
 	public void onFragmentActivated() {
 		if ((mIssue == null || mIssue.journals == null) && mUpdateTask == null) {
-			final AbsMyMineActivity act = (AbsMyMineActivity) getActivity();
-			if (act != null && mIssue != null && mIssue.server != null) {
-				mUpdateTask = new IssueHistoryDownloadTask(getSherlockActivity(), new JournalsDownloadCallbacks() {
-					@Override
-					public void onPreExecute() {
-						getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
-					}
+			mUpdateTask = new IssueHistoryDownloadTask(getSherlockActivity(), new JournalsDownloadCallbacks() {
+				@Override
+				public void onPreExecute() {
+					getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+				}
 
-					@Override
-					public void onJournalsDownloaded(final IssueHistory history) {
-						setHistory(history);
-						if (history == null || history.journals == null) {
-							Crouton.makeText(getSherlockActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
-						}
-						getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+				@Override
+				public void onJournalsDownloaded(final IssueHistory history) {
+					setHistory(history);
+					if (history == null || history.journals == null) {
+						Crouton.makeText(getSherlockActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
 					}
-				}, mIssue);
-				mUpdateTask.execute();
-			}
+					getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+				}
+			}, mIssue);
+			mUpdateTask.execute();
 		}
 	}
 

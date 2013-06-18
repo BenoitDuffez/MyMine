@@ -1,20 +1,5 @@
 package net.bicou.redmine.app.ssl;
 
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
-import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
-import net.bicou.redmine.app.AbsMyMineActivity.SplitScreenFragmentConfigurationChangesListener;
-import net.bicou.redmine.app.ssl.CertificatesListFragment.CertInfo;
-import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
-import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
-import net.bicou.redmine.util.L;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -32,14 +17,26 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import net.bicou.redmine.R;
+import net.bicou.redmine.app.ssl.CertificatesListFragment.CertInfo;
+import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
+import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
+import net.bicou.redmine.util.L;
 
-public class CertificatesListFragment extends SherlockListFragment implements LoaderCallbacks<List<CertInfo>>, SplitScreenFragmentConfigurationChangesListener {
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
+public class CertificatesListFragment extends SherlockListFragment implements LoaderCallbacks<List<CertInfo>> {
 	KeyStoreAdapter mAdapter;
 	ListView mListView;
 	ActionMode mActionMode;
@@ -76,11 +73,12 @@ public class CertificatesListFragment extends SherlockListFragment implements Lo
 					final CertificateFragment frag = CertificateFragment.newInstance(args);
 
 					// Open fragment in the right pane?
-					if (((AbsMyMineActivity) getActivity()).isSplitScreen()) {
-						getFragmentManager().beginTransaction().replace(R.id.certificates_pane_certificate, frag).commit();
-					} else {
-						getFragmentManager().beginTransaction().replace(R.id.certificates_pane_list, frag).addToBackStack("prout").commit();
-					}
+					//TODO
+					//if (((AbsMyMineActivity) getActivity()).isSplitScreen()) {
+					//	getFragmentManager().beginTransaction().replace(R.id.certificates_pane_certificate, frag).commit();
+					//} else {
+					getFragmentManager().beginTransaction().replace(R.id.certificates_pane_list, frag).addToBackStack("prout").commit();
+					//}
 				}
 			}
 		});
@@ -268,14 +266,6 @@ public class CertificatesListFragment extends SherlockListFragment implements Lo
 				}
 			}
 		}
-	}
-
-	@Override
-	public void updateSplitScreenState(final boolean isSplitScreen) {
-	}
-
-	@Override
-	public void updateCurrentProject(final long projectId) {
 	}
 
 	private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {

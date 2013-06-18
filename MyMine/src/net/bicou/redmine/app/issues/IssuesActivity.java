@@ -14,16 +14,13 @@ import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 import com.google.gson.Gson;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
-import net.bicou.redmine.app.AbsMyMineActivity.SplitScreenBehavior;
+import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.app.issues.IssuesActivity.GetNavigationModeAdapterTask.NavigationModeAdapterCallback;
 import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
 import net.bicou.redmine.app.issues.IssuesOrderingFragment.IssuesOrderSelectionListener;
-import net.bicou.redmine.app.misc.DrawerActivity;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
@@ -35,22 +32,14 @@ import net.bicou.redmine.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IssuesActivity extends DrawerActivity implements SplitScreenBehavior {
+public class IssuesActivity extends DrawerActivity {
 	int mNavMode;
 	ArrayList<OrderColumn> mCurrentOrder;
-	boolean mIsSplitScreen;//TODO
+	boolean isSplitScreen;//TODO
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setSupportProgressBarIndeterminate(true);
-		setSupportProgressBarIndeterminateVisibility(false);
-
-		setContentView(R.layout.activity_drawer);
-
-		mIsSplitScreen = false;// TODO findViewById(R.id.content) != null;
 
 		final Intent intent = getIntent();
 
@@ -60,7 +49,6 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 		} else {
 			args = new Bundle();
 		}
-		args.putBoolean(KEY_IS_SPLIT_SCREEN, mIsSplitScreen);
 
 		mNavMode = ActionBar.NAVIGATION_MODE_LIST;
 
@@ -87,20 +75,6 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 		if (savedInstanceState == null) {
 			// Setup list view
 			getSupportFragmentManager().beginTransaction().replace(R.id.content, IssuesListFragment.newInstance(args)).commit();
-		} else if (savedInstanceState.containsKey(IssueFragment.KEY_ISSUE_JSON)) {
-			// Setup content view, if possible
-			if (mIsSplitScreen) {
-				// TODO: necessary?!
-				getSupportFragmentManager().beginTransaction().replace(R.id.content, IssueFragment.newInstance(args)).commit();
-			}
-		}
-
-		// Screen rotation on 7" tablets
-		if (savedInstanceState != null && mIsSplitScreen != savedInstanceState.getBoolean(KEY_IS_SPLIT_SCREEN)) {
-			final Fragment f = getSupportFragmentManager().findFragmentById(R.id.content);
-			if (f != null && f instanceof AbsMyMineActivity.SplitScreenFragmentConfigurationChangesListener) {
-				((AbsMyMineActivity.SplitScreenFragmentConfigurationChangesListener) f).updateSplitScreenState(mIsSplitScreen);
-			}
 		}
 	}
 
@@ -131,16 +105,12 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		final FragmentManager fm = getSupportFragmentManager();
-		if (mIsSplitScreen == false && fm.findFragmentById(R.id.content) instanceof IssuesListFragment) {
-			getSupportActionBar().setTitle(R.string.issues_activity_title);
-		}
 		supportInvalidateOptionsMenu();
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final int id = mIsSplitScreen ? R.id.content : R.id.content;
+		final int id = R.id.content;
 		final Fragment frag = getSupportFragmentManager().findFragmentById(id);
 
 		switch (item.getItemId()) {
@@ -211,7 +181,6 @@ public class IssuesActivity extends DrawerActivity implements SplitScreenBehavio
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putBoolean(KEY_IS_SPLIT_SCREEN, mIsSplitScreen);
 		outState.putParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER, mCurrentOrder);
 	}
 

@@ -1,10 +1,5 @@
 package net.bicou.redmine.app.ssl;
 
-import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
-import net.bicou.redmine.app.AbsMyMineActivity.SplitScreenBehavior;
-import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
-import net.bicou.redmine.util.PreferencesManager;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -12,25 +7,21 @@ import android.os.Bundle;
 import android.security.KeyChain;
 import android.security.KeyChainAliasCallback;
 import android.support.v4.app.Fragment;
-
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import net.bicou.redmine.R;
+import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
+import net.bicou.redmine.util.PreferencesManager;
 
-public class KeyStoreManagerActivity extends AbsMyMineActivity implements SplitScreenBehavior {
-	@Override
-	public void onPreCreate() {
-		prepareIndeterminateProgressActionBar();
-	}
-
+public class KeyStoreManagerActivity extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_certificates);
 
-		mIsSplitScreen = findViewById(R.id.certificates_pane_certificate) != null;
 		final Bundle args = new Bundle();
-		args.putBoolean(KEY_IS_SPLIT_SCREEN, mIsSplitScreen);
 
 		// Setup fragments
 		if (savedInstanceState == null) {
@@ -39,34 +30,20 @@ public class KeyStoreManagerActivity extends AbsMyMineActivity implements SplitS
 		} else if (savedInstanceState.containsKey(CertificateFragment.KEY_CERT_ALIAS)) {
 			args.putString(CertificateFragment.KEY_CERT_ALIAS, savedInstanceState.getString(CertificateFragment.KEY_CERT_ALIAS));
 			// Setup content view, if possible
-			if (mIsSplitScreen) {
-				getSupportFragmentManager().beginTransaction().replace(R.id.certificates_pane_certificate, CertificateFragment.newInstance(args))
-						.commit();
-			}
+			//TODO
+			//if (mIsSplitScreen) {
+			//	getSupportFragmentManager().beginTransaction().replace(R.id.certificates_pane_certificate, CertificateFragment.newInstance(args)).commit();
+			//}
 		}
 
 		// Screen rotation on 7" tablets
-		if (savedInstanceState != null && mIsSplitScreen != savedInstanceState.getBoolean(KEY_IS_SPLIT_SCREEN)) {
-			final Fragment f = getSupportFragmentManager().findFragmentById(R.id.certificates_pane_list);
-			if (f != null && f instanceof CertificatesListFragment) {
-				((CertificatesListFragment) f).updateSplitScreenState(mIsSplitScreen);
-			}
-		}
-	}
-
-	@Override
-	protected boolean shouldDisplayProjectsSpinner() {
-		return false;
-	}
-
-	@Override
-	protected void onCurrentProjectChanged() {
-	}
-
-	@Override
-	protected void onSaveInstanceState(final Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putBoolean(KEY_IS_SPLIT_SCREEN, mIsSplitScreen);
+		// TODO
+		//if (savedInstanceState != null && mIsSplitScreen != savedInstanceState.getBoolean(KEY_IS_SPLIT_SCREEN)) {
+		//		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.certificates_pane_list);
+		//		if (f != null && f instanceof CertificatesListFragment) {
+		//			((CertificatesListFragment) f).updateSplitScreenState(mIsSplitScreen);
+		//		}
+		//	}
 	}
 
 	@Override

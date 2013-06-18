@@ -1,14 +1,5 @@
 package net.bicou.redmine.app.projects;
 
-import java.text.DateFormat;
-import java.util.Date;
-
-import net.bicou.redmine.Constants;
-import net.bicou.redmine.R;
-import net.bicou.redmine.data.sqlite.DbAdapter;
-import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
-import net.bicou.redmine.data.sqlite.SimpleCursorLoader;
-import net.bicou.redmine.util.L;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -23,8 +14,16 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.actionbarsherlock.app.SherlockListFragment;
+import net.bicou.redmine.Constants;
+import net.bicou.redmine.R;
+import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
+import net.bicou.redmine.data.sqlite.SimpleCursorLoader;
+import net.bicou.redmine.util.L;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 public class ProjectsListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {
 	View mFragmentView;
@@ -56,15 +55,6 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 		mAdapter = new ProjectsCursorAdapter(activity, null, true);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, null, this);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		// final Bundle args = new Bundle();
-		// args.putParcelable(Constants.KEY_SERVER, ((AbsMyMineActivity)
-		// getActivity()).getCurrentServer());
-		// getLoaderManager().restartLoader(0, args, this);
 	}
 
 	public void updateSplitScreenState(final boolean isSplitScreen) {
@@ -111,9 +101,9 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 
 	/**
 	 * Loader that will handle the initial DB query and Cursor creation
-	 * 
+	 *
 	 * @author bicou
-	 * 
+	 *
 	 */
 	public static final class ProjectsListCursorLoader extends SimpleCursorLoader {
 		private final ProjectsDbAdapter mHelper;
@@ -139,9 +129,9 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 
 	/**
 	 * CursorAdapter that will map Cursor data to a layout
-	 * 
+	 *
 	 * @author bicou
-	 * 
+	 *
 	 */
 	public final class ProjectsCursorAdapter extends CursorAdapter {
 		private final Context mContext;

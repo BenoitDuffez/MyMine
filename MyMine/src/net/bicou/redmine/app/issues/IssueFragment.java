@@ -16,7 +16,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.AbsMyMineActivity;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
@@ -97,7 +96,7 @@ public class IssueFragment extends SherlockFragment {
 		final Bundle args = new Bundle(getArguments());
 		if (savedInstanceState == null) {
 			// Load issue
-			final AbsMyMineActivity activity = (AbsMyMineActivity) getActivity();
+			final Activity activity = getActivity();
 			final ServersDbAdapter sdb = new ServersDbAdapter(activity);
 			sdb.open();
 			final Server server = sdb.getServer(args.getLong(Constants.KEY_SERVER_ID, 0));
