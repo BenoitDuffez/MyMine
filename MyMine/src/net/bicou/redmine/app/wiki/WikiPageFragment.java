@@ -14,8 +14,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.gson.Gson;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.Server;
@@ -24,7 +22,6 @@ import net.bicou.redmine.data.json.WikiPage;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
-import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 
@@ -37,7 +34,7 @@ public class WikiPageFragment extends SherlockFragment {
 	public static final String KEY_WIKI_PAGE = "net.bicou.redmine.WikiPage";
 	public static final String KEY_WIKI_PAGE_NAME = "net.bicou.redmine.WikiPageName";
 
-	int mProjectId;
+	long mProjectId;
 	long mServerId;
 
 	Project mProject;
@@ -76,7 +73,7 @@ public class WikiPageFragment extends SherlockFragment {
 		mWebView = (WebView) mLayout.findViewById(R.id.wiki_page);
 		mWikiTitle = (TextView) mLayout.findViewById(R.id.wiki_title);
 		mWebView.setWebViewClient(new WikiWebViewClient());
-		mProjectId = getArguments().getInt(Constants.KEY_PROJECT_ID);
+		mProjectId = getArguments().getLong(Constants.KEY_PROJECT_ID);
 		mServerId = getArguments().getLong(Constants.KEY_SERVER_ID);
 
 		if (savedInstanceState != null) {
@@ -84,12 +81,14 @@ public class WikiPageFragment extends SherlockFragment {
 		}
 
 		// Setup page URI and title
-		mWikiPageURI = getUriFromTitle(getArguments().getString(KEY_WIKI_PAGE_NAME));
+		mWikiPageURI = WikiPageLoader.getUriFromTitle(getArguments().getString(KEY_WIKI_PAGE_NAME));
 
-		if (getArguments().getBoolean(KEY_WIKI_DIRECT_LOAD) || mWikiPage == null) {
+		if (mWikiPage != null) {
+			refreshUI();
+		} else if (getArguments().getBoolean(KEY_WIKI_DIRECT_LOAD)) {
 			triggerAsyncLoadWikiPage();
 		} else {
-			refreshUI();
+			// empty fragment, need to call updateCurrentProject
 		}
 
 		return mLayout;
@@ -100,6 +99,14 @@ public class WikiPageFragment extends SherlockFragment {
 
 		mWikiPageURI = "";
 		mWikiPage = null;
+
+		if (project != null) {
+			mServerId = project.server.rowId;
+			mProject = project;
+			mProjectId = project.id;
+		}
+
+		//FIXME: doesn't properly switch from one project wiki to another
 
 		// Load the page
 		if (mWikiPage == null || TextUtils.isEmpty(mWikiPage.text)) {
@@ -113,14 +120,7 @@ public class WikiPageFragment extends SherlockFragment {
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putString(KEY_WIKI_PAGE, new Gson().toJson(mWikiPage));
-		outState.putInt(Constants.KEY_PROJECT_ID, mProjectId);
-	}
-
-	private static String getUrlPrefix(final Project project, final String path) {
-		if (project == null) {
-			return null;
-		}
-		return "projects/" + project.identifier + path;
+		outState.putLong(Constants.KEY_PROJECT_ID, mProjectId);
 	}
 
 	private void triggerAsyncLoadWikiPage() {
@@ -142,9 +142,13 @@ public class WikiPageFragment extends SherlockFragment {
 					ProjectsDbAdapter pdb = new ProjectsDbAdapter(sdb);
 					mProject = pdb.select(server, mProjectId);
 
+					WikiDbAdapter db = new WikiDbAdapter(sdb);
+					WikiPageLoader loader = new WikiPageLoader(server, getSherlockActivity(), db, mLayout);
+					WikiPage page = loader.actualSyncLoadWikiPage(mProject, mWikiPageURI);
+
 					sdb.close();
 
-					return actualSyncLoadWikiPage(server, mProject, getSherlockActivity(), mWikiPageURI, mLayout);
+					return page;
 				}
 
 				@Override
@@ -158,72 +162,6 @@ public class WikiPageFragment extends SherlockFragment {
 				}
 			}.execute();
 		}
-	}
-
-	private static WikiPage actualSyncLoadWikiPage(Server server, Project project, SherlockFragmentActivity act, String uri, ViewGroup croutonHolder) {
-		// Try to load from DB first, if the sync is working it should already be there.
-		final WikiDbAdapter db = new WikiDbAdapter(act);
-		WikiPage wikiPage = db.select(server, project, uri);
-		db.close();
-
-		if (wikiPage == null) {
-			final String wikiPrefix = getUrlPrefix(project, "/wiki");
-			if (TextUtils.isEmpty(wikiPrefix)) {
-				if (croutonHolder != null) {
-					Crouton.makeText(act, R.string.wiki_page_not_found, Style.ALERT, croutonHolder);
-				}
-				L.e("Can't find wiki prefix?!", null);
-				return null;
-			}
-			final String wikiUri = TextUtils.isEmpty(uri) ? "" : "/" + uri;
-			final String url = wikiPrefix + wikiUri + ".json";
-
-			wikiPage = new JsonDownloader<WikiPage>(WikiPage.class).fetchObject(act, server, url);
-
-			if (wikiPage == null) {
-				return null;
-			}
-		}
-
-		wikiPage.text = handleMarkupReplacements(server, project, act, wikiPage.text);
-		return wikiPage;
-	}
-
-	public static String handleMarkupReplacements(final Server server, final Project project, SherlockFragmentActivity act, String text) {
-		if (TextUtils.isEmpty(text)) {
-			return "";
-		}
-
-		// Include pages
-		final Pattern regex = Pattern.compile("\\{\\{include\\(([^\\)]+)\\)\\}\\}", 0);
-		StringBuilder sb;
-		WikiPage p;
-		do {
-			final Matcher m = regex.matcher(text);
-			sb = new StringBuilder();
-			if (m.find()) {
-				sb.append(text.substring(0, m.start()));
-				p = actualSyncLoadWikiPage(server, project, act, getUriFromTitle(m.group(1)), null);
-				if (p != null && !TextUtils.isEmpty(p.text)) {
-					sb.append("\n");
-					sb.append(p.text);
-					sb.append("\n");
-				}
-				sb.append(text.substring(m.end()));
-				text = sb.toString();
-			} else {
-				break;
-			}
-		} while (true);
-
-		return text;
-	}
-
-	private static String getUriFromTitle(final String title) {
-		if (TextUtils.isEmpty(title)) {
-			return null;
-		}
-		return title.replace(" ", "_").replace(".", "");
 	}
 
 	private void refreshUI() {
@@ -262,12 +200,12 @@ public class WikiPageFragment extends SherlockFragment {
 		// [[linkTarget|Link name]]
 		Pattern regex = Pattern.compile("\\[\\[([^\\|]+)\\|([^\\]]+)\\]\\]");
 		Matcher matcher = regex.matcher(html);
-		html = matcher.replaceAll("<a href=\"" + getUrlPrefix(mProject, "") + "/wiki/$1\">$2</a>");
+		html = matcher.replaceAll("<a href=\"" + WikiPageLoader.getUrlPrefix(mProject, "") + "/wiki/$1\">$2</a>");
 
 		// [[link]]
 		regex = Pattern.compile("\\[\\[([^\\]]+)\\]\\]");
 		matcher = regex.matcher(html);
-		html = matcher.replaceAll("<a href=\"" + getUrlPrefix(mProject, "") + "/wiki/$1\">$1</a>");
+		html = matcher.replaceAll("<a href=\"" + WikiPageLoader.getUrlPrefix(mProject, "") + "/wiki/$1\">$1</a>");
 
 		// Issue
 		// TODO
@@ -286,13 +224,13 @@ public class WikiPageFragment extends SherlockFragment {
 				return true;
 			}
 
-			final int id = url.indexOf(getUrlPrefix(mProject, "/wiki"));
+			final int id = url.indexOf(WikiPageLoader.getUrlPrefix(mProject, "/wiki"));
 			if (id >= 0) {
-				final String newPage = url.substring(id + getUrlPrefix(mProject, "/wiki/").length());
+				final String newPage = url.substring(id + WikiPageLoader.getUrlPrefix(mProject, "/wiki/").length());
 				final Bundle args = new Bundle();
 				args.putString(KEY_WIKI_PAGE_NAME, newPage);
 				args.putBoolean(KEY_WIKI_DIRECT_LOAD, true);
-				args.putInt(Constants.KEY_PROJECT_ID, mProjectId);
+				args.putLong(Constants.KEY_PROJECT_ID, mProjectId);
 				args.putLong(Constants.KEY_SERVER_ID, mServerId);
 				final WikiPageFragment newWiki = WikiPageFragment.newInstance(args);
 				getFragmentManager().beginTransaction().replace(R.id.wiki_contents, newWiki).addToBackStack("prout").commit();
