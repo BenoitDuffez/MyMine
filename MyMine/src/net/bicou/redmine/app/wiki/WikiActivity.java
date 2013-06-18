@@ -62,6 +62,7 @@ public class WikiActivity extends DrawerActivity implements ActionBar.OnNavigati
 	@Override
 	protected void onRestoreInstanceState(final Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
+L.d("icicle: "+savedInstanceState);
 
 		// Prepare navigation spinner
 		if (savedInstanceState == null) {
@@ -70,11 +71,18 @@ public class WikiActivity extends DrawerActivity implements ActionBar.OnNavigati
 			mCurrentProjectPosition = -1;
 		} else {
 			mProjects = savedInstanceState.getParcelableArrayList(KEY_REDMINE_PROJECTS_LIST);
-			mAdapter = new ProjectsSpinnerAdapter(this, R.layout.main_nav_item, mProjects);
 			mCurrentProjectPosition = savedInstanceState.getInt(Constants.KEY_PROJECT_POSITION);
+			mAdapter = new ProjectsSpinnerAdapter(this, R.layout.main_nav_item, mProjects);
 
 			enableListNavigationMode();
 		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelableArrayList(KEY_REDMINE_PROJECTS_LIST, mProjects);
+		outState.putInt(Constants.KEY_PROJECT_POSITION, mCurrentProjectPosition);
 	}
 
 	private void enableListNavigationMode() {
@@ -88,7 +96,7 @@ public class WikiActivity extends DrawerActivity implements ActionBar.OnNavigati
 	}
 
 	public void refreshProjectsList() {
-		if (mProjects.size() > 0) {
+		if (mProjects != null && mProjects.size() > 0) {
 			return;
 		}
 

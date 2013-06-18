@@ -106,6 +106,9 @@ public class WikiPageFragment extends SherlockFragment {
 			mProjectId = project.id;
 		}
 
+		L.i("serv=" + mServerId + " proj=" + mProjectId + "=" + mProject);
+		L.i("wikipage=" + mWikiPage + "=" + (mWikiPage == null ? "null" : mWikiPage.text));
+
 		//FIXME: doesn't properly switch from one project wiki to another
 
 		// Load the page
@@ -211,10 +214,12 @@ public class WikiPageFragment extends SherlockFragment {
 		// TODO
 		// regex = Pattern.compile("#([0-9]+)([^;0-9]{1})");
 		// matcher = regex.matcher(html);
-		// html = matcher.replaceAll("<a href=\"" + getUrlPrefix("/issues/$1") +
-		// "\">#$1</a>$2");
+		// html = matcher.replaceAll("<a href=\"" + getUrlPrefix("/issues/$1") + "\">#$1</a>$2");
 
+		//mWebView.setVisibility(View.GONE);
 		mWebView.loadData(html, "text/html; charset=UTF-8", null);
+		//mWebView.reload();
+		//mWebView.setVisibility(View.VISIBLE);
 	}
 
 	private class WikiWebViewClient extends WebViewClient {
@@ -240,6 +245,12 @@ public class WikiPageFragment extends SherlockFragment {
 				startActivity(intent);
 			}
 			return true;
+		}
+
+		@Override
+		public void onPageFinished(WebView view, String url) {
+			super.onPageFinished(view, url);
+			view.invalidate();
 		}
 	}
 }
