@@ -1,21 +1,22 @@
 package net.bicou.redmine.app.issues;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.wiki.WikiPageFragment;
+import net.bicou.redmine.app.wiki.WikiPageLoader;
 import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.data.sqlite.WikiDbAdapter;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 
-public class IssueOverviewFragment extends Fragment {
+public class IssueOverviewFragment extends SherlockFragment {
 	TextView mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion;
 	WebView mDescription;
 	Issue mIssue;
@@ -48,9 +49,25 @@ public class IssueOverviewFragment extends Fragment {
 		mCategory.setText(mIssue.category != null ? mIssue.category.name : "-");
 		mTargetVersion.setText(mIssue.fixed_version != null ? mIssue.fixed_version.name : "-");
 
-		String textile = mIssue.description != null ? mIssue.description : "";
-		textile = WikiPageFragment.handleMarkupReplacements(mIssue.server, mIssue.project, (SherlockFragmentActivity) getActivity(), textile);
-		mDescription.loadData(Util.htmlFromTextile(textile), "text/html; charset=UTF-8", null);
+		new AsyncTask<Void, Void, String>() {
+			@Override
+			protected String doInBackground(Void... voids) {
+				WikiDbAdapter db = new WikiDbAdapter(getActivity());
+				db.open();
+				WikiPageLoader loader = new WikiPageLoader(mIssue.server, getSherlockActivity(), db, null);
+
+				String textile = mIssue.description != null ? mIssue.description : "";
+				textile = loader.handleMarkupReplacements(mIssue.project, textile);
+
+				db.close();
+				return textile;
+			}
+
+			@Override
+			protected void onPostExecute(String textile) {
+				mDescription.loadData(Util.htmlFromTextile(textile), "text/html; charset=UTF-8", null);
+			}
+		}.execute();
 
 		return v;
 	}
