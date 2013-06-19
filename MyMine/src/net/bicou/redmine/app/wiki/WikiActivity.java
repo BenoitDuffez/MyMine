@@ -3,18 +3,18 @@ package net.bicou.redmine.app.wiki;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ProjectsSpinnerAdapter;
 import net.bicou.redmine.app.RefreshProjectsTask;
-import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.util.L;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WikiActivity extends DrawerActivity implements ActionBar.OnNavigationListener {
+public class WikiActivity extends SherlockFragmentActivity implements ActionBar.OnNavigationListener {
 	private static final String WIKI_CONTENTS_TAG = "wiki";
 
 	@Override
@@ -24,8 +24,9 @@ public class WikiActivity extends DrawerActivity implements ActionBar.OnNavigati
 
 		// Setup fragments
 		if (savedInstanceState == null) {
-			final Bundle args = new Bundle(getIntent().getExtras());
-			getSupportFragmentManager().beginTransaction().replace(R.id.content, WikiPageFragment.newInstance(args), WIKI_CONTENTS_TAG).commit();
+			Bundle extras = getIntent().getExtras();
+			final Bundle args = extras == null ? new Bundle() : new Bundle(extras);
+			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, WikiPageFragment.newInstance(args), WIKI_CONTENTS_TAG).commit();
 		}
 	}
 
@@ -62,7 +63,6 @@ public class WikiActivity extends DrawerActivity implements ActionBar.OnNavigati
 	@Override
 	protected void onRestoreInstanceState(final Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-L.d("icicle: "+savedInstanceState);
 
 		// Prepare navigation spinner
 		if (savedInstanceState == null) {
@@ -120,7 +120,7 @@ L.d("icicle: "+savedInstanceState);
 
 		mCurrentProjectPosition = itemPosition;
 
-		final WikiPageFragment f = (WikiPageFragment) getSupportFragmentManager().findFragmentById(R.id.content);
+		final WikiPageFragment f = (WikiPageFragment) getSupportFragmentManager().findFragmentByTag(WIKI_CONTENTS_TAG);
 		f.updateCurrentProject(mProjects.get(mCurrentProjectPosition));
 
 		return true;
