@@ -40,7 +40,7 @@ public class RoadmapsListFragment extends SherlockListFragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		if (activity instanceof RoadmapSelectionListener == false) {
+		if (!(activity instanceof RoadmapSelectionListener)) {
 			throw new IllegalArgumentException("Activity " + activity.getClass().getName() + " must implement RoadmapSelectionListener");
 		}
 		mListener = (RoadmapSelectionListener) activity;
@@ -74,9 +74,9 @@ public class RoadmapsListFragment extends SherlockListFragment {
 		final CurrentProjectInfo info = (CurrentProjectInfo) getActivity();
 		mList.clear();
 
-		if (info == null) {
+		if (info == null || info.getCurrentProject() == null) {
 			L.e("shouldn't happen", null);
-
+		} else {
 			new AsyncTask<Void, Void, Void>() {
 				@Override
 				protected Void doInBackground(Void... contexts) {
