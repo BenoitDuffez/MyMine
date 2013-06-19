@@ -390,7 +390,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 				String html = Util.htmlFromTextile(journal.notes);
 				html = html.replace("<pre>", "<tt>").replace("</pre>", "</tt>");
 				// Fake lists
-				html=html.replace("<li>", " &nbsp; &nbsp; • ").replace("</li>", "<br />");
+				html = html.replace("<li>", " &nbsp; &nbsp; • ").replace("</li>", "<br />");
 				journal.formatted_notes = (Spanned) trim(Html.fromHtml(html));
 			}
 		}
@@ -406,8 +406,10 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		for (ChangeSet changeSet : changeSets) {
 			changeSet.commentsHtml = Html.fromHtml(changeSet.comments.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br />"));
 			// TODO: cache users?
-			changeSet.user = db.select(mIssue.server, changeSet.user.id);
-			changeSet.user.createGravatarUrl();
+			if (changeSet.user != null) {
+				changeSet.user = db.select(mIssue.server, changeSet.user.id);
+				changeSet.user.createGravatarUrl();
+			}
 		}
 		db.close();
 	}

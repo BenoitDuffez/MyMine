@@ -29,7 +29,9 @@ public class IssueFragment extends SherlockFragment {
 
 	private Issue mIssue;
 
-	OnPageChangeListener mListener;
+	private OnPageChangeListener mListener;
+	private IssueTabsAdapter mAdapter;
+
 	private static final int NB_TABS = 2;
 	private static final String[] TAB_TITLES = new String[NB_TABS];
 
@@ -116,14 +118,8 @@ public class IssueFragment extends SherlockFragment {
 		}
 		args.putString(KEY_ISSUE_JSON, new Gson().toJson(mIssue));
 
-		// Set the pager with an adapter
-		final ViewPager pager = (ViewPager) v.findViewById(R.id.issue_pager);
-		final IssueTabsAdapter mAdapter = new IssueTabsAdapter(getChildFragmentManager(), args);
-		pager.setAdapter(mAdapter);
-
-		// TODO Bind the title indicator to the adapter
-		//final TitlePageIndicator titleIndicator = (TitlePageIndicator) v.findViewById(R.id.issue_pager_titles);
-		//titleIndicator.setViewPager(pager);
+		// Adapter
+		mAdapter = new IssueTabsAdapter(getChildFragmentManager(), args);
 
 		// Listener
 		mListener = new OnPageChangeListener() {
@@ -143,7 +139,11 @@ public class IssueFragment extends SherlockFragment {
 			public void onPageScrollStateChanged(final int arg0) {
 			}
 		};
-		//titleIndicator.setOnPageChangeListener(mListener);
+
+		// Bind everything
+		final ViewPager pager = (ViewPager) v.findViewById(R.id.issue_pager);
+		pager.setAdapter(mAdapter);
+		pager.setOnPageChangeListener(mListener);
 
 		setHasOptionsMenu(true);
 

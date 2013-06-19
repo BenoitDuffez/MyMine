@@ -114,7 +114,7 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 				}
 			} else {
 				ChangeSet changeSet = (ChangeSet) item;
-				holder.user.setText(changeSet.user.getName());
+				holder.user.setText(changeSet.user == null ? mContext.getString(R.string.issue_journal_user_anonymous) : changeSet.user.getName());
 				Date d = changeSet.committed_on.getTime();
 				holder.date.setText(String.format(Locale.ENGLISH, "%s — %s", mDateFormat.format(d), mTimeFormat.format(d)));
 				holder.details.setText(mContext.getString(R.string.issue_changeset_revision, changeSet.revision));// TODO create link to revision
