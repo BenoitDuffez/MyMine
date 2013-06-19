@@ -31,6 +31,10 @@
 
         <item name="selectableItemBackground">@drawable/ab_background</item>
 
+        <item name="mainPaneStyle">@style/MainPaneStyle</item>
+        <item name="contentPaneStyle">@style/ContentPaneStyle</item>
+        <item name="containerStyle">@style/ContainerStyle</item>
+
     </style>
 
     <!-- Actual theme. Must be overriden by newer version to take advantage of new features -->

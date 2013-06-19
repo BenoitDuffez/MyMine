@@ -8,9 +8,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -43,6 +46,20 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	@Override
 	protected IssueFragment createContentFragment(Bundle args) {
 		return IssueFragment.newInstance(args);
+	}
+
+	@Override
+	protected Fragment createEmptyFragment(Bundle args) {
+		return new EmptyFragment();
+	}
+
+	private static class EmptyFragment extends SherlockFragment{
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			View v=inflater.inflate(R.layout.frag_empty,container,false);
+			v.setBackgroundResource(R.drawable.issues_empty_fragment);
+			return v;
+		}
 	}
 
 	@Override

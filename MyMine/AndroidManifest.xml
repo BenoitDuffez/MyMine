@@ -208,7 +208,7 @@
                 android:authorities="net.bicou.redmine.sync.Users"
                 android:label="@string/sync_users"/>
 
-        <!-- The view notification service --
+        <!-- The view notification service
         <service
                 android:name="net.bicou.redmine.notifier.NotifierService"
                 android:exported="true">

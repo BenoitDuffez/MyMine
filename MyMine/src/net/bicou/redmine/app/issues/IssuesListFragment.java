@@ -109,7 +109,9 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
+		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
@@ -156,16 +158,6 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		args.putLong(Constants.KEY_SERVER_ID, serverId);
 
 		((IssuesActivity) getActivity()).selectContent(args);
-		//		final IssueFragment frag = IssueFragment.newInstance(args);
-
-		// Open issue in the right pane
-		// TODO
-		//	if (mIsSplitScreen) {
-		//		getFragmentManager().beginTransaction().replace(android.R.id.content, frag).commit();
-		//	} else {
-		//		getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		//		getFragmentManager().beginTransaction().replace(android.R.id.content, frag).addToBackStack("prout").commit();
-		//	}
 	}
 
 	@Override
