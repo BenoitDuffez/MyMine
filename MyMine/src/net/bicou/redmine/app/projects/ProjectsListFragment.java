@@ -31,7 +31,7 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 	private ProjectsCursorAdapter mAdapter;
 	private ProjectsDbAdapter mProjectsDbAdapter;
 
-	boolean mIsSplitScreen;
+	//TODO boolean mIsSplitScreen;
 
 	public static ProjectsListFragment newInstance(final Bundle args) {
 		final ProjectsListFragment frag = new ProjectsListFragment();
@@ -45,9 +45,6 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 		L.d("");
 
 		final Bundle args = getArguments();
-		if (args != null) {
-			mIsSplitScreen = args.getBoolean(ProjectsActivity.KEY_IS_SPLIT_SCREEN);
-		}
 
 		final Activity activity = getActivity();
 		activity.setTitle(R.string.title_projects);
@@ -55,10 +52,6 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 		mAdapter = new ProjectsCursorAdapter(activity, null, true);
 		setListAdapter(mAdapter);
 		getLoaderManager().initLoader(0, null, this);
-	}
-
-	public void updateSplitScreenState(final boolean isSplitScreen) {
-		mIsSplitScreen = isSplitScreen;
 	}
 
 	private ProjectsDbAdapter getHelper() {
@@ -199,10 +192,10 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 		final ProjectFragment frag = ProjectFragment.newInstance(args);
 
 		// Open project in the right pane
-		if (mIsSplitScreen) {
-			getFragmentManager().beginTransaction().replace(R.id.projects_pane_project, frag).commit();
-		} else {
-			getFragmentManager().beginTransaction().replace(R.id.projects_pane_list, frag).addToBackStack("prout").commit();
-		}
+		//		if (mIsSplitScreen) {
+		//			getFragmentManager().beginTransaction().replace(R.id.projects_pane_project, frag).commit();
+		//		} else {
+		getFragmentManager().beginTransaction().replace(android.R.id.content, frag).addToBackStack("prout").commit();
+		//		}
 	}
 }

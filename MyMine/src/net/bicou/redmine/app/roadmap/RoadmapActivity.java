@@ -5,13 +5,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ProjectsSpinnerAdapter;
 import net.bicou.redmine.app.RefreshProjectsTask;
-import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter;
 import net.bicou.redmine.app.issues.IssuesOrderingFragment;
 import net.bicou.redmine.data.json.Project;
@@ -21,15 +21,12 @@ import net.bicou.redmine.util.L;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoadmapActivity extends DrawerActivity implements RoadmapsListFragment.RoadmapSelectionListener, ActionBar.OnNavigationListener,
+public class RoadmapActivity extends SherlockFragmentActivity implements RoadmapsListFragment.RoadmapSelectionListener, ActionBar.OnNavigationListener,
 		RoadmapsListFragment.CurrentProjectInfo {
-	/** Whether the screen is split into a list + an item. Likely the case on tablets and/or in landscape orientation */
-	public static final String KEY_IS_SPLIT_SCREEN = "net.bicou.redmine.app.roadmap.SplitScreen";
-
 	@Override
 	public void onRoadmapSelected(Version version) {
 		L.d("");
-		int fragId = R.id.content;//TODO mIsSplitScreen ? R.id.roadmaps_pane_roadmap : R.id.roadmaps_pane_list;
+		int fragId = android.R.id.content;//TODO mIsSplitScreen ? R.id.roadmaps_pane_roadmap : R.id.roadmaps_pane_list;
 		Bundle args = new Bundle();
 		args.putString(RoadmapFragment.KEY_VERSION_JSON, new Gson().toJson(version));
 		getSupportFragmentManager().beginTransaction().replace(fragId, RoadmapFragment.newInstance(args)).addToBackStack("prout").commit();
@@ -46,7 +43,7 @@ public class RoadmapActivity extends DrawerActivity implements RoadmapsListFragm
 		// Setup fragments
 		if (savedInstanceState == null) {
 			// Setup list view
-			getSupportFragmentManager().beginTransaction().replace(R.id.content, RoadmapsListFragment.newInstance(args)).commit();
+			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, RoadmapsListFragment.newInstance(args)).commit();
 		}
 
 		// Screen rotation on 7" tablets
@@ -60,7 +57,7 @@ public class RoadmapActivity extends DrawerActivity implements RoadmapsListFragm
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final int id = R.id.content; //TODO mIsSplitScreen ? R.id.content : R.id.content;
+		final int id = android.R.id.content; //TODO mIsSplitScreen ? android.R.id.content : android.R.id.content;
 		final Fragment frag = getSupportFragmentManager().findFragmentById(id);
 		L.d("");
 		switch (item.getItemId()) {
@@ -74,7 +71,7 @@ public class RoadmapActivity extends DrawerActivity implements RoadmapsListFragm
 						rf.setNewIssuesOrder(orderColumns);
 
 						final FragmentManager fm = getSupportFragmentManager();
-						final Fragment frag = fm.findFragmentById(R.id.content);
+						final Fragment frag = fm.findFragmentById(android.R.id.content);
 					}
 				});
 				issuesOrder.show(getSupportFragmentManager(), "issues_order");
@@ -90,25 +87,25 @@ public class RoadmapActivity extends DrawerActivity implements RoadmapsListFragm
 	@Override
 	public void onResume() {
 		super.onResume();
-//		final Fragment frag = getSupportFragmentManager().findFragmentById(R.id.content);
-//		L.d("");
-//		final Bundle args = new Bundle();
-//		if (frag instanceof RoadmapsListFragment) {
-//			//			((RoadmapsListFragment) frag).updateCurrentRoadmap(mRoadmaps.get(mCurrentRoadmapPosition).id);
-//			//			if (mIsSplitScreen) {
-//			//				final Fragment f = getSupportFragmentManager().findFragmentById(R.id.roadmaps_pane_roadmap);
-//			//				if (f != null) {
-//			//					getSupportFragmentManager().beginTransaction().remove(f).commit();
-//			//				}
-//			//			}
-//			getSupportFragmentManager().beginTransaction().replace(R.id.content, RoadmapFragment.newInstance(args)).commit();
-//		} else if (frag instanceof RoadmapFragment) {
-//			getSupportFragmentManager().beginTransaction().replace(R.id.content, RoadmapsListFragment.newInstance(args)).commit();
-//		}
-//		supportInvalidateOptionsMenu();
-//
-//
-//		mProjects.clear();
+		//		final Fragment frag = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		//		L.d("");
+		//		final Bundle args = new Bundle();
+		//		if (frag instanceof RoadmapsListFragment) {
+		//			//			((RoadmapsListFragment) frag).updateCurrentRoadmap(mRoadmaps.get(mCurrentRoadmapPosition).id);
+		//			//			if (mIsSplitScreen) {
+		//			//				final Fragment f = getSupportFragmentManager().findFragmentById(R.id.roadmaps_pane_roadmap);
+		//			//				if (f != null) {
+		//			//					getSupportFragmentManager().beginTransaction().remove(f).commit();
+		//			//				}
+		//			//			}
+		//			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, RoadmapFragment.newInstance(args)).commit();
+		//		} else if (frag instanceof RoadmapFragment) {
+		//			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, RoadmapsListFragment.newInstance(args)).commit();
+		//		}
+		//		supportInvalidateOptionsMenu();
+		//
+		//
+		//		mProjects.clear();
 		refreshProjectsList();
 	}
 
@@ -191,11 +188,11 @@ public class RoadmapActivity extends DrawerActivity implements RoadmapsListFragm
 		mCurrentProjectPosition = itemPosition;
 
 		FragmentManager fm = getSupportFragmentManager();
-		Fragment f = fm.findFragmentById(R.id.content);
+		Fragment f = fm.findFragmentById(android.R.id.content);
 		if (f != null && f instanceof RoadmapsListFragment) {
 			((RoadmapsListFragment) f).updateRoadmapsList();
 		} else {
-			fm.beginTransaction().replace(R.id.content, RoadmapsListFragment.newInstance(new Bundle())).commit();
+			fm.beginTransaction().replace(android.R.id.content, RoadmapsListFragment.newInstance(new Bundle())).commit();
 		}
 
 		return true;

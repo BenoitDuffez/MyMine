@@ -46,7 +46,7 @@ public class MainActivity extends DrawerActivity {
 			editor.commit();
 		}
 
-		getSupportFragmentManager().beginTransaction().replace(R.id.content, LoadingFragment.newInstance()).commit();
+		getSupportFragmentManager().beginTransaction().replace(R.id.drawer_content, LoadingFragment.newInstance()).commit();
 		getSupportFragmentManager().beginTransaction().replace(R.id.navigation_drawer, new DrawerMenuFragment()).commit();
 	}
 
@@ -156,7 +156,7 @@ public class MainActivity extends DrawerActivity {
 				}
 
 				try {
-					getSupportFragmentManager().beginTransaction().replace(R.id.content, contents).commit();
+					getSupportFragmentManager().beginTransaction().replace(R.id.drawer_content, contents).commit();
 				} catch (final Exception e) {
 					// FATAL EXCEPTION: main
 					// java.lang.RuntimeException: Unable to resume activity {net.bicou.redmine/net.bicou.redmine.app.MainActivity}:
@@ -205,7 +205,7 @@ public class MainActivity extends DrawerActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.content);
+		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.drawer_content);
 		if (f == null) {
 			return super.onOptionsItemSelected(item);
 		}

@@ -50,10 +50,9 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 	@Override
 	public void setContentView(int layoutResId) {
 		setContentViewCount++;
-		if (setContentViewCount==1){
+		if (setContentViewCount == 1) {
 			super.setContentView(layoutResId);
-		}
-		else{
+		} else {
 			throw new IllegalStateException("Don't call setContentView from your activity");
 		}
 	}
@@ -72,7 +71,7 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
 
 		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction().add(R.id.content, getDrawerFragment()).commit();
+			getSupportFragmentManager().beginTransaction().add(R.id.drawer_content, getDrawerFragment()).commit();
 		}
 
 		if (mDrawerMenu == null || mDrawerLayout == null) {

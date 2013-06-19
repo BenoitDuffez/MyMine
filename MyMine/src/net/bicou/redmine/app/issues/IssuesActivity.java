@@ -11,13 +11,13 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.google.gson.Gson;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.app.issues.IssuesActivity.GetNavigationModeAdapterTask.NavigationModeAdapterCallback;
 import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
 import net.bicou.redmine.app.issues.IssuesOrderingFragment.IssuesOrderSelectionListener;
@@ -32,7 +32,7 @@ import net.bicou.redmine.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IssuesActivity extends DrawerActivity {
+public class IssuesActivity extends SherlockFragmentActivity {
 	int mNavMode;
 	ArrayList<OrderColumn> mCurrentOrder;
 	boolean isSplitScreen;//TODO
@@ -74,7 +74,7 @@ public class IssuesActivity extends DrawerActivity {
 		// Setup fragments
 		if (savedInstanceState == null) {
 			// Setup list view
-			getSupportFragmentManager().beginTransaction().replace(R.id.content, IssuesListFragment.newInstance(args)).commit();
+			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, IssuesListFragment.newInstance(args)).commit();
 		}
 	}
 
@@ -110,7 +110,7 @@ public class IssuesActivity extends DrawerActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final int id = R.id.content;
+		final int id = android.R.id.content;
 		final Fragment frag = getSupportFragmentManager().findFragmentById(id);
 
 		switch (item.getItemId()) {
@@ -145,7 +145,7 @@ public class IssuesActivity extends DrawerActivity {
 					saveNewColumnsOrder(orderColumns);
 
 					final FragmentManager fm = getSupportFragmentManager();
-					final Fragment frag = fm.findFragmentById(R.id.content);
+					final Fragment frag = fm.findFragmentById(android.R.id.content);
 					if (frag instanceof IssuesListFragment) {
 						((IssuesListFragment) frag).updateColumnsOrder(orderColumns);
 					} else {
@@ -190,7 +190,7 @@ public class IssuesActivity extends DrawerActivity {
 		@Override
 		public boolean onNavigationItemSelected(final int itemPosition, final long itemId) {
 			final FragmentManager fm = getSupportFragmentManager();
-			final Fragment frag = fm.findFragmentById(R.id.content);
+			final Fragment frag = fm.findFragmentById(android.R.id.content);
 			if (mSpinnerAdapter.isSeparator(itemPosition)) {
 				getSupportActionBar().setSelectedNavigationItem(lastPosition);
 			} else {
