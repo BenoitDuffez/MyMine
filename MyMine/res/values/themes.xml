@@ -3,9 +3,11 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources>
 
-    <style
-            name="MyMineTheme"
-            parent="@style/Theme.SplitActivity.Light">
+    <!-- Namespace declaration -->
+    <style name="MyMine"/>
+
+    <!-- Defaults for all android versions -->
+    <style name="MyMine.Base" parent="Theme.SplitActivity.Light">
 
         <item name="android:windowBackground">@color/grey_window_background</item>
 
@@ -30,5 +32,8 @@
         <item name="selectableItemBackground">@drawable/ab_background</item>
 
     </style>
+
+    <!-- Actual theme. Must be overriden by newer version to take advantage of new features -->
+    <style name="Theme.MyMine" parent="MyMine.Base"/>
 
 </resources>
