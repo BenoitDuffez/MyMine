@@ -1,53 +1,36 @@
 package net.bicou.redmine.app.projects;
 
 import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import com.actionbarsherlock.app.SherlockFragment;
+import net.bicou.android.splitscreen.SplitActivity;
 
-public class ProjectsActivity extends SherlockFragmentActivity {
-	/** Whether the screen is split into a list + an item. Likely the case on tablets and/or in landscape orientation */
-	public static final String KEY_IS_SPLIT_SCREEN = "net.bicou.redmine.projects.SplitScreen";
-	//TODO	boolean mIsSplitScreen;
-
-
+public class ProjectsActivity extends SplitActivity<ProjectsListFragment, ProjectFragment> {
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		final Bundle args = new Bundle();
-
-		// Setup fragments
-		if (savedInstanceState == null) {
-			// Setup list view
-			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, ProjectsListFragment.newInstance(args)).commit();
-		} else if (savedInstanceState.containsKey(ProjectFragment.KEY_PROJECT_JSON)) {
-			// Setup content view, if possible
-		}
-
-		// Screen rotation on 7" tablets
-		//		if (savedInstanceState != null && mIsSplitScreen != savedInstanceState.getBoolean(KEY_IS_SPLIT_SCREEN)) {
-		//			final Fragment f = getSupportFragmentManager().findFragmentById(android.R.id.content);
-		//			if (f != null && f instanceof ProjectsListFragment) {
-		//				((ProjectsListFragment) f).updateSplitScreenState(mIsSplitScreen);
-		//			}
-		//		}
+	protected ProjectsListFragment createMainFragment(Bundle args) {
+		return ProjectsListFragment.newInstance(args);
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		//		final Fragment frag = getSupportFragmentManager().findFragmentById(android.R.id.content);
-		//		final Bundle args = new Bundle();
-		//		if (frag instanceof ProjectsListFragment) {
-		//			//			((ProjectsListFragment) frag).updateCurrentProject(mProjects.get(mCurrentProjectPosition).id);
-		//			//			if (mIsSplitScreen) {
-		//			//				final Fragment f = getSupportFragmentManager().findFragmentById(R.id.projects_pane_project);
-		//			//				if (f != null) {
-		//			//					getSupportFragmentManager().beginTransaction().remove(f).commit();
-		//			//				}
-		//			//			}
-		//
-		//		} else if (frag instanceof ProjectFragment) {
-		//			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, ProjectsListFragment.newInstance(args)).commit();
-		//		}
+	protected ProjectFragment createContentFragment(Bundle args) {
+		return ProjectFragment.newInstance(args);
+	}
+
+	@Override
+	protected Fragment createEmptyFragment(Bundle args) {
+		return new ProjectEmptyFragment();
+	}
+
+	private static class ProjectEmptyFragment extends SherlockFragment {
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			TextView tv = new TextView(inflater.getContext());
+			tv.setText("Empty view!");
+			return tv;
+		}
 	}
 }

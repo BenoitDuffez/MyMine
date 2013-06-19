@@ -189,13 +189,14 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 		final long serverId = c.getLong(c.getColumnIndex(ProjectsDbAdapter.KEY_SERVER_ID));
 		args.putLong(Constants.KEY_PROJECT_ID, projectId);
 		args.putLong(Constants.KEY_SERVER_ID, serverId);
-		final ProjectFragment frag = ProjectFragment.newInstance(args);
+		((ProjectsActivity) getActivity()).selectContent(args);
+		//		final ProjectFragment frag = ProjectFragment.newInstance(args);
 
 		// Open project in the right pane
 		//		if (mIsSplitScreen) {
 		//			getFragmentManager().beginTransaction().replace(R.id.projects_pane_project, frag).commit();
 		//		} else {
-		getFragmentManager().beginTransaction().replace(android.R.id.content, frag).addToBackStack("prout").commit();
+		//getFragmentManager().beginTransaction().replace(android.R.id.content, frag).addToBackStack("prout").commit();
 		//		}
 	}
 }
