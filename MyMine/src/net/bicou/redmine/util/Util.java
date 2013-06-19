@@ -70,7 +70,7 @@ public class Util {
 					firstCharPos++;
 				}
 
-				if (line.charAt(firstCharPos) == '>') {
+				if (firstCharPos < line.length() && line.charAt(firstCharPos) == '>') {
 					int newBlockQuoteLevel = 1;
 					pos = firstCharPos + 1;
 					while (pos < line.length()) {
