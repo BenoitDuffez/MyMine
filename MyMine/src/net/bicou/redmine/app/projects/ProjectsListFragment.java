@@ -31,8 +31,6 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 	private ProjectsCursorAdapter mAdapter;
 	private ProjectsDbAdapter mProjectsDbAdapter;
 
-	//TODO boolean mIsSplitScreen;
-
 	public static ProjectsListFragment newInstance(final Bundle args) {
 		final ProjectsListFragment frag = new ProjectsListFragment();
 		frag.setArguments(args);
@@ -43,8 +41,6 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		L.d("");
-
-		final Bundle args = getArguments();
 
 		final Activity activity = getActivity();
 		activity.setTitle(R.string.title_projects);
@@ -190,13 +186,5 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 		args.putLong(Constants.KEY_PROJECT_ID, projectId);
 		args.putLong(Constants.KEY_SERVER_ID, serverId);
 		((ProjectsActivity) getActivity()).selectContent(args);
-		//		final ProjectFragment frag = ProjectFragment.newInstance(args);
-
-		// Open project in the right pane
-		//		if (mIsSplitScreen) {
-		//			getFragmentManager().beginTransaction().replace(R.id.projects_pane_project, frag).commit();
-		//		} else {
-		//getFragmentManager().beginTransaction().replace(android.R.id.content, frag).addToBackStack("prout").commit();
-		//		}
 	}
 }
