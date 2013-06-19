@@ -123,9 +123,9 @@ public class DrawerMenuFragment extends SherlockListFragment {
 			add(new Item(R.drawable.icon_issues, R.string.menu_issues));
 			add(new Item(R.drawable.icon_roadmaps, R.string.menu_roadmap));
 			add(new Item(R.drawable.icon_wiki, R.string.menu_wiki));
-			add(new Separator(R.string.app_name));
-			add(new Item(R.drawable.icon_about, R.string.menu_about));
-			add(new Item(R.drawable.icon_settings, R.string.menu_settings));
+			//			add(new Separator(R.string.app_name));
+			//			add(new Item(R.drawable.icon_about, R.string.menu_about));
+			//			add(new Item(R.drawable.icon_settings, R.string.menu_settings));
 		}
 	};
 
