@@ -7,7 +7,7 @@
 
 	<ListView
 		android:id="@android:id/list"
-		android:background="@drawable/listview_item_background"
+		android:background="@drawable/issueslist_item_background_indicator"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent" />
 

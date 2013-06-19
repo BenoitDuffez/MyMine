@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@android:id/text1"
 	android:padding="12dp"
-	android:background="@drawable/listview_item_background"
+	android:background="@drawable/issueslist_item_background_indicator"
 	android:textIsSelectable="false"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">

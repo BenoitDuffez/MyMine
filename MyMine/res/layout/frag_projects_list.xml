@@ -9,7 +9,7 @@
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/listview_item_background"
+        android:background="@drawable/issueslist_item_background_indicator"
         android:padding="@dimen/main_layout_padding"
         tools:listitem="@layout/project_listitem" />
 

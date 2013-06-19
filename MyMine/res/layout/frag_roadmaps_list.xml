@@ -26,7 +26,7 @@
 
     <ListView
             android:layout_width="wrap_content"
-            android:background="@drawable/listview_item_background"
+            android:background="@drawable/issueslist_item_background_indicator"
             android:layout_height="wrap_content"
             android:id="@android:id/list"
             android:layout_gravity="left|center_vertical"

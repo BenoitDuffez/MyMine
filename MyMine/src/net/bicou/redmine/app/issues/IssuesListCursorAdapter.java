@@ -1,9 +1,5 @@
 package net.bicou.redmine.app.issues;
 
-import net.bicou.redmine.R;
-import net.bicou.redmine.data.sqlite.DbAdapter;
-import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
-import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Paint;
@@ -13,17 +9,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import net.bicou.redmine.R;
+import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.widget.IssuesListRelativeLayout;
 
 /**
  * CursorAdapter that will map Cursor data to a layout
- * 
+ *
  * @author bicou
- * 
+ *
  */
 public final class IssuesListCursorAdapter extends CursorAdapter {
 	private final Context mContext;
 
 	public class ViewHolder {
+		IssuesListRelativeLayout layout;
 		TextView issueID, subject, targetVersion, status, description, project;
 	}
 
@@ -39,8 +41,9 @@ public final class IssuesListCursorAdapter extends CursorAdapter {
 
 	@Override
 	public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
-		final View view = LayoutInflater.from(mContext).inflate(R.layout.issue_listitem, parent, false);
+		final IssuesListRelativeLayout view = (IssuesListRelativeLayout) LayoutInflater.from(mContext).inflate(R.layout.issue_listitem, parent, false);
 		final ViewHolder viewHolder = new ViewHolder();
+		viewHolder.layout = view;
 		viewHolder.issueID = (TextView) view.findViewById(R.id.issue_item_id);
 		viewHolder.subject = (TextView) view.findViewById(R.id.issue_item_subject);
 		viewHolder.targetVersion = (TextView) view.findViewById(R.id.issue_item_fixed_version);
@@ -81,11 +84,14 @@ public final class IssuesListCursorAdapter extends CursorAdapter {
 		viewHolder.status.setText(TextUtils.isEmpty(status) ? mContext.getString(R.string.issue_status_na) : status);
 		viewHolder.project.setText(cursor.getString(cursor.getColumnIndex(IssuesDbAdapter.KEY_PROJECT)));
 
-		final String isClosed = cursor.getString(cursor.getColumnIndex(IssueStatusesDbAdapter.KEY_IS_CLOSED));
-		if ("1".equals(isClosed)) {
+		final boolean isClosed = "1".equals(cursor.getString(cursor.getColumnIndex(IssueStatusesDbAdapter.KEY_IS_CLOSED)));
+		viewHolder.layout.setIsClosed(isClosed);
+		if (isClosed) {
 			viewHolder.subject.setPaintFlags(viewHolder.subject.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+			viewHolder.issueID.setPaintFlags(viewHolder.subject.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 		} else {
 			viewHolder.subject.setPaintFlags(viewHolder.subject.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+			viewHolder.issueID.setPaintFlags(viewHolder.subject.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 		}
 	}
 }
