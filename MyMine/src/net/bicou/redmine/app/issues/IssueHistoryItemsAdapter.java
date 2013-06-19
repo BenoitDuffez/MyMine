@@ -120,7 +120,7 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 				holder.details.setText(mContext.getString(R.string.issue_changeset_revision, changeSet.revision));// TODO create link to revision
 				holder.notes.setText(changeSet.commentsHtml);
 
-				if (TextUtils.isEmpty(changeSet.user.gravatarUrl)) {
+				if (changeSet.user == null || TextUtils.isEmpty(changeSet.user.gravatarUrl)) {
 					holder.avatar.setVisibility(View.INVISIBLE);
 				} else {
 					holder.avatar.setVisibility(View.VISIBLE);
