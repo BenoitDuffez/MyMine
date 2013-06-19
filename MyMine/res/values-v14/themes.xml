@@ -5,7 +5,7 @@
 
     <style
             name="MyMineTheme"
-            parent="@style/Theme.Sherlock.Light.DarkActionBar">
+            parent="@style/Theme.SplitActivity.Light">
 
         <item name="android:windowBackground">@color/grey_window_background</item>
 
