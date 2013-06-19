@@ -5,9 +5,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import net.bicou.android.splitscreen.SplitActivity;
+import net.bicou.redmine.R;
 
 public class ProjectsActivity extends SplitActivity<ProjectsListFragment, ProjectFragment> {
 	@Override
@@ -28,9 +28,9 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 	private static class ProjectEmptyFragment extends SherlockFragment {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-			TextView tv = new TextView(inflater.getContext());
-			tv.setText("Empty view!");
-			return tv;
+			View v=inflater.inflate(R.layout.frag_empty,container,false);
+			v.setBackgroundResource(R.drawable.projects_empty_fragment);
+			return v;
 		}
 	}
 }
