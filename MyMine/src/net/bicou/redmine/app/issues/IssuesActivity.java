@@ -11,14 +11,13 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.google.gson.Gson;
+import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssuesActivity.GetNavigationModeAdapterTask.NavigationModeAdapterCallback;
 import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
 import net.bicou.redmine.app.issues.IssuesOrderingFragment.IssuesOrderSelectionListener;
 import net.bicou.redmine.data.json.Issue;
@@ -32,15 +31,22 @@ import net.bicou.redmine.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IssuesActivity extends SherlockFragmentActivity {
+public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> {
 	int mNavMode;
 	ArrayList<OrderColumn> mCurrentOrder;
-	boolean isSplitScreen;//TODO
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	protected IssuesListFragment createMainFragment(Bundle args) {
+		return IssuesListFragment.newInstance(args);
+	}
 
+	@Override
+	protected IssueFragment createContentFragment(Bundle args) {
+		return IssueFragment.newInstance(args);
+	}
+
+	@Override
+	public Bundle getMainFragmentArgs(Bundle savedInstanceState) {
 		final Intent intent = getIntent();
 
 		final Bundle args, extras;
@@ -71,11 +77,7 @@ public class IssuesActivity extends SherlockFragmentActivity {
 		}
 		args.putParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER, mCurrentOrder);
 
-		// Setup fragments
-		if (savedInstanceState == null) {
-			// Setup list view
-			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, IssuesListFragment.newInstance(args)).commit();
-		}
+		return args;
 	}
 
 	void saveNewColumnsOrder(final ArrayList<OrderColumn> orderColumns) {
@@ -84,7 +86,8 @@ public class IssuesActivity extends SherlockFragmentActivity {
 		PreferencesManager.setString(IssuesActivity.this, IssuesOrderingFragment.KEY_COLUMNS_ORDER, json);
 	}
 
-	NavigationModeAdapterCallback mNavigationModeAdapterCallback = new NavigationModeAdapterCallback() {
+	GetNavigationModeAdapterTask.NavigationModeAdapterCallback mNavigationModeAdapterCallback = new GetNavigationModeAdapterTask.NavigationModeAdapterCallback
+			() {
 		@Override
 		public void onNavigationModeAdapterReady(final IssuesMainFilterAdapter adapter) {
 			mSpinnerAdapter = adapter;

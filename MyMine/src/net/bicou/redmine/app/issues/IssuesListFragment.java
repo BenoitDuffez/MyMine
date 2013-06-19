@@ -155,15 +155,16 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		args.putLong(Constants.KEY_ISSUE_ID, issueId);
 		args.putLong(Constants.KEY_SERVER_ID, serverId);
 
-		final IssueFragment frag = IssueFragment.newInstance(args);
+		((IssuesActivity) getActivity()).selectContent(args);
+		//		final IssueFragment frag = IssueFragment.newInstance(args);
 
 		// Open issue in the right pane
 		// TODO
 		//	if (mIsSplitScreen) {
 		//		getFragmentManager().beginTransaction().replace(android.R.id.content, frag).commit();
 		//	} else {
-		getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		getFragmentManager().beginTransaction().replace(android.R.id.content, frag).addToBackStack("prout").commit();
+		//		getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		//		getFragmentManager().beginTransaction().replace(android.R.id.content, frag).addToBackStack("prout").commit();
 		//	}
 	}
 
