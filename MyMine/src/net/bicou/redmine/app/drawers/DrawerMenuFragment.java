@@ -137,7 +137,6 @@ public class DrawerMenuFragment extends SherlockListFragment {
 		return v;
 	}
 
-
 	@Override
 	public void onListItemClick(final ListView listView, final View v, final int position, final long id) {
 		final Bundle args = new Bundle();

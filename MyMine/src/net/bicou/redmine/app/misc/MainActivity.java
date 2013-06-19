@@ -35,7 +35,6 @@ public class MainActivity extends DrawerActivity {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_drawer);
 
 		showAlphaVersionAlert();
 		final boolean isFirstLaunch = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).getBoolean(KEY_IS_FIRST_LAUNCH, true);
@@ -47,6 +46,7 @@ public class MainActivity extends DrawerActivity {
 			editor.commit();
 		}
 
+		getSupportFragmentManager().beginTransaction().replace(R.id.content, LoadingFragment.newInstance()).commit();
 		getSupportFragmentManager().beginTransaction().replace(R.id.navigation_drawer, new DrawerMenuFragment()).commit();
 	}
 

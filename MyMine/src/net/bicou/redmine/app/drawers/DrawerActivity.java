@@ -7,8 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -26,13 +24,6 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 	View mDrawerMenu;
 	private String mTitle, mTitleDrawer;
 	protected ActionBarDrawerToggle mDrawerToggle;
-
-
-	static class SlidingMenuItemViewsHolder {
-		ImageView icon;
-		TextView text;
-	}
-
 
 	@Override
 	protected void onResume() {
@@ -52,6 +43,19 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 	 */
 	protected Fragment getDrawerFragment() {
 		return new DrawerMenuFragment();
+	}
+
+	int setContentViewCount = 0;
+
+	@Override
+	public void setContentView(int layoutResId) {
+		setContentViewCount++;
+		if (setContentViewCount==1){
+			super.setContentView(layoutResId);
+		}
+		else{
+			throw new IllegalStateException("Don't call setContentView from your activity");
+		}
 	}
 
 	@Override
