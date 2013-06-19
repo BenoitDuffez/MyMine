@@ -31,6 +31,7 @@
     <orderEntry type="module" module-name="Crouton" />
     <orderEntry type="module" module-name="DSLV" />
     <orderEntry type="module" module-name="LVA" />
+    <orderEntry type="module" module-name="SplitActivity" />
   </component>
 </module>
 

@@ -7,6 +7,7 @@
     <mapping directory="$PROJECT_DIR$/vendor/Android-Universal-Image-Loader/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/vendor/Crouton/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/vendor/ListViewAnimations/library" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/vendor/SplitActivity/SplitActivity" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/vendor/aFileChooser/aFileChooser" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/vendor/drag-sort-listview/library" vcs="svn" />
   </component>
