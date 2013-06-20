@@ -8,12 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -23,6 +20,7 @@ import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
 import net.bicou.redmine.app.issues.IssuesOrderingFragment.IssuesOrderSelectionListener;
+import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
@@ -50,16 +48,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	protected Fragment createEmptyFragment(Bundle args) {
-		return new EmptyFragment();
-	}
-
-	private static class EmptyFragment extends SherlockFragment{
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-			View v=inflater.inflate(R.layout.frag_empty,container,false);
-			v.setBackgroundResource(R.drawable.issues_empty_fragment);
-			return v;
-		}
+		return new EmptyFragment(R.drawable.issues_empty_fragment);
 	}
 
 	@Override
