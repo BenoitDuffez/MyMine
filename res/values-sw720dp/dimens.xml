@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="main_pane_margin">12dp</dimen>
+    <dimen name="content_pane_margin">24dp</dimen>
+</resources>
+

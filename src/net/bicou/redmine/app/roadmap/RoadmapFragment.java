@@ -59,6 +59,8 @@ public class RoadmapFragment extends SherlockListFragment implements LoaderManag
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mFragmentView = inflater.inflate(R.layout.frag_roadmap, container, false);
 
+		setHasOptionsMenu(true);
+
 		mVersionName = (TextView) mFragmentView.findViewById(R.id.roadmap_version);
 		mDueDate = (TextView) mFragmentView.findViewById(R.id.roadmap_due_date);
 		mPercentComplete = (TextView) mFragmentView.findViewById(R.id.roadmap_percent_complete);

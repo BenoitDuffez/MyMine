@@ -23,4 +23,6 @@
 
     <integer name="issues_list_item_nb_lines">3</integer>
 
+    <dimen name="main_pane_margin">0dp</dimen>
+
 </resources>

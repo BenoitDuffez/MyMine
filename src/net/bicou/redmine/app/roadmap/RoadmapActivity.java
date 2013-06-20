@@ -2,7 +2,6 @@ package net.bicou.redmine.app.roadmap;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -15,6 +14,7 @@ import net.bicou.redmine.app.ProjectsSpinnerAdapter;
 import net.bicou.redmine.app.RefreshProjectsTask;
 import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter;
 import net.bicou.redmine.app.issues.IssuesOrderingFragment;
+import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.util.L;
@@ -31,6 +31,21 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 		args.putString(RoadmapFragment.KEY_VERSION_JSON, new Gson().toJson(version));
 		selectContent(args);
 		supportInvalidateOptionsMenu();
+	}
+
+	@Override
+	protected RoadmapsListFragment createMainFragment(Bundle args) {
+		return RoadmapsListFragment.newInstance(args);
+	}
+
+	@Override
+	protected RoadmapFragment createContentFragment(Bundle args) {
+		return RoadmapFragment.newInstance(args);
+	}
+
+	@Override
+	protected Fragment createEmptyFragment(Bundle args) {
+		return new EmptyFragment(R.drawable.roadmaps_empty_fragment);
 	}
 
 	@Override
@@ -181,8 +196,9 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 		mCurrentProjectPosition = itemPosition;
 
 		RoadmapsListFragment list = getMainFragment();
-		if (list==null){
-		}else{
+		if (list == null) {
+			showMainFragment(new Bundle());
+		} else {
 			list.updateRoadmapsList();
 		}
 
