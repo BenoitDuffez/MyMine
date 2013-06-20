@@ -5,9 +5,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.gson.Gson;
+import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ProjectsSpinnerAdapter;
@@ -21,57 +22,49 @@ import net.bicou.redmine.util.L;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoadmapActivity extends SherlockFragmentActivity implements RoadmapsListFragment.RoadmapSelectionListener, ActionBar.OnNavigationListener,
-		RoadmapsListFragment.CurrentProjectInfo {
+public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, RoadmapFragment> implements RoadmapsListFragment.RoadmapSelectionListener,
+		ActionBar.OnNavigationListener, RoadmapsListFragment.CurrentProjectInfo {
 	@Override
 	public void onRoadmapSelected(Version version) {
 		L.d("");
-		int fragId = android.R.id.content;//TODO mIsSplitScreen ? R.id.roadmaps_pane_roadmap : R.id.roadmaps_pane_list;
 		Bundle args = new Bundle();
 		args.putString(RoadmapFragment.KEY_VERSION_JSON, new Gson().toJson(version));
-		getSupportFragmentManager().beginTransaction().replace(fragId, RoadmapFragment.newInstance(args)).addToBackStack("prout").commit();
+		selectContent(args);
+		supportInvalidateOptionsMenu();
 	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initProjectsSpinner(savedInstanceState);
+	}
 
-		//TODO mIsSplitScreen = findViewById(R.id.roadmaps_pane_roadmap) != null;
-		final Bundle args = new Bundle();
-
-		// Setup fragments
-		if (savedInstanceState == null) {
-			// Setup list view
-			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, RoadmapsListFragment.newInstance(args)).commit();
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		// Show the "sort issues" item only if the issues list is displayed
+		MenuItem sortIssues = menu.findItem(R.id.menu_roadmap_sort_issues);
+		if (sortIssues != null) {
+			sortIssues.setVisible(getContentFragment() != null);
 		}
-
-		// Screen rotation on 7" tablets
-		//		if (savedInstanceState != null && mIsSplitScreen != savedInstanceState.getBoolean(KEY_IS_SPLIT_SCREEN)) {
-		//			final Fragment f = getSupportFragmentManager().findFragmentById(R.id.roadmaps_pane_list);
-		//			if (f != null && f instanceof RoadmapsListFragment) {
-		//				// TODO ((RoadmapsListFragment) f).updateSplitScreenState(mIsSplitScreen);
-		//			}
-		//		}
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final int id = android.R.id.content; //TODO mIsSplitScreen ? android.R.id.content : android.R.id.content;
-		final Fragment frag = getSupportFragmentManager().findFragmentById(id);
 		L.d("");
 		switch (item.getItemId()) {
 		case R.id.menu_roadmap_sort_issues:
-			if (frag instanceof RoadmapFragment) {
-				final RoadmapFragment rf = (RoadmapFragment) frag;
+			final RoadmapFragment rf = getContentFragment();
+			if (rf == null) {
+				supportInvalidateOptionsMenu();
+			} else {
+				// Display the issues ordering popup
 				final IssuesOrderingFragment issuesOrder = IssuesOrderingFragment.newInstance(rf.getCurrentOrder());
 				issuesOrder.setOrderSelectionListener(new IssuesOrderingFragment.IssuesOrderSelectionListener() {
 					@Override
 					public void onOrderColumnsSelected(final ArrayList<IssuesOrderColumnsAdapter.OrderColumn> orderColumns) {
+						// Upon selection, update the roadmap fragment issues ordering
 						rf.setNewIssuesOrder(orderColumns);
-
-						final FragmentManager fm = getSupportFragmentManager();
-						final Fragment frag = fm.findFragmentById(android.R.id.content);
 					}
 				});
 				issuesOrder.show(getSupportFragmentManager(), "issues_order");
@@ -187,12 +180,10 @@ public class RoadmapActivity extends SherlockFragmentActivity implements Roadmap
 
 		mCurrentProjectPosition = itemPosition;
 
-		FragmentManager fm = getSupportFragmentManager();
-		Fragment f = fm.findFragmentById(android.R.id.content);
-		if (f != null && f instanceof RoadmapsListFragment) {
-			((RoadmapsListFragment) f).updateRoadmapsList();
-		} else {
-			fm.beginTransaction().replace(android.R.id.content, RoadmapsListFragment.newInstance(new Bundle())).commit();
+		RoadmapsListFragment list = getMainFragment();
+		if (list==null){
+		}else{
+			list.updateRoadmapsList();
 		}
 
 		return true;
