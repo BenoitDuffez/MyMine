@@ -11,9 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.projects.ProjectsActivity;
@@ -45,6 +43,8 @@ public class WelcomeFragment extends Fragment {
 		int action2IconId;
 		int action2TextId;
 		Intent action2Intent;
+
+		OnClickListener mOnClickListener;
 
 		public OverviewCard setTitle(final int title, final int subtitle, final int image) {
 			titleTextId = title;
@@ -83,7 +83,7 @@ public class WelcomeFragment extends Fragment {
 			image.setImageResource(imageResId);
 
 			// First action icon
-			OnClickListener ocl = new OnClickListener() {
+			mOnClickListener = new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					try {
@@ -95,10 +95,10 @@ public class WelcomeFragment extends Fragment {
 			};
 			action = (TextView) card.findViewById(R.id.overview_card_action);
 			action.setText(actionTextId);
-			action.setOnClickListener(ocl);
-			card.setOnClickListener(ocl);
-			card.findViewById(R.id.overview_card_image_holder).setOnClickListener(ocl);
-			card.findViewById(R.id.overview_card_image).setOnClickListener(ocl);
+			action.setOnClickListener(mOnClickListener);
+			card.setOnClickListener(mOnClickListener);
+			card.findViewById(R.id.overview_card_image_holder).setOnClickListener(mOnClickListener);
+			card.findViewById(R.id.overview_card_image).setOnClickListener(mOnClickListener);
 
 			actionIcon = (ImageView) card.findViewById(R.id.overview_card_action_image);
 			actionIcon.setImageResource(actionIconId);
@@ -126,6 +126,42 @@ public class WelcomeFragment extends Fragment {
 			}
 
 			return card;
+		}
+
+		public OnClickListener getOnClickListener() {
+			return mOnClickListener;
+		}
+	}
+
+	private static class CardsAdapter extends BaseAdapter {
+		private List<OverviewCard> mCards;
+
+		public CardsAdapter(List<OverviewCard> cards) {
+			mCards = cards;
+		}
+
+		@Override
+		public int getCount() {
+			return mCards == null ? 0 : mCards.size();
+		}
+
+		@Override
+		public OverviewCard getItem(int i) {
+			return i >= getCount() || i < 0 ? null : mCards.get(i);
+		}
+
+		@Override
+		public long getItemId(int i) {
+			return i;
+		}
+
+		@Override
+		public View getView(int i, View view, ViewGroup viewGroup) {
+			OverviewCard item = getItem(i);
+			if (item != null) {
+				return item.getView(viewGroup.getContext(), viewGroup);
+			}
+			return null;
 		}
 	}
 
@@ -169,10 +205,22 @@ public class WelcomeFragment extends Fragment {
 				.addAction(R.drawable.icon_add, R.string.overview_card_servers_action2, HelpSetupFragment.getNewAccountActivityIntent()));
 
 		// Add the cards views
-		for (final OverviewCard card : mCards) {
-			nowLayout.addView(card.getView(getActivity(), container));
-			nowLayout.addView(getSpacer());
-		}
+		//		for (final OverviewCard card : mCards) {
+		//			nowLayout.addView(card.getView(getActivity(), container));
+		//			nowLayout.addView(getSpacer());
+		//		}
+		final CardsAdapter adapter = new CardsAdapter(mCards);
+		GridView gv = (GridView) v.findViewById(R.id.overview_nowlayout);
+		gv.setAdapter(adapter);
+		gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+				OverviewCard card = adapter.getItem(i);
+				if (card != null) {
+					card.getOnClickListener().onClick(view);
+				}
+			}
+		});
 
 		refreshUI();
 
@@ -208,7 +256,7 @@ public class WelcomeFragment extends Fragment {
 		}
 		final String issuesSubTitle = res.getString(R.string.overview_card_issues_subtitle);
 		final int whereId = isAnon ? R.string.overview_card_issues_anonymous : R.string.overview_card_issues_logged;
-		((TextView) nowLayout.findViewById(RESID_ISSUES)).setText(String.format(MessageFormat.format(issuesSubTitle, numIssues), getString(whereId)));
+//		((TextView) nowLayout.findViewById(RESID_ISSUES)).setText(String.format(MessageFormat.format(issuesSubTitle, numIssues), getString(whereId)));
 
 		// Load projects
 		final ProjectsDbAdapter pdb = new ProjectsDbAdapter(getActivity());
@@ -216,12 +264,12 @@ public class WelcomeFragment extends Fragment {
 		final int numProjects = pdb.getNumProjects();
 		pdb.close();
 		final String projectsSubTitle = MessageFormat.format(res.getString(R.string.overview_card_projects_subtitle), numProjects);
-		((TextView) nowLayout.findViewById(RESID_PROJECTS)).setText(projectsSubTitle);
+//		((TextView) nowLayout.findViewById(RESID_PROJECTS)).setText(projectsSubTitle);
 
 		// Load servers
 		final int numServers = sdb.getNumServers();
 		sdb.close();
 		final String serversSubTitle = res.getString(R.string.overview_card_servers_subtitle);
-		((TextView) nowLayout.findViewById(RESID_SERVERS)).setText(MessageFormat.format(serversSubTitle, numServers));
+//		((TextView) nowLayout.findViewById(RESID_SERVERS)).setText(MessageFormat.format(serversSubTitle, numServers));
 	}
 }

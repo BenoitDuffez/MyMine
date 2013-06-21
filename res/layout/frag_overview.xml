@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="@dimen/main_layout_padding" >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00F"
+            android:layout_margin="@dimen/main_layout_padding">
 
-    <LinearLayout
-        android:id="@+id/overview_nowlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/main_layout_padding"
-        android:orientation="vertical" />
+    <GridView
+            android:id="@+id/overview_nowlayout"
+            android:background="#0FF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:verticalSpacing="10dp"
+            android:horizontalSpacing="10dp"
+            android:stretchMode="spacingWidthUniform"
+            
+            android:numColumns="@integer/overview_num_columns"
+            android:layout_margin="@dimen/main_layout_padding"
+            />
 
 </ScrollView>
