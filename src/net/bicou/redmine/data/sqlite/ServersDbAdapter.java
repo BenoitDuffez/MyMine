@@ -1,12 +1,12 @@
 package net.bicou.redmine.data.sqlite;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.bicou.redmine.data.Server;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import net.bicou.redmine.data.Server;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServersDbAdapter extends DbAdapter {
 	public static final String TABLE_SERVERS = "servers";
@@ -27,13 +27,13 @@ public class ServersDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 * 
+	 *
 	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
-			"CREATE TABLE " + TABLE_SERVERS + "(" + KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_SERVER_URL + "," + KEY_API_KEY + ","
-					+ KEY_USER_ID + "," + KEY_AUTH_USERNAME + "," + KEY_AUTH_PASSWORD + ")",
+				"CREATE TABLE " + TABLE_SERVERS + "(" + KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_SERVER_URL + "," + KEY_API_KEY + "," +
+						"" + KEY_USER_ID + "," + KEY_AUTH_USERNAME + "," + KEY_AUTH_PASSWORD + ")",
 		};
 	}
 
@@ -64,6 +64,8 @@ public class ServersDbAdapter extends DbAdapter {
 		values.put(KEY_SERVER_URL, server.serverUrl);
 		values.put(KEY_API_KEY, server.apiKey);
 		values.put(KEY_USER_ID, server.user == null ? 0 : server.user.id);
+		values.put(KEY_AUTH_USERNAME, server.authUsername == null ? "" : server.authUsername);
+		values.put(KEY_AUTH_PASSWORD, server.authPassword == null ? "" : server.authPassword);
 		return mDb.insert(TABLE_SERVERS, "", values);
 	}
 
@@ -82,11 +84,11 @@ public class ServersDbAdapter extends DbAdapter {
 
 	public long getServerId(final String serverUrl) {
 		final String[] cols = {
-			KEY_ROWID
+				KEY_ROWID
 		};
 		final String cond = KEY_SERVER_URL + " = ?";
 		final String[] args = {
-			serverUrl
+				serverUrl
 		};
 		final Cursor c = mDb.query(TABLE_SERVERS, cols, cond, args, null, null, null);
 
@@ -104,7 +106,7 @@ public class ServersDbAdapter extends DbAdapter {
 		final String[] cols = null;
 		final String cond = KEY_SERVER_URL + " = ?";
 		final String[] args = {
-			serverUrl
+				serverUrl
 		};
 		final Cursor c = mDb.query(TABLE_SERVERS, cols, cond, args, null, null, null);
 
@@ -130,7 +132,7 @@ public class ServersDbAdapter extends DbAdapter {
 
 	public int getNumServers() {
 		final Cursor c = mDb.query(TABLE_SERVERS, new String[] {
-			"COUNT(*)"
+				"COUNT(*)"
 		}, null, null, null, null, null);
 
 		int nb = 0;
