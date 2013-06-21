@@ -32,6 +32,7 @@
     <orderEntry type="module" module-name="DSLV" />
     <orderEntry type="module" module-name="LVA" />
     <orderEntry type="module" module-name="SplitActivity" />
+    <orderEntry type="module" module-name="StaggeredGridView" />
   </component>
 </module>
 
