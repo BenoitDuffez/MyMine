@@ -2,6 +2,7 @@ package net.bicou.redmine.app.misc;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -27,11 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WelcomeFragment extends Fragment {
-	private static final int RESID_ISSUES = 0x1B00B;
-	private static final int RESID_PROJECTS = 0x2B00B5;
-	private static final int RESID_SERVERS = 0x3B00B5;
-
-
 	public static WelcomeFragment newInstance(final Bundle args) {
 		final WelcomeFragment f = new WelcomeFragment();
 		f.setArguments(args);
@@ -39,6 +35,24 @@ public class WelcomeFragment extends Fragment {
 	}
 
 	StaggeredGridView mStaggeredGridView;
+	List<OverviewCard> mCards = new ArrayList<OverviewCard>();
+
+	final int ID_PROJECTS = 10, ID_ROADMAPS = 11;
+	final int ID_SERVERS_ADD = 20, ID_SYNC = 21;
+	CardsAdapter.CardActionCallback mCardsActionsCallback = new CardsAdapter.CardActionCallback() {
+		@Override
+		public void onActionSelected(int actionId) {
+			switch (actionId) {
+			case ID_ROADMAPS:
+				startActivity(new Intent(getActivity(), RoadmapActivity.class));
+				break;
+
+			case ID_SERVERS_ADD:
+				startActivity(HelpSetupFragment.getNewAccountActivityIntent());
+				break;
+			}
+		}
+	};
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -46,32 +60,8 @@ public class WelcomeFragment extends Fragment {
 		L.d("");
 		mStaggeredGridView = (StaggeredGridView) v.findViewById(R.id.overview_container);
 
-		Intent intent;
-		List<OverviewCard> cards = new ArrayList<OverviewCard>();
-
-		// Issues
-		intent = new Intent(getActivity(), IssuesActivity.class);
-		cards.add(new OverviewCard() //
-				.setTitle(R.string.overview_card_issues_title, RESID_ISSUES, R.drawable.card_issues) //
-				.addAction(R.drawable.icon_issues, R.string.overview_card_issues_action, intent));
-
-		// Projects
-		intent = new Intent(getActivity(), ProjectsActivity.class);
-		cards.add(new OverviewCard() //
-				.setTitle(R.string.overview_card_projects_title, RESID_PROJECTS, R.drawable.card_project) //
-				.addAction(R.drawable.icon_projects, R.string.overview_card_projects_action, intent) //
-				.addAction(R.drawable.icon_roadmaps, R.string.overview_card_projects_action2, new Intent(getActivity(), RoadmapActivity.class)));
-
-		// Servers
-		intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
-		intent.putExtra(Settings.EXTRA_AUTHORITIES, SyncUtils.SYNC_AUTHORITIES);
-		cards.add(new OverviewCard() //
-				.setTitle(R.string.overview_card_servers_title, RESID_SERVERS, R.drawable.card_server) //
-				.addAction(R.drawable.icon_servers, R.string.overview_card_servers_action, intent) //
-				.addAction(R.drawable.icon_add, R.string.overview_card_servers_action2, HelpSetupFragment.getNewAccountActivityIntent()));
-
 		// Add the cards views
-		final CardsAdapter adapter = new CardsAdapter(cards);
+		final CardsAdapter adapter = new CardsAdapter(mCards, mCardsActionsCallback);
 		mStaggeredGridView.setAdapter(adapter);
 		adapter.notifyDataSetChanged();
 		mStaggeredGridView.setOnItemClickListener(new StaggeredGridView.OnItemClickListener() {
@@ -79,18 +69,31 @@ public class WelcomeFragment extends Fragment {
 			public void onItemClick(StaggeredGridView parent, View view, int position, long id) {
 				OverviewCard card = adapter.getItem(position);
 				if (card != null) {
-					card.getOnClickListener().onClick(view);
+					startActivity(card.getDefaultAction());
 				}
 			}
 		});
 
-		refreshUI();
-		v.invalidate();
+
+		new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... voids) {
+				buildCards();
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				adapter.notifyDataSetChanged();
+			}
+		}.execute();
 
 		return v;
 	}
 
-	public void refreshUI() {
+	private void buildCards() {
+		String issuesDescription, projectsDescription, serversDescription;
+
 		final Resources res = getResources();
 		final ServersDbAdapter sdb = new ServersDbAdapter(getActivity());
 		sdb.open();
@@ -99,34 +102,50 @@ public class WelcomeFragment extends Fragment {
 		final List<Server> servers = sdb.selectAll();
 		int numIssues = 0;
 		boolean isAnon = true;
-		final IssuesDbAdapter idb = new IssuesDbAdapter(getActivity());
-		idb.open();
-		for (final Server server : servers) {
-			if (server.user != null) {
-				isAnon = false;
-				numIssues += idb.countIssues(server, server.user);
-			}
-		}
+		final IssuesDbAdapter idb = new IssuesDbAdapter(sdb);
 		if (isAnon) {
 			numIssues = idb.countAll();
+		} else {
+			for (final Server server : servers) {
+				if (server.user != null) {
+					isAnon = false;
+					numIssues += idb.countIssues(server, server.user);
+				}
+			}
 		}
+
+		// Build description strings
 		final String issuesSubTitle = res.getString(R.string.overview_card_issues_subtitle);
 		final int whereId = isAnon ? R.string.overview_card_issues_anonymous : R.string.overview_card_issues_logged;
-		//		((TextView) mStaggeredGridView.findViewById(RESID_ISSUES)).setText(String.format(MessageFormat.format(issuesSubTitle, numIssues),
-		// getString(whereId)));
+		issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssues), getString(whereId));
 
 		// Load projects
-		final ProjectsDbAdapter pdb = new ProjectsDbAdapter(getActivity());
-		pdb.open();
+		final ProjectsDbAdapter pdb = new ProjectsDbAdapter(sdb);
 		final int numProjects = pdb.getNumProjects();
-		pdb.close();
-		final String projectsSubTitle = MessageFormat.format(res.getString(R.string.overview_card_projects_subtitle), numProjects);
-		//		((TextView) mStaggeredGridView.findViewById(RESID_PROJECTS)).setText(projectsSubTitle);
+		projectsDescription = MessageFormat.format(res.getString(R.string.overview_card_projects_subtitle), numProjects);
 
 		// Load servers
 		final int numServers = sdb.getNumServers();
 		sdb.close();
 		final String serversSubTitle = res.getString(R.string.overview_card_servers_subtitle);
-		//		((TextView) mStaggeredGridView.findViewById(RESID_SERVERS)).setText(MessageFormat.format(serversSubTitle, numServers));
+		serversDescription = MessageFormat.format(serversSubTitle, numServers);
+
+		// Issues
+		mCards.add(new OverviewCard(new Intent(getActivity(), IssuesActivity.class)) //
+				.setContent(R.string.overview_card_issues_title, issuesDescription, R.drawable.card_issues, R.drawable.icon_issues));
+
+		// Projects
+		mCards.add(new OverviewCard(new Intent(getActivity(), ProjectsActivity.class)) //
+				.setContent(R.string.overview_card_projects_title, projectsDescription, R.drawable.card_project, R.drawable.icon_projects) //
+						//				.addAction(ID_PROJECTS, R.string.overview_card_projects_action) //
+				.addAction(ID_ROADMAPS, R.string.overview_card_projects_action2));
+
+		// Servers
+		Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
+		intent.putExtra(Settings.EXTRA_AUTHORITIES, SyncUtils.SYNC_AUTHORITIES);
+		mCards.add(new OverviewCard(intent) //
+				.setContent(R.string.overview_card_servers_title, serversDescription, R.drawable.card_server, R.drawable.icon_servers) //
+						//				.addAction(ID_SYNC, R.string.overview_card_servers_sync) //
+				.addAction(ID_SERVERS_ADD, R.string.overview_card_servers_add));
 	}
 }

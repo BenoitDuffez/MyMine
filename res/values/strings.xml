@@ -103,8 +103,8 @@
     <string name="overview_card_servers_subtitle">{0,choice,0#There is no synced server yet. Have you set up an account?|1#One server is synced with this app|1&lt;{0}
         servers are synced with this app}
     </string>
-    <string name="overview_card_servers_action">Manage servers and sync</string>
-    <string name="overview_card_servers_action2">Add new server</string>
+    <string name="overview_card_servers_sync">Manage servers and sync</string>
+    <string name="overview_card_servers_add">Add new server</string>
 
     <!-- Issue-related -->
     <string name="issue_listview_target_version">Ver: %1$s</string>
