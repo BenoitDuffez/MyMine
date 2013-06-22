@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/testtt"
                 android:background="@drawable/issueslist_item_background_indicator"
                 android:minHeight="60dp"
                 android:padding="8dp">
