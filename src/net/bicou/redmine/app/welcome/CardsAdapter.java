@@ -22,9 +22,13 @@ public class CardsAdapter extends BaseAdapter {
 		public void onActionSelected(int actionId);
 	}
 
-	public CardsAdapter(List<OverviewCard> cards, CardActionCallback callback) {
-		mCards = cards;
+	public CardsAdapter(CardActionCallback callback) {
 		mCallback = callback;
+	}
+
+	public void setData(List<OverviewCard> cards) {
+		mCards = cards;
+		notifyDataSetChanged();
 	}
 
 	@Override
@@ -43,6 +47,7 @@ public class CardsAdapter extends BaseAdapter {
 	}
 
 	private static class CardViewsHolder {
+		View layout;
 		TextView title, description;
 		ImageView image, icon, overflowIcon;
 		ViewGroup overflowMenu;
@@ -66,6 +71,14 @@ public class CardsAdapter extends BaseAdapter {
 		}
 	};
 
+	private View.OnClickListener mItemClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View view) {
+			OverviewCard card = (OverviewCard) view.getTag();
+			view.getContext().startActivity(card.getDefaultAction());
+		}
+	};
+
 	public void bindView(final LayoutInflater layoutInflater, final CardViewsHolder holder, final OverviewCard card) {
 		holder.title.setText(card.titleTextId);
 		holder.description.setText(card.description);
@@ -79,6 +92,9 @@ public class CardsAdapter extends BaseAdapter {
 
 		holder.overflowIcon.setTag(holder.overflowMenu);
 		holder.overflowIcon.setOnClickListener(mOverflowMenuOnClickListener);
+
+		holder.layout.setTag(card);
+		holder.layout.setOnClickListener(mItemClickListener);
 
 		if (hasActions) {
 			View actionView;
@@ -103,6 +119,7 @@ public class CardsAdapter extends BaseAdapter {
 		if (convertView == null) {
 			card = layoutInflater.inflate(R.layout.welcome_card, viewGroup, false);
 			holder = new CardViewsHolder();
+			holder.layout = card;
 			holder.title = (TextView) card.findViewById(R.id.overview_card_title);
 			holder.description = (TextView) card.findViewById(R.id.overview_card_description);
 			holder.image = (ImageView) card.findViewById(R.id.overview_card_image);

@@ -49,7 +49,6 @@
             android:layout_toRightOf="@+id/overview_card_icon"
             android:layout_below="@+id/overview_card_image"
             android:textColor="#666666"
-            android:background="@drawable/card_foreground"
             android:padding="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
