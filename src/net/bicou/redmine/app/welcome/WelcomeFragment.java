@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.misc;
+package net.bicou.redmine.app.welcome;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -11,10 +11,9 @@ import android.view.ViewGroup;
 import com.origamilabs.library.views.StaggeredGridView;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssuesActivity;
+import net.bicou.redmine.app.misc.HelpSetupFragment;
 import net.bicou.redmine.app.projects.ProjectsActivity;
 import net.bicou.redmine.app.roadmap.RoadmapActivity;
-import net.bicou.redmine.app.welcome.CardsAdapter;
-import net.bicou.redmine.app.welcome.OverviewCard;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
