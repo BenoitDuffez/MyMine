@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/overview_card_overflow_action"
+        android:background="@drawable/overview_card_overflow_menu_background"
+        android:gravity="center_vertical"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text="Add new server"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"/>
