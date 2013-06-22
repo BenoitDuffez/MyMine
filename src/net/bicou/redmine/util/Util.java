@@ -4,38 +4,15 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
-import com.google.gson.Gson;
-import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter;
-import net.bicou.redmine.app.issues.IssuesOrderingFragment;
 import net.java.textilej.parser.MarkupParser;
 import net.java.textilej.parser.builder.HtmlDocumentBuilder;
 import net.java.textilej.parser.markup.textile.TextileDialect;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
 
 public class Util {
-	public static ArrayList<IssuesOrderColumnsAdapter.OrderColumn> getPreferredIssuesOrder(Context ctx) {
-		ArrayList<IssuesOrderColumnsAdapter.OrderColumn> mCurrentOrder = null;
-
-		final String json = PreferencesManager.getString(ctx, IssuesOrderingFragment.KEY_COLUMNS_ORDER, null);
-		if (!TextUtils.isEmpty(json)) {
-			try {
-				mCurrentOrder = new Gson().fromJson(json, IssuesOrderingFragment.ORDER_TYPE);
-			} catch (final Exception e) {
-				PreferencesManager.setString(ctx, IssuesOrderingFragment.KEY_COLUMNS_ORDER, null);
-			}
-		}
-		if (mCurrentOrder == null) {
-			mCurrentOrder = IssuesOrderColumnsAdapter.OrderColumn.getDefaultOrder();
-		}
-
-		return mCurrentOrder;
-	}
-
 	public static String htmlFromTextile(final String textile) {
 		if (textile == null) {
 			return "";

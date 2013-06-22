@@ -17,6 +17,7 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.app.drawers.DrawerMenuFragment;
 import net.bicou.redmine.app.settings.SettingsActivity;
+import net.bicou.redmine.app.welcome.WelcomeFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;

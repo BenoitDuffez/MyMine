@@ -3,7 +3,7 @@ package net.bicou.redmine.app.issues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
+import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssuesList;
@@ -35,21 +35,13 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 	};
 	private final IssuesDbAdapter mHelper;
 	IssuesListFilter mFilter;
-	List<OrderColumn> mColumnsOrder;
+	IssuesOrder mColumnsOrder;
 
 	public IssuesListCursorLoader(final Context context, final IssuesDbAdapter helper, final Bundle args) {
 		super(context);
 		mHelper = helper;
-		if (args != null) {
-			if (args.getBoolean(IssuesListFilter.KEY_HAS_FILTER, false)) {
-				mFilter = new IssuesListFilter(args);
-			}
-			mColumnsOrder = args.getParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER);
-		}
-
-		if (mColumnsOrder == null) {
-			mColumnsOrder = OrderColumn.getDefaultOrder();
-		}
+		mFilter = IssuesListFilter.fromBundle(args);
+		mColumnsOrder = IssuesOrder.fromBundle(args);
 	}
 
 	@Override
@@ -64,7 +56,7 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 		case ALL:
 		case SEARCH:
 		case VERSION:
-			return mHelper.selectAllCursor(mFilter, COLUMN_SELECTION, mColumnsOrder);
+			return mHelper.selectAllCursor(mFilter, COLUMN_SELECTION, mColumnsOrder.getColumns());
 
 		case QUERY:
 			return selectIssuesFromQuery();
@@ -87,7 +79,7 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 		// Update issues
 		final List<Long> issueIds = updateMatchingIssues(ctx, server);
 
-		return mHelper.selectAllCursor(server, issueIds, COLUMN_SELECTION, mColumnsOrder);
+		return mHelper.selectAllCursor(server, issueIds, COLUMN_SELECTION, mColumnsOrder.getColumns());
 	}
 
 	/**

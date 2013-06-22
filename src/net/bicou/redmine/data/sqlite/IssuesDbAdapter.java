@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.issues.IssuesListFilter.FilterType;
-import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
+import net.bicou.redmine.app.issues.order.OrderColumn;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Reference;

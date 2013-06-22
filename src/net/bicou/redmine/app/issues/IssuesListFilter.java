@@ -70,4 +70,11 @@ public class IssuesListFilter {
 		args.putLong(KEY_FILTER_ID, id);
 		args.putString(KEY_FILTER_SEARCH_TERMS, searchQuery);
 	}
+
+	public static IssuesListFilter fromBundle(Bundle args) {
+		if (args.getBoolean(KEY_HAS_FILTER)) {
+			return new IssuesListFilter(args);
+		}
+		return FILTER_ALL;
+	}
 }

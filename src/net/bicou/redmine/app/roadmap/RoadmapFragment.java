@@ -19,15 +19,16 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.*;
+import net.bicou.redmine.app.issues.IssueFragment;
+import net.bicou.redmine.app.issues.IssuesListCursorAdapter;
+import net.bicou.redmine.app.issues.IssuesListCursorLoader;
+import net.bicou.redmine.app.issues.IssuesListFilter;
+import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
-import net.bicou.redmine.util.PreferencesManager;
 import net.bicou.redmine.util.Util;
-
-import java.util.ArrayList;
 
 /**
  * Created by bicou on 28/05/13.
@@ -44,7 +45,7 @@ public class RoadmapFragment extends SherlockListFragment implements LoaderManag
 	IssuesListCursorAdapter mAdapter;
 
 	long mCurrentServerId;
-	ArrayList<IssuesOrderColumnsAdapter.OrderColumn> mCurrentOrder;
+	IssuesOrder mCurrentOrder;
 	IssuesListFilter mFilter;
 
 	public static final String KEY_VERSION_JSON = "net.bicou.redmine.app.roadmap.Version";
@@ -94,9 +95,9 @@ public class RoadmapFragment extends SherlockListFragment implements LoaderManag
 				// Get issue sort order
 				if (mCurrentOrder == null) {
 					if (savedInstanceState == null) {
-						mCurrentOrder = Util.getPreferredIssuesOrder(getActivity());
+						mCurrentOrder = IssuesOrder.fromPreferences(getActivity());
 					} else {
-						mCurrentOrder = savedInstanceState.getParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER);
+						mCurrentOrder = IssuesOrder.fromBundle(savedInstanceState);
 					}
 				}
 
@@ -208,19 +209,22 @@ public class RoadmapFragment extends SherlockListFragment implements LoaderManag
 		args.putBoolean(IssuesListFilter.KEY_HAS_FILTER, true);
 		mFilter.saveTo(args);
 
-		args.putParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER, mCurrentOrder);
+		if (mCurrentOrder != null) {
+			mCurrentOrder.saveTo(args);
+		}
 
 		getLoaderManager().initLoader(0, args, this);
 	}
 
-	public ArrayList<IssuesOrderColumnsAdapter.OrderColumn> getCurrentOrder() {
+	public IssuesOrder getCurrentOrder() {
 		return mCurrentOrder;
 	}
 
-	public void setNewIssuesOrder(ArrayList<IssuesOrderColumnsAdapter.OrderColumn> newOrder) {
+	public void setNewIssuesOrder(IssuesOrder newOrder) {
 		mCurrentOrder = newOrder;
-		final String json = new Gson().toJson(mCurrentOrder, IssuesOrderingFragment.ORDER_TYPE);
-		PreferencesManager.setString(getActivity(), IssuesOrderingFragment.KEY_COLUMNS_ORDER, json);
+		if (mCurrentOrder != null) {
+			mCurrentOrder.saveToPreferences(getActivity());
+		}
 
 		restartLoader();
 	}
@@ -228,8 +232,8 @@ public class RoadmapFragment extends SherlockListFragment implements LoaderManag
 
 	private void restartLoader() {
 		final Bundle args = new Bundle();
-		if (mCurrentOrder != null && mCurrentOrder.size() > 0) {
-			args.putParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER, mCurrentOrder);
+		if (mCurrentOrder != null) {
+			mCurrentOrder.saveTo(args);
 		}
 		if (mFilter != null) {
 			args.putBoolean(IssuesListFilter.KEY_HAS_FILTER, true);

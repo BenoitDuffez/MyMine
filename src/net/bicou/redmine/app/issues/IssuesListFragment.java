@@ -1,6 +1,5 @@
 package net.bicou.redmine.app.issues;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,30 +11,25 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
+import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 
-import java.util.ArrayList;
-
-public class IssuesListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {//TODO }, SplitScreenFragmentConfigurationChangesListener {
+public class IssuesListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {
 	View mFragmentView;
 
 	private IssuesListCursorAdapter mAdapter;
 	private IssuesDbAdapter mIssuesDbAdapter;
 
-	//TODO boolean mIsSplitScreen;
-	boolean mHasFilter;
 	boolean mHasSearchQuery;
 
 	IssuesListFilter mFilter;
-	ArrayList<OrderColumn> mColumnsOrder;
+	IssuesOrder mIssuesOrder;
 
 	public static IssuesListFragment newInstance(final Bundle args) {
 		final IssuesListFragment frag = new IssuesListFragment();
@@ -48,35 +42,44 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		super.onCreate(savedInstanceState);
 
 		final Bundle args = getArguments();
-		//TODO mIsSplitScreen = args.getBoolean(SplitScreenBehavior.KEY_IS_SPLIT_SCREEN);
-		mHasFilter = args.getBoolean(IssuesListFilter.KEY_HAS_FILTER, false);
-		mHasSearchQuery = args.containsKey(IssuesOrderingFragment.KEY_COLUMNS_ORDER);
-		final boolean emptyLoader = mHasFilter == false && mHasSearchQuery == false;
+		if (savedInstanceState != null && savedInstanceState.getBoolean(IssuesListFilter.KEY_HAS_FILTER)) {
+			mFilter = IssuesListFilter.fromBundle(savedInstanceState);
+		} else {
+			mFilter = IssuesListFilter.fromBundle(args);
+		}
 
-		final Activity activity = getActivity();
-		activity.setTitle(R.string.title_issues);
-
-		mAdapter = new IssuesListCursorAdapter(activity, null, true);
+		mAdapter = new IssuesListCursorAdapter(getActivity(), null, true);
 		setListAdapter(mAdapter);
-		getLoaderManager().initLoader(0, emptyLoader ? null : args, this);
+		getLoaderManager().initLoader(0, args, this);
 
 		setHasOptionsMenu(true);
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		final int navMode = mHasFilter ? ActionBar.NAVIGATION_MODE_STANDARD : ActionBar.NAVIGATION_MODE_LIST;
-		getSherlockActivity().getSupportActionBar().setNavigationMode(navMode);
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (mIssuesOrder != null) {
+			mIssuesOrder.saveTo(outState);
+		}
+		if (mFilter != null) {
+			mFilter.saveTo(outState);
+		}
 	}
+	//
+	//	@Override
+	//	public void onResume() {
+	//		super.onResume();
+	//		final int navMode = mHasFilter ? ActionBar.NAVIGATION_MODE_STANDARD : ActionBar.NAVIGATION_MODE_LIST;
+	//		getSherlockActivity().getSupportActionBar().setNavigationMode(navMode);
+	//	}
 
 	public void updateFilter(final IssuesListFilter filter) {
 		mFilter = filter;
 		restartLoader();
 	}
 
-	public void updateColumnsOrder(final ArrayList<OrderColumn> order) {
-		mColumnsOrder = order;
+	public void updateColumnsOrder(final IssuesOrder order) {
+		mIssuesOrder = order;
 		restartLoader();
 	}
 
@@ -85,8 +88,8 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		if (mFilter != null) {
 			mFilter.saveTo(args);
 		}
-		if (mColumnsOrder != null && mColumnsOrder.size() > 0) {
-			args.putParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER, mColumnsOrder);
+		if (mIssuesOrder != null && !mIssuesOrder.isEmpty()) {
+			mIssuesOrder.saveTo(args);
 		}
 		getLoaderManager().restartLoader(0, args, this);
 	}

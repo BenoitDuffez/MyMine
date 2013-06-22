@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
@@ -15,26 +14,24 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
-import com.google.gson.Gson;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
-import net.bicou.redmine.app.issues.IssuesOrderingFragment.IssuesOrderSelectionListener;
+import net.bicou.redmine.app.issues.order.IssuesOrder;
+import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
+import net.bicou.redmine.app.issues.order.IssuesOrderingFragment.IssuesOrderSelectionListener;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
-import net.bicou.redmine.util.PreferencesManager;
-import net.bicou.redmine.util.Util;
+import net.bicou.redmine.util.L;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> {
 	int mNavMode;
-	ArrayList<OrderColumn> mCurrentOrder;
+	IssuesOrder mCurrentOrder;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -76,23 +73,27 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		// Get issue sort order
 		if (mCurrentOrder == null) {
 			if (savedInstanceState == null) {
-				mCurrentOrder = Util.getPreferredIssuesOrder(this);
+				mCurrentOrder = IssuesOrder.fromPreferences(this);
 			} else {
-				mCurrentOrder = savedInstanceState.getParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER);
+				mCurrentOrder = IssuesOrder.fromBundle(savedInstanceState);
 			}
 		}
-		args.putParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER, mCurrentOrder);
+
+		if (mCurrentOrder != null) {
+			mCurrentOrder.saveTo(args);
+		}
 
 		return args;
 	}
 
-	void saveNewColumnsOrder(final ArrayList<OrderColumn> orderColumns) {
+	void saveNewColumnsOrder(final IssuesOrder orderColumns) {
 		mCurrentOrder = orderColumns;
-		final String json = new Gson().toJson(mCurrentOrder, IssuesOrderingFragment.ORDER_TYPE);
-		PreferencesManager.setString(IssuesActivity.this, IssuesOrderingFragment.KEY_COLUMNS_ORDER, json);
+		if (mCurrentOrder != null) {
+			mCurrentOrder.saveToPreferences(this);
+		}
 	}
 
-	GetNavigationModeAdapterTask.NavigationModeAdapterCallback mNavigationModeAdapterCallback = new GetNavigationModeAdapterTask.NavigationModeAdapterCallback
+	GetNavigationSpinnerDataTask.NavigationModeAdapterCallback mNavigationModeAdapterCallback = new GetNavigationSpinnerDataTask.NavigationModeAdapterCallback
 			() {
 		@Override
 		public void onNavigationModeAdapterReady(final IssuesMainFilterAdapter adapter) {
@@ -107,7 +108,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public void onResume() {
 		super.onResume();
 		if (mNavMode == ActionBar.NAVIGATION_MODE_LIST) {
-			new GetNavigationModeAdapterTask(this, mNavigationModeAdapterCallback).execute();
+			new GetNavigationSpinnerDataTask(this, mNavigationModeAdapterCallback).execute();
 		}
 	}
 
@@ -119,17 +120,15 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final int id = android.R.id.content;
-		final Fragment frag = getSupportFragmentManager().findFragmentById(id);
-
 		switch (item.getItemId()) {
 		/*case android.R.id.home:
 			finish();
 			return true;
 		*/
 		case R.id.menu_issue_browser:
-			if (frag instanceof IssueFragment) {
-				final Issue issue = ((IssueFragment) frag).getIssue();
+			IssueFragment frag = getContentFragment();
+			if (frag != null) {
+				final Issue issue = frag.getIssue();
 				if (issue != null) {
 					String url = issue.server.serverUrl;
 					if (!url.endsWith("/")) {
@@ -150,15 +149,18 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			final IssuesOrderingFragment issuesOrder = IssuesOrderingFragment.newInstance(mCurrentOrder);
 			issuesOrder.setOrderSelectionListener(new IssuesOrderSelectionListener() {
 				@Override
-				public void onOrderColumnsSelected(final ArrayList<OrderColumn> orderColumns) {
+				public void onOrderColumnsSelected(final IssuesOrder orderColumns) {
 					saveNewColumnsOrder(orderColumns);
 
-					final FragmentManager fm = getSupportFragmentManager();
-					final Fragment frag = fm.findFragmentById(android.R.id.content);
-					if (frag instanceof IssuesListFragment) {
-						((IssuesListFragment) frag).updateColumnsOrder(orderColumns);
+					IssuesListFragment list = getMainFragment();
+					if (list != null) {
+						list.updateColumnsOrder(orderColumns);
 					} else {
-						// TODO?
+						Bundle args = getMainFragmentArgs(null);
+						if (orderColumns != null) {
+							orderColumns.saveTo(args);
+						}
+						showMainFragment(args);
 					}
 				}
 			});
@@ -187,26 +189,23 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	@Override
-	protected void onSaveInstanceState(final Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putParcelableArrayList(IssuesOrderingFragment.KEY_COLUMNS_ORDER, mCurrentOrder);
-	}
-
 	OnNavigationListener mNavigationCallbacks = new OnNavigationListener() {
 		int lastPosition;
 
 		@Override
 		public boolean onNavigationItemSelected(final int itemPosition, final long itemId) {
-			final FragmentManager fm = getSupportFragmentManager();
-			final Fragment frag = fm.findFragmentById(android.R.id.content);
-			if (mSpinnerAdapter.isSeparator(itemPosition)) {
-				getSupportActionBar().setSelectedNavigationItem(lastPosition);
-			} else {
-				if (frag instanceof IssuesListFragment) {
-					((IssuesListFragment) frag).updateFilter(mSpinnerAdapter.getFilter(itemPosition));
+			L.d("pos=" + itemPosition);
+			if (!mSpinnerAdapter.isSeparator(itemPosition)) {
+				IssuesListFragment list = getMainFragment();
+				IssuesListFilter newFilter = mSpinnerAdapter.getFilter(itemPosition);
+				if (list != null) {
+					list.updateFilter(newFilter);
 				} else {
-					// TODO??
+					Bundle args = getMainFragmentArgs(null);
+					if (newFilter != null) {
+						newFilter.saveTo(args);
+					}
+					showMainFragment(args);
 				}
 			}
 			lastPosition = itemPosition;
@@ -216,7 +215,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	IssuesMainFilterAdapter mSpinnerAdapter;
 
-	public static class GetNavigationModeAdapterTask extends AsyncTask<Void, Void, IssuesMainFilterAdapter> {
+	public static class GetNavigationSpinnerDataTask extends AsyncTask<Void, Void, IssuesMainFilterAdapter> {
 		Context mContext;
 		NavigationModeAdapterCallback mCallback;
 
@@ -224,7 +223,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			public void onNavigationModeAdapterReady(IssuesMainFilterAdapter adapter);
 		}
 
-		GetNavigationModeAdapterTask(final Context ctx, final NavigationModeAdapterCallback cb) {
+		GetNavigationSpinnerDataTask(final Context ctx, final NavigationModeAdapterCallback cb) {
 			mContext = ctx;
 			mCallback = cb;
 		}

@@ -12,8 +12,8 @@ import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ProjectsSpinnerAdapter;
 import net.bicou.redmine.app.RefreshProjectsTask;
-import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter;
-import net.bicou.redmine.app.issues.IssuesOrderingFragment;
+import net.bicou.redmine.app.issues.order.IssuesOrder;
+import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
@@ -77,7 +77,7 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 				final IssuesOrderingFragment issuesOrder = IssuesOrderingFragment.newInstance(rf.getCurrentOrder());
 				issuesOrder.setOrderSelectionListener(new IssuesOrderingFragment.IssuesOrderSelectionListener() {
 					@Override
-					public void onOrderColumnsSelected(final ArrayList<IssuesOrderColumnsAdapter.OrderColumn> orderColumns) {
+					public void onOrderColumnsSelected(final IssuesOrder orderColumns) {
 						// Upon selection, update the roadmap fragment issues ordering
 						rf.setNewIssuesOrder(orderColumns);
 					}

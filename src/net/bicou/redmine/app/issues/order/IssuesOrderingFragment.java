@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.order;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,36 +8,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.google.gson.reflect.TypeToken;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 public class IssuesOrderingFragment extends SherlockDialogFragment {
 	IssuesOrderColumnsAdapter mAdapter;
 	DragSortListView mDslv;
 	DragSortController mController;
-	public static final String KEY_COLUMNS_ORDER = "net.bicou.redmine.app.issues.ColumnsOrder";
 	IssuesOrderSelectionListener mListener;
+	IssuesOrder mIssuesOrder;
 
-	public final static Type ORDER_TYPE = new TypeToken<ArrayList<OrderColumn>>() {
-	}.getType();
-
-	public static IssuesOrderingFragment newInstance(final ArrayList<OrderColumn> order) {
+	public static IssuesOrderingFragment newInstance(final IssuesOrder order) {
 		final IssuesOrderingFragment frag = new IssuesOrderingFragment();
 		final Bundle args = new Bundle();
-		args.putParcelableArrayList(KEY_COLUMNS_ORDER, order);
+		if (order != null) {
+			order.saveTo(args);
+		}
 		frag.setArguments(args);
 		return frag;
 	}
 
 	public interface IssuesOrderSelectionListener {
-		public void onOrderColumnsSelected(ArrayList<OrderColumn> orderColumns);
+		public void onOrderColumnsSelected(IssuesOrder orderColumns);
 	}
 
 	public void setOrderSelectionListener(final IssuesOrderSelectionListener listener) {
@@ -78,22 +71,17 @@ public class IssuesOrderingFragment extends SherlockDialogFragment {
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelableArrayList(KEY_COLUMNS_ORDER, mAdapter.getColumns());
+		if (mIssuesOrder != null) {
+			mIssuesOrder.saveTo(outState);
+		}
 	}
 
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final LayoutInflater inflater = getActivity().getLayoutInflater();
 
-		List<OrderColumn> items;
-		if (savedInstanceState != null) {
-			items = savedInstanceState.getParcelableArrayList(KEY_COLUMNS_ORDER);
-		} else if (getArguments().containsKey(KEY_COLUMNS_ORDER)) {
-			items = getArguments().getParcelableArrayList(KEY_COLUMNS_ORDER);
-		} else {
-			items = OrderColumn.getDefaultOrder();
-		}
-		mAdapter = new IssuesOrderColumnsAdapter(getActivity(), items);
+		mIssuesOrder = IssuesOrder.fromBundle(savedInstanceState);
+		mAdapter = new IssuesOrderColumnsAdapter(getActivity(), mIssuesOrder.getColumns());
 
 		final View v = inflater.inflate(R.layout.frag_issues_sort_order, null, false);
 
@@ -118,7 +106,7 @@ public class IssuesOrderingFragment extends SherlockDialogFragment {
 				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(final DialogInterface dialog, final int id) {
-						mListener.onOrderColumnsSelected(mAdapter.getColumns());
+						mListener.onOrderColumnsSelected(mAdapter.getIssuesOrder());
 					}
 				}) //
 				.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

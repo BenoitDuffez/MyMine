@@ -1,11 +1,5 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.order;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import net.bicou.redmine.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -15,8 +9,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import net.bicou.redmine.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class IssuesOrderingPickColumnFragment extends SherlockDialogFragment {
 	private static final String KEY_AVAILABLE_COLUMNS = "net.bicou.redmine.app.issues.OrderPickColumns";

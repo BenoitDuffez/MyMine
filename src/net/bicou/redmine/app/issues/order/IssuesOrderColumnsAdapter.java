@@ -1,8 +1,6 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.order;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,8 +10,6 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssuesOrderColumnsAdapter.OrderColumn;
-import net.bicou.redmine.app.issues.IssuesOrderingPickColumnFragment.ColumnPickSelectionListener;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.util.L;
 
@@ -66,58 +62,6 @@ public class IssuesOrderColumnsAdapter extends ArrayAdapter<OrderColumn> impleme
 			put(IssuesDbAdapter.KEY_SPENT_HOURS, R.string.issue_spent_time);
 		}
 	};
-
-	public static class OrderColumn implements Parcelable {
-		public String key;
-		public boolean isAscending;
-
-		@SuppressWarnings("serial")
-		public static final ArrayList<OrderColumn> getDefaultOrder() {
-			return new ArrayList<IssuesOrderColumnsAdapter.OrderColumn>() {
-				{
-					add(new OrderColumn(IssuesDbAdapter.KEY_ID, false));
-				}
-			};
-		}
-
-		public OrderColumn(final String k, final boolean asc) {
-			key = k;
-			isAscending = asc;
-		}
-
-		public OrderColumn(final Parcel in) {
-			key = in.readString();
-			isAscending = in.readInt() > 0;
-		}
-
-		@Override
-		public int describeContents() {
-			return 0;
-		}
-
-		@Override
-		public void writeToParcel(final Parcel dest, final int flags) {
-			dest.writeString(key);
-			dest.writeInt(isAscending ? 1 : 0);
-		}
-
-		public static final Parcelable.Creator<OrderColumn> CREATOR = new Parcelable.Creator<OrderColumn>() {
-			@Override
-			public OrderColumn createFromParcel(final Parcel in) {
-				return new OrderColumn(in);
-			}
-
-			@Override
-			public OrderColumn[] newArray(final int size) {
-				return new OrderColumn[size];
-			}
-		};
-
-		@Override
-		public String toString() {
-			return "OrderColumn { key: " + key + ", isAscending: " + isAscending + " }";
-		}
-	}
 
 	static class OrderColumnViewsHolder {
 		public TextView key;
@@ -194,8 +138,8 @@ public class IssuesOrderColumnsAdapter extends ArrayAdapter<OrderColumn> impleme
 		}
 	}
 
-	public ArrayList<OrderColumn> getColumns() {
-		return (ArrayList<OrderColumn>) mData;
+	public IssuesOrder getIssuesOrder() {
+		return IssuesOrder.fromList((ArrayList<OrderColumn>) mData);
 	}
 
 	@Override
@@ -203,14 +147,14 @@ public class IssuesOrderColumnsAdapter extends ArrayAdapter<OrderColumn> impleme
 		final OrderColumn item = (OrderColumn) v.getTag(R.id.issues_order_column_name);
 		L.d("clicked on " + item);
 		final HashMap<String, Integer> cols = new HashMap<String, Integer>(AVAILABLE_COLUMNS_NAMES);
-		for (final OrderColumn col : getColumns()) {
+		for (final OrderColumn col : mData) {
 			if (cols.containsKey(col)) {
 				cols.remove(cols.get(col));
 			}
 		}
 		final SherlockFragmentActivity act = (SherlockFragmentActivity) getContext();
 		final IssuesOrderingPickColumnFragment pickColumn = IssuesOrderingPickColumnFragment.newInstance(cols);
-		pickColumn.setColumnPickSelectionListener(new ColumnPickSelectionListener() {
+		pickColumn.setColumnPickSelectionListener(new IssuesOrderingPickColumnFragment.ColumnPickSelectionListener() {
 			@Override
 			public void onColumnSelected(final String key) {
 				item.key = key;
