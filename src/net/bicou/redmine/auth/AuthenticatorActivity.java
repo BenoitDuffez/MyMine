@@ -1,24 +1,5 @@
 package net.bicou.redmine.auth;
 
-import net.bicou.redmine.Constants;
-import net.bicou.redmine.R;
-import net.bicou.redmine.auth.AdvancedServerSettingsFragment.ServerSettingsListener;
-import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.ProjectsList;
-import net.bicou.redmine.data.sqlite.ServersDbAdapter;
-import net.bicou.redmine.data.sqlite.UsersDbAdapter;
-import net.bicou.redmine.net.JsonDownloadError;
-import net.bicou.redmine.net.JsonDownloadError.ErrorType;
-import net.bicou.redmine.net.JsonDownloader;
-import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
-import net.bicou.redmine.sync.NetworkUtilities;
-import net.bicou.redmine.sync.SyncUtils;
-import net.bicou.redmine.util.L;
-import net.bicou.redmine.util.Util;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
@@ -38,18 +19,34 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import net.bicou.redmine.Constants;
+import net.bicou.redmine.R;
+import net.bicou.redmine.auth.AdvancedServerSettingsFragment.ServerSettingsListener;
+import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.ProjectsList;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.data.sqlite.UsersDbAdapter;
+import net.bicou.redmine.net.JsonDownloadError;
+import net.bicou.redmine.net.JsonDownloadError.ErrorType;
+import net.bicou.redmine.net.JsonDownloader;
+import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
+import net.bicou.redmine.sync.NetworkUtilities;
+import net.bicou.redmine.sync.SyncUtils;
+import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.Util;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  * Activity which displays login screen to the user.
  */
-public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity implements DialogInterface.OnClickListener, DialogInterface.OnCancelListener, ServerSettingsListener {
+public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity implements DialogInterface.OnClickListener, DialogInterface.OnCancelListener,
+		ServerSettingsListener {
 	/** The Intent flag to confirm credentials. */
 	public static final String PARAM_CONFIRM_CREDENTIALS = "confirmCredentials";
 
@@ -159,7 +156,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 	/**
 	 * Handles onClick event on the Submit button. Sends serverUrl/apiKey to the server for authentication. The button is configured to call
 	 * handleLogin() in the layout XML.
-	 * 
+	 *
 	 * @param view
 	 *            The Submit button for which this method is invoked
 	 */
@@ -180,7 +177,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 	 * Called when response is received from the server for authentication request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult
 	 * which is sent back to the caller. We store the authToken that's returned from the server as the 'apiKey' for this account - so we're never
 	 * storing the user's actual apiKey locally.
-	 * 
+	 *
 	 * @param result
 	 *            the confirmCredentials result.
 	 */
@@ -210,7 +207,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 
 	/**
 	 * Ran in the background, in order do DB management
-	 * 
+	 *
 	 * @param projectsList
 	 */
 	private void saveServer() {
@@ -248,8 +245,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 					details = mError.getMessage(this);
 				} else {
 					details = mError.exception.getClass().getSimpleName() + mError.exception.getMessage() == null ? //
-					mError.exception.getCause().toString()
-							: mError.exception.getMessage();
+							mError.exception.getCause().toString() : mError.exception.getMessage();
 				}
 				errorMessage = getString(mError.errorType == ErrorType.TYPE_JSON ? R.string.auth_error_json : R.string.auth_error_network, details);
 				break;
@@ -275,7 +271,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 
 	/**
 	 * Called when the authentication process completes (see attemptLogin()).
-	 * 
+	 *
 	 * @param authToken
 	 *            the authentication token returned by the server, or NULL if authentication failed.
 	 */
@@ -305,7 +301,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 		new AlertDialog.Builder(this).setTitle(R.string.auth_accept_cert) //
 				.setMessage(mError.chain[0].toString()) //
 				.setPositiveButton(android.R.string.yes, this) //
-				// .setNeutralButton(R.string.mtm_decision_once, this) //
+						// .setNeutralButton(R.string.mtm_decision_once, this) //
 				.setNegativeButton(android.R.string.no, this) //
 				.setOnCancelListener(this) //
 				.create().show();
@@ -356,7 +352,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 
 			final String url = "projects.json";
 			final NameValuePair[] args = new BasicNameValuePair[] {
-				new BasicNameValuePair("limit", "1")
+					new BasicNameValuePair("limit", "1")
 			};
 			boolean authResult = false;
 

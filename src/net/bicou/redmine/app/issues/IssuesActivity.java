@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
@@ -121,10 +122,10 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-		/*case android.R.id.home:
-			finish();
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
 			return true;
-		*/
+
 		case R.id.menu_issue_browser:
 			IssueFragment frag = getContentFragment();
 			if (frag != null) {

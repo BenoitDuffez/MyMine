@@ -2,6 +2,7 @@ package net.bicou.redmine.app.roadmap;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -68,6 +69,10 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		L.d("");
 		switch (item.getItemId()) {
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+
 		case R.id.menu_roadmap_sort_issues:
 			final RoadmapFragment rf = getContentFragment();
 			if (rf == null) {

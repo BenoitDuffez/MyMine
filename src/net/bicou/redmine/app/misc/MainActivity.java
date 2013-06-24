@@ -206,11 +206,6 @@ public class MainActivity extends DrawerActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.drawer_content);
-		if (f == null) {
-			return super.onOptionsItemSelected(item);
-		}
-
 		switch (item.getItemId()) {
 		case R.id.menu_main_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
@@ -220,8 +215,6 @@ public class MainActivity extends DrawerActivity {
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 
-		// case R.id.menu_refresh:
-		// return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
