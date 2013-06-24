@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
@@ -47,16 +48,25 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 			L.i("[1]: " + getActivity().getSupportFragmentManager().getBackStackEntryAt(0));
 		}
 
-		final Bundle args = getArguments();
-		if (savedInstanceState != null) {
+		Bundle args = ((SplitActivity) getActivity()).getMainFragmentPreviousState();
+		// Restore from backstack
+		if (args != null) {
+			mIssuesOrder = IssuesOrder.fromBundle(args);
+			mFilter = IssuesListFilter.fromBundle(args);
+			//here, the activity won't get a notification from the action bar navigation list spinner selection, so we need to launch the loader ourselves
+			getLoaderManager().initLoader(0, args, this);
+		}
+		// Restore from saved instance state
+		else if (savedInstanceState != null) {
 			mFilter = IssuesListFilter.fromBundle(savedInstanceState);
 			mIssuesOrder = IssuesOrder.fromBundle(savedInstanceState);
-		} else {
-			mFilter = IssuesListFilter.fromBundle(args);
-			mIssuesOrder = IssuesOrder.fromBundle(args);
 		}
-		L.i("filter=" + mFilter + " order=" + mIssuesOrder);
-		L.i("-------------------------------------------------------------------------");
+		// Retrieve from fragment arguments
+		else {
+			args = getArguments();
+			mIssuesOrder = IssuesOrder.fromBundle(args);
+			mFilter = IssuesListFilter.fromBundle(args);
+		}
 
 		mAdapter = new IssuesListCursorAdapter(getActivity(), null, true);
 		setListAdapter(mAdapter);
@@ -73,18 +83,18 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		Bundle args = getArguments();
+		Bundle args = new Bundle();
 		if (mFilter != null) {
 			mFilter.saveTo(args);
 		}
 		if (mIssuesOrder != null) {
 			mIssuesOrder.saveTo(args);
 		}
+		((SplitActivity) getActivity()).saveMainFragmentState(args);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		L.d("SAVING!!!!");
 		super.onSaveInstanceState(outState);
 		if (mIssuesOrder != null) {
 			mIssuesOrder.saveTo(outState);
