@@ -60,6 +60,11 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 			args = getArguments();
 			mIssuesOrder = IssuesOrder.fromBundle(args);
 			mFilter = IssuesListFilter.fromBundle(args);
+
+			if (mFilter.type == IssuesListFilter.FilterType.SEARCH) {
+				// a search doesn't trigger a notification from the action bar navigation list spinner selection, so we need to launch the loader ourselves
+				getLoaderManager().initLoader(0, args, this);
+			}
 		}
 
 		mAdapter = new IssuesListCursorAdapter(getActivity(), null, true);
