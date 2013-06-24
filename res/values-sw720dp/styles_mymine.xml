@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Master/content related styles -->
+    <style name="ContainerStyle" parent="Widget.SplitActivity.Container">
+        <item name="android:background">@drawable/grey_background_pattern</item>
+    </style>
+
+    <style name="MainPaneStyle" parent="Widget.SplitActivity.MainPane">
+        <item name="android:layout_margin">12dp</item>
+        <item name="android:layout_weight">2</item>
+        <item name="android:background">@drawable/main_pane_background</item>
+    </style>
+
+    <style name="ContentPaneStyle" parent="Widget.SplitActivity.ContentPane">
+        <item name="android:layout_margin">24dp</item>
+        <item name="android:layout_weight">3</item>
+        <item name="android:background">@drawable/content_pane_background</item>
+    </style>
+
+    <style name="SeparatorStyle" parent="Widget.SplitActivity.Separator">
+        <item name="android:background">@null</item>
+    </style>
+
+</resources>
