@@ -162,15 +162,6 @@ public class IssueFragment extends SherlockFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (getActivity() != null && mIssue != null) {
-			getSherlockActivity().getSupportActionBar().setTitle("#" + mIssue.id);
-		}
-		getSherlockActivity().supportInvalidateOptionsMenu();
-	}
-
-	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
 		getSherlockActivity().supportInvalidateOptionsMenu();
 	}
 
