@@ -93,7 +93,7 @@ public class ProjectsSyncAdapterService extends Service {
 					// Sync issue categories
 					categories = NetworkUtilities.syncIssueCategories(mContext, server, project, lastSyncMarker);
 					if (categories != null && categories.issue_categories != null && categories.issue_categories.size() > 0) {
-						ProjectManager.updateIssueCategories(mContext, server, categories.issue_categories, lastSyncMarker);
+						ProjectManager.updateIssueCategories(mContext, server, project, categories.issue_categories, lastSyncMarker);
 					}
 				}
 

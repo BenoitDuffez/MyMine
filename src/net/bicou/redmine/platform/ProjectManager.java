@@ -90,10 +90,10 @@ public class ProjectManager {
 		return new GregorianCalendar().getTimeInMillis();
 	}
 
-	public static synchronized long updateIssueCategories(Context context, Server server, List<IssueCategory> remoteList, long lastSyncMarker) {
+	public static synchronized long updateIssueCategories(Context context, Server server, Project project, List<IssueCategory> remoteList, long lastSyncMarker) {
 		IssueCategoriesDbAdapter db = new IssueCategoriesDbAdapter(context);
 		db.open();
-		db.deleteAll(server);
+		db.deleteAll(server, project);
 		for (IssueCategory cat : remoteList) {
 			cat.server = server;
 			db.insert(cat);

@@ -52,8 +52,7 @@ public class IssueCategoriesDbAdapter extends DbAdapter {
 	private void putValues(ContentValues values, IssueCategory issueCategory) {
 		values.put(KEY_ID, issueCategory.id);
 		values.put(KEY_NAME, issueCategory.name);
-		values.put(KEY_ASSIGNED_TO_ID, issueCategory.assigned_to == null ? 0 : issueCategory.assigned_to
-				.id);
+		values.put(KEY_ASSIGNED_TO_ID, issueCategory.assigned_to == null ? 0 : issueCategory.assigned_to.id);
 		values.put(KEY_PROJECT_ID, issueCategory.project.id);
 		values.put(KEY_SERVER_ID, issueCategory.server.rowId);
 	}
@@ -104,11 +103,12 @@ public class IssueCategoriesDbAdapter extends DbAdapter {
 	}
 
 	/**
-	 * Removes issues
+	 * Removes issues for a given project on a given server
 	 *
 	 * @return
 	 */
-	public int deleteAll(final Server server) {
-		return mDb.delete(TABLE_ISSUE_CATEGORIES, KEY_SERVER_ID + " = " + server.rowId, null);
+	public int deleteAll(final Server server, Project project) {
+		String where = KEY_SERVER_ID + " = " + server.rowId + " AND " + KEY_PROJECT_ID + " = " + project.id;
+		return mDb.delete(TABLE_ISSUE_CATEGORIES, where, null);
 	}
 }
