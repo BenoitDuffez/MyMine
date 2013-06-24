@@ -54,6 +54,7 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		else if (savedInstanceState != null) {
 			mFilter = IssuesListFilter.fromBundle(savedInstanceState);
 			mIssuesOrder = IssuesOrder.fromBundle(savedInstanceState);
+			getLoaderManager().initLoader(0, args, this);
 		}
 		// Retrieve from fragment arguments
 		else {
