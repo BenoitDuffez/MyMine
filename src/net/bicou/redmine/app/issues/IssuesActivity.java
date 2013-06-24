@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
-import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.view.Menu;
@@ -182,9 +181,6 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		if (searchView != null) {
 			final SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
 			searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-			final View searchPlate = searchView.findViewById(R.id.abs__search_plate);
-			searchPlate.setBackgroundResource(R.drawable.issues_search_background);
 		}
 
 		return super.onCreateOptionsMenu(menu);
