@@ -120,7 +120,7 @@ public class VersionsDbAdapter extends DbAdapter {
 		String statusName = null;
 		if (c != null) {
 			if (c.moveToFirst()) {
-				statusName = c.getString(0);
+				statusName = c.getString(c.getColumnIndex(KEY_NAME));
 			}
 			c.close();
 		}
