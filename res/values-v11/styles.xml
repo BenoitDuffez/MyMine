@@ -73,13 +73,6 @@
 
     <!-- Generated with http://android-holo-colors.com -->
     <style
-            name="AutoCompleteTextViewMyMineTheme"
-            parent="android:Widget.Holo.Light.AutoCompleteTextView">
-        <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
-        <item name="android:background">@drawable/edit_text_holo_light</item>
-    </style>
-
-    <style
             name="ButtonMyMineTheme"
             parent="android:Widget.Holo.Light.Button">
         <item name="android:background">@drawable/btn_default_holo_light</item>

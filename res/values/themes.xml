@@ -36,6 +36,10 @@
         <item name="containerStyle">@style/ContainerStyle</item>
         <item name="separatorStyle">@style/SeparatorStyle</item>
 
+        <item name="searchAutoCompleteTextView">@style/AutoCompleteTextViewMyMineTheme</item>
+        <item name="searchViewTextField">@drawable/issues_search_background</item>
+        <item name="searchViewSearchIcon">@drawable/ab_ic_search</item>
+
     </style>
 
     <!-- Actual theme. Must be overriden by newer version to take advantage of new features -->

@@ -13,8 +13,9 @@
 		name="AutoCompleteTextViewMyMineTheme"
 		parent="android:Widget.AutoCompleteTextView">
 		<item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
-		<item name="android:background">@drawable/edit_text_holo_light</item>
-		<item name="android:textColor">#000000</item>
+		<item name="android:background">@drawable/issues_search_background</item>
+		<item name="android:textColor">@color/light_text</item>
+        <item name="android:textColorHint">@color/light_faded_text</item>
 	</style>
 
 	<style
