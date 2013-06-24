@@ -39,6 +39,40 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		}
 	}
 
+	private static class IdPair {
+		public long oldId, newId;
+		private static IdPair instance;
+
+		private IdPair() {
+		}
+
+		public static IdPair from(JournalDetail d) {
+			if (instance == null) {
+				instance = new IdPair();
+			}
+			instance.oldId = instance.newId = 0;
+			if (d == null) {
+				return instance;
+			}
+			if (!TextUtils.isEmpty(d.old_value)) {
+				try {
+					instance.oldId = Long.parseLong(d.old_value);
+				} catch (Exception e) {
+					instance.oldId = 0;
+				}
+			}
+			if (!TextUtils.isEmpty(d.new_value)) {
+				try {
+					instance.newId = Long.parseLong(d.new_value);
+				} catch (Exception e) {
+					instance.newId = 0;
+				}
+			}
+
+			return instance;
+		}
+	}
+
 	public interface JournalsDownloadCallbacks {
 		void onPreExecute();
 
@@ -63,8 +97,11 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 			return null;
 		}
 
-		parseJournals(history.journals);
-		parseChangeSets(history.changesets);
+		IssuesDbAdapter dummy = new IssuesDbAdapter(mActivity);
+		dummy.open();
+		parseJournals(history.journals, dummy);
+		parseChangeSets(history.changesets, dummy);
+		dummy.close();
 
 		return history;
 	}
@@ -88,71 +125,39 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	/**
 	 * Translate a version change
 	 *
+	 *
+	 *
 	 * @param d
+	 * @param ids
+	 * @param db
 	 * @return
 	 */
-	private PropertyChange onVersionChanged(final JournalDetail d) {
+	private PropertyChange onVersionChanged(final JournalDetail d, IdPair ids, DbAdapter db) {
 		String propName, oldVal, newVal;
 
 		propName = mActivity.getString(R.string.issue_target_version);
-		int oldId = 0, newId = 0;
-		try {
-			if (!TextUtils.isEmpty(d.old_value)) {
-				oldId = Integer.parseInt(d.old_value);
-			}
-			if (!TextUtils.isEmpty(d.new_value)) {
-				newId = Integer.parseInt(d.new_value);
-			}
-		} catch (final NumberFormatException nfe) {
-		}
-		final VersionsDbAdapter db = new VersionsDbAdapter(mActivity);
-		db.open();
-		if (oldId <= 0) {
-			oldVal = null;
-		} else {
-			oldVal = db.getName(mIssue.server, mIssue.project, oldId);
-		}
-		if (newId <= 0) {
-			newVal = null;
-		} else {
-			newVal = db.getName(mIssue.server, mIssue.project, newId);
-		}
-		db.close();
+		final VersionsDbAdapter vdb = new VersionsDbAdapter(db);
+		oldVal = vdb.getName(mIssue.server, mIssue.project, ids.oldId);
+		newVal = vdb.getName(mIssue.server, mIssue.project, ids.newId);
 
 		return new PropertyChange(propName, oldVal, newVal);
 	}
 
-	private PropertyChange onEstimatedHoursChange(final JournalDetail d) {
+	private PropertyChange onEstimatedHoursChange(final JournalDetail d, IdPair ids, DbAdapter db) {
 		return new PropertyChange(mActivity.getString(R.string.issue_estimated_hours), d.old_value, d.new_value); // TODO
 	}
 
-	private PropertyChange onDoneRatioChange(final JournalDetail d) {
+	private PropertyChange onDoneRatioChange(final JournalDetail d, IdPair ids, DbAdapter db) {
 		return new PropertyChange(mActivity.getString(R.string.issue_percent_done), d.old_value, d.new_value); // TODO
 	}
 
-	private PropertyChange onAssignedToChange(final JournalDetail d) {
+	private PropertyChange onAssignedToChange(final JournalDetail d, IdPair ids, DbAdapter db) {
 		final String oldVal, newVal;
-		int oldId = 0, newId = 0;
-		try {
-			if (!TextUtils.isEmpty(d.old_value)) {
-				oldId = Integer.parseInt(d.old_value);
-			}
-			if (!TextUtils.isEmpty(d.new_value)) {
-				newId = Integer.parseInt(d.new_value);
-			}
-		} catch (final NumberFormatException nfe) {
-		}
 
-		final UsersDbAdapter db = new UsersDbAdapter(mActivity);
-		db.open();
-		User o = null, n = null;
-		if (oldId > 0) {
-			o = db.select(mIssue.server, oldId);
-		}
-		if (newId > 0) {
-			n = db.select(mIssue.server, newId);
-		}
-		db.close();
+		final UsersDbAdapter udb = new UsersDbAdapter(db);
+		User o, n;
+		o = udb.select(mIssue.server, ids.oldId);
+		n = udb.select(mIssue.server, ids.newId);
 
 		oldVal = o == null ? mActivity.getString(R.string.issue_journal_value_na) : o.firstname + " " + o.lastname;
 		newVal = n == null ? mActivity.getString(R.string.issue_journal_value_na) : n.firstname + " " + n.lastname;
@@ -160,28 +165,13 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_assignee), oldVal, newVal);
 	}
 
-	private PropertyChange onPriorityChange(final JournalDetail d) {
+	private PropertyChange onPriorityChange(final JournalDetail d, IdPair ids, DbAdapter db) {
 		String oldVal, newVal;
-		int oldId = 0, newId = 0;
-		try {
-			if (!TextUtils.isEmpty(d.old_value)) {
-				oldId = Integer.parseInt(d.old_value);
-			}
-			if (!TextUtils.isEmpty(d.new_value)) {
-				newId = Integer.parseInt(d.new_value);
-			}
-		} catch (final NumberFormatException nfe) {
-		}
 
-		IssuePrioritiesDbAdapter db = new IssuePrioritiesDbAdapter(mActivity);
-		db.open();
-		IssuePriority o = null, n = null;
-		if (oldId > 0) {
-			o = db.select(mIssue.server, oldId, null);
-		}
-		if (newId > 0) {
-			n = db.select(mIssue.server, newId, null);
-		}
+		IssuePrioritiesDbAdapter ipdb = new IssuePrioritiesDbAdapter(db);
+		IssuePriority o, n;
+		o = ipdb.select(mIssue.server, ids.oldId, null);
+		n = ipdb.select(mIssue.server, ids.newId, null);
 
 		oldVal = o == null ? mActivity.getString(R.string.issue_journal_value_na) : o.name;
 		newVal = n == null ? mActivity.getString(R.string.issue_journal_value_na) : n.name;
@@ -189,48 +179,28 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_priority), oldVal, newVal);
 	}
 
-	private PropertyChange onStatusChange(final JournalDetail d) {
+	private PropertyChange onStatusChange(final JournalDetail d, IdPair ids, DbAdapter db) {
 		String oldVal, newVal;
 
-		final IssueStatusesDbAdapter db = new IssueStatusesDbAdapter(mActivity);
-		db.open();
-		try {
-			final long oldStatus = Long.parseLong(d.old_value);
-			oldVal = db.getName(mIssue.server, oldStatus);
-		} catch (final Exception e) {
-			oldVal = null;
-		}
-		try {
-			final long newStatus = Long.parseLong(d.new_value);
-			newVal = db.getName(mIssue.server, newStatus);
-		} catch (final Exception e) {
-			newVal = null;
-		}
-		db.close();
+		final IssueStatusesDbAdapter isdb = new IssueStatusesDbAdapter(db);
+		oldVal = isdb.getName(mIssue.server, ids.oldId);
+		newVal = isdb.getName(mIssue.server, ids.newId);
 
 		return new PropertyChange(mActivity.getString(R.string.issue_status), oldVal, newVal);
 	}
 
-	private PropertyChange onDueDateChange(final JournalDetail d) {
+	private PropertyChange onDueDateChange(final JournalDetail d, IdPair ids, DbAdapter db) {
 		return new PropertyChange(mActivity.getString(R.string.issue_due_date), d.old_value, d.new_value); // TODO
 	}
 
-	private PropertyChange onSubjectChange(final JournalDetail d) {
+	private PropertyChange onSubjectChange(final JournalDetail d, IdPair ids, DbAdapter db) {
 		return new PropertyChange(mActivity.getString(R.string.issue_subject), d.old_value, d.new_value);
 	}
 
-	private PropertyChange onTrackerChange(JournalDetail d) {
-		TrackersDbAdapter db = new TrackersDbAdapter(mActivity);
-		db.open();
-
-		int oldId = 0, newId = 0;
-		try {
-			oldId = Integer.parseInt(d.old_value);
-			newId = Integer.parseInt(d.new_value);
-		} catch (NumberFormatException e) {
-		}
-		Tracker o = db.select(mIssue.server, oldId);
-		Tracker n = db.select(mIssue.server, newId);
+	private PropertyChange onTrackerChange(JournalDetail d, IdPair ids, DbAdapter db) {
+		TrackersDbAdapter tdb = new TrackersDbAdapter(db);
+		Tracker o = tdb.select(mIssue.server, ids.oldId);
+		Tracker n = tdb.select(mIssue.server, ids.newId);
 
 		String oldValue = o == null ? null : o.name;
 		String newValue = n == null ? null : n.name;
@@ -238,19 +208,11 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_tracker), oldValue, newValue);
 	}
 
-	private PropertyChange onIssueCategoryChange(JournalDetail d) {
-		IssueCategoriesDbAdapter db = new IssueCategoriesDbAdapter(mActivity);
-		db.open();
+	private PropertyChange onIssueCategoryChange(JournalDetail d, IdPair ids, DbAdapter db) {
+		IssueCategoriesDbAdapter icdb = new IssueCategoriesDbAdapter(db);
 
-		long oldId = 0, newId = 0;
-		try {
-			oldId = Long.parseLong(d.old_value);
-			newId = Long.parseLong(d.new_value);
-		} catch (NumberFormatException e) {
-		}
-
-		IssueCategory o = db.select(mIssue.server, mIssue.project, oldId, null);
-		IssueCategory n = db.select(mIssue.server, mIssue.project, newId, null);
+		IssueCategory o = icdb.select(mIssue.server, mIssue.project, ids.oldId, null);
+		IssueCategory n = icdb.select(mIssue.server, mIssue.project, ids.newId, null);
 
 		String oldValue = o == null ? null : o.name;
 		String newValue = n == null ? null : n.name;
@@ -258,11 +220,9 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_category), oldValue, newValue);
 	}
 
-	private void setAvatarUrl(final Journal journal) {
-		final UsersDbAdapter db = new UsersDbAdapter(mActivity);
-		db.open();
-		journal.user = db.select(mIssue.server, journal.user.id);
-		db.close();
+	private void setAvatarUrl(final Journal journal, DbAdapter db) {
+		final UsersDbAdapter udb = new UsersDbAdapter(db);
+		journal.user = udb.select(mIssue.server, journal.user.id);
 
 		if (journal.user == null || TextUtils.isEmpty(journal.user.mail)) {
 			return;
@@ -271,7 +231,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		journal.user.createGravatarUrl();
 	}
 
-	private PropertyChange onDescriptionChange(JournalDetail d) {
+	private PropertyChange onDescriptionChange(JournalDetail d, IdPair ids, DbAdapter db) {
 		String oldHtml = Util.htmlFromTextile(d.old_value);
 		String newHtml = Util.htmlFromTextile(d.new_value);
 		DiffMatchPatch diff = new DiffMatchPatch();
@@ -300,35 +260,37 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_description), null, sb.toString());
 	}
 
-	private List<String> getFormattedDetails(final Journal journal) {
+	private List<String> getFormattedDetails(final Journal journal, DbAdapter db) {
 		final List<String> formattedDetails = new ArrayList<String>();
 		PropertyChange propChange;
+		IdPair ids;
 
 		for (final JournalDetail d : journal.details) {
+			ids = IdPair.from(d);
 			if ("attr".equals(d.property)) {
 				// Get the human readable name of the property that was changed
 				if (IssuesDbAdapter.KEY_FIXED_VERSION_ID.equals(d.name)) {
-					propChange = onVersionChanged(d);
+					propChange = onVersionChanged(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_ESTIMATED_HOURS.equals(d.name)) {
-					propChange = onEstimatedHoursChange(d);
+					propChange = onEstimatedHoursChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_DONE_RATIO.equals(d.name)) {
-					propChange = onDoneRatioChange(d);
+					propChange = onDoneRatioChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_ASSIGNED_TO_ID.equals(d.name)) {
-					propChange = onAssignedToChange(d);
+					propChange = onAssignedToChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_PRIORITY_ID.equals(d.name)) {
-					propChange = onPriorityChange(d);
+					propChange = onPriorityChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_STATUS_ID.equals(d.name)) {
-					propChange = onStatusChange(d);
+					propChange = onStatusChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_DUE_DATE.equals(d.name)) {
-					propChange = onDueDateChange(d);
+					propChange = onDueDateChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_SUBJECT.equals(d.name)) {
-					propChange = onSubjectChange(d);
+					propChange = onSubjectChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_TRACKER_ID.equals(d.name)) {
-					propChange = onTrackerChange(d);
+					propChange = onTrackerChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_CATEGORY_ID.equals(d.name)) {
-					propChange = onIssueCategoryChange(d);
+					propChange = onIssueCategoryChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_DESCRIPTION.equals(d.name)) {
-					propChange = onDescriptionChange(d);
+					propChange = onDescriptionChange(d, ids, db);
 				} else {
 					propChange = new PropertyChange(mActivity.getString(R.string.issue_journal_unknown_property, d.name), d.old_value, d.new_value);
 					L.e("Unknown property " + d.property + " name: " + d.name + " old=" + d.old_value + " new=" + d.new_value, null);
@@ -377,13 +339,13 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	/**
 	 * Translate data in the journal into human-readable values
 	 */
-	private void parseJournals(final List<Journal> journals) {
+	private void parseJournals(final List<Journal> journals, DbAdapter db) {
 		for (final Journal journal : journals) {
 			// Avatar
-			setAvatarUrl(journal);
+			setAvatarUrl(journal, db);
 
 			// Details
-			journal.formatted_details = getFormattedDetails(journal);
+			journal.formatted_details = getFormattedDetails(journal, db);
 
 			// Notes
 			if (TextUtils.isEmpty(journal.notes) == false) {
@@ -396,22 +358,20 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		}
 	}
 
-	private void parseChangeSets(List<ChangeSet> changeSets) {
+	private void parseChangeSets(List<ChangeSet> changeSets, DbAdapter db) {
 		if (changeSets == null || changeSets.size() <= 0) {
 			return;
 		}
 
-		UsersDbAdapter db = new UsersDbAdapter(mActivity);
-		db.open();
+		UsersDbAdapter udb = new UsersDbAdapter(db);
 		for (ChangeSet changeSet : changeSets) {
 			changeSet.commentsHtml = Html.fromHtml(changeSet.comments.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br />"));
 			// TODO: cache users?
 			if (changeSet.user != null) {
-				changeSet.user = db.select(mIssue.server, changeSet.user.id);
+				changeSet.user = udb.select(mIssue.server, changeSet.user.id);
 				changeSet.user.createGravatarUrl();
 			}
 		}
-		db.close();
 	}
 
 	@Override

@@ -84,7 +84,7 @@ public class TrackersDbAdapter extends DbAdapter {
 		return list;
 	}
 
-	public Tracker select(final Server server, final int id) {
+	public Tracker select(final Server server, final long id) {
 		if (server == null) {
 			return null;
 		}
