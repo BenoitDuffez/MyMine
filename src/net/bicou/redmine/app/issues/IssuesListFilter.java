@@ -77,4 +77,9 @@ public class IssuesListFilter {
 		}
 		return FILTER_ALL;
 	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + " { serverId: " + serverId + ", type: " + type + ", id: " + id + ", searchQuery: " + searchQuery + " }";
+	}
 }

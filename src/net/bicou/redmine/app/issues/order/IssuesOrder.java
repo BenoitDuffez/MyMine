@@ -100,4 +100,9 @@ public class IssuesOrder {
 	public ArrayList<OrderColumn> getColumns() {
 		return columns;
 	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + " { columns: " + columns + " }";
+	}
 }

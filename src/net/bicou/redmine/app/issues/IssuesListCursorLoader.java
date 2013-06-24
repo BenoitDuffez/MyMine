@@ -10,6 +10,7 @@ import net.bicou.redmine.data.json.IssuesList;
 import net.bicou.redmine.data.sqlite.*;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.platform.IssuesManager;
+import net.bicou.redmine.util.L;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -49,6 +50,8 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 		if (mFilter == null) {
 			mFilter = IssuesListFilter.FILTER_ALL;
 		}
+
+		L.d("filter="+mFilter+", order="+mColumnsOrder);
 
 		switch (mFilter.type) {
 		default:

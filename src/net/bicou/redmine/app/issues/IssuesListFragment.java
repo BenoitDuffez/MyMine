@@ -19,6 +19,7 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.util.L;
 
 public class IssuesListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {
 	View mFragmentView;
@@ -38,25 +39,52 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 	}
 
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		L.d("savedInstanceState=" + savedInstanceState + " this=" + this);
+		L.i("backstack: " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
+		if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
+			L.i("[1]: " + getActivity().getSupportFragmentManager().getBackStackEntryAt(0));
+		}
 
 		final Bundle args = getArguments();
-		if (savedInstanceState != null && savedInstanceState.getBoolean(IssuesListFilter.KEY_HAS_FILTER)) {
+		if (savedInstanceState != null) {
 			mFilter = IssuesListFilter.fromBundle(savedInstanceState);
+			mIssuesOrder = IssuesOrder.fromBundle(savedInstanceState);
 		} else {
 			mFilter = IssuesListFilter.fromBundle(args);
+			mIssuesOrder = IssuesOrder.fromBundle(args);
 		}
+		L.i("filter=" + mFilter + " order=" + mIssuesOrder);
+		L.i("-------------------------------------------------------------------------");
 
 		mAdapter = new IssuesListCursorAdapter(getActivity(), null, true);
 		setListAdapter(mAdapter);
-		getLoaderManager().initLoader(0, args, this);
 
 		setHasOptionsMenu(true);
 	}
 
 	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		mFragmentView = inflater.inflate(R.layout.frag_issues_list, container, false);
+		return mFragmentView;
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		Bundle args = getArguments();
+		if (mFilter != null) {
+			mFilter.saveTo(args);
+		}
+		if (mIssuesOrder != null) {
+			mIssuesOrder.saveTo(args);
+		}
+	}
+
+	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		L.d("SAVING!!!!");
 		super.onSaveInstanceState(outState);
 		if (mIssuesOrder != null) {
 			mIssuesOrder.saveTo(outState);
@@ -65,13 +93,6 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 			mFilter.saveTo(outState);
 		}
 	}
-	//
-	//	@Override
-	//	public void onResume() {
-	//		super.onResume();
-	//		final int navMode = mHasFilter ? ActionBar.NAVIGATION_MODE_STANDARD : ActionBar.NAVIGATION_MODE_LIST;
-	//		getSherlockActivity().getSupportActionBar().setNavigationMode(navMode);
-	//	}
 
 	public void updateFilter(final IssuesListFilter filter) {
 		mFilter = filter;
@@ -133,12 +154,6 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 	@Override
 	public void onLoaderReset(final Loader<Cursor> loader) {
 		mAdapter.swapCursor(null);
-	}
-
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		mFragmentView = inflater.inflate(R.layout.frag_issues_list, container, false);
-		return mFragmentView;
 	}
 
 	@Override
