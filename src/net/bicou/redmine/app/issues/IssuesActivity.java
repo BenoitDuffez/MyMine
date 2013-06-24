@@ -174,7 +174,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(final Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.menu_issues, menu);
 
@@ -187,7 +187,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			searchPlate.setBackgroundResource(R.drawable.issues_search_background);
 		}
 
-		return super.onPrepareOptionsMenu(menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	OnNavigationListener mNavigationCallbacks = new OnNavigationListener() {
