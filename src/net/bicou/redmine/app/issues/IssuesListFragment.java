@@ -78,18 +78,17 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 	public void onDestroyView() {
 		super.onDestroyView();
 		Bundle args = new Bundle();
-		if (mFilter != null) {
-			mFilter.saveTo(args);
-		}
-		if (mIssuesOrder != null) {
-			mIssuesOrder.saveTo(args);
-		}
+		saveInstance(args);
 		((SplitActivity) getActivity()).saveMainFragmentState(args);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		saveInstance(outState);
+	}
+
+	private void saveInstance(Bundle outState) {
 		if (mIssuesOrder != null) {
 			mIssuesOrder.saveTo(outState);
 		}
