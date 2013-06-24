@@ -20,7 +20,6 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
-import net.bicou.redmine.util.L;
 
 public class IssuesListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {
 	View mFragmentView;
@@ -42,11 +41,6 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		L.d("savedInstanceState=" + savedInstanceState + " this=" + this);
-		L.i("backstack: " + getActivity().getSupportFragmentManager().getBackStackEntryCount());
-		if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
-			L.i("[1]: " + getActivity().getSupportFragmentManager().getBackStackEntryAt(0));
-		}
 
 		Bundle args = ((SplitActivity) getActivity()).getMainFragmentPreviousState();
 		// Restore from backstack
