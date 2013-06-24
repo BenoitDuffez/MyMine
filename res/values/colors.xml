@@ -22,6 +22,7 @@
     <color name="white_layout_background">#FFFFFF</color>
     <color name="dark_background">#333333</color>
     <color name="light_text">#EEEEEE</color>
+    <color name="light_faded_text">#CCC</color>
     <color name="faded_text">#666666</color>
 
     <color name="pager_indicator_background">#33c90000</color>
