@@ -28,6 +28,10 @@ public class IssueCategory extends Reference {
 				} else if (IssueCategoriesDbAdapter.KEY_ASSIGNED_TO_ID.equals(col)) {
 					UsersDbAdapter udb = new UsersDbAdapter(db);
 					assigned_to = udb.select(server, cursor.getInt(columnIndex));
+				} else if (IssueCategoriesDbAdapter.KEY_NAME.equals(col)) {
+					name = cursor.getString(columnIndex);
+				} else if (IssueCategoriesDbAdapter.KEY_PROJECT_ID.equals(col)) {
+				} else if (IssueCategoriesDbAdapter.KEY_SERVER_ID.equals(col)) {
 				} else {
 					L.e("Unhandled IssueCategory column: " + col, null);
 				}
