@@ -57,10 +57,8 @@ public class Issue {
 				} else if (col.equals(IssuesDbAdapter.KEY_PRIORITY_ID)) {
 					// TODO
 				} else if (col.equals(IssuesDbAdapter.KEY_STATUS_ID)) {
-					final IssueStatusesDbAdapter isdb = new IssueStatusesDbAdapter(db);
 					status = new Reference();
 					status.id = c.getLong(columnIndex);
-					status.name = isdb.getName(server, status.id);
 				} else if (col.equals(IssuesDbAdapter.KEY_AUTHOR_ID)) {
 					// TODO
 				} else if (col.equals(IssuesDbAdapter.KEY_SUBJECT)) {
@@ -112,6 +110,16 @@ public class Issue {
 			final VersionsDbAdapter vdb = new VersionsDbAdapter(db);
 			try {
 				fixed_version.name = vdb.getName(server, project, fixed_version.id);
+			} catch (Exception e) {// May crash, see 1ce751712db2f789c0db04cd01b751e5
+				L.e("Got an unexpected exception. Here's the current object state: project=" + project + " server=" + server);
+				L.e(this.toString());
+				L.e("sending bug report", null);
+			}
+		}
+		if (status != null && status.id > 0) {
+			final IssueStatusesDbAdapter isdb = new IssueStatusesDbAdapter(db);
+			try {
+				status.name = isdb.getName(server, status.id);
 			} catch (Exception e) {// May crash, see 1ce751712db2f789c0db04cd01b751e5
 				L.e("Got an unexpected exception. Here's the current object state: project=" + project + " server=" + server);
 				L.e(this.toString());
