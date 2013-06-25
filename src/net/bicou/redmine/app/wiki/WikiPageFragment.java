@@ -238,7 +238,7 @@ public class WikiPageFragment extends SherlockFragment {
 				args.putLong(Constants.KEY_PROJECT_ID, mProjectId);
 				args.putLong(Constants.KEY_SERVER_ID, mServerId);
 				final WikiPageFragment newWiki = WikiPageFragment.newInstance(args);
-				getFragmentManager().beginTransaction().replace(R.id.wiki_contents, newWiki).addToBackStack("prout").commit();
+				getFragmentManager().beginTransaction().replace(android.R.id.content, newWiki).addToBackStack("prout").commit();
 			} else {
 				final Intent intent = new Intent(Intent.ACTION_VIEW);
 				intent.setData(Uri.parse(url));
