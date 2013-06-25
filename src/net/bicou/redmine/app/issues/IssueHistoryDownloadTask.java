@@ -329,6 +329,9 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 				}
 				attnUrl += "attachments/download/" + d.name + "/" + d.new_value;
 				formattedDetails.add(mActivity.getString(R.string.issue_journal_attachment_added, attnUrl, d.new_value));
+			} else if ("cf".equals(d.property)) {
+				// TODO: support custom fields
+				L.i("Custom fields are not yet supported. You can ask for support by emailing redmine@bicou.net");
 			} else {
 				L.e("Unknown journal detail " + d.property + " change, name: " + d.name + " old=" + d.old_value + " new=" + d.new_value, null);
 			}
