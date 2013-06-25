@@ -95,7 +95,10 @@ public class IssueFragment extends SherlockFragment {
 		TAB_TITLES[i++] = getString(R.string.issue_overview_title);
 		TAB_TITLES[i++] = getString(R.string.issue_journal_title);
 
-		final Bundle args = new Bundle(getArguments());
+		final Bundle args = new Bundle();
+		if (getArguments() != null) {
+			args.putAll(getArguments());
+		}
 		if (savedInstanceState == null) {
 			// Load issue
 			final Activity activity = getActivity();
