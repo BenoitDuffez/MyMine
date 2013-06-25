@@ -128,6 +128,7 @@
     <string name="issue_version_na">Ver: none</string>
     <string name="issue_status_na">N/A</string>
     <string name="issue_estimated_hours">Estimated hours</string>
+    <string name="issue_parent">Parent</string>
 
     <string name="issue_filter_all">ALL</string>
     <string name="issue_filter_queries">Queries</string>
