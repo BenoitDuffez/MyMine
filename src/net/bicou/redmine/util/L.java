@@ -62,7 +62,7 @@ public class L {
 		try {
 			ACRA.getErrorReporter().removeCustomData("TraceLog");
 			if (log.length() > 10000) {
-				log = log.substring(10000 - log.length());
+				log = log.substring(log.length() - 50000);
 			}
 			ACRA.getErrorReporter().putCustomData("TraceLog", log);
 		} catch (final Exception e) {
