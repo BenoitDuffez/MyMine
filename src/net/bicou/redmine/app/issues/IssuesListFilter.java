@@ -72,7 +72,7 @@ public class IssuesListFilter {
 	}
 
 	public static IssuesListFilter fromBundle(Bundle args) {
-		if (args.getBoolean(KEY_HAS_FILTER)) {
+		if (args != null && args.getBoolean(KEY_HAS_FILTER)) {
 			return new IssuesListFilter(args);
 		}
 		return FILTER_ALL;
