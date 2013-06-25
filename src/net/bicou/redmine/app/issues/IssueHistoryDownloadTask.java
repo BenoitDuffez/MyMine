@@ -193,6 +193,10 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_due_date), d.old_value, d.new_value); // TODO
 	}
 
+	private PropertyChange onStartDateChange(final JournalDetail d, IdPair ids, DbAdapter db) {
+		return new PropertyChange(mActivity.getString(R.string.issue_start_date), d.old_value, d.new_value); // TODO
+	}
+
 	private PropertyChange onSubjectChange(final JournalDetail d, IdPair ids, DbAdapter db) {
 		return new PropertyChange(mActivity.getString(R.string.issue_subject), d.old_value, d.new_value);
 	}
@@ -289,6 +293,8 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 					propChange = onStatusChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_DUE_DATE.equals(d.name)) {
 					propChange = onDueDateChange(d, ids, db);
+				} else if (IssuesDbAdapter.KEY_START_DATE.equals(d.name)) {
+					propChange = onStartDateChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_SUBJECT.equals(d.name)) {
 					propChange = onSubjectChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_TRACKER_ID.equals(d.name)) {
