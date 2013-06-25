@@ -324,7 +324,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 				attnUrl += "attachments/download/" + d.name + "/" + d.new_value;
 				formattedDetails.add(mActivity.getString(R.string.issue_journal_attachment_added, attnUrl, d.new_value));
 			} else {
-				L.e("Unknown property " + d.property + " name: " + d.name + " old=" + d.old_value + " new=" + d.new_value, null);
+				L.e("Unknown journal detail " + d.property + " change, name: " + d.name + " old=" + d.old_value + " new=" + d.new_value, null);
 			}
 		}
 
