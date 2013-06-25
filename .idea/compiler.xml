@@ -2,6 +2,17 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
+    <excludeFromCompile>
+      <directory url="file://$PROJECT_DIR$/vendor/aFileChooser/aFileChooser/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/vendor/drag-sort-listview/library/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/vendor/StaggeredGridView/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/vendor/Crouton/library/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/vendor/SplitActivity/SplitActivity/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/vendor/Android-Universal-Image-Loader/library/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/vendor/ActionBarSherlock/actionbarsherlock/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/vendor/ListViewAnimations/library/gen" includeSubdirectories="true" />
+    </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />
