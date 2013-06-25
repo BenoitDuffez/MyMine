@@ -16,6 +16,7 @@ import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.util.L;
+import net.bicou.redmine.widget.IssuesListRelativeLayout;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -45,6 +46,12 @@ public class RoadmapsListFragment extends SherlockListFragment {
 		}
 		mListener = (RoadmapSelectionListener) activity;
 		mList = new ArrayList<Version>();
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		mListener = null;
 	}
 
 	@Override
@@ -97,6 +104,7 @@ public class RoadmapsListFragment extends SherlockListFragment {
 
 	private static class RoadmapListItemViewsHolder {
 		TextView name, date;
+		IssuesListRelativeLayout layout;
 	}
 
 	private static class RoadmapsAdapter extends BaseAdapter {
@@ -138,6 +146,7 @@ public class RoadmapsListFragment extends SherlockListFragment {
 			if (convertView == null) {
 				v = mLayoutInflater.inflate(R.layout.roadmap_list_item, viewGroup, false);
 				holder = new RoadmapListItemViewsHolder();
+				holder.layout = (IssuesListRelativeLayout) v.findViewById(R.id.roadmap_list_item_layout);
 				holder.name = (TextView) v.findViewById(R.id.roadmap_list_item_name);
 				holder.date = (TextView) v.findViewById(R.id.roadmap_list_item_date);
 				v.setTag(holder);
@@ -147,6 +156,7 @@ public class RoadmapsListFragment extends SherlockListFragment {
 			}
 
 			Version item = getItem(i);
+			holder.layout.setIsClosed(item.status == Version.VersionStatus.CLOSED);
 			holder.name.setText(item.name);
 			if (item.due_date == null || item.due_date.getTimeInMillis() < 1000) {
 				holder.date.setVisibility(View.GONE);

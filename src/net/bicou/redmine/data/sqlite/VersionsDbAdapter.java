@@ -99,7 +99,10 @@ public class VersionsDbAdapter extends DbAdapter {
 
 	public List<Version> selectAll(Server server, Project project) {
 		final String where = KEY_SERVER_ID + " = " + server.rowId + " AND " + KEY_PROJECT_ID + " = " + project.id;
-		String orderBy = KEY_DUE_DATE + " ASC";
+		String orderBy = Util.join(new String[] {
+				KEY_STATUS + " DESC",
+				KEY_DUE_DATE + " DESC",
+		}, ", ");
 		List<Version> versions = new ArrayList<Version>();
 		Cursor c = mDb.query(TABLE_VERSIONS, null, where, null, null, null, orderBy);
 		if (c != null) {
