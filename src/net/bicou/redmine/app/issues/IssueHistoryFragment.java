@@ -16,11 +16,9 @@ import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
 import net.bicou.redmine.app.issues.IssueHistoryDownloadTask.JournalsDownloadCallbacks;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueHistory;
-import net.bicou.redmine.data.json.Journal;
 import net.bicou.redmine.util.L;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 public class IssueHistoryFragment extends SherlockListFragment implements FragmentActivationListener {
 	private IssueHistoryDownloadTask mUpdateTask;
@@ -30,18 +28,6 @@ public class IssueHistoryFragment extends SherlockListFragment implements Fragme
 
 	private IssueHistory mHistory;
 	private static final String HISTORY_DATA = "net.bicou.redmine.app.issues.History";
-
-	static class JournalsHolder {
-		List<Journal> journals;
-
-		public JournalsHolder(final List<Journal> journals) {
-			this.journals = journals;
-		}
-
-		public int size() {
-			return journals == null ? 0 : journals.size();
-		}
-	}
 
 	public static IssueHistoryFragment newInstance(final Bundle args) {
 		final IssueHistoryFragment f = new IssueHistoryFragment();
@@ -80,7 +66,6 @@ public class IssueHistoryFragment extends SherlockListFragment implements Fragme
 			adapter.setListView(getListView());
 			setListAdapter(adapter);
 			getListView().invalidate();
-			// setListAdapter(journalAdapter);
 		}
 	}
 
