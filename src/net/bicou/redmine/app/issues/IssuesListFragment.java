@@ -1,14 +1,12 @@
 package net.bicou.redmine.app.issues;
 
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -144,10 +142,6 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		mAdapter.swapCursor(data);
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
-		}
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 		}
 
 		final TextView empty = (TextView) mFragmentView.findViewById(android.R.id.empty);
