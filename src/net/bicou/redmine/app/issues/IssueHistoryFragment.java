@@ -63,9 +63,15 @@ public class IssueHistoryFragment extends SherlockListFragment implements Fragme
 		} else {
 			final IssueHistoryItemsAdapter journalAdapter = new IssueHistoryItemsAdapter(getActivity(), mIssue, mHistory);
 			final SwingBottomInAnimationAdapter adapter = new SwingBottomInAnimationAdapter(journalAdapter);
-			adapter.setListView(getListView());
-			setListAdapter(adapter);
-			getListView().invalidate();
+
+			try {
+				adapter.setListView(getListView());
+				setListAdapter(adapter);
+				getListView().invalidate();
+			} catch (IllegalStateException e) { // java.lang.IllegalStateException: Content view not yet created
+				// Sometimes the screen rotation is too fast and the view is already disposed, the new one isn't created yet
+				// TODO: maybe we could save the result and pass it when the listview is ready?
+			}
 		}
 	}
 
