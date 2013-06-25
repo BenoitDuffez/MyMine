@@ -260,6 +260,12 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_description), null, sb.toString());
 	}
 
+	private PropertyChange onParentChange(JournalDetail d, IdPair ids, DbAdapter db) {
+		String o = ids.oldId > 0 ? "#" + Long.toString(ids.oldId) : null;
+		String n = ids.newId > 0 ? "#" + Long.toString(ids.newId) : null;
+		return new PropertyChange(mActivity.getString(R.string.issue_parent), o, n);
+	}
+
 	private List<String> getFormattedDetails(final Journal journal, DbAdapter db) {
 		final List<String> formattedDetails = new ArrayList<String>();
 		PropertyChange propChange;
@@ -291,6 +297,8 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 					propChange = onIssueCategoryChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_DESCRIPTION.equals(d.name)) {
 					propChange = onDescriptionChange(d, ids, db);
+				} else if (IssuesDbAdapter.KEY_PARENT_ID.equals(d.name)) {
+					propChange = onParentChange(d, ids, db);
 				} else {
 					propChange = new PropertyChange(mActivity.getString(R.string.issue_journal_unknown_property, d.name), d.old_value, d.new_value);
 					L.e("Unknown property " + d.property + " name: " + d.name + " old=" + d.old_value + " new=" + d.new_value, null);
