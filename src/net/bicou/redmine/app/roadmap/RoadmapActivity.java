@@ -46,7 +46,7 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 
 	@Override
 	protected Fragment createEmptyFragment(Bundle args) {
-		return new EmptyFragment(R.drawable.roadmaps_empty_fragment);
+		return EmptyFragment.newInstance(R.drawable.roadmaps_empty_fragment);
 	}
 
 	@Override

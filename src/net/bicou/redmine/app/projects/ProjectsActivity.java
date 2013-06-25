@@ -21,7 +21,7 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 
 	@Override
 	protected Fragment createEmptyFragment(Bundle args) {
-		return new EmptyFragment(R.drawable.projects_empty_fragment);
+		return EmptyFragment.newInstance(R.drawable.projects_empty_fragment);
 	}
 
 	@Override

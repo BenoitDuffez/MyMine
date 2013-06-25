@@ -45,7 +45,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	protected Fragment createEmptyFragment(Bundle args) {
-		return new EmptyFragment(R.drawable.issues_empty_fragment);
+		return EmptyFragment.newInstance(R.drawable.issues_empty_fragment);
 	}
 
 	@Override

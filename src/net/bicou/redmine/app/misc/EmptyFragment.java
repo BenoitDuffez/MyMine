@@ -13,13 +13,19 @@ import net.bicou.redmine.R;
  */
 public class EmptyFragment extends SherlockFragment {
 	int mResId;
+	private static final String KEY_IMAGE_RESOURCE_ID = "net.bicou.redmine.app.misc.EmptyFragment";
 
-	public EmptyFragment(int resId) {
-		mResId = resId;
+	public static EmptyFragment newInstance(int resId) {
+		Bundle args = new Bundle();
+		args.putInt(KEY_IMAGE_RESOURCE_ID, resId);
+		EmptyFragment frag = new EmptyFragment();
+		frag.setArguments(args);
+		return frag;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mResId = getArguments().getInt(KEY_IMAGE_RESOURCE_ID);
 		View v = inflater.inflate(R.layout.frag_empty, container, false);
 		ImageView iv = (ImageView) v.findViewById(R.id.frag_empty_image);
 		iv.setImageResource(mResId);
