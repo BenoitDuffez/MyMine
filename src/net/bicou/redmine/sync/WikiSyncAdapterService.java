@@ -2,11 +2,14 @@ package net.bicou.redmine.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Service;
 import android.content.*;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+import net.bicou.redmine.Constants;
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
@@ -16,6 +19,7 @@ import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.platform.WikiManager;
 import net.bicou.redmine.util.L;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -69,12 +73,24 @@ public class WikiSyncAdapterService extends Service {
 
 			final ServersDbAdapter db = new ServersDbAdapter(mContext);
 			db.open();
-			final Server server = db.getServer(account.name);
+			Server server = db.getServer(account.name);
 			db.close();
 
 			if (server == null) {
-				L.e("can't sync with no server!", null);
-				return;
+				L.i("no server matching " + account.name + ", recreating it");
+				try {
+					final String authToken = mAccountManager.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
+					server = new Server(account.name, authToken);
+					db.insert(server);
+				} catch (OperationCanceledException e) {
+				} catch (IOException e) {
+				} catch (AuthenticatorException e) {
+				}
+
+				if (server == null) {
+					L.e("Really couldn't get the server", null);
+					return;
+				}
 			}
 
 			// Init SSL and certificates

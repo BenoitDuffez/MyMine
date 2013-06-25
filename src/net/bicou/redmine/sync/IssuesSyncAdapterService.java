@@ -2,6 +2,8 @@ package net.bicou.redmine.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -27,6 +29,8 @@ import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.platform.IssuesManager;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.PreferencesManager;
+
+import java.io.IOException;
 
 /**
  * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns
@@ -85,12 +89,24 @@ public class IssuesSyncAdapterService extends Service {
 
 			final ServersDbAdapter db = new ServersDbAdapter(mContext);
 			db.open();
-			final Server server = db.getServer(account.name);
+			Server server = db.getServer(account.name);
 			db.close();
 
 			if (server == null) {
-				L.e("server is null!!", null);
-				return;
+				L.i("no server matching " + account.name + ", recreating it");
+				try {
+					final String authToken = mAccountManager.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
+					server = new Server(account.name, authToken);
+					db.insert(server);
+				} catch (OperationCanceledException e) {
+				} catch (IOException e) {
+				} catch (AuthenticatorException e) {
+				}
+
+				if (server == null) {
+					L.e("Really couldn't get the server", null);
+					return;
+				}
 			}
 
 			int offset = 0;

@@ -1,7 +1,14 @@
 package net.bicou.redmine.sync;
 
-import java.io.IOException;
-
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
+import android.app.Service;
+import android.content.*;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.text.TextUtils;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
@@ -9,19 +16,8 @@ import net.bicou.redmine.data.json.UsersList;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.platform.UsersManager;
 import net.bicou.redmine.util.L;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.app.Service;
-import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProviderClient;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SyncResult;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.text.TextUtils;
+
+import java.io.IOException;
 
 /**
  * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns
@@ -70,53 +66,54 @@ public class UsersSyncAdapterService extends Service {
 
 		@Override
 		public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider,
-				final SyncResult syncResult) {
+								  final SyncResult syncResult) {
 			L.d("account=" + account + " extras=" + extras + " auth=" + authority + " prov=" + provider + " result=" + syncResult);
 
-			try {
-				final long lastSyncMarker = getServerSyncMarker(account);
-				final String authtoken = mAccountManager.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, NOTIFY_AUTH_FAILURE);
+			final long lastSyncMarker = getServerSyncMarker(account);
 
-				final ServersDbAdapter db = new ServersDbAdapter(mContext);
-				db.open();
-				final Server server = db.getServer(account.name);
-				db.close();
+			final ServersDbAdapter db = new ServersDbAdapter(mContext);
+			db.open();
+			Server server = db.getServer(account.name);
+			db.close();
 
-				if (authtoken == null || server == null) {
-					L.e("can't sync with no server!", null);
+			if (server == null) {
+				L.i("no server matching " + account.name + ", recreating it");
+				try {
+					final String authToken = mAccountManager.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
+					server = new Server(account.name, authToken);
+					db.insert(server);
+				} catch (OperationCanceledException e) {
+				} catch (IOException e) {
+				} catch (AuthenticatorException e) {
+				}
+
+				if (server == null) {
+					L.e("Really couldn't get the server", null);
 					return;
 				}
+			}
 
-				// Init SSL and certificates
-				SupportSSLKeyManager.init(mContext);
+			// Init SSL and certificates
+			SupportSSLKeyManager.init(mContext);
 
-				// Sync all users pages of all projects
-				long newSyncState = 0, tmp;
-				final UsersList users = NetworkUtilities.syncUsers(mContext, server, lastSyncMarker);
-				if (users != null && users.users != null && users.users.size() > 0) {
-					tmp = UsersManager.updateUsers(mContext, server, users.users, lastSyncMarker);
-					if (tmp > newSyncState) {
-						newSyncState = tmp;
-					}
+			// Sync all users pages of all projects
+			long newSyncState = 0, tmp;
+			final UsersList users = NetworkUtilities.syncUsers(mContext, server, lastSyncMarker);
+			if (users != null && users.users != null && users.users.size() > 0) {
+				tmp = UsersManager.updateUsers(mContext, server, users.users, lastSyncMarker);
+				if (tmp > newSyncState) {
+					newSyncState = tmp;
 				}
+			}
 
-				if (newSyncState > 0) {
-					setServerSyncMarker(account, newSyncState);
-				}
-			} catch (final AuthenticatorException e) {
-				L.e("AuthenticatorException", e);
-				syncResult.stats.numParseExceptions++;
-			} catch (final IOException e) {
-				L.e("IOException", e);
-				syncResult.stats.numIoExceptions++;
-			} catch (final OperationCanceledException e) {
-				L.e("Operation Cancelled: " + e, e);
+			if (newSyncState > 0) {
+				setServerSyncMarker(account, newSyncState);
 			}
 		}
 
 		/**
 		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
-		 * 
+		 *
 		 * @param account
 		 *            the account we're syncing
 		 * @return the change high-water-mark
@@ -131,7 +128,7 @@ public class UsersSyncAdapterService extends Service {
 
 		/**
 		 * Save off the high-water-mark we receive back from the server.
-		 * 
+		 *
 		 * @param account
 		 *            The account we're syncing
 		 * @param marker
