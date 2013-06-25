@@ -82,10 +82,8 @@ public class Issue {
 					due_date = new GregorianCalendar();
 					due_date.setTimeInMillis(c.getLong(columnIndex));
 				} else if (col.equals(IssuesDbAdapter.KEY_FIXED_VERSION_ID)) {
-					final VersionsDbAdapter vdb = new VersionsDbAdapter(db);
 					fixed_version = new Reference();
 					fixed_version.id = c.getLong(columnIndex);
-					fixed_version.name = vdb.getName(server, project, fixed_version.id);
 				} else if (col.equals(IssuesDbAdapter.KEY_CATEGORY_ID)) {
 					// TODO
 				} else if (col.equals(IssuesDbAdapter.KEY_PARENT_ID)) {
@@ -108,5 +106,42 @@ public class Issue {
 				L.e("Unhandled exception while creating an Issue: " + e, e);
 			}
 		}
+
+		// This has to be done when server and project are not null
+		if (fixed_version != null && fixed_version.id > 0) {
+			final VersionsDbAdapter vdb = new VersionsDbAdapter(db);
+			try {
+				fixed_version.name = vdb.getName(server, project, fixed_version.id);
+			} catch (Exception e) {// May crash, see 1ce751712db2f789c0db04cd01b751e5
+				L.e("Got an unexpected exception. Here's the current object state: project=" + project + " server=" + server);
+				L.e(this.toString());
+				L.e("sending bug report", null);
+			}
+		}
+	}
+
+	public String toString() {
+		return this.getClass().getSimpleName() + " {" + id + ", " +
+				server + ", " +
+				project + ", " +
+				tracker + ", " +
+				priority + ", " +
+				status + ", " +
+				author + ", " +
+				subject + ", " +
+				description + ", " +
+				start_date + ", " +
+				done_ratio + ", " +
+				created_on + ", " +
+				updated_on + ", " +
+				due_date + ", " +
+				fixed_version + ", " +
+				category + ", " +
+				parent + ", " +
+				assigned_to + ", " +
+				estimated_hours + ", " +
+				spent_hours + ", " +
+				journals + ", " +
+				changesets + "}";
 	}
 }
