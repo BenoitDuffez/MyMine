@@ -377,7 +377,9 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 			// TODO: cache users?
 			if (changeSet.user != null) {
 				changeSet.user = udb.select(mIssue.server, changeSet.user.id);
-				changeSet.user.createGravatarUrl();
+				if (changeSet.user != null) {
+					changeSet.user.createGravatarUrl();
+				}
 			}
 		}
 	}
