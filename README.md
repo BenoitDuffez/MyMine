@@ -15,83 +15,84 @@ Usage
 Example
 -------
 
-	public class ToolsActivity extends SherlockFragmentActivity implements AsyncTaskFragment.TaskFragmentCallbacks {
-		public static final int ACTION_HEADERS = 0;
-		public static final int ACTION_SOCIAL = 1;
+```java
+public class ToolsActivity extends SherlockFragmentActivity implements AsyncTaskFragment.TaskFragmentCallbacks {
+	public static final int ACTION_HEADERS = 0;
+	public static final int ACTION_SOCIAL = 1;
 	
-		@Override
-		public void onCreate(final Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-	
-			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-	
-			setContentView(R.layout.activity_tools);
-			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-	
-			setSupportProgressBarIndeterminate(true);
-			setSupportProgressBarIndeterminateVisibility(false);
-	
-			AsyncTaskFragment.attachAsyncTaskFragment(this); // Here we prepare the AsyncTaskFragment, but nothing happened yet
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-			EditText text = (EditText) findViewById(R.id.text);
-			findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					// Here we actually trigger the background task
-					AsyncTaskFragment.runTask(getActivity(), ACTION_SOCIAL, text.getText());
-				}
-			});
-		}
-	
-		@Override
-		public void onPreExecute(int action, Object parameters) {
-			setSupportProgressBarIndeterminateVisibility(true);
-			switch (action) {
-			case ACTION_HEADERS:
-				// prepare some stuff specific to the task 'ACTION_HEADERS'
-				break;
-	
-			case ACTION_SOCIAL:
-				// prepare some stuff specific to the task 'ACTION_SOCIAL'
-				break;
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+		setContentView(R.layout.activity_tools);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
+
+		AsyncTaskFragment.attachAsyncTaskFragment(this); // Here we prepare the AsyncTaskFragment, but nothing happened yet
+
+		EditText text = (EditText) findViewById(R.id.text);
+		findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				// Here we actually trigger the background task
+				AsyncTaskFragment.runTask(getActivity(), ACTION_SOCIAL, text.getText());
 			}
-		}
-	
-		@Override
-		public Object doInBackGround(int action, Object parameters) {
-			switch (action) {
-			case ACTION_HEADERS:
-				// background processing for task ACTION_HEADERS
-				break;
-	
-			case ACTION_SOCIAL:
-				// that's an example, try to rotate the screen during the background processing
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				break;
-			}
-	
-			return null;
-		}
-	
-		@Override
-		public void onPostExecute(int action, Object parameters, Object result) {
-			setSupportProgressBarIndeterminateVisibility(false);
-			// here you can update the UI with the results of the background thread work
-	
-			switch (action) {
-			case ACTION_HEADERS:
-				break;
-	
-			case ACTION_SOCIAL:
-				break;
-			}
-		}
-	
+		});
 	}
+
+	@Override
+	public void onPreExecute(int action, Object parameters) {
+		setSupportProgressBarIndeterminateVisibility(true);
+		switch (action) {
+		case ACTION_HEADERS:
+			// prepare some stuff specific to the task 'ACTION_HEADERS'
+			break;
+
+		case ACTION_SOCIAL:
+			// prepare some stuff specific to the task 'ACTION_SOCIAL'
+			break;
+		}
+	}
+
+	@Override
+	public Object doInBackGround(int action, Object parameters) {
+		switch (action) {
+		case ACTION_HEADERS:
+			// background processing for task ACTION_HEADERS
+			break;
+
+		case ACTION_SOCIAL:
+			// that's an example, try to rotate the screen during the background processing
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			break;
+		}
+
+		return null;
+	}
+
+	@Override
+	public void onPostExecute(int action, Object parameters, Object result) {
+		setSupportProgressBarIndeterminateVisibility(false);
+		// here you can update the UI with the results of the background thread work
+
+		switch (action) {
+		case ACTION_HEADERS:
+			break;
+
+		case ACTION_SOCIAL:
+			break;
+		}
+	}
+}
+```
 
 As you can see, it is possible to launch different tasks which code are in the same activity. The `doInBackGround` method is called off the UI thread so you need to ensure that you don't touch the UI. You can use `onPreExecute` and `onPostExecute` to prepare and update the UI.
 
