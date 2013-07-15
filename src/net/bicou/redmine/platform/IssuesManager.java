@@ -1,6 +1,5 @@
 package net.bicou.redmine.platform;
 
-import android.accounts.Account;
 import android.content.Context;
 import android.content.SyncResult;
 import net.bicou.redmine.data.Server;
@@ -64,9 +63,8 @@ public class IssuesManager {
 		return currentSyncMarker;
 	}
 
-	public static synchronized long updateIssueStatuses(final Context context, final Account account, final Server server, final List<IssueStatus> remoteList,
-														final long lastSyncMarker) {
-		L.d("ctx=" + context + ", account=" + account + ", remote issue statuses count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
+	public static synchronized long updateIssueStatuses(final Context context, final Server server, final List<IssueStatus> remoteList, final long lastSyncMarker) {
+		L.d("ctx=" + context + ", remote issue statuses count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
 		final IssueStatusesDbAdapter db = new IssueStatusesDbAdapter(context);
 		db.open();
 		db.deleteAll(server);
@@ -104,8 +102,7 @@ public class IssuesManager {
 		return new GregorianCalendar().getTimeInMillis();
 	}
 
-	public static synchronized long updatePriorities(final Context context, final Server server, final List<IssuePriority> remoteList,
-													 final long lastSyncMarker) {
+	public static synchronized long updatePriorities(final Context context, final Server server, final List<IssuePriority> remoteList, final long lastSyncMarker) {
 		final IssuePrioritiesDbAdapter db = new IssuePrioritiesDbAdapter(context);
 		db.open();
 		db.deleteAll(server);

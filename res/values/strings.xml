@@ -155,6 +155,7 @@
     <string name="issue_menu_open_browser">Open in browser</string>
     <string name="issues_activity_title">Issues</string>
     <string name="issues_menu_search">Search issues&#8230;</string>
+    <string name="issues_menu_refresh">Refresh issues</string>
     <string name="issues_search_hint">Search Redmine issues&#8230;</string>
 
     <string name="issues_ordering">Order the issues list by:</string>

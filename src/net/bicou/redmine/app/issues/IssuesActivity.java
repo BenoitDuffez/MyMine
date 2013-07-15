@@ -13,23 +13,28 @@ import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment.IssuesOrderSelectionListener;
 import net.bicou.redmine.app.misc.EmptyFragment;
+import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
 
 import java.util.List;
 
-public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> {
+public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks {
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
 
@@ -86,6 +91,16 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		return args;
 	}
 
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
+
+		super.onCreate(savedInstanceState);
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
+	}
+
 	void saveNewColumnsOrder(final IssuesOrder orderColumns) {
 		mCurrentOrder = orderColumns;
 		if (mCurrentOrder != null) {
@@ -93,8 +108,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		}
 	}
 
-	GetNavigationSpinnerDataTask.NavigationModeAdapterCallback mNavigationModeAdapterCallback = new GetNavigationSpinnerDataTask.NavigationModeAdapterCallback
-			() {
+	GetNavigationSpinnerDataTask.NavigationModeAdapterCallback mNavigationModeAdapterCallback = new GetNavigationSpinnerDataTask.NavigationModeAdapterCallback() {
 		@Override
 		public void onNavigationModeAdapterReady(final IssuesMainFilterAdapter adapter) {
 			mSpinnerAdapter = adapter;
@@ -167,6 +181,10 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			issuesOrder.show(getSupportFragmentManager(), "issues_order");
 			return true;
 
+		case R.id.menu_issues_refresh:
+			AsyncTaskFragment.runTask(this, R.id.menu_issues_refresh, null);
+			return true;
+
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -211,6 +229,33 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	};
 
 	IssuesMainFilterAdapter mSpinnerAdapter;
+
+	@Override
+	public void onPreExecute(final int action, final Object parameters) {
+		setSupportProgressBarIndeterminateVisibility(true);
+	}
+
+	@Override
+	public Object doInBackGround(final int action, final Object parameters) {
+		if (action == R.id.menu_issues_refresh) {
+			IssuesSyncAdapterService.Synchronizer synchronizer = new IssuesSyncAdapterService.Synchronizer(this);
+			ServersDbAdapter db = new ServersDbAdapter(this);
+			db.open();
+			for (Server server : db.selectAll()) {
+				synchronizer.synchronizeIssues(server, null, 0);
+			}
+			db.close();
+		}
+		return null;
+	}
+
+	@Override
+	public void onPostExecute(final int action, final Object parameters, final Object result) {
+		setSupportProgressBarIndeterminateVisibility(false);
+		if (getMainFragment() != null) {
+			getMainFragment().refreshList();
+		}
+	}
 
 	public static class GetNavigationSpinnerDataTask extends AsyncTask<Void, Void, IssuesMainFilterAdapter> {
 		Context mContext;

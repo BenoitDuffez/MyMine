@@ -111,6 +111,10 @@ public class IssuesListFragment extends SherlockListFragment implements LoaderCa
 		restartLoader();
 	}
 
+	public void refreshList() {
+		restartLoader();
+	}
+
 	private void restartLoader() {
 		final Bundle args = new Bundle();
 		if (mFilter != null) {

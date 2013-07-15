@@ -33,8 +33,7 @@ import net.bicou.redmine.util.PreferencesManager;
 import java.io.IOException;
 
 /**
- * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns
- * its IBinder.
+ * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns its IBinder.
  */
 public class IssuesSyncAdapterService extends Service {
 	public static final String SYNC_MARKER_KEY = "net.bicou.redmine.sync.Issues.marker";
@@ -59,9 +58,10 @@ public class IssuesSyncAdapterService extends Service {
 	}
 
 	/**
-	 * SyncAdapter implementation for syncing sample SyncAdapter contacts to the platform ContactOperations provider. This sample shows a basic 2-way
-	 * sync between the client and a sample server. It also contains an example of how to update the contacts' status messages, which would be useful
-	 * for a messaging or social networking client.
+	 * SyncAdapter implementation for syncing sample SyncAdapter contacts to the platform ContactOperations provider. This sample shows a basic 2-way sync between
+	 * the
+	 * client and a sample server. It also contains an example of how to update the contacts' status messages, which would be useful for a messaging or social
+	 * networking client.
 	 */
 	private static class SyncAdapter extends AbstractThreadedSyncAdapter {
 		private static final boolean NOTIFY_AUTH_FAILURE = true;
@@ -109,13 +109,64 @@ public class IssuesSyncAdapterService extends Service {
 				}
 			}
 
+			Synchronizer sync = new Synchronizer(mContext);
+			long newSyncState = sync.synchronizeIssues(server, syncResult, lastSyncMarker);
+
+
+			// Save off the new sync marker. On our next sync, we only
+			// want to receive
+			// contacts that have changed since this sync...
+			if (newSyncState > 0) {
+				setServerSyncMarker(account, newSyncState);
+			}
+		}
+
+		/**
+		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
+		 *
+		 * @param account the account we're syncing
+		 *
+		 * @return the change high-water-mark
+		 */
+		private long getServerSyncMarker(final Account account) {
+			final String markerString = mAccountManager.getUserData(account, SYNC_MARKER_KEY);
+			if (!TextUtils.isEmpty(markerString)) {
+				return Long.parseLong(markerString);
+			}
+			return 0;
+		}
+
+		/**
+		 * Save off the high-water-mark we receive back from the server.
+		 *
+		 * @param account The account we're syncing
+		 * @param marker  The high-water-mark we want to save.
+		 */
+		private void setServerSyncMarker(final Account account, final long marker) {
+			mAccountManager.setUserData(account, SYNC_MARKER_KEY, Long.toString(marker));
+		}
+	}
+
+	public static class Synchronizer {
+		private final AccountManager mAccountManager;
+		private final Context mContext;
+
+		public Synchronizer(Context context) {
+			mContext = context;
+			mAccountManager = AccountManager.get(context);
+		}
+
+		public long synchronizeIssues(final Server server, final SyncResult syncResult, long lastSyncMarker) {
 			int offset = 0;
 			IssuesList issues;
 			long newSyncState = 0;
-			final Parcel parcel = Parcel.obtain();
-			syncResult.writeToParcel(parcel, 0);
-			final SyncResult before = SyncResult.CREATOR.createFromParcel(parcel);
-			parcel.recycle();
+			SyncResult before = null;
+			if (syncResult != null) {
+				final Parcel parcel = Parcel.obtain();
+				syncResult.writeToParcel(parcel, 0);
+				before = SyncResult.CREATOR.createFromParcel(parcel);
+				parcel.recycle();
+			}
 
 			// Get the issues sync period preference
 			final int issuesSyncPeriod = PreferencesManager.getInt(mContext, SettingsActivity.KEY_ISSUES_SYNC_PERIOD, 182);
@@ -129,7 +180,7 @@ public class IssuesSyncAdapterService extends Service {
 				offset += issues.downloadedObjects;
 			} while (offset < issues.total_count);
 
-			if (before.stats.numInserts < syncResult.stats.numInserts || before.stats.numUpdates < syncResult.stats.numUpdates) {
+			if (before != null && (before.stats.numInserts < syncResult.stats.numInserts || before.stats.numUpdates < syncResult.stats.numUpdates)) {
 				// displayIssuesNotification(mContext, before.stats,
 				// syncResult.stats);
 			}
@@ -137,7 +188,7 @@ public class IssuesSyncAdapterService extends Service {
 			// Sync issue statuses as well
 			final IssueStatusesList issuesStatuses = NetworkUtilities.syncIssueStatuses(mContext, server, lastSyncMarker);
 			if (issuesStatuses != null && issuesStatuses.issue_statuses != null && issuesStatuses.issue_statuses.size() > 0) {
-				IssuesManager.updateIssueStatuses(mContext, account, server, issuesStatuses.issue_statuses, lastSyncMarker);
+				IssuesManager.updateIssueStatuses(mContext, server, issuesStatuses.issue_statuses, lastSyncMarker);
 			}
 
 			// Sync issue queries
@@ -158,19 +209,13 @@ public class IssuesSyncAdapterService extends Service {
 				IssuesManager.updatePriorities(mContext, server, priorities.issue_priorities, lastSyncMarker);
 			}
 
-			// Save off the new sync marker. On our next sync, we only
-			// want to receive
-			// contacts that have changed since this sync...
-			if (newSyncState > 0) {
-				setServerSyncMarker(account, newSyncState);
-			}
+			return newSyncState;
 		}
 
 		private void displayIssuesNotification(final Context ctx, final SyncStats before, final SyncStats after) {
 			final String notif;
 			if (before.numInserts < after.numInserts && before.numUpdates < after.numUpdates) {
-				notif = String.format("%d issues were added, and %d were modified", after.numInserts - before.numInserts,
-						after.numUpdates - before.numUpdates);
+				notif = String.format("%d issues were added, and %d were modified", after.numInserts - before.numInserts, after.numUpdates - before.numUpdates);
 			} else if (before.numInserts < after.numInserts) {
 				notif = String.format("%d issues were added", after.numInserts - before.numInserts);
 			} else {
@@ -178,7 +223,8 @@ public class IssuesSyncAdapterService extends Service {
 			}
 
 			final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx).setSmallIcon(R.drawable.icon_issues).setContentTitle("MyMine " +
-					"issues update");
+					"issues " +
+					"update");
 			mBuilder.setContentText(notif);
 
 			// Creates an explicit intent for an Activity in your app
@@ -202,30 +248,6 @@ public class IssuesSyncAdapterService extends Service {
 			final NotificationManager mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 			// mId allows you to update the notification later on.
 			mNotificationManager.notify(0, mBuilder.build());
-		}
-
-		/**
-		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
-		 *
-		 * @param account the account we're syncing
-		 * @return the change high-water-mark
-		 */
-		private long getServerSyncMarker(final Account account) {
-			final String markerString = mAccountManager.getUserData(account, SYNC_MARKER_KEY);
-			if (!TextUtils.isEmpty(markerString)) {
-				return Long.parseLong(markerString);
-			}
-			return 0;
-		}
-
-		/**
-		 * Save off the high-water-mark we receive back from the server.
-		 *
-		 * @param account The account we're syncing
-		 * @param marker  The high-water-mark we want to save.
-		 */
-		private void setServerSyncMarker(final Account account, final long marker) {
-			mAccountManager.setUserData(account, SYNC_MARKER_KEY, Long.toString(marker));
 		}
 	}
 }
