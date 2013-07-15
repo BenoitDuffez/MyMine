@@ -6,7 +6,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_margin="8dp"
-	android:padding="@dimen/main_layout_padding">
+	android:padding="@dimen/main_content_padding">
 
 	<net.bicou.redmine.widget.RobotoThinTextView
 		android:id="@+id/project_overview_title"

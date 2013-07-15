@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/main_layout_padding"
+    android:layout_margin="@dimen/main_content_padding"
     android:background="#FFFFFF" >
 
     <RelativeLayout
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/server_auth_settings_cert_hint"
                 android:textSize="16sp" />
-            
+
         </LinearLayout>
 
         <TextView

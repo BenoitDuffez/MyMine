@@ -4,9 +4,9 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/main_layout_padding"
+                android:layout_margin="@dimen/main_content_padding"
                 android:background="@color/white_layout_background"
-                android:padding="@dimen/main_layout_padding">
+                android:padding="@dimen/main_content_padding">
 
     <net.bicou.redmine.widget.RobotoThinTextView
             android:layout_width="fill_parent"

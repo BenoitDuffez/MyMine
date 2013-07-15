@@ -5,7 +5,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:padding="@dimen/main_layout_padding">
+              android:padding="@dimen/main_content_padding">
 
     <net.bicou.redmine.widget.RobotoThinTextView
             android:layout_width="fill_parent"

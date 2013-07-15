@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@drawable/issueslist_item_background_indicator"
-        android:padding="@dimen/main_layout_padding"
+        android:padding="@dimen/main_content_padding"
         tools:listitem="@layout/project_listitem" />
 
     <TextView

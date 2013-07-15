@@ -3,7 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="@dimen/main_layout_padding">
+                android:padding="@dimen/main_content_padding">
 
     <ListView
             android:id="@android:id/list"
