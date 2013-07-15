@@ -348,6 +348,13 @@ public class JsonDownloader<T> {
 					e.printStackTrace();
 				}
 			}
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		return builder.toString();
