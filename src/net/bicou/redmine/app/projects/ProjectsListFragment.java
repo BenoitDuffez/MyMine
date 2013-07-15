@@ -68,12 +68,20 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
-		getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-		final TextView empty = (TextView) mFragmentView.findViewById(android.R.id.empty);
-		if (empty != null && data != null && data.getCount() == 0) {
-			empty.setText(R.string.no_projects);
+		if (getSherlockActivity() != null) {
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
+		}
+
+		if (getListView() != null) {
+			getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+		}
+
+		if (mFragmentView != null) {
+			final TextView empty = (TextView) mFragmentView.findViewById(android.R.id.empty);
+			if (empty != null && data != null && data.getCount() == 0) {
+				empty.setText(R.string.no_projects);
+			}
 		}
 	}
 
@@ -92,7 +100,6 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 	 * Loader that will handle the initial DB query and Cursor creation
 	 *
 	 * @author bicou
-	 *
 	 */
 	public static final class ProjectsListCursorLoader extends SimpleCursorLoader {
 		private final ProjectsDbAdapter mHelper;
@@ -120,7 +127,6 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 	 * CursorAdapter that will map Cursor data to a layout
 	 *
 	 * @author bicou
-	 *
 	 */
 	public final class ProjectsCursorAdapter extends CursorAdapter {
 		private final Context mContext;
