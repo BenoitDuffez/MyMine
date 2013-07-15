@@ -18,10 +18,7 @@ import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import net.bicou.redmine.net.ssl.MyMineSSLSocketFactory;
 import net.bicou.redmine.net.ssl.MyMineSSLTrustManager;
 import net.bicou.redmine.util.L;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -306,6 +303,7 @@ public class JsonDownloader<T> {
 
 			// Ask for UTF-8
 			get.setHeader("Content-Type", "application/json; charset=utf-8");
+			get.setHeader("Accept-Encoding", "gzip");
 
 			if (resp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 				L.d("Got HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
@@ -316,7 +314,8 @@ public class JsonDownloader<T> {
 
 			// Handle proper incoming charset
 			HttpEntity entity = resp.getEntity();
-			String charset = entity.getContentEncoding() == null ? null : entity.getContentEncoding().getValue();
+			Header contentEncoding = resp.getFirstHeader("Content-Encoding");
+			String charset = contentEncoding == null ? null : contentEncoding.getValue();
 			if (TextUtils.isEmpty(charset)) {
 				charset = "UTF-8";
 			}
