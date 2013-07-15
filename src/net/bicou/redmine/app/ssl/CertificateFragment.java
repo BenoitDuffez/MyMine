@@ -1,18 +1,22 @@
 package net.bicou.redmine.app.ssl;
 
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.cert.X509Certificate;
-
-import net.bicou.redmine.R;
-import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.actionbarsherlock.app.SherlockFragment;
+import net.bicou.redmine.R;
+import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
+import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
+import net.bicou.redmine.util.L;
+
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 public class CertificateFragment extends SherlockFragment {
 	public static final String KEY_CERT_ALIAS = "net.bicou.redmine.ssl.Certificate";
@@ -42,6 +46,19 @@ public class CertificateFragment extends SherlockFragment {
 			mCertificate = (X509Certificate) ks.getCertificate(alias);
 		} catch (final KeyStoreException e) {
 			// TODO Auto-generated catch block
+		}
+
+		// Maybe we need to look into Android's keystore
+		if (mCertificate == null && !TextUtils.isEmpty(alias) && Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			X509Certificate[] chain;
+			try {
+				chain = MyMineSSLKeyManager.getCertificateChain(getActivity(), alias);
+				if (chain != null && chain.length > 0) {
+					mCertificate = chain[0];
+				}
+			} catch (CertificateException e) {
+				L.e("Couldn't load certificate from Android's keystore", e);
+			}
 		}
 
 		return v;

@@ -7,43 +7,29 @@ import android.os.Bundle;
 import android.security.KeyChain;
 import android.security.KeyChainAliasCallback;
 import android.support.v4.app.Fragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
 import net.bicou.redmine.util.PreferencesManager;
 
-public class KeyStoreManagerActivity extends SherlockFragmentActivity {
+public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragment, CertificateFragment> {
 	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_certificates);
+	protected Fragment createEmptyFragment(Bundle args) {
+		return EmptyFragment.newInstance(R.drawable.empty_cert);
+	}
 
-		final Bundle args = new Bundle();
+	@Override
+	protected CertificatesListFragment createMainFragment(Bundle args) {
+		return CertificatesListFragment.newInstance(args);
+	}
 
-		// Setup fragments
-		if (savedInstanceState == null) {
-			// Setup list view
-			getSupportFragmentManager().beginTransaction().replace(R.id.certificates_pane_list, CertificatesListFragment.newInstance(args)).commit();
-		} else if (savedInstanceState.containsKey(CertificateFragment.KEY_CERT_ALIAS)) {
-			args.putString(CertificateFragment.KEY_CERT_ALIAS, savedInstanceState.getString(CertificateFragment.KEY_CERT_ALIAS));
-			// Setup content view, if possible
-			//TODO
-			//if (mIsSplitScreen) {
-			//	getSupportFragmentManager().beginTransaction().replace(R.id.certificates_pane_certificate, CertificateFragment.newInstance(args)).commit();
-			//}
-		}
-
-		// Screen rotation on 7" tablets
-		// TODO
-		//if (savedInstanceState != null && mIsSplitScreen != savedInstanceState.getBoolean(KEY_IS_SPLIT_SCREEN)) {
-		//		final Fragment f = getSupportFragmentManager().findFragmentById(R.id.certificates_pane_list);
-		//		if (f != null && f instanceof CertificatesListFragment) {
-		//			((CertificatesListFragment) f).updateSplitScreenState(mIsSplitScreen);
-		//		}
-		//	}
+	@Override
+	protected CertificateFragment createContentFragment(Bundle args) {
+		return CertificateFragment.newInstance(args);
 	}
 
 	@Override
@@ -76,9 +62,9 @@ public class KeyStoreManagerActivity extends SherlockFragmentActivity {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				final Fragment f = getSupportFragmentManager().findFragmentById(R.id.certificates_pane_list);
-				if (f != null && f instanceof CertificatesListFragment) {
-					((CertificatesListFragment) f).refreshList();
+				final CertificatesListFragment f = getMainFragment();
+				if (f != null) {
+					f.refreshList();
 				}
 			}
 		});
