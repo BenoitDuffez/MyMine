@@ -18,7 +18,9 @@ import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import net.bicou.redmine.net.ssl.MyMineSSLSocketFactory;
 import net.bicou.redmine.net.ssl.MyMineSSLTrustManager;
 import net.bicou.redmine.util.L;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -299,15 +301,24 @@ public class JsonDownloader<T> {
 			final HttpGet get = new HttpGet(mURI);
 			final HttpResponse resp = httpClient.execute(get);
 
-			if (resp.getStatusLine().getStatusCode() != 200) {
+			// Ask for UTF-8
+			get.setHeader("Content-Type", "application/json; charset=utf-8");
+
+			if (resp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 				L.d("Got HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
 				mError = new JsonDownloadError(ErrorType.TYPE_NETWORK);
 				mError.setMessage(R.string.err_http, "HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
 				return null;
 			}
 
-			reader = new BufferedReader(new InputStreamReader(resp.getEntity().getContent()));
-			String line = "";
+			// Handle proper incoming charset
+			HttpEntity entity = resp.getEntity();
+			String charset = entity.getContentEncoding() == null ? null : entity.getContentEncoding().getValue();
+			if (TextUtils.isEmpty(charset)) {
+				charset = "UTF-8";
+			}
+			reader = new BufferedReader(new InputStreamReader(entity.getContent(), charset));
+			String line;
 			while ((line = reader.readLine()) != null) {
 				builder.append(line).append("\n");
 			}
