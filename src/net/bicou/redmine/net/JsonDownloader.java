@@ -41,6 +41,7 @@ import org.apache.http.params.HttpParams;
 import javax.net.ssl.KeyManager;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,6 +52,7 @@ import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 public class JsonDownloader<T> {
 	T mObject;
@@ -288,6 +290,7 @@ public class JsonDownloader<T> {
 	 */
 	private String downloadJson() {
 		BufferedReader reader = null;
+		InputStream inputStream = null;
 		final StringBuilder builder = new StringBuilder();
 
 		try {
@@ -317,7 +320,16 @@ public class JsonDownloader<T> {
 			if (TextUtils.isEmpty(charset)) {
 				charset = "UTF-8";
 			}
-			reader = new BufferedReader(new InputStreamReader(entity.getContent(), charset));
+
+			// Handle gzip decompression
+			if (charset.equalsIgnoreCase("gzip")) {
+				inputStream = new GZIPInputStream(entity.getContent());
+			} else {
+				inputStream = entity.getContent();
+			}
+
+			// Read response
+			reader = new BufferedReader(new InputStreamReader(inputStream, charset));
 			String line;
 			while ((line = reader.readLine()) != null) {
 				builder.append(line).append("\n");
