@@ -7,7 +7,7 @@
             name="Theme.MyMine"
             parent="MyMine.Base">
 
-        <item name="android:windowBackground">@color/grey_window_background</item>
+        <item name="android:windowBackground">@drawable/grey_background_pattern</item>
 
         <item name="android:editTextStyle">@style/EditTextMyMineTheme</item>
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMyMineTheme</item>
