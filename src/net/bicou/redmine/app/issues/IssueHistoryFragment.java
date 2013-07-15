@@ -87,10 +87,12 @@ public class IssueHistoryFragment extends SherlockListFragment implements Fragme
 				@Override
 				public void onJournalsDownloaded(final IssueHistory history) {
 					setHistory(history);
-					if (history == null || history.journals == null) {
-						Crouton.makeText(getSherlockActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
+					if (getSherlockActivity() != null) {
+						if (history == null || history.journals == null) {
+							Crouton.makeText(getSherlockActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
+						}
+						getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 					}
-					getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 				}
 			}, mIssue);
 			mUpdateTask.execute();
