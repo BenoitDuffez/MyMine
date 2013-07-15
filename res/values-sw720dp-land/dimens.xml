@@ -3,6 +3,9 @@
 
     <dimen name="navigation_drawer_width">800dp</dimen>
 
+    <dimen name="main_content_padding">12dp</dimen>
+    <dimen name="main_horizontal_margin">96dp</dimen>
+
     <integer name="issues_order_pick_column_gridview_nb_columns">4</integer>
 
     <integer name="issues_list_item_nb_lines">5</integer>

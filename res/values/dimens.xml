@@ -13,7 +13,13 @@
 
     <dimen name="title_font_size">34sp</dimen>
 
-    <dimen name="main_layout_padding">8dp</dimen>
+    <!-- For the main container of the whole screen -->
+    <dimen name="main_horizontal_margin">12dp</dimen>
+    <dimen name="main_vertical_margin">12dp</dimen>
+
+    <!-- For a content container inside the whole screen -->
+    <dimen name="main_content_padding">8dp</dimen>
+
     <dimen name="content_layout_padding">4dp</dimen>
 
     <integer name="overview_num_columns">1</integer>
