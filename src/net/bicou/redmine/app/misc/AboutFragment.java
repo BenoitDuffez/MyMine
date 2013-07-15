@@ -23,7 +23,7 @@ import java.util.zip.ZipFile;
 public class AboutFragment extends SherlockFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.activity_about, container, false);
+		View v = inflater.inflate(R.layout.frag_about, container, false);
 
 		final TextView version = (TextView) v.findViewById(R.id.about_version);
 		setupVersion(version);
