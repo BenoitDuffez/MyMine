@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
 import net.bicou.redmine.util.L;
@@ -40,7 +41,14 @@ public class CertificateFragment extends SherlockFragment {
 		mKey = (TextView) v.findViewById(R.id.cert_key);
 		mAlgo = (TextView) v.findViewById(R.id.cert_algo);
 
+		// Load the cert from disk or android keystore
 		final String alias = getArguments().getString(KEY_CERT_ALIAS);
+		AsyncTaskFragment.runTask(getSherlockActivity(), 0, alias);
+
+		return v;
+	}
+
+	public void loadCertificate(String alias) {
 		final KeyStore ks = new KeyStoreDiskStorage(getActivity()).loadAppKeyStore();
 		try {
 			mCertificate = (X509Certificate) ks.getCertificate(alias);
@@ -60,13 +68,9 @@ public class CertificateFragment extends SherlockFragment {
 				L.e("Couldn't load certificate from Android's keystore", e);
 			}
 		}
-
-		return v;
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
+	public void refreshUI() {
 		if (mCertificate == null) {
 			mStartDate.setText(R.string.not_applicable);
 			mEndDate.setText(R.string.not_applicable);

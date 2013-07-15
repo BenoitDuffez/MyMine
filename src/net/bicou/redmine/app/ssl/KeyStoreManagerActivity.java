@@ -10,13 +10,15 @@ import android.support.v4.app.Fragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
 import net.bicou.redmine.util.PreferencesManager;
 
-public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragment, CertificateFragment> {
+public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragment, CertificateFragment> implements AsyncTaskFragment.TaskFragmentCallbacks {
 	@Override
 	protected Fragment createEmptyFragment(Bundle args) {
 		return EmptyFragment.newInstance(R.drawable.empty_cert);
@@ -30,6 +32,16 @@ public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragm
 	@Override
 	protected CertificateFragment createContentFragment(Bundle args) {
 		return CertificateFragment.newInstance(args);
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
+		super.onCreate(savedInstanceState);
+		
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
 	}
 
 	@Override
@@ -88,5 +100,26 @@ public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragm
 				null,// "internal.example.com", // host name of server requesting the cert, null if unavailable
 				-1,// 443, // port of server requesting the cert, -1 if unavailable
 				null); // alias to preselect, null if unavailable
+	}
+
+	@Override
+	public void onPreExecute(final int action, final Object parameters) {
+		setSupportProgressBarIndeterminateVisibility(true);
+	}
+
+	@Override
+	public Object doInBackGround(final int action, final Object parameters) {
+		if (getContentFragment() != null) {
+			getContentFragment().loadCertificate((String) parameters);
+		}
+		return null;
+	}
+
+	@Override
+	public void onPostExecute(final int action, final Object parameters, final Object result) {
+		setSupportProgressBarIndeterminateVisibility(false);
+		if (getContentFragment() != null) {
+			getContentFragment().refreshUI();
+		}
 	}
 }
