@@ -1,16 +1,19 @@
 package net.bicou.redmine.app.settings;
 
-import net.bicou.redmine.R;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import net.bicou.redmine.R;
 
 /**
  * This fragment shows data and sync preferences only. It is used when the activity is showing a two-pane settings UI.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class DataSyncPreferenceFragment extends PreferenceFragment {
+	public DataSyncPreferenceFragment() {
+	}
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
