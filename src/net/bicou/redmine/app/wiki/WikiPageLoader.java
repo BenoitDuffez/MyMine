@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 
 /**
  * Created by bicou on 18/06/13.
+ * <p/>
+ * Textile markup based text management
  */
 public class WikiPageLoader {
 	Server mServer;
@@ -25,6 +27,13 @@ public class WikiPageLoader {
 	WikiDbAdapter mDb;
 	ViewGroup mCroutonHolder;
 
+	/**
+	 * Constructor.
+	 * <p/>
+	 * The activity and ViewGroup are required to display Crouton notifications in case of issues.
+	 * <p/>
+	 * The server and db may be required if the markup text includes wiki pages.
+	 */
 	public WikiPageLoader(Server server, SherlockFragmentActivity act, WikiDbAdapter db, ViewGroup croutonHolder) {
 		mServer = server;
 		mActivity = act;
@@ -32,6 +41,9 @@ public class WikiPageLoader {
 		mCroutonHolder = croutonHolder;
 	}
 
+	/**
+	 * Synchronously loads a wiki page, either from db if it exists, or from the server otherwise
+	 */
 	public WikiPage actualSyncLoadWikiPage(Project project, String uri) {
 		// Try to load from DB first, if the sync is working it should already be there.
 		WikiPage wikiPage = mDb.select(mServer, project, uri);
@@ -59,6 +71,9 @@ public class WikiPageLoader {
 		return wikiPage;
 	}
 
+	/**
+	 * Synchronously handle textile markup management. May load included pages from the db or the server.
+	 */
 	public String handleMarkupReplacements(final Project project, String text) {
 		if (TextUtils.isEmpty(text)) {
 			return "";
