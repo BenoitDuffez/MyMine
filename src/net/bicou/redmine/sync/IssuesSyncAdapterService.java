@@ -24,8 +24,7 @@ import net.bicou.redmine.data.json.IssuePrioritiesList;
 import net.bicou.redmine.data.json.IssueStatusesList;
 import net.bicou.redmine.data.json.IssuesList;
 import net.bicou.redmine.data.json.TrackersList;
-import net.bicou.redmine.data.sqlite.QueriesList;
-import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.data.sqlite.*;
 import net.bicou.redmine.platform.IssuesManager;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.PreferencesManager;
@@ -170,13 +169,15 @@ public class IssuesSyncAdapterService extends Service {
 
 			// Get the issues sync period preference
 			final int issuesSyncPeriod = PreferencesManager.getInt(mContext, SettingsActivity.KEY_ISSUES_SYNC_PERIOD, 182);
+			IssuesDbAdapter db = new IssuesDbAdapter(mContext);
+			db.open();
 
 			do {
 				issues = NetworkUtilities.syncIssues(mContext, server, issuesSyncPeriod, lastSyncMarker, offset);
 				if (issues == null || issues.issues == null || issues.issues.size() <= 0) {
 					break;
 				}
-				newSyncState = IssuesManager.updateIssues(mContext, server, issues.issues, lastSyncMarker, syncResult);
+				newSyncState = IssuesManager.updateIssues(db, server, issues.issues, lastSyncMarker, syncResult);
 				offset += issues.downloadedObjects;
 			} while (offset < issues.total_count);
 
@@ -188,27 +189,28 @@ public class IssuesSyncAdapterService extends Service {
 			// Sync issue statuses as well
 			final IssueStatusesList issuesStatuses = NetworkUtilities.syncIssueStatuses(mContext, server, lastSyncMarker);
 			if (issuesStatuses != null && issuesStatuses.issue_statuses != null && issuesStatuses.issue_statuses.size() > 0) {
-				IssuesManager.updateIssueStatuses(mContext, server, issuesStatuses.issue_statuses, lastSyncMarker);
+				IssuesManager.updateIssueStatuses(new IssueStatusesDbAdapter(db), server, issuesStatuses.issue_statuses, lastSyncMarker);
 			}
 
 			// Sync issue queries
 			final QueriesList queries = NetworkUtilities.syncQueriesList(mContext, server, lastSyncMarker);
 			if (queries != null && queries.queries != null && queries.queries.size() > 0) {
-				IssuesManager.updateIssueQueries(mContext, server, queries.queries, lastSyncMarker);
+				IssuesManager.updateIssueQueries(new QueriesDbAdapter(db), server, queries.queries, lastSyncMarker);
 			}
 
 			// Sync issue trackers
 			final TrackersList trackers = NetworkUtilities.syncTrackers(mContext, server, lastSyncMarker);
 			if (trackers != null && trackers.trackers != null && trackers.trackers.size() > 0) {
-				IssuesManager.updateTrackers(mContext, server, trackers.trackers, lastSyncMarker);
+				IssuesManager.updateTrackers(new TrackersDbAdapter(db), server, trackers.trackers, lastSyncMarker);
 			}
 
 			// Sync issue priorities
 			IssuePrioritiesList priorities = NetworkUtilities.syncIssuePriorities(mContext, server, lastSyncMarker);
 			if (priorities != null && priorities.issue_priorities != null && priorities.issue_priorities.size() > 0) {
-				IssuesManager.updatePriorities(mContext, server, priorities.issue_priorities, lastSyncMarker);
+				IssuesManager.updatePriorities(new IssuePrioritiesDbAdapter(db), server, priorities.issue_priorities, lastSyncMarker);
 			}
 
+			db.close();
 			return newSyncState;
 		}
 

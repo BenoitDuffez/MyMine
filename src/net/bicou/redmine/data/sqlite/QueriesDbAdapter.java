@@ -1,14 +1,14 @@
 package net.bicou.redmine.data.sqlite;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.Query;
-import net.bicou.redmine.util.Util;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Query;
+import net.bicou.redmine.util.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class QueriesDbAdapter extends DbAdapter {
 	public static final String TABLE_QUERIES = "queries";
@@ -31,17 +31,19 @@ public class QueriesDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 * 
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
-			"CREATE TABLE " + TABLE_QUERIES + "(" + Util.join(QUERY_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
+				"CREATE TABLE " + TABLE_QUERIES + "(" + Util.join(QUERY_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
 		};
 	}
 
 	public QueriesDbAdapter(final Context ctx) {
 		super(ctx);
+	}
+
+	public QueriesDbAdapter(final DbAdapter db) {
+		super(db);
 	}
 
 	private void feedValues(final ContentValues values, final Query query) {
@@ -127,8 +129,6 @@ public class QueriesDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes queries
-	 * 
-	 * @return
 	 */
 	public int deleteAll(final Server server, final long projectId) {
 		final List<String> selection = new ArrayList<String>();
