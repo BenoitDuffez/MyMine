@@ -84,7 +84,7 @@ public class IssuesDbAdapter extends DbAdapter {
 	public static final String KEY_ATTN_AUTHOR_ID = "author_id";
 	public static final String KEY_ATTN_CREATED_ON = "created_on";
 
-	public static final String KEY_ATTN_ISSUE_ID = "id";
+	public static final String KEY_ATTN_ISSUE_ID = "issue_id";
 	public static final String KEY_ATTN_SERVER_ID = "server_id";
 
 	public static final String[] ATTACHMENT_FIELDS = {
