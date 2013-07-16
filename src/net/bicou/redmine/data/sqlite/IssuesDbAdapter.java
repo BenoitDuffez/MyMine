@@ -194,6 +194,41 @@ public class IssuesDbAdapter extends DbAdapter {
 		return mDb.update(TABLE_ISSUES, values, KEY_ID + "=" + issue.id + " AND " + KEY_SERVER_ID + " = " + issue.server.rowId, null);
 	}
 
+	public int update(Issue issue, Attachment attn) {
+		ContentValues values = new ContentValues();
+		values.put(KEY_ATTN_SERVER_ID, issue.server == null ? 0 : issue.server.rowId);
+		values.put(KEY_ATTN_ISSUE_ID, issue.id);
+		values.put(KEY_ATTN_ID, attn.id);
+		values.put(KEY_ATTN_FILENAME, attn.filename);
+		values.put(KEY_ATTN_FILESIZE, attn.filesize);
+		values.put(KEY_ATTN_DESCRIPTION, attn.description);
+		values.put(KEY_ATTN_CONTENT_URL, attn.content_url);
+		values.put(KEY_ATTN_CONTENT_TYPE, attn.content_type);
+		values.put(KEY_ATTN_AUTHOR_ID, attn.author == null ? 0 : attn.author.id);
+		values.put(KEY_ATTN_CREATED_ON, attn.created_on == null ? 0 : attn.created_on.getTimeInMillis());
+
+		Attachment a = select(issue, attn.id);
+		if (a == null) {
+			return mDb.insert(TABLE_ATTACHMENTS, "", values) > 0 ? 1 : 0;
+		} else {
+			return mDb.update(TABLE_ATTACHMENTS, values, KEY_ATTN_ID + " = " + attn.id + " AND " + KEY_ATTN_SERVER_ID + " = " + issue.server.rowId, null);
+		}
+	}
+
+	private Attachment select(final Issue issue, final long id) {
+		String[] where = {
+				KEY_ATTN_ID + " = " + id,
+				KEY_ATTN_SERVER_ID + " = " + issue.server.rowId,
+		};
+		Cursor c = mDb.query(TABLE_ATTACHMENTS, null, Util.join(where, " AND "), null, null, null, null);
+		Attachment attn = null;
+		if (c.moveToFirst()) {
+			attn = new Attachment(issue.server, this, c);
+			c.close();
+		}
+		return attn;
+	}
+
 	public Cursor selectCursor(final Server server, final long id, final String[] columns) {
 		final String where = KEY_ID + " = " + id + " AND " + KEY_SERVER_ID + " = " + server.rowId;
 		return mDb.query(TABLE_ISSUES, columns, where, null, null, null, null);
@@ -477,5 +512,22 @@ public class IssuesDbAdapter extends DbAdapter {
 			c.close();
 		}
 		return attachments;
+	}
+
+	public Attachment getAttnFromFileName(Server server, String fileName) {
+		String[] where = {
+				KEY_ATTN_FILENAME + " = ?",
+				KEY_ATTN_SERVER_ID + " = " + server.rowId,
+		};
+		String[] args = { fileName };
+
+		Cursor c = mDb.query(TABLE_ATTACHMENTS, null, Util.join(where, " AND "), args, null, null, null);
+		Attachment attn = null;
+		if (c.moveToFirst()) {
+			attn = new Attachment(server, this, c);
+			c.close();
+		}
+
+		return attn;
 	}
 }

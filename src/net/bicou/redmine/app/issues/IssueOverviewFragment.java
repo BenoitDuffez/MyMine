@@ -1,6 +1,7 @@
 package net.bicou.redmine.app.issues;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,20 @@ import com.google.gson.Gson;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.wiki.WikiPageLoader;
+import net.bicou.redmine.data.json.Attachment;
 import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
+import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IssueOverviewFragment extends SherlockFragment {
 	TextView mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion;
@@ -66,9 +77,63 @@ public class IssueOverviewFragment extends SherlockFragment {
 		String textile = mIssue.description != null ? mIssue.description : "";
 		textile = loader.handleMarkupReplacements(mIssue.project, textile);
 
-		db.close();
+		IssuesDbAdapter idb = new IssuesDbAdapter(db);
+		syncIssueAttachments(idb);
+		textile = refactorImageUrls(idb, textile);
 
+		db.close();
 		return Util.htmlFromTextile(textile);
+	}
+
+	private void syncIssueAttachments(IssuesDbAdapter db) {
+		// Sync attachments
+		String url = "issues/" + mIssue.id + ".json";
+		NameValuePair[] args = {
+				new BasicNameValuePair("include", "attachments"),
+		};
+
+		Issue i = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true).fetchObject(getActivity(), mIssue.server, url, args);
+		if (i != null) {
+			mIssue.attachments = i.attachments;
+		}
+
+		if (mIssue.attachments != null && mIssue.attachments.size() > 0) {
+			for (Attachment attn : mIssue.attachments) {
+				db.update(mIssue, attn);
+			}
+		}
+	}
+
+	private String refactorImageUrls(IssuesDbAdapter db, String textile) {
+		Pattern regex = Pattern.compile("(!>?)([^!]+)!", 0);
+		Matcher m = regex.matcher(textile);
+		String path;
+		Attachment attn;
+		List<String> matches = new ArrayList<String>();
+		List<String> replacements = new ArrayList<String>();
+
+		while (m.find()) {
+			L.d("found image: " + m.group(0));
+
+			path = m.group(2);
+			if (path.startsWith(">")) {
+				path = path.substring(1);
+			}
+			if (!path.startsWith("http://") && !path.startsWith("https://") && !path.startsWith("ftp://")) {
+				attn = db.getAttnFromFileName(mIssue.server, path);
+				if (attn != null && !TextUtils.isEmpty(attn.content_url)) {
+					matches.add(m.group(0));
+					replacements.add(m.group(1) + attn.content_url + "!");
+					L.i("replaced url to: " + m.group(1) + attn.content_url + "!");
+				}
+			}
+		}
+
+		for (int i = 0; i < matches.size(); i++) {
+			textile = textile.replace(matches.get(i), replacements.get(i));
+		}
+
+		return textile;
 	}
 
 	public void onIssueOverviewLoaded(String html) {
