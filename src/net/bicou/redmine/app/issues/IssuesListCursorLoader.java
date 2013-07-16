@@ -21,7 +21,6 @@ import java.util.List;
  * Loader that will handle the initial DB query and Cursor creation
  *
  * @author bicou
- *
  */
 public final class IssuesListCursorLoader extends SimpleCursorLoader {
 	private static final String[] COLUMN_SELECTION = new String[] {
@@ -51,7 +50,7 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 			mFilter = IssuesListFilter.FILTER_ALL;
 		}
 
-		L.d("filter="+mFilter+", order="+mColumnsOrder);
+		L.d("filter=" + mFilter + ", order=" + mColumnsOrder);
 
 		switch (mFilter.type) {
 		default:
@@ -98,6 +97,9 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 		};
 		final List<Long> matchingIssues = new ArrayList<Long>();
 
+		IssuesDbAdapter db = new IssuesDbAdapter(ctx);
+		db.open();
+
 		// Fetch issues
 		do {
 			issues = new JsonDownloader<IssuesList>(IssuesList.class).setDownloadAllIfList(false).fetchObject(ctx, server, "issues.json", args);
@@ -108,12 +110,14 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 			offset += issues.getSize();
 			args[1] = new BasicNameValuePair("offset", Integer.toString(offset));
 
-			IssuesManager.updateIssues(ctx, server, issues.issues, 0, null);
+			IssuesManager.updateIssues(db, server, issues.issues, 0, null);
 
 			for (final Issue i : issues.issues) {
 				matchingIssues.add(i.id);
 			}
 		} while (issues != null && nbDownloaded < issues.total_count);
+
+		db.close();
 
 		return matchingIssues;
 	}
