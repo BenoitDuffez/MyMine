@@ -37,6 +37,8 @@ import java.util.List;
 public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks {
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
+	public static final int ACTION_REFRESH_ISSUES = 0;
+	public static final int ACTION_ISSUE_OVERVIEW = 1;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -182,7 +184,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return true;
 
 		case R.id.menu_issues_refresh:
-			AsyncTaskFragment.runTask(this, R.id.menu_issues_refresh, null);
+			AsyncTaskFragment.runTask(this, ACTION_REFRESH_ISSUES, null);
 			return true;
 
 		default:
@@ -237,7 +239,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public Object doInBackGround(final int action, final Object parameters) {
-		if (action == R.id.menu_issues_refresh) {
+		switch (action) {
+		case ACTION_REFRESH_ISSUES:
 			IssuesSyncAdapterService.Synchronizer synchronizer = new IssuesSyncAdapterService.Synchronizer(this);
 			ServersDbAdapter db = new ServersDbAdapter(this);
 			db.open();
@@ -245,15 +248,41 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 				synchronizer.synchronizeIssues(server, null, 0);
 			}
 			db.close();
+			break;
+
+		case ACTION_ISSUE_OVERVIEW:
+			IssueFragment content = getContentFragment();
+			if (content != null) {
+				Fragment frag = content.getFragmentFromViewPager(0);
+				if (frag != null && frag instanceof IssueOverviewFragment) {
+					return ((IssueOverviewFragment) frag).loadIssueOverview();
+				}
+			}
+			break;
 		}
+
 		return null;
 	}
 
 	@Override
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		setSupportProgressBarIndeterminateVisibility(false);
-		if (getMainFragment() != null) {
-			getMainFragment().refreshList();
+		switch (action) {
+		case ACTION_REFRESH_ISSUES:
+			if (getMainFragment() != null) {
+				getMainFragment().refreshList();
+			}
+			break;
+
+		case ACTION_ISSUE_OVERVIEW:
+			IssueFragment content = getContentFragment();
+			if (content != null) {
+				Fragment frag = content.getFragmentFromViewPager(0);
+				if (frag != null && frag instanceof IssueOverviewFragment) {
+					((IssueOverviewFragment) frag).onIssueOverviewLoaded((String) result);
+				}
+			}
+			break;
 		}
 	}
 

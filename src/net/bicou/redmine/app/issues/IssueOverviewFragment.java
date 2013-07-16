@@ -1,6 +1,5 @@
 package net.bicou.redmine.app.issues;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.wiki.WikiPageLoader;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
@@ -49,26 +49,28 @@ public class IssueOverviewFragment extends SherlockFragment {
 		mCategory.setText(mIssue.category != null ? mIssue.category.name : "-");
 		mTargetVersion.setText(mIssue.fixed_version != null ? mIssue.fixed_version.name : "-");
 
-		new AsyncTask<Void, Void, String>() {
-			@Override
-			protected String doInBackground(Void... voids) {
-				WikiDbAdapter db = new WikiDbAdapter(getActivity());
-				db.open();
-				WikiPageLoader loader = new WikiPageLoader(mIssue.server, getSherlockActivity(), db, null);
-
-				String textile = mIssue.description != null ? mIssue.description : "";
-				textile = loader.handleMarkupReplacements(mIssue.project, textile);
-
-				db.close();
-				return textile;
-			}
-
-			@Override
-			protected void onPostExecute(String textile) {
-				mDescription.loadData(Util.htmlFromTextile(textile), "text/html; charset=UTF-8", null);
-			}
-		}.execute();
-
 		return v;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_OVERVIEW, null);
+	}
+
+	public String loadIssueOverview() {
+		WikiDbAdapter db = new WikiDbAdapter(getActivity());
+		db.open();
+		WikiPageLoader loader = new WikiPageLoader(mIssue.server, getSherlockActivity(), db, null);
+
+		String textile = mIssue.description != null ? mIssue.description : "";
+		textile = loader.handleMarkupReplacements(mIssue.project, textile);
+
+		db.close();
+		return textile;
+	}
+
+	public void onIssueOverviewLoaded(String textile) {
+		mDescription.loadData(Util.htmlFromTextile(textile), "text/html; charset=UTF-8", null);
 	}
 }

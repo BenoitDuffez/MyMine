@@ -65,10 +65,10 @@ public class IssueFragment extends SherlockFragment {
 		}
 
 		/**
-		 * {{@link #getItem(int)} is a VERY bad name: it is not meant to retrieve the item, but it is meant to INSTANTIATE the item.<br />
-		 * Hence, this method will simply retrieve the item.
+		 * {{@link #getItem(int)} is a VERY bad name: it is not meant to retrieve the item, but it is meant to INSTANTIATE the item.<br /> Hence,
+		 * this method will simply
+		 * retrieve the item.
 		 *
-		 * @param position
 		 * @return The {@code Fragment} at that position
 		 */
 		public Fragment getFragment(final int position) {
@@ -84,6 +84,10 @@ public class IssueFragment extends SherlockFragment {
 			}
 			return mFragments[position];
 		}
+	}
+
+	public Fragment getFragmentFromViewPager(int position) {
+		return mAdapter.getFragment(position);
 	}
 
 	@Override
