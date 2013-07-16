@@ -46,6 +46,8 @@ public class Attachment {
 				} else if (col.equals(IssuesDbAdapter.KEY_ATTN_CREATED_ON)) {
 					created_on = new GregorianCalendar();
 					created_on.setTimeInMillis(c.getLong(colIndex));
+				} else if (col.equals(IssuesDbAdapter.KEY_ATTN_SERVER_ID)) {
+				} else if (col.equals(IssuesDbAdapter.KEY_ATTN_ISSUE_ID)) {
 				} else {
 					L.e("Unparsed attachment column: " + col, null);
 				}
