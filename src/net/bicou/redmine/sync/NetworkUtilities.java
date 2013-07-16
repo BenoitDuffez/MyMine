@@ -18,10 +18,6 @@ import java.util.*;
 final public class NetworkUtilities {
 	/**
 	 * Try to get info about the local user
-	 *
-	 * @param ctx
-	 * @param server
-	 * @return
 	 */
 	public static User whoAmI(final Context ctx, final Server server) {
 		return new JsonDownloader<User>(User.class) //
@@ -40,6 +36,7 @@ final public class NetworkUtilities {
 		args.add(new BasicNameValuePair("limit", Integer.toString(Constants.ISSUES_LIST_BURST_DOWNLOAD_COUNT)));
 		args.add(new BasicNameValuePair("status_id", "*"));
 		args.add(new BasicNameValuePair("offset", Integer.toString(startOffset)));
+		args.add(new BasicNameValuePair("include", "attachments"));
 
 		// Create updated_on filter
 		if (syncPeriod > 0) {

@@ -31,6 +31,7 @@ public class Issue {
 	public double spent_hours;
 	public List<Journal> journals;
 	public List<ChangeSet> changesets;
+	public List<Attachment> attachments;
 
 	public Server server;
 	public Project project;
@@ -126,6 +127,9 @@ public class Issue {
 				L.e("sending bug report", null);
 			}
 		}
+
+		// Load attachments
+	attachments=db.loadAttachments(this);
 	}
 
 	public String toString() {

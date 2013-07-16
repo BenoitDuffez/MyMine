@@ -9,6 +9,7 @@ import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.issues.IssuesListFilter.FilterType;
 import net.bicou.redmine.app.issues.order.OrderColumn;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Attachment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Reference;
 import net.bicou.redmine.data.json.User;
@@ -72,13 +73,51 @@ public class IssuesDbAdapter extends DbAdapter {
 			KEY_SERVER_ID,
 	};
 
+	// Attachments
+	public static final String TABLE_ATTACHMENTS = "issue_attachments";
+	public static final String KEY_ATTN_ID = "id";
+	public static final String KEY_ATTN_FILENAME = "filename";
+	public static final String KEY_ATTN_FILESIZE = "filesize";
+	public static final String KEY_ATTN_CONTENT_TYPE = "content_type";
+	public static final String KEY_ATTN_DESCRIPTION = "description";
+	public static final String KEY_ATTN_CONTENT_URL = "content_url";
+	public static final String KEY_ATTN_AUTHOR_ID = "author_id";
+	public static final String KEY_ATTN_CREATED_ON = "created_on";
+
+	public static final String KEY_ATTN_ISSUE_ID = "id";
+	public static final String KEY_ATTN_SERVER_ID = "server_id";
+
+	public static final String[] ATTACHMENT_FIELDS = {
+			KEY_ATTN_ID,
+			KEY_ATTN_FILENAME,
+			KEY_ATTN_FILESIZE,
+			KEY_ATTN_CONTENT_TYPE,
+			KEY_ATTN_DESCRIPTION,
+			KEY_ATTN_CONTENT_URL,
+			KEY_ATTN_AUTHOR_ID,
+			KEY_ATTN_CREATED_ON,
+
+			KEY_ATTN_SERVER_ID,
+			KEY_ATTN_ISSUE_ID,
+	};
+
 	/**
 	 * Table creation statements
 	 */
 	public static final String[] getCreateTablesStatements() {
+		String[] issuesKeys = {
+				KEY_ID,
+				KEY_SERVER_ID,
+				KEY_PROJECT_ID,
+		}, attnKeys = {
+				KEY_ATTN_ID,
+				KEY_ATTN_SERVER_ID,
+				KEY_ATTN_ISSUE_ID
+		};
+
 		return new String[] {
-				"CREATE TABLE " + TABLE_ISSUES + "(" + Util.join(ISSUE_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + ", " +
-						"" + KEY_PROJECT_ID + "))",
+				"CREATE TABLE " + TABLE_ISSUES + "(" + Util.join(ISSUE_FIELDS, ", ") + ", PRIMARY KEY (" + Util.join(issuesKeys, ", ") + "))",
+				"CREATE TABLE " + TABLE_ATTACHMENTS + " (" + Util.join(ATTACHMENT_FIELDS, ", ") + ", PRIMARY KEY (" + Util.join(attnKeys, ", ") + "))",
 		};
 	}
 
@@ -112,6 +151,23 @@ public class IssuesDbAdapter extends DbAdapter {
 		values.put(KEY_ESTIMATED_HOURS, issue.estimated_hours);
 		values.put(KEY_SPENT_HOURS, issue.spent_hours);
 		values.put(KEY_SERVER_ID, issue.server.rowId);
+
+		if (issue.attachments != null && issue.attachments.size() > 0) {
+			ContentValues cv = new ContentValues();
+			cv.put(KEY_ATTN_SERVER_ID, issue.server.rowId);
+			for (Attachment attn : issue.attachments) {
+				cv.put(KEY_ATTN_ID, attn.id);
+				cv.put(KEY_ATTN_FILENAME, attn.filename);
+				cv.put(KEY_ATTN_FILESIZE, attn.filesize);
+				cv.put(KEY_ATTN_CONTENT_TYPE, attn.content_type);
+				cv.put(KEY_ATTN_DESCRIPTION, attn.description);
+				cv.put(KEY_ATTN_CONTENT_URL, attn.content_url);
+				cv.put(KEY_ATTN_AUTHOR_ID, attn.author == null ? 0 : attn.author.id);
+				cv.put(KEY_ATTN_CREATED_ON, attn.created_on == null ? 0 : attn.created_on.getTimeInMillis());
+				mDb.insert(TABLE_ATTACHMENTS, "", cv);
+			}
+		}
+
 		return mDb.insert(TABLE_ISSUES, "", values);
 	}
 
@@ -407,5 +463,19 @@ public class IssuesDbAdapter extends DbAdapter {
 			c.close();
 		}
 		return nb;
+	}
+
+	public List<Attachment> loadAttachments(final Issue issue) {
+		String where = KEY_ATTN_SERVER_ID + " = " + issue.server.rowId + " AND " + KEY_ATTN_ISSUE_ID + " = " + issue.id;
+		Cursor c = mDb.query(TABLE_ATTACHMENTS, ATTACHMENT_FIELDS, where, null, null, null, null);
+		List<Attachment> attachments = null;
+		if (c.moveToFirst()) {
+			attachments = new ArrayList<Attachment>();
+			do {
+				attachments.add(new Attachment(issue.server, this, c));
+			} while (c.moveToNext());
+			c.close();
+		}
+		return attachments;
 	}
 }
