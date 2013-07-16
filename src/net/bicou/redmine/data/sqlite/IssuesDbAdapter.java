@@ -48,9 +48,6 @@ public class IssuesDbAdapter extends DbAdapter {
 	public static final String KEY_STATUS = "status";
 	public static final String KEY_FIXED_VERSION = "version";
 
-	public static final String TABLE_JOURNALS = "issue_journals";
-	// TODO public List<Journal> journals;
-
 	public static final String[] ISSUE_FIELDS = new String[] {
 			KEY_ID,
 			KEY_PROJECT_ID,
@@ -77,8 +74,6 @@ public class IssuesDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
@@ -199,10 +194,6 @@ public class IssuesDbAdapter extends DbAdapter {
 
 	/**
 	 * Select all the issues that match the given ID from the list, on the given server.
-	 *
-	 * @param issueIds
-	 * @param columns
-	 * @return
 	 */
 	public Cursor selectAllCursor(final Server server, final List<Long> issueIds, final String[] columns, final List<OrderColumn> columnsOrder) {
 		final List<String> selection = new ArrayList<String>();
@@ -214,11 +205,7 @@ public class IssuesDbAdapter extends DbAdapter {
 	/**
 	 * Select all the issues that match the given filter.
 	 *
-	 * @param filter
-	 * @param columns
-	 * @return
-	 * @throws IllegalArgumentException
-	 *             if the filter is a {@link FilterType#QUERY}
+	 * @throws IllegalArgumentException if the filter is a {@link FilterType#QUERY}
 	 */
 	public Cursor selectAllCursor(IssuesListFilter filter, final String[] columns, final List<OrderColumn> columnsOrder) {
 		if (filter == null) {
@@ -304,14 +291,10 @@ public class IssuesDbAdapter extends DbAdapter {
 	}
 
 	/**
-	 * Select all the issues that match the SQL <code>WHERE</code> clause expressed in <code>selection</code><br />
-	 * Arguments placed in <code>selection</code> without ?'s must be properly escaped, because the Cursor will be created using
-	 * {@link SQLiteDatabase#rawQuery(String, String[])}.<br />
-	 * Arguments placed in <code>selection</code> with ?'s can place their arguments in <code>selectionArgs</code>.
-	 *
-	 * @param selection
-	 * @param columns
-	 * @return
+	 * Select all the issues that match the SQL <code>WHERE</code> clause expressed in <code>selection</code><br /> Arguments placed in <code>selection</code>
+	 * without
+	 * ?'s must be properly escaped, because the Cursor will be created using {@link SQLiteDatabase#rawQuery(String, String[])}.<br /> Arguments placed in
+	 * <code>selection</code> with ?'s can place their arguments in <code>selectionArgs</code>.
 	 */
 	private Cursor findMatchingIssues(final List<String> selection, final List<String> selectionArgs, final String[] columns, final String orderBy) {
 		final List<String> tables = new ArrayList<String>();
@@ -384,8 +367,6 @@ public class IssuesDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes issues
-	 *
-	 * @return
 	 */
 	public int deleteAll(final Server server, final long projectId) {
 		if (projectId > 0) {
