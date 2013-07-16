@@ -106,25 +106,6 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 	@Override
 	public void onResume() {
 		super.onResume();
-		//		final Fragment frag = getSupportFragmentManager().findFragmentById(android.R.id.content);
-		//		L.d("");
-		//		final Bundle args = new Bundle();
-		//		if (frag instanceof RoadmapsListFragment) {
-		//			//			((RoadmapsListFragment) frag).updateCurrentRoadmap(mRoadmaps.get(mCurrentRoadmapPosition).id);
-		//			//			if (mIsSplitScreen) {
-		//			//				final Fragment f = getSupportFragmentManager().findFragmentById(R.id.roadmaps_pane_roadmap);
-		//			//				if (f != null) {
-		//			//					getSupportFragmentManager().beginTransaction().remove(f).commit();
-		//			//				}
-		//			//			}
-		//			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, RoadmapFragment.newInstance(args)).commit();
-		//		} else if (frag instanceof RoadmapFragment) {
-		//			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, RoadmapsListFragment.newInstance(args)).commit();
-		//		}
-		//		supportInvalidateOptionsMenu();
-		//
-		//
-		//		mProjects.clear();
 		refreshProjectsList();
 	}
 
