@@ -2,7 +2,6 @@ package net.bicou.redmine.app.roadmap;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +11,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
-import net.bicou.redmine.util.L;
 import net.bicou.redmine.widget.IssuesListRelativeLayout;
 
 import java.text.DateFormat;
@@ -68,38 +68,38 @@ public class RoadmapsListFragment extends SherlockListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.frag_roadmaps_list, container, false);
-
 		mAdapter = new RoadmapsAdapter(getActivity(), mList);
 		setListAdapter(mAdapter);
-
-		updateRoadmapsList();
-
 		return v;
 	}
 
-	public void updateRoadmapsList() {
-		final CurrentProjectInfo info = (CurrentProjectInfo) getActivity();
+	@Override
+	public void onResume() {
+		super.onResume();
+		updateRoadmap();
+	}
+
+	public void updateRoadmap() {
+		AsyncTaskFragment.runTask(getSherlockActivity(), 0, null);
+	}
+
+	public static List<Version> getRoadmap(Context ctx, Server server, Project project) {
+		List<Version> roadmap = new ArrayList<Version>();
+		VersionsDbAdapter db = new VersionsDbAdapter(ctx);
+		db.open();
+		roadmap.addAll(db.selectAll(server, project));
+		db.close();
+		return roadmap;
+	}
+
+	public void onRoadmapLoaded(List<Version> roadmap) {
 		mList.clear();
-
-		if (info == null || info.getCurrentProject() == null) {
-			L.e("shouldn't happen", null);
-		} else {
-			new AsyncTask<Void, Void, Void>() {
-				@Override
-				protected Void doInBackground(Void... contexts) {
-					VersionsDbAdapter db = new VersionsDbAdapter(getActivity());
-					db.open();
-					mList.addAll(db.selectAll(info.getCurrentProject().server, info.getCurrentProject()));
-					db.close();
-					return null;
-				}
-
-				@Override
-				protected void onPostExecute(Void aVoid) {
-					mAdapter.notifyDataSetChanged();
-				}
-			}.execute();
+		if (roadmap != null) {
+			for (Version v : roadmap) {
+				mList.add(v);
+			}
 		}
+		mAdapter.notifyDataSetChanged();
 	}
 
 	private static class RoadmapListItemViewsHolder {

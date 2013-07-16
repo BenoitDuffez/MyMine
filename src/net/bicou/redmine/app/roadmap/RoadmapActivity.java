@@ -7,10 +7,12 @@ import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.google.gson.Gson;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ProjectsSpinnerAdapter;
 import net.bicou.redmine.app.RefreshProjectsTask;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, RoadmapFragment> implements RoadmapsListFragment.RoadmapSelectionListener,
-		ActionBar.OnNavigationListener, RoadmapsListFragment.CurrentProjectInfo {
+		ActionBar.OnNavigationListener, RoadmapsListFragment.CurrentProjectInfo, AsyncTaskFragment.TaskFragmentCallbacks {
 	@Override
 	public void onRoadmapSelected(Version version) {
 		L.d("");
@@ -51,7 +53,11 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
 		super.onCreate(savedInstanceState);
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
 		initProjectsSpinner(savedInstanceState);
 	}
 
@@ -204,7 +210,7 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 		if (list == null) {
 			showMainFragment(new Bundle());
 		} else {
-			list.updateRoadmapsList();
+			list.updateRoadmap();
 		}
 
 		return true;
@@ -216,5 +222,28 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 			return null;
 		}
 		return mProjects.get(mCurrentProjectPosition);
+	}
+
+	@Override
+	public void onPreExecute(final int action, final Object parameters) {
+		setSupportProgressBarIndeterminateVisibility(true);
+	}
+
+	@Override
+	public Object doInBackGround(final int action, final Object parameters) {
+		Project project = getCurrentProject();
+		if (project != null) {
+			return RoadmapsListFragment.getRoadmap(this, getCurrentProject().server, getCurrentProject());
+		}
+		return null;
+	}
+
+	@Override
+	public void onPostExecute(final int action, final Object parameters, final Object result) {
+		setSupportProgressBarIndeterminateVisibility(false);
+		RoadmapsListFragment list = getMainFragment();
+		if (list != null) {
+			list.onRoadmapLoaded((List<Version>) result);
+		}
 	}
 }
