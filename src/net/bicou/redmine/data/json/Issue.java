@@ -129,7 +129,7 @@ public class Issue {
 		}
 
 		// Load attachments
-	attachments=db.loadAttachments(this);
+		attachments = db.loadAttachments(this);
 	}
 
 	public String toString() {
