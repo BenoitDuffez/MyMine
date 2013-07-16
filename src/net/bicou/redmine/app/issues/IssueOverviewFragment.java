@@ -67,10 +67,11 @@ public class IssueOverviewFragment extends SherlockFragment {
 		textile = loader.handleMarkupReplacements(mIssue.project, textile);
 
 		db.close();
-		return textile;
+
+		return Util.htmlFromTextile(textile);
 	}
 
-	public void onIssueOverviewLoaded(String textile) {
-		mDescription.loadData(Util.htmlFromTextile(textile), "text/html; charset=UTF-8", null);
+	public void onIssueOverviewLoaded(String html) {
+		mDescription.loadData(html, "text/html; charset=UTF-8", null);
 	}
 }
