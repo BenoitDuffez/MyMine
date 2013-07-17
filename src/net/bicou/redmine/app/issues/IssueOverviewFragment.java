@@ -54,7 +54,6 @@ public class IssueOverviewFragment extends SherlockFragment {
 		mDescription = (WebView) v.findViewById(R.id.issue_description);
 
 		mIssue = new Gson().fromJson(getArguments().getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
-		mIssue.server = ((IssuesActivity)getActivity()).getCu
 
 		mSubject.setText(mIssue.subject != null ? mIssue.subject : "");
 		mStatus.setText(mIssue.status != null ? mIssue.status.name : "-");
@@ -97,7 +96,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 
 		Issue issueWithAttns = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true).fetchObject(context, issue.server, url, args);
 		if (issueWithAttns != null) {
-
+			issueWithAttns.server = issue.server;
 			if (issueWithAttns.attachments != null && issueWithAttns.attachments.size() > 0) {
 				for (Attachment attn : issueWithAttns.attachments) {
 					db.update(issueWithAttns, attn);
