@@ -1,6 +1,7 @@
 package net.bicou.redmine.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -68,20 +69,25 @@ public class AsyncTaskFragment extends Fragment {
 	public interface TaskFragmentCallbacks {
 		/**
 		 * Called on the UI thread, before the background task is started.
-		 * @param action The action ID, used to select what background task has to be done
+		 *
+		 * @param action     The action ID, used to select what background task has to be done
 		 * @param parameters The task parameters
 		 */
 		public void onPreExecute(int action, Object parameters);
 
 		/**
 		 * The background task. Must return the result data.
-		 * @param action The action ID, used to select what background task has to be done
-		 * @param parameters The task parameters
+		 *
+		 * @param applicationContext The application Context, that can be used by the background task when a Context is required, and when the Activity may not be
+		 *                           available.
+		 * @param action             The action ID, used to select what background task has to be done
+		 * @param parameters         The task parameters
 		 */
-		public Object doInBackGround(int action, Object parameters);
+		public Object doInBackGround(Context applicationContext, int action, Object parameters);
 
 		/**
 		 * Called from the UI thread, when the background task is complete
+		 *
 		 * @param action The action ID, used to select what background task has to be done
 		 * @param result The result data of the background task
 		 */
@@ -92,6 +98,7 @@ public class AsyncTaskFragment extends Fragment {
 	private static final String FRAGMENT_TAG = "net.bicou.TaskFragmentTag";
 	private TaskFragmentCallbacks mCallbacks;
 	private HashMap<Integer, Object> mTasks = new HashMap<Integer, Object>();
+	private Context mAppContext;
 
 	public static void attachAsyncTaskFragment(SherlockFragmentActivity activity) {
 		FragmentManager fm = activity.getSupportFragmentManager();
@@ -101,10 +108,7 @@ public class AsyncTaskFragment extends Fragment {
 	}
 
 	/**
-	 * Triggers the callbacks in the activity for a given action.<br />
-	 * The activity has to implement TaskFragmentCallbacks.
-	 * @param activity
-	 * @param action
+	 * Triggers the callbacks in the activity for a given action.<br /> The activity has to implement TaskFragmentCallbacks.
 	 */
 	public static void runTask(SherlockFragmentActivity activity, int action, Object parameters) {
 		FragmentManager fm = activity.getSupportFragmentManager();
@@ -113,8 +117,8 @@ public class AsyncTaskFragment extends Fragment {
 			((AsyncTaskFragment) f).mTasks.put(action, parameters);
 			((AsyncTaskFragment) f).run(action, parameters);
 		} else {
-			throw new IllegalStateException("Your activity must implement TaskFragmentCallbacks and call AsyncTaskFragment.attachAsyncTaskFragment() in its onCreate " +
-					"method.");
+			throw new IllegalStateException("Your activity must implement TaskFragmentCallbacks and call AsyncTaskFragment.attachAsyncTaskFragment() in its " +
+					"onCreate method.");
 		}
 	}
 
@@ -137,6 +141,7 @@ public class AsyncTaskFragment extends Fragment {
 			key = i.next();
 			mCallbacks.onPreExecute(key, mTasks.get(key));
 		}
+		mAppContext = activity.getApplicationContext();
 	}
 
 	@Override
@@ -173,7 +178,7 @@ public class AsyncTaskFragment extends Fragment {
 			protected Void doInBackground(Void... voids) {
 				waitForCallbacks();
 				if (mCallbacks != null) {
-					mObject = mCallbacks.doInBackGround(action, parameters);
+					mObject = mCallbacks.doInBackGround(mAppContext, action, parameters);
 				}
 				return null;
 			}
