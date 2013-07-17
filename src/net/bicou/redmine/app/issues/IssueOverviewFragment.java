@@ -143,7 +143,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 	}
 
 	public void onIssueOverviewLoaded(String html) {
-		L.d("Received new html: " + html);
 		mDescription.loadData(html, "text/html; charset=UTF-8", null);
+		mDescription.reload();
 	}
 }
