@@ -76,8 +76,6 @@ public class JsonDownloader<T> {
 
 	/**
 	 * This constructor can only be used if no callback is used, i.e. when the task is executed through {@code #syncExecute()}
-	 *
-	 * @param type
 	 */
 	public JsonDownloader(final Class<T> type) {
 		mType = type;
@@ -85,9 +83,6 @@ public class JsonDownloader<T> {
 
 	/**
 	 * Prevent all objects from being downloaded if the remote JSON contains a list of objects (see {@link AbsObjectList})
-	 *
-	 * @param downloadAllIfList
-	 * @return
 	 */
 	public JsonDownloader<T> setDownloadAllIfList(final boolean downloadAllIfList) {
 		mDownloadAllIfList = downloadAllIfList;
@@ -128,7 +123,9 @@ public class JsonDownloader<T> {
 		args.add(new BasicNameValuePair("key", mServer.apiKey));
 
 		String path = uri.getPath();
-		if (!path.endsWith("/")) {
+		if (TextUtils.isEmpty(path)) {
+			path = "/";
+		} else if (!path.endsWith("/")) {
 			path += "/";
 		}
 		path += mQueryPath;
@@ -136,6 +133,13 @@ public class JsonDownloader<T> {
 		mURI = URIUtils.createURI(uri.getScheme(), uri.getHost(), uri.getPort(), path, URLEncodedUtils.format(args, "UTF-8"), null);
 	}
 
+	/**
+	 * Downloads a json object and convert it to a java object
+	 *
+	 * @param ctx    Required to retrieve the SSL certificates from the app keystore or Android's
+	 * @param server Target server
+	 * @param uri    Target URI
+	 */
 	public T fetchObject(final Context ctx, final Server server, final String uri) {
 		mContext = ctx;
 		mServer = server;
@@ -143,6 +147,14 @@ public class JsonDownloader<T> {
 		return downloadAndParse();
 	}
 
+	/**
+	 * Downloads a json object and convert it to a java object
+	 *
+	 * @param ctx    Required to retrieve the SSL certificates from the app keystore or Android's
+	 * @param server Target server
+	 * @param uri    Target URI
+	 * @param args   Optional HTTP GET arguments
+	 */
 	public T fetchObject(final Context ctx, final Server server, final String uri, final NameValuePair[] args) {
 		mContext = ctx;
 		mServer = server;
@@ -155,6 +167,14 @@ public class JsonDownloader<T> {
 		return downloadAndParse();
 	}
 
+	/**
+	 * Downloads a json object and convert it to a java object
+	 *
+	 * @param ctx    Required to retrieve the SSL certificates from the app keystore or Android's
+	 * @param server Target server
+	 * @param uri    Target URI
+	 * @param args   Optional HTTP GET arguments
+	 */
 	public T fetchObject(final Context ctx, final Server server, final String uri, final List<NameValuePair> args) {
 		mContext = ctx;
 		mServer = server;
@@ -199,7 +219,7 @@ public class JsonDownloader<T> {
 						break;
 					}
 
-					if (mDownloadAllIfList == false) {
+					if (!mDownloadAllIfList) {
 						break;
 					}
 				} while (downloadedObjects < total);
@@ -229,8 +249,6 @@ public class JsonDownloader<T> {
 
 	/**
 	 * Creates the {@link MyMineSSLSocketFactory} that will provide our certificates to the HTTP client
-	 *
-	 * @return
 	 */
 	protected MyMineSSLSocketFactory createAdditionalCertsSSLSocketFactory() {
 		try {
@@ -251,8 +269,6 @@ public class JsonDownloader<T> {
 
 	/**
 	 * Prepares the Apache HttpClient object with correct SSL handling and Basic Authentication
-	 *
-	 * @return
 	 */
 	private HttpClient getHttpClient() {
 		final SchemeRegistry schemeRegistry = new SchemeRegistry();
@@ -281,8 +297,6 @@ public class JsonDownloader<T> {
 	/**
 	 * Actually downloads the JSON from the server. In case of failure, an object will be stored in {@link JsonDownloader#mError}.
 	 *
-	 * @param offset
-	 *            The current offset, if downloading many objects from a loop (to be deprecated?)
 	 * @return the JSON, as a {@code String}
 	 */
 	private String downloadJson() {
