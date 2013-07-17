@@ -38,7 +38,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
 	public static final int ACTION_REFRESH_ISSUES = 0;
-	public static final int ACTION_ISSUE_OVERVIEW = 1;
+	public static final int ACTION_ISSUE_LOAD_OVERVIEW = 1;
+	public static final int ACTION_ISSUE_LOAD_ATTACHMENTS= 2;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -250,12 +251,18 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			db.close();
 			break;
 
-		case ACTION_ISSUE_OVERVIEW:
+		case ACTION_ISSUE_LOAD_OVERVIEW:
+		case ACTION_ISSUE_LOAD_ATTACHMENTS:
 			IssueFragment content = getContentFragment();
 			if (content != null) {
 				Fragment frag = content.getFragmentFromViewPager(0);
 				if (frag != null && frag instanceof IssueOverviewFragment) {
-					return ((IssueOverviewFragment) frag).loadIssueOverview();
+					IssueOverviewFragment overview = (IssueOverviewFragment) frag;
+					if (action==ACTION_ISSUE_LOAD_OVERVIEW){
+						return overview.loadIssueOverview();
+					}else{
+						return overview.loadIssueAttachments();
+					}
 				}
 			}
 			break;
@@ -274,7 +281,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			break;
 
-		case ACTION_ISSUE_OVERVIEW:
+		case ACTION_ISSUE_LOAD_OVERVIEW:
 			IssueFragment content = getContentFragment();
 			if (content != null) {
 				Fragment frag = content.getFragmentFromViewPager(0);

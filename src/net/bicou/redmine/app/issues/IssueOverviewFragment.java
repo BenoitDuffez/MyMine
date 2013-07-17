@@ -1,5 +1,6 @@
 package net.bicou.redmine.app.issues;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 	TextView mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion;
 	WebView mDescription;
 	Issue mIssue;
+	private String mTextileDescription;
 
 	public static IssueOverviewFragment newInstance(final Bundle args) {
 		final IssueOverviewFragment f = new IssueOverviewFragment();
@@ -66,23 +68,27 @@ public class IssueOverviewFragment extends SherlockFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_OVERVIEW, null);
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_OVERVIEW, null);
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ATTACHMENTS, null);
 	}
 
-	public String loadIssueOverview() {
-		WikiDbAdapter db = new WikiDbAdapter(getActivity());
+	public String loadIssueOverview(Context context) {
+		WikiDbAdapter db = new WikiDbAdapter(context);
 		db.open();
 		WikiPageLoader loader = new WikiPageLoader(mIssue.server, getSherlockActivity(), db, null);
 
-		String textile = mIssue.description != null ? mIssue.description : "";
-		textile = loader.handleMarkupReplacements(mIssue.project, textile);
-
-		IssuesDbAdapter idb = new IssuesDbAdapter(db);
-		syncIssueAttachments(idb);
-		textile = refactorImageUrls(idb, textile);
+		mTextileDescription = mIssue.description != null ? mIssue.description : "";
+		mTextileDescription = loader.handleMarkupReplacements(mIssue.project, mTextileDescription);
 
 		db.close();
-		return Util.htmlFromTextile(textile);
+		return Util.htmlFromTextile(mTextileDescription);
+	}
+
+	public Object loadIssueAttachments(Context context) {
+		IssuesDbAdapter idb = new IssuesDbAdapter(context);
+		syncIssueAttachments(idb);
+		mTextileDescription = refactorImageUrls(idb, mTextileDescription);
+		return Util.htmlFromTextile(mTextileDescription);
 	}
 
 	private void syncIssueAttachments(IssuesDbAdapter db) {

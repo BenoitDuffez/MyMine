@@ -1,5 +1,6 @@
 package net.bicou.redmine.app.wiki;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -23,8 +24,10 @@ import java.util.regex.Pattern;
  */
 public class WikiPageLoader {
 	Server mServer;
-	SherlockFragmentActivity mActivity;
 	WikiDbAdapter mDb;
+	Context mContext;
+
+	SherlockFragmentActivity mActivity;
 	ViewGroup mCroutonHolder;
 
 	/**
@@ -34,11 +37,19 @@ public class WikiPageLoader {
 	 * <p/>
 	 * The server and db may be required if the markup text includes wiki pages.
 	 */
-	public WikiPageLoader(Server server, SherlockFragmentActivity act, WikiDbAdapter db, ViewGroup croutonHolder) {
+	public WikiPageLoader(Server server, Context context, WikiDbAdapter db) {
 		mServer = server;
-		mActivity = act;
 		mDb = db;
+		mContext = context;
+	}
+
+	/**
+	 * Use this to enable Crouton based notifications on your activity/viewgroup
+	 */
+	public WikiPageLoader enableCroutonNotifications(SherlockFragmentActivity activity, ViewGroup croutonHolder) {
+		mActivity = activity;
 		mCroutonHolder = croutonHolder;
+		return this;
 	}
 
 	/**
@@ -51,7 +62,7 @@ public class WikiPageLoader {
 		if (wikiPage == null) {
 			final String wikiPrefix = getUrlPrefix(project, "/wiki");
 			if (TextUtils.isEmpty(wikiPrefix)) {
-				if (mCroutonHolder != null) {
+				if (mCroutonHolder != null && mActivity != null) {
 					Crouton.makeText(mActivity, R.string.wiki_page_not_found, Style.ALERT, mCroutonHolder);
 				}
 				L.e("Can't find wiki prefix?!", null);
@@ -60,7 +71,7 @@ public class WikiPageLoader {
 			final String wikiUri = TextUtils.isEmpty(uri) ? "" : "/" + uri;
 			final String url = wikiPrefix + wikiUri + ".json";
 
-			wikiPage = new JsonDownloader<WikiPage>(WikiPage.class).fetchObject(mActivity, mServer, url);
+			wikiPage = new JsonDownloader<WikiPage>(WikiPage.class).fetchObject(mContext, mServer, url);
 
 			if (wikiPage == null) {
 				return null;
