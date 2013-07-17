@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.wiki.WikiPageLoader;
+import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Attachment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
@@ -32,7 +33,6 @@ public class IssueOverviewFragment extends SherlockFragment {
 	TextView mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion;
 	WebView mDescription;
 	Issue mIssue;
-	private String mTextileDescription;
 
 	public static IssueOverviewFragment newInstance(final Bundle args) {
 		final IssueOverviewFragment f = new IssueOverviewFragment();
@@ -54,6 +54,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 		mDescription = (WebView) v.findViewById(R.id.issue_description);
 
 		mIssue = new Gson().fromJson(getArguments().getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
+		mIssue.server = ((IssuesActivity)getActivity()).getCu
 
 		mSubject.setText(mIssue.subject != null ? mIssue.subject : "");
 		mStatus.setText(mIssue.status != null ? mIssue.status.name : "-");
@@ -68,47 +69,49 @@ public class IssueOverviewFragment extends SherlockFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_OVERVIEW, null);
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ATTACHMENTS, null);
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_OVERVIEW, mIssue);
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ATTACHMENTS, mIssue);
 	}
 
-	public String loadIssueOverview(Context context) {
+	public static String loadIssueOverview(Context context, Issue issue) {
 		WikiDbAdapter db = new WikiDbAdapter(context);
 		db.open();
-		WikiPageLoader loader = new WikiPageLoader(mIssue.server, context, db);
+		WikiPageLoader loader = new WikiPageLoader(issue.server, context, db);
 
-		mTextileDescription = mIssue.description != null ? mIssue.description : "";
-		mTextileDescription = loader.handleMarkupReplacements(mIssue.project, mTextileDescription);
+		String textile = issue.description != null ? issue.description : "";
+		textile = loader.handleMarkupReplacements(issue.project, textile);
 
 		db.close();
-		return Util.htmlFromTextile(mTextileDescription);
+		return Util.htmlFromTextile(textile);
 	}
 
-	public Object loadIssueAttachments(Context context) {
+	public static Object loadIssueAttachments(Context context, Issue issue) {
 		IssuesDbAdapter db = new IssuesDbAdapter(context);
 		db.open();
-		String url = "issues/" + mIssue.id + ".json";
+		String url = "issues/" + issue.id + ".json";
 		NameValuePair[] args = {
 				new BasicNameValuePair("include", "attachments"),
 		};
 
-		Issue i = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true).fetchObject(getActivity(), mIssue.server, url, args);
-		if (i != null) {
-			mIssue.attachments = i.attachments;
+		String textile = issue.description;
+
+		Issue issueWithAttns = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true).fetchObject(context, issue.server, url, args);
+		if (issueWithAttns != null) {
+
+			if (issueWithAttns.attachments != null && issueWithAttns.attachments.size() > 0) {
+				for (Attachment attn : issueWithAttns.attachments) {
+					db.update(issueWithAttns, attn);
+				}
+			}
+			textile = refactorImageUrls(db, issue.server, textile);
 		}
 
-		if (mIssue.attachments != null && mIssue.attachments.size() > 0) {
-			for (Attachment attn : mIssue.attachments) {
-				db.update(mIssue, attn);
-			}
-		}
-		mTextileDescription = refactorImageUrls(db, mTextileDescription);
 		db.close();
 
-		return Util.htmlFromTextile(mTextileDescription);
+		return Util.htmlFromTextile(textile);
 	}
 
-	private String refactorImageUrls(IssuesDbAdapter db, String textile) {
+	private static String refactorImageUrls(IssuesDbAdapter db, Server server, String textile) {
 		Pattern regex = Pattern.compile("(!>?)([^!]+)!", 0);
 		Matcher m = regex.matcher(textile);
 		String path;
@@ -124,7 +127,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 				path = path.substring(1);
 			}
 			if (!path.startsWith("http://") && !path.startsWith("https://") && !path.startsWith("ftp://")) {
-				attn = db.getAttnFromFileName(mIssue.server, path);
+				attn = db.getAttnFromFileName(server, path);
 				if (attn != null && !TextUtils.isEmpty(attn.content_url)) {
 					matches.add(m.group(0));
 					replacements.add(m.group(1) + attn.content_url + "!");
@@ -141,6 +144,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 	}
 
 	public void onIssueOverviewLoaded(String html) {
+		L.d("Received new html: " + html);
 		mDescription.loadData(html, "text/html; charset=UTF-8", null);
 	}
 }

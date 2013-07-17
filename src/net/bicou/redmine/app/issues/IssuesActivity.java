@@ -242,8 +242,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public Object doInBackGround(Context applicationContext, final int action, final Object parameters) {
 		switch (action) {
 		case ACTION_REFRESH_ISSUES:
-			IssuesSyncAdapterService.Synchronizer synchronizer = new IssuesSyncAdapterService.Synchronizer(this);
-			ServersDbAdapter db = new ServersDbAdapter(this);
+			IssuesSyncAdapterService.Synchronizer synchronizer = new IssuesSyncAdapterService.Synchronizer(applicationContext);
+			ServersDbAdapter db = new ServersDbAdapter(applicationContext);
 			db.open();
 			for (Server server : db.selectAll()) {
 				synchronizer.synchronizeIssues(server, null, 0);
@@ -252,20 +252,10 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			break;
 
 		case ACTION_ISSUE_LOAD_OVERVIEW:
+			return IssueOverviewFragment.loadIssueOverview(applicationContext, (Issue) parameters);
+
 		case ACTION_ISSUE_LOAD_ATTACHMENTS:
-			IssueFragment content = getContentFragment();
-			if (content != null) {
-				Fragment frag = content.getFragmentFromViewPager(0);
-				if (frag != null && frag instanceof IssueOverviewFragment) {
-					IssueOverviewFragment overview = (IssueOverviewFragment) frag;
-					if (action == ACTION_ISSUE_LOAD_OVERVIEW) {
-						return overview.loadIssueOverview(applicationContext);
-					} else {
-						return overview.loadIssueAttachments(applicationContext);
-					}
-				}
-			}
-			break;
+			return IssueOverviewFragment.loadIssueAttachments(applicationContext, (Issue) parameters);
 		}
 
 		return null;
@@ -282,6 +272,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			break;
 
 		case ACTION_ISSUE_LOAD_OVERVIEW:
+		case ACTION_ISSUE_LOAD_ATTACHMENTS:
 			IssueFragment content = getContentFragment();
 			if (content != null) {
 				Fragment frag = content.getFragmentFromViewPager(0);
