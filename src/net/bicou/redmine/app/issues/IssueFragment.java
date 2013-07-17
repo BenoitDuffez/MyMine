@@ -1,6 +1,5 @@
 package net.bicou.redmine.app.issues;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -105,19 +104,16 @@ public class IssueFragment extends SherlockFragment {
 		}
 		if (savedInstanceState == null) {
 			// Load issue
-			final Activity activity = getActivity();
-			final ServersDbAdapter sdb = new ServersDbAdapter(activity);
+			final ServersDbAdapter sdb = new ServersDbAdapter(getActivity());
 			sdb.open();
 			final Server server = sdb.getServer(args.getLong(Constants.KEY_SERVER_ID, 0));
-			sdb.close();
 
 			if (server == null) {
 				L.e("Server can't be null now!", null);
 				return v;
 			}
 
-			final IssuesDbAdapter db = new IssuesDbAdapter(activity);
-			db.open();
+			final IssuesDbAdapter db = new IssuesDbAdapter(sdb);
 			mIssue = db.select(server, args.getLong(Constants.KEY_ISSUE_ID), null);
 			db.close();
 		} else {
