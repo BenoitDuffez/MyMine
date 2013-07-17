@@ -1,5 +1,6 @@
 package net.bicou.redmine.app.roadmap;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -211,7 +212,7 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 	}
 
 	@Override
-	public Object doInBackGround(final int action, final Object parameters) {
+	public Object doInBackGround(Context context, final int action, final Object parameters) {
 		Project project = getCurrentProject();
 		if (project != null) {
 			return RoadmapsListFragment.getRoadmap(this, getCurrentProject().server, getCurrentProject());

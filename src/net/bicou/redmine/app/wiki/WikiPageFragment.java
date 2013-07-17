@@ -146,7 +146,7 @@ public class WikiPageFragment extends SherlockFragment {
 					mProject = pdb.select(server, mProjectId);
 
 					WikiDbAdapter db = new WikiDbAdapter(sdb);
-					WikiPageLoader loader = new WikiPageLoader(server, getSherlockActivity(), db, mLayout);
+					WikiPageLoader loader = new WikiPageLoader(server, getSherlockActivity(), db).enableCroutonNotifications(getSherlockActivity(), mLayout);
 					WikiPage page = loader.actualSyncLoadWikiPage(mProject, mWikiPageURI);
 
 					sdb.close();

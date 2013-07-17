@@ -75,7 +75,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 	public String loadIssueOverview(Context context) {
 		WikiDbAdapter db = new WikiDbAdapter(context);
 		db.open();
-		WikiPageLoader loader = new WikiPageLoader(mIssue.server, getSherlockActivity(), db, null);
+		WikiPageLoader loader = new WikiPageLoader(mIssue.server, context, db);
 
 		mTextileDescription = mIssue.description != null ? mIssue.description : "";
 		mTextileDescription = loader.handleMarkupReplacements(mIssue.project, mTextileDescription);
@@ -85,14 +85,8 @@ public class IssueOverviewFragment extends SherlockFragment {
 	}
 
 	public Object loadIssueAttachments(Context context) {
-		IssuesDbAdapter idb = new IssuesDbAdapter(context);
-		syncIssueAttachments(idb);
-		mTextileDescription = refactorImageUrls(idb, mTextileDescription);
-		return Util.htmlFromTextile(mTextileDescription);
-	}
-
-	private void syncIssueAttachments(IssuesDbAdapter db) {
-		// Sync attachments
+		IssuesDbAdapter db = new IssuesDbAdapter(context);
+		db.open();
 		String url = "issues/" + mIssue.id + ".json";
 		NameValuePair[] args = {
 				new BasicNameValuePair("include", "attachments"),
@@ -108,6 +102,10 @@ public class IssueOverviewFragment extends SherlockFragment {
 				db.update(mIssue, attn);
 			}
 		}
+		mTextileDescription = refactorImageUrls(db, mTextileDescription);
+		db.close();
+
+		return Util.htmlFromTextile(mTextileDescription);
 	}
 
 	private String refactorImageUrls(IssuesDbAdapter db, String textile) {

@@ -1,6 +1,7 @@
 package net.bicou.redmine.app.ssl;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragm
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
 		super.onCreate(savedInstanceState);
-		
+
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 	}
 
@@ -108,7 +109,7 @@ public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragm
 	}
 
 	@Override
-	public Object doInBackGround(final int action, final Object parameters) {
+	public Object doInBackGround(Context applicationContext, final int action, final Object parameters) {
 		if (getContentFragment() != null) {
 			getContentFragment().loadCertificate((String) parameters);
 		}
