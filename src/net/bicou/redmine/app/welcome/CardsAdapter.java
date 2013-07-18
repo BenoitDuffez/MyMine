@@ -107,7 +107,12 @@ public class CardsAdapter extends BaseAdapter {
 	public void bindView(final LayoutInflater layoutInflater, final CardViewsHolder holder, final OverviewCard card) {
 		holder.title.setText(card.titleTextId);
 		holder.description.setText(card.description);
-		holder.image.setImageResource(card.imageResId);
+		if (card.imageResId > 0) {
+			holder.image.setImageResource(card.imageResId);
+			holder.image.setVisibility(View.VISIBLE);
+		} else {
+			holder.image.setVisibility(View.GONE);
+		}
 		holder.icon.setImageResource(card.iconId);
 
 		// Actions?
