@@ -3,5 +3,6 @@
     <dimen name="main_pane_margin">12dp</dimen>
     <dimen name="content_pane_margin">24dp</dimen>
     <integer name="overview_num_columns">2</integer>
+    <integer name="project_overview_num_columns">2</integer>
 </resources>
 

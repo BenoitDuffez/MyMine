@@ -4,15 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Point;
 import android.text.TextUtils;
 import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.issues.IssuesListFilter.FilterType;
 import net.bicou.redmine.app.issues.order.OrderColumn;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.Attachment;
-import net.bicou.redmine.data.json.Issue;
-import net.bicou.redmine.data.json.Reference;
-import net.bicou.redmine.data.json.User;
+import net.bicou.redmine.data.json.*;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
@@ -388,6 +386,11 @@ public class IssuesDbAdapter extends DbAdapter {
 	 * <code>selection</code> with ?'s can place their arguments in <code>selectionArgs</code>.
 	 */
 	private Cursor findMatchingIssues(final List<String> selection, final List<String> selectionArgs, final String[] columns, final String orderBy) {
+		return findMatchingIssues(selection, selectionArgs, columns, orderBy, null);
+	}
+
+	private Cursor findMatchingIssues(final List<String> selection, final List<String> selectionArgs, final String[] columns, final String orderBy,
+									  String groupBy) {
 		final List<String> tables = new ArrayList<String>();
 		final List<String> cols = new ArrayList<String>();
 		final List<String> onArgs = new ArrayList<String>();
@@ -418,6 +421,8 @@ public class IssuesDbAdapter extends DbAdapter {
 				onArgs.add(IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + IssueStatusesDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + KEY_STATUS_ID);
 				onArgs.add(IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + IssueStatusesDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." +
 						KEY_SERVER_ID);
+			} else if (col.startsWith("COUNT")) {
+				cols.add("COUNT(DISTINCT " + TABLE_ISSUES + "." + KEY_ID + ")" + col.replace("COUNT", ""));
 			} else {
 				cols.add(TABLE_ISSUES + "." + col);
 			}
@@ -436,6 +441,10 @@ public class IssuesDbAdapter extends DbAdapter {
 
 		if (!TextUtils.isEmpty(orderBy)) {
 			sql += " ORDER BY " + orderBy;
+		}
+
+		if (!TextUtils.isEmpty(groupBy)) {
+			sql += " GROUP BY " + groupBy;
 		}
 
 		return mDb.rawQuery(sql, selA);
@@ -530,4 +539,40 @@ public class IssuesDbAdapter extends DbAdapter {
 
 		return attn;
 	}
+
+	/**
+	 * Point.x will contain the closed issues, Point.y will contain the open issues
+	 */
+	public Point countIssues(Project project, final Tracker tracker) {
+		List<String> sel = new ArrayList<String>();
+		sel.add(KEY_TRACKER_ID + " = " + tracker.id);
+		sel.add(KEY_SERVER_ID + " = " + tracker.server.rowId);
+		sel.add(KEY_PROJECT_ID + " = " + project.id);
+		String[] cols = {
+				KEY_STATUS_ID,
+				"COUNT AS count",
+		};
+		String groupBy = KEY_STATUS_ID;
+		Cursor c = findMatchingIssues(sel, null, cols, null, groupBy);
+
+		Point nbIssues = new Point();
+		if (c.moveToFirst()) {
+			IssueStatusesDbAdapter isdb = new IssueStatusesDbAdapter(this);
+			IssueStatus status;
+			do {
+				status = isdb.select(project.server.rowId, c.getInt(c.getColumnIndex(KEY_STATUS_ID)), null);//new String[]{IssueStatusesDbAdapter.KEY_IS_CLOSED});
+				if (status != null) {
+					if (status.is_closed) {
+						nbIssues.x += c.getInt(c.getColumnIndex("count"));
+					} else {
+						nbIssues.y += c.getInt(c.getColumnIndex("count"));
+					}
+				}
+			} while (c.moveToNext());
+			c.close();
+		}
+
+		return nbIssues;
+	}
 }
+

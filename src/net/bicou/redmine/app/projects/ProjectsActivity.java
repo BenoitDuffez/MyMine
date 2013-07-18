@@ -1,14 +1,23 @@
 package net.bicou.redmine.app.projects;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.misc.EmptyFragment;
+import net.bicou.redmine.app.welcome.OverviewCard;
+import net.bicou.redmine.data.json.Project;
 
-public class ProjectsActivity extends SplitActivity<ProjectsListFragment, ProjectFragment> {
+import java.util.List;
+
+public class ProjectsActivity extends SplitActivity<ProjectsListFragment, ProjectFragment> implements AsyncTaskFragment.TaskFragmentCallbacks {
+	public static final int ACTION_LOAD_PROJECT_CARDS = 0;
+
 	@Override
 	protected ProjectsListFragment createMainFragment(Bundle args) {
 		return ProjectsListFragment.newInstance(args);
@@ -32,5 +41,38 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onCreate(final Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
+		super.onCreate(savedInstanceState);
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
+	}
+
+	@Override
+	public void onPreExecute(final int action, final Object parameters) {
+		setSupportProgressBarIndeterminateVisibility(true);
+	}
+
+	@Override
+	public Object doInBackGround(final Context applicationContext, final int action, final Object parameters) {
+		switch (action) {
+		case ACTION_LOAD_PROJECT_CARDS:
+			Project project = (Project) parameters;
+			return ProjectFragment.getProjectCards(applicationContext, project.server, project);
+		}
+		return null;
+	}
+
+	@Override
+	public void onPostExecute(final int action, final Object parameters, final Object result) {
+		setSupportProgressBarIndeterminateVisibility(false);
+		ProjectFragment projectFragment = getContentFragment();
+		if (projectFragment != null) {
+			projectFragment.onCardsBuilt((List<OverviewCard>) result);
+		}
 	}
 }

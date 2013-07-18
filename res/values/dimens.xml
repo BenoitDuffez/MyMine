@@ -26,6 +26,8 @@
     <dimen name="overview_card_spacer_size">20dp</dimen>
     <dimen name="overview_card_icon_size">32dp</dimen>
 
+    <integer name="project_overview_num_columns">1</integer>
+
     <integer name="issues_order_pick_column_gridview_nb_columns">3</integer>
 
     <integer name="issues_list_item_nb_lines">3</integer>
