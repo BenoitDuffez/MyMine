@@ -1,11 +1,14 @@
 package net.bicou.redmine.app.welcome;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.origamilabs.library.views.StaggeredGridView;
 import net.bicou.redmine.R;
 import net.bicou.redmine.util.L;
 
@@ -78,6 +81,28 @@ public class CardsAdapter extends BaseAdapter {
 			view.getContext().startActivity(card.getDefaultAction());
 		}
 	};
+
+	private StaggeredGridView.OnItemClickListener mStaggeredItemClickListener = new StaggeredGridView.OnItemClickListener() {
+		@Override
+		public void onItemClick(StaggeredGridView parent, View view, int position, long id) {
+			OverviewCard card = getItem(position);
+			if (card != null && card.isEnabled()) {
+				Context context = parent == null ? null : parent.getContext();
+				if (context != null) {
+					Intent intent = card.getDefaultAction();
+					if (intent != null) {
+						context.startActivity(intent);
+						return;
+					}
+				}
+			}
+			L.i("didn't trigger any action on this SGV item");
+		}
+	};
+
+	public StaggeredGridView.OnItemClickListener getStaggeredItemClickListener() {
+		return mStaggeredItemClickListener;
+	}
 
 	public void bindView(final LayoutInflater layoutInflater, final CardViewsHolder holder, final OverviewCard card) {
 		holder.title.setText(card.titleTextId);
