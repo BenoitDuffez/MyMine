@@ -16,6 +16,8 @@ public class OverviewCard {
 	List<CardAction> actions;
 	Intent defaultAction;
 
+	boolean enabled;
+
 	public static class CardAction {
 		int mId, mTextResId;
 
@@ -45,5 +47,13 @@ public class OverviewCard {
 
 	public Intent getDefaultAction() {
 		return defaultAction;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(final boolean enabled) {
+		this.enabled = enabled;
 	}
 }
