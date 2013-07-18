@@ -27,4 +27,8 @@ public class Reference {
 	public String toString() {
 		return this.getClass().getSimpleName() + " { id: " + id + ", name: " + name + " }";
 	}
+
+	public boolean isColumnHandled(final String col) {
+		return KEY_NAME.equals(col) || KEY_ID.equals(col);
+	}
 }

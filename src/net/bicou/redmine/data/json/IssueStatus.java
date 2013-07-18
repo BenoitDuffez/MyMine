@@ -20,7 +20,7 @@ public class IssueStatus extends Reference {
 				} else if (col.equals(IssueStatusesDbAdapter.KEY_IS_CLOSED)) {
 					is_closed = c.getInt(columnIndex) > 0;
 				} else if (col.equals(IssueStatusesDbAdapter.KEY_SERVER_ID)) {
-				} else {
+				} else if (!super.isColumnHandled(col)) {
 					L.e("Unhandled column " + col + "!", null);
 				}
 			} catch (final NumberFormatException nfe) {
