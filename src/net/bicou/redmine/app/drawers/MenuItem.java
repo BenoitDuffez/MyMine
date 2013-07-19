@@ -13,6 +13,7 @@ class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	private DrawerMenuFragment drawerMenuFragment;
 	int iconId, textId;
 	String mText;
+	private Object mData;
 
 	private class ViewHolder {
 		ImageView icon;
@@ -32,6 +33,17 @@ class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	private MenuItem(DrawerMenuFragment drawerMenuFragment, int icon) {
 		this.drawerMenuFragment = drawerMenuFragment;
 		iconId = icon;
+	}
+
+	@Override
+	public Object getTag() {
+		return mData;
+	}
+
+	@Override
+	public MenuItem setTag(final Object data) {
+		this.mData = data;
+		return this;
 	}
 
 	@Override

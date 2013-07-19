@@ -19,7 +19,9 @@ public class DrawerMenuItemsAdapter extends BaseAdapter {
 
 		public int getViewType();
 
-		public int getTextId();
+		public DrawerMenuItem setTag(Object tag);
+
+		public Object getTag();
 	}
 
 	List<DrawerMenuItem> mData;
