@@ -15,6 +15,8 @@ import net.bicou.redmine.app.projects.ProjectsActivity;
 import net.bicou.redmine.app.roadmap.RoadmapActivity;
 import net.bicou.redmine.app.settings.SettingsActivity;
 import net.bicou.redmine.app.wiki.WikiActivity;
+import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,20 +29,29 @@ public class DrawerMenuFragment extends SherlockListFragment {
 	public static final int MENU_VIEWTYPE_SEPARATOR = 0;
 	public static final int MENU_VIEWTYPE_ITEM = 1;
 
-	private List<DrawerMenuItemsAdapter.DrawerMenuItem> mData = new ArrayList<DrawerMenuItemsAdapter.DrawerMenuItem>() {{
-		add(new MenuSeparator(DrawerMenuFragment.this, R.string.app_name));
-		add(new MenuItem(DrawerMenuFragment.this, R.drawable.icon_projects, R.string.menu_projects));
-		add(new MenuItem(DrawerMenuFragment.this, R.drawable.icon_issues, R.string.menu_issues));
-		add(new MenuItem(DrawerMenuFragment.this, R.drawable.icon_roadmaps, R.string.menu_roadmap));
-		add(new MenuItem(DrawerMenuFragment.this, R.drawable.icon_wiki, R.string.menu_wiki));
-	}};
+	private List<DrawerMenuItemsAdapter.DrawerMenuItem> mData = new ArrayList<DrawerMenuItemsAdapter.DrawerMenuItem>();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.frag_drawer, container, false);
+
+		buildMenuContents();
+
 		mAdapter = new DrawerMenuItemsAdapter(getActivity(), mData);
 		setListAdapter(mAdapter);
 		return v;
+	}
+
+	private void buildMenuContents() {
+		mData.add(new MenuSeparator(DrawerMenuFragment.this, R.string.menu_projects));
+		ProjectsDbAdapter db = new ProjectsDbAdapter(getActivity());
+		db.open();
+		List<Project> favs = db.getFavorites();
+		db.close();
+
+		for (Project project : favs) {
+			mData.add(new MenuItem(DrawerMenuFragment.this, 0, project.name));
+		}
 	}
 
 	@Override
