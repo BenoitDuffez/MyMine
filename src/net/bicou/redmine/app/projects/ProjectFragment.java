@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
@@ -38,6 +39,7 @@ public class ProjectFragment extends SherlockFragment {
 	public static final String KEY_PROJECT_JSON = "net.bicou.redmine.Project";
 	private Project mProject;
 	TextView mUpdatedOn, mCreatedOn, mTitle, mDescription, mServer, mParent;
+	CheckBox mIsFavorite;
 	CardsAdapter mAdapter;
 	StaggeredGridView mStaggeredGridView;
 	DateFormat mLongDateFormat = DateFormat.getDateInstance(DateFormat.LONG);
@@ -64,6 +66,19 @@ public class ProjectFragment extends SherlockFragment {
 		mTitle = (TextView) v.findViewById(R.id.project_overview_title);
 		mParent = (TextView) v.findViewById(R.id.project_overview_parent);
 		mDescription = (TextView) v.findViewById(R.id.project_overview_description);
+		mIsFavorite = (CheckBox) v.findViewById(R.id.project_overview_is_favorite);
+
+		mIsFavorite.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View view) {
+				mProject.is_favorite = !mProject.is_favorite;
+				ProjectsDbAdapter db = new ProjectsDbAdapter(getActivity());
+				db.open();
+				db.update(mProject);
+				db.close();
+				refreshUI();
+			}
+		});
 
 		mAdapter = new CardsAdapter(mCardsActionsCallback);
 		mStaggeredGridView = (StaggeredGridView) v.findViewById(R.id.project_overview_container);
@@ -153,6 +168,10 @@ public class ProjectFragment extends SherlockFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+		refreshUI();
+	}
+
+	private void refreshUI() {
 		if (getActivity() != null && mProject != null) {
 			getSherlockActivity().getSupportActionBar().setTitle(mProject.name);
 			mTitle.setText(mProject.name);
@@ -167,6 +186,7 @@ public class ProjectFragment extends SherlockFragment {
 			if (!TextUtils.isEmpty(mProject.description)) {
 				mDescription.setText(Html.fromHtml(Util.htmlFromTextile(mProject.description)));
 			}
+			mIsFavorite.setChecked(mProject.is_favorite);
 		}
 	}
 }
