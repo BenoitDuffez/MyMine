@@ -136,8 +136,7 @@ public class ProjectFragment extends SherlockFragment {
 		filter.saveTo(args);
 		intent.putExtras(args);
 
-		// Create the card
-		OverviewCard issuesCard = new OverviewCard(intent);
+		// Count issues
 		StringBuilder issues = new StringBuilder();
 		List<Tracker> trackers = tdb.selectAll(server);
 		Point nbIssues;
@@ -147,6 +146,9 @@ public class ProjectFragment extends SherlockFragment {
 				issues.append(String.format(context.getString(R.string.project_overview_issues_card_tracker), tracker.name, nbIssues.y, nbIssues.x)).append("\n");
 			}
 		}
+
+		// Create the card
+		OverviewCard issuesCard = new OverviewCard(intent);
 		issuesCard.setContent(R.string.title_issues, issues.toString().trim(), 0, R.drawable.icon_issues);
 		cards.add(issuesCard);
 	}
