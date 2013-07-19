@@ -6,8 +6,8 @@ import android.widget.TextView;
 import net.bicou.redmine.R;
 
 /**
-* Created by bicou on 19/07/13.
-*/
+ * Created by bicou on 19/07/13.
+ */
 class MenuSeparator implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	private DrawerMenuFragment drawerMenuFragment;
 	int textId;
@@ -39,7 +39,7 @@ class MenuSeparator implements DrawerMenuItemsAdapter.DrawerMenuItem {
 
 	@Override
 	public int getViewType() {
-		return 0;
+		return DrawerMenuFragment.MENU_VIEWTYPE_SEPARATOR;
 	}
 
 	@Override

@@ -7,13 +7,13 @@ import android.widget.TextView;
 import net.bicou.redmine.R;
 
 /**
-* Created by bicou on 19/07/13.
-*/
+ * Created by bicou on 19/07/13.
+ */
 class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	private DrawerMenuFragment drawerMenuFragment;
 	int iconId, textId;
 
-	private class VH {
+	private class ViewHolder {
 		ImageView icon;
 		TextView text;
 	}
@@ -27,21 +27,21 @@ class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	@Override
 	public View fillView(View convertView, ViewGroup parent) {
 		View v;
-		VH vh;
+		ViewHolder holder;
 
 		if (convertView == null) {
 			v = drawerMenuFragment.getActivity().getLayoutInflater().inflate(R.layout.drawer_menu_item, parent, false);
-			vh = new VH();
-			vh.icon = (ImageView) v.findViewById(R.id.slidingmenu_item_icon);
-			vh.text = (TextView) v.findViewById(R.id.slidingmenu_item_text);
-			v.setTag(vh);
+			holder = new ViewHolder();
+			holder.icon = (ImageView) v.findViewById(R.id.slidingmenu_item_icon);
+			holder.text = (TextView) v.findViewById(R.id.slidingmenu_item_text);
+			v.setTag(holder);
 		} else {
 			v = convertView;
-			vh = (VH) convertView.getTag();
+			holder = (ViewHolder) convertView.getTag();
 		}
 
-		vh.icon.setImageResource(iconId);
-		vh.text.setText(textId);
+		holder.icon.setImageResource(iconId);
+		holder.text.setText(textId);
 
 		return v;
 	}
@@ -53,7 +53,7 @@ class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 
 	@Override
 	public int getViewType() {
-		return 1;
+		return DrawerMenuFragment.MENU_VIEWTYPE_ITEM;
 	}
 
 	@Override

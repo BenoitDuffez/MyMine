@@ -24,6 +24,8 @@ import java.util.List;
  */
 public class DrawerMenuFragment extends SherlockListFragment {
 	DrawerMenuItemsAdapter mAdapter;
+	public static final int MENU_VIEWTYPE_SEPARATOR = 0;
+	public static final int MENU_VIEWTYPE_ITEM = 1;
 
 	private List<DrawerMenuItemsAdapter.DrawerMenuItem> mData = new ArrayList<DrawerMenuItemsAdapter.DrawerMenuItem>() {{
 		add(new MenuSeparator(DrawerMenuFragment.this, R.string.app_name));
