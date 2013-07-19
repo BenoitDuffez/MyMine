@@ -20,6 +20,10 @@ import java.util.List;
 public class CardsAdapter extends BaseAdapter {
 	private List<OverviewCard> mCards;
 	CardActionCallback mCallback;
+	private static final int TAG_VIEW_HOLDER = 0;
+	private static final int TAG_CARD = 1;
+	private static final int TAG_MENU = 2;
+	private static final int TAG_ACTION = 3;
 
 	public interface CardActionCallback {
 		public void onActionSelected(int actionId);
@@ -59,8 +63,7 @@ public class CardsAdapter extends BaseAdapter {
 	private View.OnClickListener mActionItemOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View view) {
-			L.d("item click on: " + view + " tag=" + view.getTag());
-			Integer id = (Integer) view.getTag();
+			Integer id = (Integer) view.getTag(TAG_ACTION);
 			mCallback.onActionSelected(id);
 		}
 	};
@@ -68,8 +71,7 @@ public class CardsAdapter extends BaseAdapter {
 	private View.OnClickListener mOverflowMenuOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View view) {
-			L.d("menu click on: " + view + " tag=" + view.getTag());
-			View menu = (View) view.getTag();
+			View menu = (View) view.getTag(TAG_MENU);
 			menu.setVisibility(menu.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
 		}
 	};
@@ -77,7 +79,7 @@ public class CardsAdapter extends BaseAdapter {
 	private View.OnClickListener mItemClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View view) {
-			OverviewCard card = (OverviewCard) view.getTag();
+			OverviewCard card = (OverviewCard) view.getTag(TAG_CARD);
 			view.getContext().startActivity(card.getDefaultAction());
 		}
 	};
@@ -120,10 +122,10 @@ public class CardsAdapter extends BaseAdapter {
 		holder.overflowIcon.setVisibility(hasActions ? View.VISIBLE : View.INVISIBLE);
 		holder.overflowMenu.setVisibility(hasActions ? View.INVISIBLE : View.GONE);
 
-		holder.overflowIcon.setTag(holder.overflowMenu);
+		holder.overflowIcon.setTag(TAG_MENU, holder.overflowMenu);
 		holder.overflowIcon.setOnClickListener(mOverflowMenuOnClickListener);
 
-		holder.layout.setTag(card);
+		holder.layout.setTag(TAG_CARD, card);
 		holder.layout.setOnClickListener(mItemClickListener);
 
 		if (hasActions) {
@@ -133,7 +135,7 @@ public class CardsAdapter extends BaseAdapter {
 				actionView = layoutInflater.inflate(R.layout.overview_card_overflow_action, holder.overflowMenu, false);
 				tv = (TextView) actionView.findViewById(R.id.overview_card_overflow_action);
 				tv.setText(action.mTextResId);
-				actionView.setTag(action.mId);
+				actionView.setTag(TAG_ACTION, action.mId);
 				actionView.setOnClickListener(mActionItemOnClickListener);
 				holder.overflowMenu.addView(actionView);
 			}
@@ -156,10 +158,10 @@ public class CardsAdapter extends BaseAdapter {
 			holder.icon = (ImageView) card.findViewById(R.id.overview_card_icon);
 			holder.overflowIcon = (ImageView) card.findViewById(R.id.overview_card_overflow_icon);
 			holder.overflowMenu = (ViewGroup) card.findViewById(R.id.overview_card_overflow_menu);
-			card.setTag(holder);
+			card.setTag(TAG_VIEW_HOLDER, holder);
 		} else {
 			card = convertView;
-			holder = (CardViewsHolder) card.getTag();
+			holder = (CardViewsHolder) card.getTag(TAG_VIEW_HOLDER);
 		}
 
 		OverviewCard item = getItem(i);
