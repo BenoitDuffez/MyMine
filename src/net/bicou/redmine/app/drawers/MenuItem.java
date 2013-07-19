@@ -12,6 +12,7 @@ import net.bicou.redmine.R;
 class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	private DrawerMenuFragment drawerMenuFragment;
 	int iconId, textId;
+	String mText;
 
 	private class ViewHolder {
 		ImageView icon;
@@ -19,9 +20,18 @@ class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	}
 
 	public MenuItem(final DrawerMenuFragment drawerMenuFragment, int icon, int text) {
+		this(drawerMenuFragment, icon);
+		textId = text;
+	}
+
+	public MenuItem(DrawerMenuFragment drawerMenuFragment, int icon, String text) {
+		this(drawerMenuFragment, icon);
+		mText = text;
+	}
+
+	private MenuItem(DrawerMenuFragment drawerMenuFragment, int icon) {
 		this.drawerMenuFragment = drawerMenuFragment;
 		iconId = icon;
-		textId = text;
 	}
 
 	@Override
@@ -40,8 +50,17 @@ class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		holder.icon.setImageResource(iconId);
-		holder.text.setText(textId);
+		if (iconId > 0) {
+			holder.icon.setImageResource(iconId);
+			holder.icon.setVisibility(View.VISIBLE);
+		} else {
+			holder.icon.setVisibility(View.INVISIBLE);
+		}
+		if (textId > 0) {
+			holder.text.setText(textId);
+		} else {
+			holder.text.setText(mText);
+		}
 
 		return v;
 	}
