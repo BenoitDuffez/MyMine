@@ -275,5 +275,6 @@
     <string name="drawer_menu_customize">Customize this menu&#8230;</string>
     <string name="drawer_favorites">Favorites</string>
     <string name="project_overview_issues_card_tracker">• %1$s: %2$d open / %3$d closed</string>
+    <string name="drawer_wiki_all_pages">All pages</string>
 
 </resources>

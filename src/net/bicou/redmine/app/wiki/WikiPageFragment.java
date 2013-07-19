@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -49,6 +50,7 @@ public class WikiPageFragment extends SherlockFragment {
 	WikiPage mWikiPage;
 	WebView mWebView;
 	TextView mWikiTitle;
+	CheckBox mFavorite;
 
 	/**
 	 * The relative part. For example http://server.com/projects/1/wiki/TermsOfUse has a wiki page URI of TermsOfUse
@@ -75,9 +77,23 @@ public class WikiPageFragment extends SherlockFragment {
 		mWebView.setWebViewClient(new WikiWebViewClient());
 		mProjectId = getArguments().getLong(Constants.KEY_PROJECT_ID);
 		mServerId = getArguments().getLong(Constants.KEY_SERVER_ID);
+		mFavorite = (CheckBox) mLayout.findViewById(R.id.wiki_favorite);
+
+		mFavorite.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View view) {
+				mWikiPage.is_favorite = !mWikiPage.is_favorite;
+				WikiDbAdapter db = new WikiDbAdapter(getActivity());
+				db.open();
+				db.update(mWikiPage);
+				db.close();
+			}
+		});
 
 		if (savedInstanceState != null) {
 			mWikiPage = new Gson().fromJson(savedInstanceState.getString(KEY_WIKI_PAGE), WikiPage.class);
+		} else if (getArguments().keySet().contains(KEY_WIKI_PAGE)) {
+			mWikiPage = new Gson().fromJson(getArguments().getString(KEY_WIKI_PAGE), WikiPage.class);
 		}
 
 		// Setup page URI and title

@@ -22,22 +22,31 @@ public class WikiDbAdapter extends DbAdapter {
 	public static final String KEY_COMMENTS = "comments";
 	public static final String KEY_CREATED_ON = "created_on";
 	public static final String KEY_UPDATED_ON = "updated_on";
+	public static final String KEY_IS_FAVORITE = "is_favorite";
 
 	public static final String KEY_SERVER_ID = "server_id";
 
-	public static final String[] WIKI_FIELDS = new String[] { KEY_PROJECT_ID, KEY_TITLE, KEY_TEXT, KEY_VERSION, KEY_AUTHOR_ID, KEY_COMMENTS, KEY_CREATED_ON,
+	public static final String[] WIKI_FIELDS = new String[] {
+			KEY_PROJECT_ID,
+			KEY_TITLE,
+			KEY_TEXT,
+			KEY_VERSION,
+			KEY_AUTHOR_ID,
+			KEY_COMMENTS,
+			KEY_CREATED_ON,
 			KEY_UPDATED_ON,
 
-			KEY_SERVER_ID, };
+			KEY_SERVER_ID,
+	};
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
-		return new String[] { "CREATE TABLE " + TABLE_WIKI + "(" + Util.join(WIKI_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_TITLE + ", " + KEY_SERVER_ID + ", " +
-				"" + KEY_PROJECT_ID + "))", };
+		return new String[] {
+				"CREATE TABLE " + TABLE_WIKI + "(" + Util.join(WIKI_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_TITLE + ", " + KEY_SERVER_ID + ", " +
+						"" + KEY_PROJECT_ID + "))",
+		};
 	}
 
 	public WikiDbAdapter(final Context ctx) {
@@ -58,6 +67,7 @@ public class WikiDbAdapter extends DbAdapter {
 		values.put(KEY_CREATED_ON, page.created_on == null ? 0 : page.created_on.getTimeInMillis());
 		values.put(KEY_UPDATED_ON, page.updated_on == null ? 0 : page.updated_on.getTimeInMillis());
 		values.put(KEY_SERVER_ID, server.rowId);
+		values.put(KEY_IS_FAVORITE, page.is_favorite ? 1 : 0);
 	}
 
 	public long insert(final Server server, final Project project, final WikiPage page) {
@@ -118,5 +128,16 @@ public class WikiDbAdapter extends DbAdapter {
 		}
 
 		return wikiPage;
+	}
+
+	public List<WikiPage> selectFavorites() {
+		List<WikiPage> pages = new ArrayList<WikiPage>();
+		Cursor c = mDb.query(TABLE_WIKI, null, KEY_IS_FAVORITE + " > 0", null, null, null, null);
+		if (c.moveToFirst()) {
+			do {
+				pages.add(new WikiPage(c, this));
+			} while (c.moveToNext());
+		}
+		return pages;
 	}
 }

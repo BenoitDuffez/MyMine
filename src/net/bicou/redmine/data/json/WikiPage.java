@@ -1,13 +1,15 @@
 package net.bicou.redmine.data.json;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
+import android.database.Cursor;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
 import net.bicou.redmine.util.L;
 
-import android.database.Cursor;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class WikiPage {
 	public String title;
@@ -20,6 +22,8 @@ public class WikiPage {
 
 	public Server server;
 	public Project project;
+
+	public boolean is_favorite;
 
 	public WikiPage() {
 		author = new Reference();
@@ -58,5 +62,13 @@ public class WikiPage {
 			} catch (final Exception e) {
 			}
 		}
+	}
+
+	public WikiPage(final Cursor c, DbAdapter db) {
+		this(c, null, null);
+		ServersDbAdapter sdb = new ServersDbAdapter(db);
+		server = sdb.getServer(c.getLong(c.getColumnIndex(WikiDbAdapter.KEY_SERVER_ID)));
+		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
+		project = pdb.select(server, c.getLong(c.getColumnIndex(WikiDbAdapter.KEY_PROJECT_ID)));
 	}
 }

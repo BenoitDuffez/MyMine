@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:padding="@dimen/main_content_padding">
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-	<LinearLayout
-		android:orientation="vertical"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:padding="8dp"
-		android:background="#FFFFFF">
+    <net.bicou.redmine.widget.RobotoThinTextView
+            android:id="@+id/wiki_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="32sp"/>
 
-		<net.bicou.redmine.widget.RobotoThinTextView
-			android:id="@+id/wiki_title"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:textSize="32sp" />
+    <CheckBox
+            android:id="@+id/wiki_favorite"
+            android:button="@drawable/favorite"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-		<View
-			android:layout_width="match_parent"
-			android:layout_height="25dp" />
+    <WebView
+            android:id="@+id/wiki_page"
+            android:layout_below="@id/wiki_favorite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-		<WebView
-			android:id="@+id/wiki_page"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content" />
-
-	</LinearLayout>
-</ScrollView>
+</RelativeLayout>
