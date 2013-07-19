@@ -39,7 +39,6 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 
 	/**
 	 * Can be overriden by subclasses
-	 * @return
 	 */
 	protected Fragment getDrawerFragment() {
 		return new DrawerMenuFragment();
@@ -70,10 +69,6 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 		mDrawerMenu = findViewById(R.id.navigation_drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
 
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction().add(R.id.drawer_content, getDrawerFragment()).commit();
-		}
-
 		if (mDrawerMenu == null || mDrawerLayout == null) {
 			throw new IllegalStateException("a DrawerActivity must have a drawer layout id=main_drawer_layout and a drawer list id=android.R.id.list");
 		}
@@ -92,12 +87,12 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
+				getSupportActionBar().setTitle(mTitle);
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mTitleDrawer);
+				getSupportActionBar().setTitle(mTitleDrawer);
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 		};
