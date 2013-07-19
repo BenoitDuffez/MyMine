@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,8 @@ import java.util.List;
 public class ProjectFragment extends SherlockFragment {
 	public static final String KEY_PROJECT_JSON = "net.bicou.redmine.Project";
 	private Project mProject;
-	TextView mUpdatedOn, mCreatedOn, mTitle, mDescription, mServer, mParent;
+	TextView mUpdatedOn, mCreatedOn, mTitle, mDescription, mServer, mParent, mShortDescription;
+	View mFullDescription;
 	CheckBox mIsFavorite;
 	CardsAdapter mAdapter;
 	StaggeredGridView mStaggeredGridView;
@@ -66,7 +68,24 @@ public class ProjectFragment extends SherlockFragment {
 		mTitle = (TextView) v.findViewById(R.id.project_overview_title);
 		mParent = (TextView) v.findViewById(R.id.project_overview_parent);
 		mDescription = (TextView) v.findViewById(R.id.project_overview_description);
+		mShortDescription = (TextView) v.findViewById(R.id.project_overview_short_description);
+		mFullDescription = v.findViewById(R.id.project_overview_full_description);
 		mIsFavorite = (CheckBox) v.findViewById(R.id.project_overview_is_favorite);
+
+		View.OnClickListener toggleDescription = new View.OnClickListener() {
+			@Override
+			public void onClick(final View view) {
+				if (mShortDescription.getVisibility() == View.VISIBLE) {
+					mShortDescription.setVisibility(View.GONE);
+					mFullDescription.setVisibility(View.VISIBLE);
+				} else {
+					mShortDescription.setVisibility(View.VISIBLE);
+					mFullDescription.setVisibility(View.GONE);
+				}
+			}
+		};
+		mShortDescription.setOnClickListener(toggleDescription);
+		mFullDescription.setOnClickListener(toggleDescription);
 
 		mIsFavorite.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -186,7 +205,9 @@ public class ProjectFragment extends SherlockFragment {
 				mParent.setText(Html.fromHtml(getString(R.string.project_parent, mProject.parent.name)));
 			}
 			if (!TextUtils.isEmpty(mProject.description)) {
-				mDescription.setText(Html.fromHtml(Util.htmlFromTextile(mProject.description)));
+				Spanned description = Html.fromHtml(Util.htmlFromTextile(mProject.description));
+				mDescription.setText(description);
+				mShortDescription.setText(description);
 			}
 			mIsFavorite.setChecked(mProject.is_favorite);
 		}
