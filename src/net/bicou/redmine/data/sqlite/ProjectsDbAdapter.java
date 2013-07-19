@@ -20,6 +20,7 @@ public class ProjectsDbAdapter extends DbAdapter {
 	public static final String KEY_UPDATED_ON = "updated_on";
 	public static final String KEY_IDENTIFIER = "identifier";
 	public static final String KEY_PARENT_ID = "parent";
+	public static final String KEY_IS_FAVORITE = "is_favorite";
 
 	public static final String KEY_SERVER_ID = "server_id";
 
@@ -32,12 +33,11 @@ public class ProjectsDbAdapter extends DbAdapter {
 			KEY_CREATED_ON,
 			KEY_UPDATED_ON,
 			KEY_SERVER_ID,
+			KEY_IS_FAVORITE,
 	};
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
@@ -53,9 +53,7 @@ public class ProjectsDbAdapter extends DbAdapter {
 		super(db);
 	}
 
-	public long insert(final Project project) {
-		final ContentValues values = new ContentValues();
-		values.put(KEY_ID, project.id);
+	private void putValues(ContentValues values, Project project) {
 		values.put(KEY_NAME, project.name);
 		values.put(KEY_DESCRIPTION, project.description);
 		values.put(KEY_IDENTIFIER, project.identifier);
@@ -63,18 +61,19 @@ public class ProjectsDbAdapter extends DbAdapter {
 		values.put(KEY_CREATED_ON, project.created_on == null ? 0 : project.created_on.getTimeInMillis());
 		values.put(KEY_UPDATED_ON, project.updated_on == null ? 0 : project.updated_on.getTimeInMillis());
 		values.put(KEY_SERVER_ID, project.server.rowId);
+		values.put(KEY_IS_FAVORITE, project.is_favorite ? 1 : 0);
+	}
+
+	public long insert(final Project project) {
+		final ContentValues values = new ContentValues();
+		values.put(KEY_ID, project.id);
+		putValues(values, project);
 		return mDb.insert(TABLE_PROJECTS, "", values);
 	}
 
 	public int update(final Project project) {
 		final ContentValues values = new ContentValues();
-		values.put(KEY_NAME, project.name);
-		values.put(KEY_DESCRIPTION, project.description);
-		values.put(KEY_IDENTIFIER, project.identifier);
-		values.put(KEY_PARENT_ID, project.parent == null ? 0 : project.parent.id);
-		values.put(KEY_CREATED_ON, project.created_on.getTimeInMillis());
-		values.put(KEY_UPDATED_ON, project.updated_on.getTimeInMillis());
-		values.put(KEY_SERVER_ID, project.server.rowId);
+		putValues(values, project);
 		return mDb.update(TABLE_PROJECTS, values, KEY_ID + "=" + project.id, null);
 	}
 
@@ -161,8 +160,6 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes absolutely all projects
-	 *
-	 * @return
 	 */
 	public int deleteAll() {
 		return mDb.delete(TABLE_PROJECTS, null, null);
@@ -170,9 +167,6 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes all the projects linked to this server ID
-	 *
-	 * @param rowId
-	 * @return
 	 */
 	public int deleteAll(final long serverId) {
 		return mDb.delete(TABLE_PROJECTS, KEY_SERVER_ID + "=?", new String[] {
@@ -182,9 +176,6 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	/**
 	 * Deletes a single project
-	 *
-	 * @param projectId
-	 * @return
 	 */
 	public boolean delete(final Server server, final long projectId) {
 		int nb = mDb.delete(TABLE_PROJECTS, KEY_ID + " = " + projectId + " AND " + KEY_SERVER_ID + " = " + server.rowId, null);

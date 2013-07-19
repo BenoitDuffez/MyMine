@@ -1,16 +1,16 @@
 package net.bicou.redmine.data.json;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
+import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.util.L;
-import android.database.Cursor;
-import android.os.Parcel;
-import android.os.Parcelable;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class Project implements Parcelable {
 	public long id;
@@ -20,7 +20,9 @@ public class Project implements Parcelable {
 	public Reference parent;
 	public Calendar created_on;
 	public Calendar updated_on;
+
 	public Server server;
+	public boolean is_favorite;
 
 	protected Project(final Parcel in) {
 		id = in.readLong();
@@ -83,30 +85,31 @@ public class Project implements Parcelable {
 				col = col.substring(0, pos);
 			}
 			try {
+				int columnIndex = c.getColumnIndex(col);
 				if (col.equals(ProjectsDbAdapter.KEY_ID)) {
-					id = c.getLong(c.getColumnIndex(ProjectsDbAdapter.KEY_ID));
+					id = c.getLong(columnIndex);
 				} else if (col.equals(ProjectsDbAdapter.KEY_NAME)) {
-					name = c.getString(c.getColumnIndex(ProjectsDbAdapter.KEY_NAME));
+					name = c.getString(columnIndex);
 				} else if (col.equals(ProjectsDbAdapter.KEY_DESCRIPTION)) {
-					description = c.getString(c.getColumnIndex(ProjectsDbAdapter.KEY_DESCRIPTION));
+					description = c.getString(columnIndex);
 				} else if (col.equals(ProjectsDbAdapter.KEY_IDENTIFIER)) {
-					identifier = c.getString(c.getColumnIndex(ProjectsDbAdapter.KEY_IDENTIFIER));
+					identifier = c.getString(columnIndex);
 				} else if (col.equals(ProjectsDbAdapter.KEY_CREATED_ON)) {
 					created_on = new GregorianCalendar();
-					created_on.setTimeInMillis(c.getLong(c.getColumnIndex(ProjectsDbAdapter.KEY_CREATED_ON)));
+					created_on.setTimeInMillis(c.getLong(columnIndex));
 				} else if (col.equals(ProjectsDbAdapter.KEY_UPDATED_ON)) {
 					updated_on = new GregorianCalendar();
-					created_on.setTimeInMillis(c.getLong(c.getColumnIndex(ProjectsDbAdapter.KEY_UPDATED_ON)));
+					created_on.setTimeInMillis(c.getLong(columnIndex));
 				} else if (col.equals(ProjectsDbAdapter.KEY_SERVER_ID)) {
-					final long serverId = c.getLong(c.getColumnIndex(ProjectsDbAdapter.KEY_SERVER_ID));
+					final long serverId = c.getLong(columnIndex);
 					final ServersDbAdapter sdb = new ServersDbAdapter(db);
 					server = sdb.getServer(serverId);
 				} else if (col.equals(ProjectsDbAdapter.KEY_PARENT_ID)) {
 					parent = new Reference();
-					parent.id = c.getLong(c.getColumnIndex(ProjectsDbAdapter.KEY_PARENT_ID));
+					parent.id = c.getLong(columnIndex);
 					if (parent.id != id && parent.id > 0) {
 						final Project p = db.select(server, parent.id, new String[] {
-							DbAdapter.KEY_REFERENCE_NAME
+								DbAdapter.KEY_REFERENCE_NAME
 						});
 						if (p != null) {
 							parent.name = p.name;
@@ -116,10 +119,13 @@ public class Project implements Parcelable {
 					} else {
 						parent.name = "";
 					}
+				} else if (col.equals(ProjectsDbAdapter.KEY_IS_FAVORITE)) {
+					is_favorite = c.getInt(columnIndex) > 0;
 				} else {
 					L.e("Unhandled column: " + col, null);
 				}
 			} catch (final Exception e) {
+				L.e("Couldn't parse project column: " + col, e);
 			}
 		}
 	}

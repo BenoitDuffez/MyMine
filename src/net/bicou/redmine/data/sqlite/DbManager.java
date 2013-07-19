@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class DbManager extends SQLiteOpenHelper {
 	private static final String DB_FILE = "redmine.db";
-	private static final int DB_VERSION = 15;
+	private static final int DB_VERSION = 16;
 	Context mContext;
 	Lock mLock = new ReentrantLock();
 
@@ -218,6 +218,10 @@ public class DbManager extends SQLiteOpenHelper {
 					IssuesDbAdapter.getCreateTablesStatements()[1],
 			};
 			createTables(db, attn);
+		}
+
+		if (oldVersion < 16) {
+			db.execSQL("ALTER TABLE " + ProjectsDbAdapter.TABLE_PROJECTS + " ADD " + ProjectsDbAdapter.KEY_IS_FAVORITE);
 		}
 	}
 
