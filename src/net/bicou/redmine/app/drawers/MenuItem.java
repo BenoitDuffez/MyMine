@@ -86,9 +86,4 @@ class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	public int getViewType() {
 		return DrawerMenuFragment.MENU_VIEWTYPE_ITEM;
 	}
-
-	@Override
-	public int getTextId() {
-		return textId;
-	}
 }

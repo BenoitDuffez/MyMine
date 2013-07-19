@@ -43,11 +43,6 @@ class MenuSeparator implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	}
 
 	@Override
-	public int getTextId() {
-		return textId;
-	}
-
-	@Override
 	public DrawerMenuItemsAdapter.DrawerMenuItem setTag(final Object tag) {
 		return null;
 	}
