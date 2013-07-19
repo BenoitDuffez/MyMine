@@ -11,8 +11,13 @@ import com.google.gson.Gson;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.projects.ProjectFragment;
 import net.bicou.redmine.app.projects.ProjectsActivity;
+import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.data.json.Query;
+import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
+import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,20 +44,39 @@ public class DrawerMenuFragment extends SherlockListFragment {
 	}
 
 	public void refreshMenu() {
-		mData.clear();
 		buildMenuContents();
 		mAdapter.notifyDataSetChanged();
 	}
 
 	private void buildMenuContents() {
-		mData.add(new MenuSeparator(DrawerMenuFragment.this, R.string.menu_projects));
+		mData.clear();
 		ProjectsDbAdapter db = new ProjectsDbAdapter(getActivity());
 		db.open();
-		List<Project> favs = db.getFavorites();
+		buildProjects(db);
+		buildIssues(db);
 		db.close();
+	}
+
+	private void buildProjects(final DbAdapter db) {
+		mData.add(new MenuSeparator(DrawerMenuFragment.this, R.string.menu_projects));
+		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
+		List<Project> favs = pdb.getFavorites();
 
 		for (Project project : favs) {
-			mData.add(new MenuItem(DrawerMenuFragment.this, 0, project.name).setTag(project));
+			mData.add(new MenuItemProject(DrawerMenuFragment.this, project.name).setTag(project));
+		}
+	}
+
+	private void buildIssues(DbAdapter db) {
+		mData.add(new MenuSeparator(DrawerMenuFragment.this, R.string.menu_issues));
+		QueriesDbAdapter qdb = new QueriesDbAdapter(db);
+		ServersDbAdapter sdb = new ServersDbAdapter(db);
+		List<Server> servers = sdb.selectAll();
+		for (Server server : servers) {
+			List<Query> queries = qdb.selectAll(server);
+			for (Query query : queries) {
+				mData.add(new MenuItemQuery(DrawerMenuFragment.this, query.name, server.serverUrl));
+			}
 		}
 	}
 
