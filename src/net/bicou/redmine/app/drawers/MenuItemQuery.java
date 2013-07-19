@@ -29,8 +29,8 @@ public class MenuItemQuery extends MenuItem {
 		if (convertView == null) {
 			v = drawerMenuFragment.getActivity().getLayoutInflater().inflate(R.layout.drawer_menu_issue_query, parent, false);
 			holder = new ViewHolder();
-			holder.server = (TextView) v.findViewById(R.id.drawer_query_name);
-			holder.query = (TextView) v.findViewById(R.id.drawer_query_server);
+			holder.query = (TextView) v.findViewById(R.id.drawer_query_name);
+			holder.server = (TextView) v.findViewById(R.id.drawer_query_server);
 			v.setTag(holder);
 		} else {
 			v = convertView;
