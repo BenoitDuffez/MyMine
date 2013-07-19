@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssuesActivity;
@@ -25,109 +23,15 @@ import java.util.List;
  * Created by bicou on 14/06/13.
  */
 public class DrawerMenuFragment extends SherlockListFragment {
-	private class Separator implements DrawerMenuItemsAdapter.DrawerMenuItem {
-		int textId;
-
-		public Separator(int text) {
-			textId = text;
-		}
-
-		@Override
-		public View fillView(View convertView, ViewGroup parent) {
-			View v;
-			if (convertView == null) {
-				v = getActivity().getLayoutInflater().inflate(R.layout.drawer_menu_separator, parent, false);
-			} else {
-				v = convertView;
-			}
-
-			TextView tv = (TextView) v.findViewById(R.id.slidingmenu_item_text);
-			tv.setText(textId);
-
-			return v;
-		}
-
-		@Override
-		public long getId() {
-			return textId;
-		}
-
-		@Override
-		public int getViewType() {
-			return 0;
-		}
-
-		@Override
-		public int getTextId() {
-			return textId;
-		}
-	}
-
-	private class Item implements DrawerMenuItemsAdapter.DrawerMenuItem {
-		int iconId, textId;
-
-		private class VH {
-			ImageView icon;
-			TextView text;
-		}
-
-		public Item(int icon, int text) {
-			iconId = icon;
-			textId = text;
-		}
-
-		@Override
-		public View fillView(View convertView, ViewGroup parent) {
-			View v;
-			VH vh;
-
-			if (convertView == null) {
-				v = getActivity().getLayoutInflater().inflate(R.layout.drawer_menu_item, parent, false);
-				vh = new VH();
-				vh.icon = (ImageView) v.findViewById(R.id.slidingmenu_item_icon);
-				vh.text = (TextView) v.findViewById(R.id.slidingmenu_item_text);
-				v.setTag(vh);
-			} else {
-				v = convertView;
-				vh = (VH) convertView.getTag();
-			}
-
-			vh.icon.setImageResource(iconId);
-			vh.text.setText(textId);
-
-			return v;
-		}
-
-		@Override
-		public long getId() {
-			return textId;
-		}
-
-		@Override
-		public int getViewType() {
-			return 1;
-		}
-
-		@Override
-		public int getTextId() {
-			return textId;
-		}
-	}
-
 	DrawerMenuItemsAdapter mAdapter;
 
-	private List<DrawerMenuItemsAdapter.DrawerMenuItem> mData = new ArrayList<DrawerMenuItemsAdapter.DrawerMenuItem>() {
-		{
-			add(new Separator(R.string.app_name));
-			add(new Item(R.drawable.icon_projects, R.string.menu_projects));
-			add(new Item(R.drawable.icon_issues, R.string.menu_issues));
-			add(new Item(R.drawable.icon_roadmaps, R.string.menu_roadmap));
-			add(new Item(R.drawable.icon_wiki, R.string.menu_wiki));
-			//			add(new Separator(R.string.app_name));
-			//			add(new Item(R.drawable.icon_about, R.string.menu_about));
-			//			add(new Item(R.drawable.icon_settings, R.string.menu_settings));
-		}
-	};
+	private List<DrawerMenuItemsAdapter.DrawerMenuItem> mData = new ArrayList<DrawerMenuItemsAdapter.DrawerMenuItem>() {{
+		add(new MenuSeparator(DrawerMenuFragment.this, R.string.app_name));
+		add(new MenuItem(DrawerMenuFragment.this, R.drawable.icon_projects, R.string.menu_projects));
+		add(new MenuItem(DrawerMenuFragment.this, R.drawable.icon_issues, R.string.menu_issues));
+		add(new MenuItem(DrawerMenuFragment.this, R.drawable.icon_roadmaps, R.string.menu_roadmap));
+		add(new MenuItem(DrawerMenuFragment.this, R.drawable.icon_wiki, R.string.menu_wiki));
+	}};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
