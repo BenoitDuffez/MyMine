@@ -129,7 +129,7 @@ public class ProjectFragment extends SherlockFragment {
 		for (Tracker tracker : trackers) {
 			nbIssues = idb.countIssues(project, tracker);
 			if (nbIssues.x + nbIssues.y > 0) {
-				issues.append(String.format(context.getString(R.string.project_overview_issues_card_tracker), tracker.name, nbIssues.y, nbIssues.x));
+				issues.append(String.format(context.getString(R.string.project_overview_issues_card_tracker), tracker.name, nbIssues.y, nbIssues.x)).append("\n");
 			}
 		}
 		issuesCard.setContent(R.string.title_issues, issues.toString().trim(), 0, R.drawable.icon_issues);
