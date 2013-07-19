@@ -42,6 +42,12 @@ public class DrawerMenuFragment extends SherlockListFragment {
 		return v;
 	}
 
+	public void refreshMenu() {
+		mData.clear();
+		buildMenuContents();
+		mAdapter.notifyDataSetChanged();
+	}
+
 	private void buildMenuContents() {
 		mData.add(new MenuSeparator(DrawerMenuFragment.this, R.string.menu_projects));
 		ProjectsDbAdapter db = new ProjectsDbAdapter(getActivity());

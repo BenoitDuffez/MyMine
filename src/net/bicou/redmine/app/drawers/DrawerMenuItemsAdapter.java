@@ -4,14 +4,14 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
+import android.widget.BaseAdapter;
 
 import java.util.List;
 
 /**
  * Created by bicou on 14/06/13.
  */
-public class DrawerMenuItemsAdapter implements ListAdapter {
+public class DrawerMenuItemsAdapter extends BaseAdapter {
 	public interface DrawerMenuItem {
 		public View fillView(View convertView, ViewGroup parent);
 

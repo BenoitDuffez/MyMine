@@ -94,6 +94,10 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 			public void onDrawerOpened(View drawerView) {
 				getSupportActionBar().setTitle(mTitleDrawer);
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+				Fragment frag = getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+				if (frag instanceof DrawerMenuFragment) {
+					((DrawerMenuFragment) frag).refreshMenu();
+				}
 			}
 		};
 
