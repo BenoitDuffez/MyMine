@@ -205,4 +205,14 @@ public class ProjectsDbAdapter extends DbAdapter {
 		}
 		return nb;
 	}
+
+	public List<Project> getFavorites() {
+		Cursor c = mDb.query(TABLE_PROJECTS, null, KEY_IS_FAVORITE + " > 0", null, null, null, null);
+		List<Project> projects = new ArrayList<Project>();
+		if (c.moveToFirst()) {
+			projects.add(new Project(c, this));
+			c.close();
+		}
+		return projects;
+	}
 }
