@@ -20,10 +20,10 @@ import java.util.List;
 public class CardsAdapter extends BaseAdapter {
 	private List<OverviewCard> mCards;
 	CardActionCallback mCallback;
-	private static final int TAG_VIEW_HOLDER = 0;
-	private static final int TAG_CARD = 1;
-	private static final int TAG_MENU = 2;
-	private static final int TAG_ACTION = 3;
+	private static final int TAG_VIEW_HOLDER = R.id.card_tag_view_holder;
+	private static final int TAG_CARD = R.id.card_tag_card;
+	private static final int TAG_MENU = R.id.card_tag_menu;
+	private static final int TAG_ACTION = R.id.card_tag_action;
 
 	public interface CardActionCallback {
 		public void onActionSelected(int actionId);
