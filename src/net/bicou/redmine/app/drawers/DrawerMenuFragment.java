@@ -7,14 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.google.gson.Gson;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssuesActivity;
-import net.bicou.redmine.app.misc.AboutActivity;
-import net.bicou.redmine.app.misc.MainActivity;
+import net.bicou.redmine.app.projects.ProjectFragment;
 import net.bicou.redmine.app.projects.ProjectsActivity;
-import net.bicou.redmine.app.roadmap.RoadmapActivity;
-import net.bicou.redmine.app.settings.SettingsActivity;
-import net.bicou.redmine.app.wiki.WikiActivity;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 
@@ -56,50 +52,18 @@ public class DrawerMenuFragment extends SherlockListFragment {
 		db.close();
 
 		for (Project project : favs) {
-			mData.add(new MenuItem(DrawerMenuFragment.this, 0, project.name));
+			mData.add(new MenuItem(DrawerMenuFragment.this, 0, project.name).setTag(project));
 		}
 	}
 
 	@Override
 	public void onListItemClick(final ListView listView, final View v, final int position, final long id) {
-		final Bundle args = new Bundle();
-		final Intent intent;
+		Project project = (Project) mAdapter.getItem(position).getTag();
 
-		switch (mAdapter.getItem(position).getTextId()) {
-		case R.string.menu_issues:
-			intent = new Intent(listView.getContext(), IssuesActivity.class);
-			intent.putExtras(args);
-			break;
-
-		case R.string.menu_projects:
-			intent = new Intent(listView.getContext(), ProjectsActivity.class);
-			intent.putExtras(args);
-			break;
-
-		case R.string.menu_roadmap:
-			intent = new Intent(listView.getContext(), RoadmapActivity.class);
-			intent.putExtras(args);
-			break;
-
-		case R.string.menu_wiki:
-			intent = new Intent(listView.getContext(), WikiActivity.class);
-			intent.putExtras(args);
-			break;
-
-		case R.string.menu_about:
-			intent = new Intent(listView.getContext(), AboutActivity.class);
-			break;
-
-		case R.string.menu_settings:
-			intent = new Intent(listView.getContext(), SettingsActivity.class);
-			break;
-
-		default:
-			intent = new Intent(listView.getContext(), MainActivity.class);
-			break;
-		}
-
+		Intent intent = new Intent(getActivity(), ProjectsActivity.class);
+		intent.putExtra(ProjectFragment.KEY_PROJECT_JSON, new Gson().toJson(project));
 		startActivity(intent);
+
 		DrawerActivity act = (DrawerActivity) getActivity();
 		act.closeDrawer();
 	}

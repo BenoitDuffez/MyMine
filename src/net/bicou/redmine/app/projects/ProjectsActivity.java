@@ -50,6 +50,14 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 		setSupportProgressBarIndeterminateVisibility(false);
 		super.onCreate(savedInstanceState);
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
+
+		// Load a project if there is one in the intent extras
+		if (savedInstanceState == null) {
+			Bundle args = getIntent().getExtras();
+			if (args != null && args.keySet().contains(ProjectFragment.KEY_PROJECT_JSON)) {
+				selectContent(args);
+			}
+		}
 	}
 
 	@Override

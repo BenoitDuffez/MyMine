@@ -109,12 +109,16 @@ public class ProjectFragment extends SherlockFragment {
 
 		final Bundle args = getArguments();
 		if (savedInstanceState == null) {
-			// Load project
-			final long serverId = args.getLong(Constants.KEY_SERVER_ID);
-			final ProjectsDbAdapter db = new ProjectsDbAdapter(getActivity());
-			db.open();
-			mProject = db.select(serverId, args.getLong(Constants.KEY_PROJECT_ID), null);
-			db.close();
+			if (args.keySet().contains(KEY_PROJECT_JSON)) {
+				mProject = new Gson().fromJson(args.getString(KEY_PROJECT_JSON), Project.class);
+			} else {
+				// Load project
+				final long serverId = args.getLong(Constants.KEY_SERVER_ID);
+				final ProjectsDbAdapter db = new ProjectsDbAdapter(getActivity());
+				db.open();
+				mProject = db.select(serverId, args.getLong(Constants.KEY_PROJECT_ID), null);
+				db.close();
+			}
 		} else {
 			mProject = new Gson().fromJson(savedInstanceState.getString(KEY_PROJECT_JSON), Project.class);
 		}
