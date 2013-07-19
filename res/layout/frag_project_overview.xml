@@ -1,80 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:staggered="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
         android:background="@color/white_layout_background"
+        android:padding="@dimen/main_content_padding"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/main_content_padding">
+        android:layout_height="wrap_content">
 
-    <net.bicou.redmine.widget.RobotoThinTextView
-            android:id="@+id/project_overview_title"
-            android:text="@string/issue_project"
-            android:textSize="@dimen/title_font_size"
-            android:gravity="center_horizontal"
-            android:layout_marginBottom="12dp"
+    <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
-    <TextView
-            android:id="@+id/project_overview_server"
-            android:text="@string/project_server"
-            android:gravity="center_vertical"
-            android:textSize="12sp"
-            android:textColor="#666666"
-            android:paddingLeft="8dp"
-            android:paddingBottom="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <net.bicou.redmine.widget.RobotoThinTextView
+                android:id="@+id/project_overview_title"
+                android:text="@string/issue_project"
+                android:textSize="@dimen/title_font_size"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-    <TextView
-            android:id="@+id/project_overview_parent"
-            android:text="@string/project_parent"
-            android:gravity="center_vertical"
-            android:textSize="12sp"
-            android:textColor="#666666"
-            android:paddingLeft="8dp"
-            android:paddingBottom="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <TextView
+                android:id="@+id/project_overview_server"
+                android:text="@string/project_server"
+                android:gravity="center_vertical"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-    <TextView
-            android:id="@+id/project_overview_created_on"
-            android:text="@string/project_created_on"
-            android:gravity="center_vertical"
-            android:textSize="12sp"
-            android:textColor="#666666"
-            android:paddingLeft="8dp"
-            android:paddingBottom="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <TextView
+                android:id="@+id/project_overview_parent"
+                android:text="@string/project_parent"
+                android:gravity="center_vertical"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-    <TextView
-            android:id="@+id/project_overview_updated_on"
-            android:text="@string/project_updated_on"
-            android:gravity="center_vertical"
-            android:textSize="12sp"
-            android:textColor="#666666"
-            android:paddingLeft="8dp"
-            android:paddingBottom="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <TextView
+                android:id="@+id/project_overview_created_on"
+                android:text="@string/project_created_on"
+                android:gravity="center_vertical"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-    <TextView
-            android:id="@+id/project_overview_description"
-            android:text="project description"
-            android:gravity="center_vertical"
-            android:textSize="18sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <TextView
+                android:id="@+id/project_overview_updated_on"
+                android:text="@string/project_updated_on"
+                android:gravity="center_vertical"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:paddingLeft="8dp"
+                android:paddingBottom="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-    <com.origamilabs.library.views.StaggeredGridView
-            android:id="@+id/project_overview_container"
-            staggered:numColumns="@integer/project_overview_num_columns"
-            staggered:drawSelectorOnTop="true"
-            staggered:itemMargin="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <TextView
+                android:id="@+id/project_overview_description"
+                android:text="project description"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-</LinearLayout>
+        <com.origamilabs.library.views.StaggeredGridView
+                android:id="@+id/project_overview_container"
+                staggered:numColumns="@integer/project_overview_num_columns"
+                staggered:drawSelectorOnTop="true"
+                staggered:itemMargin="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+    </LinearLayout>
+</ScrollView>
