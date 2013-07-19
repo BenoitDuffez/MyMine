@@ -60,11 +60,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public Bundle getMainFragmentArgs(Bundle savedInstanceState) {
 		final Intent intent = getIntent();
 
-		final Bundle args, extras;
+		final Bundle args = new Bundle(), extras;
 		if ((extras = intent.getExtras()) != null) {
-			args = new Bundle(extras);
-		} else {
-			args = new Bundle();
+			args.putAll(extras);
 		}
 
 		mNavMode = ActionBar.NAVIGATION_MODE_LIST;
@@ -72,24 +70,26 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		// Get the intent, verify the action and get the query
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			final String query = intent.getStringExtra(SearchManager.QUERY);
-			// searchIssues(query);
-			args.putBoolean(IssuesListFilter.KEY_HAS_FILTER, true);
 			new IssuesListFilter(query).saveTo(args);
 			mNavMode = ActionBar.NAVIGATION_MODE_STANDARD;
 		}
 
 		// Get issue sort order
-		if (mCurrentOrder == null) {
-			if (savedInstanceState == null) {
-				mCurrentOrder = IssuesOrder.fromPreferences(this);
-			} else {
-				mCurrentOrder = IssuesOrder.fromBundle(savedInstanceState);
+		if (args.keySet().contains(IssuesOrder.KEY_HAS_COLUMNS_ORDER) == false) {
+			if (mCurrentOrder == null) {
+				if (savedInstanceState == null) {
+					mCurrentOrder = IssuesOrder.fromPreferences(this);
+				} else {
+					mCurrentOrder = IssuesOrder.fromBundle(savedInstanceState);
+				}
+			}
+
+			if (mCurrentOrder != null) {
+				mCurrentOrder.saveTo(args);
 			}
 		}
 
-		if (mCurrentOrder != null) {
-			mCurrentOrder.saveTo(args);
-		}
+		saveMainFragmentState(args);
 
 		return args;
 	}
@@ -208,22 +208,24 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	}
 
 	OnNavigationListener mNavigationCallbacks = new OnNavigationListener() {
-		int lastPosition;
+		int lastPosition = -1;
 
 		@Override
 		public boolean onNavigationItemSelected(final int itemPosition, final long itemId) {
 			L.d("pos=" + itemPosition);
-			if (!mSpinnerAdapter.isSeparator(itemPosition)) {
-				IssuesListFragment list = getMainFragment();
-				IssuesListFilter newFilter = mSpinnerAdapter.getFilter(itemPosition);
-				if (list != null) {
-					list.updateFilter(newFilter);
-				} else {
-					Bundle args = getMainFragmentArgs(null);
-					if (newFilter != null) {
-						newFilter.saveTo(args);
+			if (lastPosition >= 0) {
+				if (!mSpinnerAdapter.isSeparator(itemPosition)) {
+					IssuesListFragment list = getMainFragment();
+					IssuesListFilter newFilter = mSpinnerAdapter.getFilter(itemPosition);
+					if (list != null) {
+						list.updateFilter(newFilter);
+					} else {
+						Bundle args = getMainFragmentArgs(null);
+						if (newFilter != null) {
+							newFilter.saveTo(args);
+						}
+						showMainFragment(args);
 					}
-					showMainFragment(args);
 				}
 			}
 			lastPosition = itemPosition;

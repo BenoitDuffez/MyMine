@@ -17,11 +17,13 @@ import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
+import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.welcome.CardsAdapter;
 import net.bicou.redmine.app.welcome.OverviewCard;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Tracker;
+import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
@@ -99,26 +101,39 @@ public class ProjectFragment extends SherlockFragment {
 	public static List<OverviewCard> getProjectCards(Context context, Server server, Project project) {
 		List<OverviewCard> cards = new ArrayList<OverviewCard>();
 
-		// Issues
-		TrackersDbAdapter tdb = new TrackersDbAdapter(context);
-		tdb.open();
-		IssuesDbAdapter idb = new IssuesDbAdapter(tdb);
-		OverviewCard issuesCard = new OverviewCard(new Intent(context, IssuesActivity.class));
+		DbAdapter db = new ProjectsDbAdapter(context);
+		db.open();
+		getIssuesCard(db, context, cards, server, project);
+		db.close();
+
+		return cards;
+	}
+
+	private static void getIssuesCard(DbAdapter db, Context context, List<OverviewCard> cards, Server server, Project project) {
+		// Get DBs
+		TrackersDbAdapter tdb = new TrackersDbAdapter(db);
+		IssuesDbAdapter idb = new IssuesDbAdapter(db);
+
+		// Create card click intent
+		Intent intent = new Intent(context, IssuesActivity.class);
+		IssuesListFilter filter = new IssuesListFilter(server.rowId, IssuesListFilter.FilterType.PROJECT, project.id);
+		Bundle args = new Bundle();
+		filter.saveTo(args);
+		intent.putExtras(args);
+
+		// Create the card
+		OverviewCard issuesCard = new OverviewCard(intent);
 		StringBuilder issues = new StringBuilder();
 		List<Tracker> trackers = tdb.selectAll(server);
 		Point nbIssues;
 		for (Tracker tracker : trackers) {
 			nbIssues = idb.countIssues(project, tracker);
 			if (nbIssues.x + nbIssues.y > 0) {
-				issues.append(String.format("%s: %d open / %d closed\n", tracker.name, nbIssues.y, nbIssues.x));
+				issues.append(String.format(context.getString(R.string.project_overview_issues_card_tracker), tracker.name, nbIssues.y, nbIssues.x));
 			}
 		}
 		issuesCard.setContent(R.string.title_issues, issues.toString().trim(), 0, R.drawable.icon_issues);
 		cards.add(issuesCard);
-
-		tdb.close();
-
-		return cards;
 	}
 
 	public void onCardsBuilt(List<OverviewCard> cards) {
