@@ -192,10 +192,7 @@ public class WikiPageFragment extends SherlockFragment {
 		// matcher = regex.matcher(html);
 		// html = matcher.replaceAll("<a href=\"" + getUrlPrefix("/issues/$1") + "\">#$1</a>$2");
 
-		//mWebView.setVisibility(View.GONE);
 		mWebView.loadData(html, "text/html; charset=UTF-8", null);
-		//mWebView.reload();
-		//mWebView.setVisibility(View.VISIBLE);
 	}
 
 	private class WikiWebViewClient extends WebViewClient {
