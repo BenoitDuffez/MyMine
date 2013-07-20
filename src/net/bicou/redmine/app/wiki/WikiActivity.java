@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
+import com.google.gson.Gson;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
@@ -11,13 +12,14 @@ import net.bicou.redmine.app.ProjectsSpinnerAdapter;
 import net.bicou.redmine.app.RefreshProjectsTask;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.data.json.WikiPage;
 import net.bicou.redmine.util.L;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageFragment> implements ActionBar.OnNavigationListener {
-	private static final String WIKI_CONTENTS_TAG = "wiki";
+	private WikiPage mDesiredWikiPage;
 
 	@Override
 	protected WikiPagesListFragment createMainFragment(final Bundle args) {
@@ -65,27 +67,20 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 
 		// Specific project/server?
 		final Bundle args = getIntent().getExtras();
-		if (args != null && args.containsKey(Constants.KEY_PROJECT_POSITION)) {
-			mCurrentProjectPosition = args.getInt(Constants.KEY_PROJECT_POSITION);
+		if (args != null) {
+			if (args.containsKey(Constants.KEY_PROJECT_POSITION)) {
+				mCurrentProjectPosition = args.getInt(Constants.KEY_PROJECT_POSITION);
+			} else if (args.containsKey(WikiPageFragment.KEY_WIKI_PAGE)) {
+				mDesiredWikiPage = new Gson().fromJson(args.getString(WikiPageFragment.KEY_WIKI_PAGE), WikiPage.class);
+			}
 		}
 	}
 
 	@Override
 	protected void onRestoreInstanceState(final Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-
-		// Prepare navigation spinner
-		if (savedInstanceState == null) {
-			mProjects = new ArrayList<Project>();
-			mAdapter = new ProjectsSpinnerAdapter(this, R.layout.main_nav_item, mProjects);
-			mCurrentProjectPosition = -1;
-		} else {
-			mProjects = savedInstanceState.getParcelableArrayList(KEY_REDMINE_PROJECTS_LIST);
-			mCurrentProjectPosition = savedInstanceState.getInt(Constants.KEY_PROJECT_POSITION);
-			mAdapter = new ProjectsSpinnerAdapter(this, R.layout.main_nav_item, mProjects);
-
-			enableListNavigationMode();
-		}
+		initProjectsSpinner(savedInstanceState);
+		enableListNavigationMode();
 	}
 
 	@Override
@@ -114,6 +109,17 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 			@Override
 			public void onProjectsLoaded(List<Project> projectList) {
 				mProjects.addAll(projectList);
+				if (mDesiredWikiPage != null) {
+					int pos = 0;
+					for (Project project : mProjects) {
+						if (project.equals(mDesiredWikiPage.project)) {
+							mCurrentProjectPosition = pos;
+							selectContent(getIntent().getExtras());
+							break;
+						}
+						pos++;
+					}
+				}
 				if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_LIST) {
 					enableListNavigationMode();
 				}

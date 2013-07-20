@@ -118,4 +118,24 @@ public class Project implements Parcelable {
 			}
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (1 << 0) * (server == null ? 0 : 1);
+		hash += (1 << 1) * (server == null ? 0 : server.rowId);
+		hash += (1 << 16) * (id);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+		if (other == null) {
+			return false;
+		}
+		return other instanceof Project && hashCode() == other.hashCode();
+	}
 }
