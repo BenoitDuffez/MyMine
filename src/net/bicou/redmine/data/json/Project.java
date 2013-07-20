@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.util.L;
@@ -107,18 +106,8 @@ public class Project implements Parcelable {
 				} else if (col.equals(ProjectsDbAdapter.KEY_PARENT_ID)) {
 					parent = new Reference();
 					parent.id = c.getLong(columnIndex);
-					if (parent.id != id && parent.id > 0) {
-						final Project p = db.select(server, parent.id, new String[] {
-								DbAdapter.KEY_REFERENCE_NAME
-						});
-						if (p != null) {
-							parent.name = p.name;
-						} else {
-							parent.name = "";
-						}
-					} else {
-						parent.name = "";
-					}
+					// We can't get the full project info otherwise it'd break the current cursor we're reading
+					parent.name = null;
 				} else if (col.equals(ProjectsDbAdapter.KEY_IS_FAVORITE)) {
 					is_favorite = c.getInt(columnIndex) > 0;
 				} else {
