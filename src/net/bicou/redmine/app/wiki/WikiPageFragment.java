@@ -52,11 +52,6 @@ public class WikiPageFragment extends SherlockFragment {
 	 */
 	String mWikiPageURI;
 
-	/**
-	 * Human readable version of the wiki page URI
-	 */
-	String mWikiPageTitle;
-
 	public static WikiPageFragment newInstance(final Bundle args) {
 		final WikiPageFragment f = new WikiPageFragment();
 		f.setArguments(args);
@@ -159,28 +154,22 @@ public class WikiPageFragment extends SherlockFragment {
 			return;
 		}
 
-		SherlockFragmentActivity activity = getSherlockActivity();
-		if (activity == null) {
-			return;
-		}
-
-		if (TextUtils.isEmpty(mWikiPageTitle)) {
-			activity.setTitle(R.string.wiki_title);
-			mWikiTitle.setVisibility(View.GONE);
+		String wikiPageTitle = mWikiPage.title;
+		if (TextUtils.isEmpty(wikiPageTitle)) {
+			mWikiTitle.setText("");
 		} else {
-			activity.setTitle(mWikiPageTitle);
 			mWikiTitle.setVisibility(View.VISIBLE);
 			if (TextUtils.isEmpty(mWikiPageURI)) {
 				mWikiPageURI = "";
-				mWikiPageTitle = DEFAULT_PAGE_URI;
+				wikiPageTitle = DEFAULT_PAGE_URI;
 			} else {
 				try {
-					mWikiPageTitle = URLDecoder.decode(mWikiPageURI, "UTF-8");
+					wikiPageTitle = URLDecoder.decode(mWikiPageURI, "UTF-8");
 				} catch (final UnsupportedEncodingException e) {
 					L.e("Unable to decode wiki page title: " + mWikiPageURI, e);
 				}
 			}
-			mWikiTitle.setText(mWikiPageTitle);
+			mWikiTitle.setText(wikiPageTitle);
 		}
 
 		// HTML Contents

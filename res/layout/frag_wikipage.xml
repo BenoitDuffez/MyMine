@@ -8,6 +8,11 @@
             android:id="@+id/wiki_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:gravity="center_vertical"
+            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@+id/wiki_favorite"
+            android:text="@string/menu_wiki"
             android:textSize="32sp"/>
 
     <CheckBox

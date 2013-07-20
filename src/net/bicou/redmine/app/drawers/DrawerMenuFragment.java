@@ -20,6 +20,7 @@ import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.json.WikiPage;
 import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.util.L;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ public class DrawerMenuFragment extends SherlockListFragment {
 	}
 
 	public void refreshMenu() {
+		L.d("thread=" + Thread.currentThread());
 		buildMenuContents();
 		mAdapter.notifyDataSetChanged();
 	}
