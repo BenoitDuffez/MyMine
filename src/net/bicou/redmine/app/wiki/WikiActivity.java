@@ -2,8 +2,10 @@ package net.bicou.redmine.app.wiki;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.gson.Gson;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
@@ -42,6 +44,15 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 		initProjectsSpinner(savedInstanceState);
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 	//-----------------------------------------------------------
 	// Projects spinner
 
