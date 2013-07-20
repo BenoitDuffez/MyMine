@@ -73,8 +73,10 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
 		}
 
-		if (getListView() != null) {
+		try {
 			getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+		} catch (Exception e) {
+			L.e("Couldn't update ListView... maybe the activity is not ready yet.");
 		}
 
 		if (mFragmentView != null) {
