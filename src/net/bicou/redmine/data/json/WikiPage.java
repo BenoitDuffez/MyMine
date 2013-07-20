@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class WikiPage {
+	public long rowId;
+
 	public String title;
 	public String text;
 	public int version;
@@ -36,7 +38,9 @@ public class WikiPage {
 		for (final String col : WikiDbAdapter.WIKI_FIELDS) {
 			try {
 				columnIndex = c.getColumnIndex(col);
-				if (col.equals(WikiDbAdapter.KEY_AUTHOR_ID)) {
+				if (col.equals(WikiDbAdapter.KEY_ROWID)) {
+					rowId = c.getLong(columnIndex);
+				} else if (col.equals(WikiDbAdapter.KEY_AUTHOR_ID)) {
 					// TODO
 				} else if (col.equals(WikiDbAdapter.KEY_COMMENTS)) {
 					comments = c.getString(columnIndex);
@@ -56,6 +60,8 @@ public class WikiPage {
 					// not needed
 				} else if (col.equals(WikiDbAdapter.KEY_SERVER_ID)) {
 					// not needed
+				} else if (col.equals(WikiDbAdapter.KEY_IS_FAVORITE)) {
+					is_favorite = c.getInt(columnIndex) > 0;
 				} else {
 					L.e("Unhandled column: " + col, null);
 				}

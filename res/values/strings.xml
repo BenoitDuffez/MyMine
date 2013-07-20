@@ -49,6 +49,7 @@
 
     <string name="title_menu">Main menu</string>
     <string name="title_projects">Projects</string>
+    <string name="title_wiki_pages">Wiki Pages</string>
     <string name="title_issues">Issues</string>
     <string name="title_setup">New server setup</string>
 
@@ -71,6 +72,7 @@
 
     <string name="wiki_title">Wiki</string>
     <string name="wiki_error_must_select_project">You have to select a project first!</string>
+    <string name="no_wiki_pages">This project doesn\'t have any wiki page.</string>
 
     <string name="none">None</string>
     <string name="not_applicable">N/A</string>
@@ -276,5 +278,6 @@
     <string name="drawer_favorites">Favorites</string>
     <string name="project_overview_issues_card_tracker">• %1$s: %2$d open / %3$d closed</string>
     <string name="drawer_wiki_all_pages">All pages</string>
+    <string name="wiki_list_item_updated_on">Upd: %1$s</string>
 
 </resources>

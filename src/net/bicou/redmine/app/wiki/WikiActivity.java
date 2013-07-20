@@ -1,33 +1,43 @@
 package net.bicou.redmine.app.wiki;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ProjectsSpinnerAdapter;
 import net.bicou.redmine.app.RefreshProjectsTask;
+import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.util.L;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WikiActivity extends SherlockFragmentActivity implements ActionBar.OnNavigationListener {
+public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageFragment> implements ActionBar.OnNavigationListener {
 	private static final String WIKI_CONTENTS_TAG = "wiki";
+
+	@Override
+	protected WikiPagesListFragment createMainFragment(final Bundle args) {
+		return WikiPagesListFragment.newInstance(args);
+	}
+
+	@Override
+	protected WikiPageFragment createContentFragment(final Bundle args) {
+		return WikiPageFragment.newInstance(args);
+	}
+
+	@Override
+	protected Fragment createEmptyFragment(final Bundle args) {
+		return EmptyFragment.newInstance(R.drawable.empty_wiki);
+	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initProjectsSpinner(savedInstanceState);
-
-		// Setup fragments
-		if (savedInstanceState == null) {
-			Bundle extras = getIntent().getExtras();
-			final Bundle args = extras == null ? new Bundle() : new Bundle(extras);
-			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, WikiPageFragment.newInstance(args), WIKI_CONTENTS_TAG).commit();
-		}
 	}
 
 	//-----------------------------------------------------------
@@ -119,9 +129,16 @@ public class WikiActivity extends SherlockFragmentActivity implements ActionBar.
 		}
 
 		mCurrentProjectPosition = itemPosition;
+		Project currentProject = mProjects.get(mCurrentProjectPosition);
 
-		final WikiPageFragment f = (WikiPageFragment) getSupportFragmentManager().findFragmentByTag(WIKI_CONTENTS_TAG);
-		f.updateCurrentProject(mProjects.get(mCurrentProjectPosition));
+		WikiPagesListFragment listFragment = getMainFragment();
+		if (listFragment == null) {
+			Bundle args = new Bundle();
+			args.putParcelable(WikiPagesListFragment.KEY_PROJECT, currentProject);
+			showMainFragment(args);
+		} else {
+			listFragment.refreshList(currentProject);
+		}
 
 		return true;
 	}

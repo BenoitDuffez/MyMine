@@ -6,6 +6,7 @@ import android.database.Cursor;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.WikiPage;
+import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class WikiDbAdapter extends DbAdapter {
 	public static final String KEY_SERVER_ID = "server_id";
 
 	public static final String[] WIKI_FIELDS = new String[] {
+			KEY_ROWID,
 			KEY_PROJECT_ID,
 			KEY_TITLE,
 			KEY_TEXT,
@@ -35,6 +37,7 @@ public class WikiDbAdapter extends DbAdapter {
 			KEY_COMMENTS,
 			KEY_CREATED_ON,
 			KEY_UPDATED_ON,
+			KEY_IS_FAVORITE,
 
 			KEY_SERVER_ID,
 	};
@@ -43,8 +46,10 @@ public class WikiDbAdapter extends DbAdapter {
 	 * Table creation statements
 	 */
 	public static final String[] getCreateTablesStatements() {
+		String fields = KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT";
+		fields += Util.join(WIKI_FIELDS, ", ").substring(KEY_ROWID.length());
 		return new String[] {
-				"CREATE TABLE " + TABLE_WIKI + "(" + Util.join(WIKI_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_TITLE + ", " + KEY_SERVER_ID + ", " +
+				"CREATE TABLE " + TABLE_WIKI + "(" + fields + ", UNIQUE (" + KEY_TITLE + ", " + KEY_SERVER_ID + ", " +
 						"" + KEY_PROJECT_ID + "))",
 		};
 	}
@@ -139,5 +144,53 @@ public class WikiDbAdapter extends DbAdapter {
 			} while (c.moveToNext());
 		}
 		return pages;
+	}
+
+	public Cursor selectAllCursor(final Server server, Project project, final String[] columns) {
+		final Cursor c;
+
+		if (columns == null) {
+			List<String> selection = new ArrayList<String>();
+			if (server != null) {
+				selection.add(KEY_SERVER_ID + " = " + server.rowId);
+			}
+			if (project != null) {
+				selection.add(KEY_PROJECT_ID + " = " + project.id);
+			}
+			c = mDb.query(TABLE_WIKI, columns, Util.join(selection.toArray(), " AND "), null, null, null, null);
+		} else {
+			final List<String> tables = new ArrayList<String>();
+			final List<String> cols = new ArrayList<String>();
+			final List<String> args = new ArrayList<String>();
+			final List<String> onArgs = new ArrayList<String>();
+
+			tables.add(TABLE_WIKI);
+			if (server != null) {
+				args.add(TABLE_WIKI + "." + KEY_SERVER_ID + " = " + server.rowId);
+			}
+			if (server != null) {
+				args.add(TABLE_WIKI + "." + KEY_PROJECT_ID + " = " + project.id);
+			}
+
+			// Handle fake columns
+			for (final String col : columns) {
+				onArgs.clear();
+				if (KEY_SERVER_ID.equals(col)) {
+					cols.add(ServersDbAdapter.TABLE_SERVERS + "." + ServersDbAdapter.KEY_SERVER_URL + " AS " + col);
+					onArgs.add(ServersDbAdapter.TABLE_SERVERS + "." + DbAdapter.KEY_ROWID + " = " + TABLE_WIKI + "." + KEY_SERVER_ID);
+					tables.add("LEFT JOIN " + ServersDbAdapter.TABLE_SERVERS + " ON " + Util.join(onArgs.toArray(), " AND "));
+				}
+				cols.add(TABLE_WIKI + "." + col);
+			}
+
+			final String where = args.size() > 0 ? " WHERE " + Util.join(args.toArray(), " AND ") : "";
+			final String sql = "SELECT " + Util.join(cols.toArray(), ", ") + " FROM " + Util.join(tables.toArray(), " ") + where;
+
+			L.d("get wiki pages with: " + sql);
+			c = mDb.rawQuery(sql, null);
+		}
+
+		c.moveToFirst();
+		return c;
 	}
 }

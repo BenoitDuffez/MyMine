@@ -17,11 +17,9 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.WikiPage;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
-import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
@@ -33,10 +31,7 @@ import java.util.regex.Pattern;
 
 public class WikiPageFragment extends SherlockFragment {
 	public static final String KEY_WIKI_PAGE = "net.bicou.redmine.WikiPage";
-	public static final String KEY_WIKI_PAGE_NAME = "net.bicou.redmine.WikiPageName";
-
-	long mProjectId;
-	long mServerId;
+	public static final String KEY_WIKI_PAGE_URI = "net.bicou.redmine.WikiPageName";
 
 	Project mProject;
 
@@ -75,8 +70,6 @@ public class WikiPageFragment extends SherlockFragment {
 		mWebView = (WebView) mLayout.findViewById(R.id.wiki_page);
 		mWikiTitle = (TextView) mLayout.findViewById(R.id.wiki_title);
 		mWebView.setWebViewClient(new WikiWebViewClient());
-		mProjectId = getArguments().getLong(Constants.KEY_PROJECT_ID);
-		mServerId = getArguments().getLong(Constants.KEY_SERVER_ID);
 		mFavorite = (CheckBox) mLayout.findViewById(R.id.wiki_favorite);
 
 		mFavorite.setOnClickListener(new View.OnClickListener() {
@@ -90,56 +83,41 @@ public class WikiPageFragment extends SherlockFragment {
 			}
 		});
 
+		long projectId = getArguments().getLong(Constants.KEY_PROJECT_ID);
+		long serverId = getArguments().getLong(Constants.KEY_SERVER_ID);
+		mWikiPageURI = getArguments().getString(KEY_WIKI_PAGE_URI);
+		ProjectsDbAdapter db = new ProjectsDbAdapter(getActivity());
+		db.open();
+		mProject = db.select(serverId, projectId, null);
+
 		if (savedInstanceState != null) {
 			mWikiPage = new Gson().fromJson(savedInstanceState.getString(KEY_WIKI_PAGE), WikiPage.class);
 		} else if (getArguments().keySet().contains(KEY_WIKI_PAGE)) {
 			mWikiPage = new Gson().fromJson(getArguments().getString(KEY_WIKI_PAGE), WikiPage.class);
+		} else {
+			WikiDbAdapter wdb = new WikiDbAdapter(db);
+			mWikiPage = wdb.select(mProject.server, mProject, mWikiPageURI);
 		}
-
-		// Setup page URI and title
-		mWikiPageURI = WikiPageLoader.getUriFromTitle(getArguments().getString(KEY_WIKI_PAGE_NAME));
+		db.close();
 
 		if (mWikiPage != null) {
 			refreshUI();
 		} else if (getArguments().getBoolean(KEY_WIKI_DIRECT_LOAD)) {
 			triggerAsyncLoadWikiPage();
 		} else {
+			// TODO
 			// empty fragment, need to call updateCurrentProject
 		}
 
 		return mLayout;
 	}
 
-	public void updateCurrentProject(final Project project) {
-		L.d("");
-
-		mWikiPageURI = "";
-		mWikiPage = null;
-
-		if (project != null) {
-			mServerId = project.server.rowId;
-			mProject = project;
-			mProjectId = project.id;
-		}
-
-		L.i("serv=" + mServerId + " proj=" + mProjectId + "=" + mProject);
-		L.i("wikipage=" + mWikiPage + "=" + (mWikiPage == null ? "null" : mWikiPage.text));
-
-		//FIXME: doesn't properly switch from one project wiki to another
-
-		// Load the page
-		if (mWikiPage == null || TextUtils.isEmpty(mWikiPage.text)) {
-			triggerAsyncLoadWikiPage();
-		} else {
-			refreshUI();
-		}
-	}
-
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putString(KEY_WIKI_PAGE, new Gson().toJson(mWikiPage));
-		outState.putLong(Constants.KEY_PROJECT_ID, mProjectId);
+		outState.putLong(Constants.KEY_PROJECT_ID, mProject.id);
+		outState.putLong(Constants.KEY_SERVER_ID, mProject.server.rowId);
 	}
 
 	private void triggerAsyncLoadWikiPage() {
@@ -154,18 +132,10 @@ public class WikiPageFragment extends SherlockFragment {
 			new AsyncTask<Void, Void, WikiPage>() {
 				@Override
 				protected WikiPage doInBackground(final Void... params) {
-					ServersDbAdapter sdb = new ServersDbAdapter(getActivity());
-					sdb.open();
-					Server server = sdb.getServer(mServerId);
-
-					ProjectsDbAdapter pdb = new ProjectsDbAdapter(sdb);
-					mProject = pdb.select(server, mProjectId);
-
-					WikiDbAdapter db = new WikiDbAdapter(sdb);
-					WikiPageLoader loader = new WikiPageLoader(server, getSherlockActivity(), db).enableCroutonNotifications(getSherlockActivity(), mLayout);
+					WikiDbAdapter db = new WikiDbAdapter(getActivity());
+					WikiPageLoader loader = new WikiPageLoader(mProject.server, getSherlockActivity(), db) //
+							.enableCroutonNotifications(getSherlockActivity(), mLayout);
 					WikiPage page = loader.actualSyncLoadWikiPage(mProject, mWikiPageURI);
-
-					sdb.close();
 
 					return page;
 				}
@@ -249,10 +219,10 @@ public class WikiPageFragment extends SherlockFragment {
 			if (id >= 0) {
 				final String newPage = url.substring(id + WikiPageLoader.getUrlPrefix(mProject, "/wiki/").length());
 				final Bundle args = new Bundle();
-				args.putString(KEY_WIKI_PAGE_NAME, newPage);
+				args.putString(KEY_WIKI_PAGE_URI, newPage);
 				args.putBoolean(KEY_WIKI_DIRECT_LOAD, true);
-				args.putLong(Constants.KEY_PROJECT_ID, mProjectId);
-				args.putLong(Constants.KEY_SERVER_ID, mServerId);
+				args.putLong(Constants.KEY_PROJECT_ID, mProject.id);
+				args.putLong(Constants.KEY_SERVER_ID, mProject.server.rowId);
 				final WikiPageFragment newWiki = WikiPageFragment.newInstance(args);
 				getFragmentManager().beginTransaction().replace(android.R.id.content, newWiki).addToBackStack("prout").commit();
 			} else {

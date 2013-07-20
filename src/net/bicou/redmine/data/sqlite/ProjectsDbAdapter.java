@@ -150,8 +150,10 @@ public class ProjectsDbAdapter extends DbAdapter {
 		final Cursor c = mDb.query(TABLE_PROJECTS, null, null, null, null, null, null);
 		final List<Project> projects = new ArrayList<Project>();
 		if (c != null) {
-			while (c.moveToNext()) {
-				projects.add(new Project(c, this));
+			if (c.moveToFirst()) {
+				do {
+					projects.add(new Project(c, this));
+				} while (c.moveToNext());
 			}
 			c.close();
 		}
