@@ -171,6 +171,7 @@ public class WikiPageFragment extends SherlockFragment {
 			}
 			mWikiTitle.setText(wikiPageTitle);
 		}
+		mFavorite.setChecked(mWikiPage.is_favorite);
 
 		// HTML Contents
 		String html = Util.htmlFromTextile(mWikiPage.text);
@@ -212,8 +213,7 @@ public class WikiPageFragment extends SherlockFragment {
 				args.putBoolean(KEY_WIKI_DIRECT_LOAD, true);
 				args.putLong(Constants.KEY_PROJECT_ID, mProject.id);
 				args.putLong(Constants.KEY_SERVER_ID, mProject.server.rowId);
-				final WikiPageFragment newWiki = WikiPageFragment.newInstance(args);
-				getFragmentManager().beginTransaction().replace(android.R.id.content, newWiki).addToBackStack("prout").commit();
+				((WikiActivity) getSherlockActivity()).selectContent(args);
 			} else {
 				final Intent intent = new Intent(Intent.ACTION_VIEW);
 				intent.setData(Uri.parse(url));
