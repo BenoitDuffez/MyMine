@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="navigation_drawer_width">800dp</dimen>
+    <dimen name="navigation_drawer_width">400dp</dimen>
 
     <dimen name="main_content_padding">12dp</dimen>
     <dimen name="main_horizontal_margin">96dp</dimen>
