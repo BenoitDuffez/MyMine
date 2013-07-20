@@ -39,7 +39,6 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 
 	/**
 	 * Can be overriden by subclasses
-	 * @return
 	 */
 	protected Fragment getDrawerFragment() {
 		return new DrawerMenuFragment();
@@ -92,12 +91,12 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
 			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
+				getSupportActionBar().setTitle(mTitle);
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mTitleDrawer);
+				getSupportActionBar().setTitle(mTitleDrawer);
 				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 		};
