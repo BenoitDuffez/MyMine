@@ -5,11 +5,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+    <ImageView
+            android:id="@+id/drawer_wiki_icon"
+            android:src="@drawable/icon_wiki"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     <net.bicou.redmine.widget.RobotoLightTextView
             android:id="@+id/drawer_wiki_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="4dp"
+            android:layout_toRightOf="@id/drawer_wiki_icon"
             android:textColor="#FFF"
             android:text="@string/menu_projects"
             android:textSize="18sp"/>
@@ -26,6 +33,7 @@
     <TextView
             android:id="@+id/drawer_wiki_project"
             android:textColor="#CCC"
+            android:layout_toRightOf="@id/drawer_wiki_icon"
             android:layout_below="@id/drawer_wiki_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
