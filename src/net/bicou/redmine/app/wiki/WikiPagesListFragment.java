@@ -36,7 +36,6 @@ public class WikiPagesListFragment extends SherlockListFragment implements Loade
 	public void refreshList(final Project project) {
 		Bundle args = new Bundle();
 		args.putParcelable(KEY_PROJECT, project);
-		L.d("refresh with " + args);
 		getLoaderManager().restartLoader(0, args, this);
 	}
 
@@ -77,8 +76,6 @@ public class WikiPagesListFragment extends SherlockListFragment implements Loade
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
-
-		L.d("refreshed, got " + data);
 
 		if (getSherlockActivity() != null) {
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);

@@ -6,7 +6,6 @@ import android.database.Cursor;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.WikiPage;
-import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
@@ -186,7 +185,6 @@ public class WikiDbAdapter extends DbAdapter {
 			final String where = args.size() > 0 ? " WHERE " + Util.join(args.toArray(), " AND ") : "";
 			final String sql = "SELECT " + Util.join(cols.toArray(), ", ") + " FROM " + Util.join(tables.toArray(), " ") + where;
 
-			L.d("get wiki pages with: " + sql);
 			c = mDb.rawQuery(sql, null);
 		}
 
