@@ -6,6 +6,7 @@ import android.database.Cursor;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.WikiPage;
+import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
@@ -77,7 +78,12 @@ public class WikiDbAdapter extends DbAdapter {
 	public long insert(final Server server, final Project project, final WikiPage page) {
 		final ContentValues values = new ContentValues();
 		putValues(server, project, values, page);
-		return mDb.insert(TABLE_WIKI, "", values);
+		try {
+			return mDb.insertOrThrow(TABLE_WIKI, "", values);
+		} catch (Exception e) {
+			L.e("Couldn't insert data into " + TABLE_WIKI, e);
+		}
+		return -1;
 	}
 
 	public int update(final WikiPage page) {
