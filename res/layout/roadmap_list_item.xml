@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:id="@+id/roadmap_list_item_layout"
-        android:background="@drawable/issueslist_item_background"
+        android:background="@drawable/issueslist_item_background_indicator"
         android:padding="8dp">
 
     <TextView
