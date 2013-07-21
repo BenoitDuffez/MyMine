@@ -22,11 +22,6 @@ public abstract class MenuItem implements DrawerMenuItemsAdapter.DrawerMenuItem 
 		return this;
 	}
 
-	@Override
-	public int getViewType() {
-		return DrawerMenuFragment.MENU_VIEWTYPE_ITEM;
-	}
-
 	public long getId() {
 		return 0;
 	}

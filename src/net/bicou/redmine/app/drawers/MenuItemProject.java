@@ -23,6 +23,11 @@ public class MenuItemProject extends MenuItem {
 	}
 
 	@Override
+	public int getViewType() {
+		return DrawerMenuFragment.MENU_VIEWTYPE_PROJECT;
+	}
+
+	@Override
 	public View fillView(View convertView, ViewGroup parent) {
 		View v;
 		ViewHolder holder;

@@ -31,7 +31,10 @@ import java.util.List;
 public class DrawerMenuFragment extends SherlockListFragment {
 	DrawerMenuItemsAdapter mAdapter;
 	public static final int MENU_VIEWTYPE_SEPARATOR = 0;
-	public static final int MENU_VIEWTYPE_ITEM = 1;
+	public static final int MENU_VIEWTYPE_PROJECT = 1;
+	public static final int MENU_VIEWTYPE_QUERY = 2;
+	public static final int MENU_VIEWTYPE_WIKI = 3;
+	public static final int MENU_VIEWTYPE_COUNT = 4;
 
 	private List<DrawerMenuItemsAdapter.DrawerMenuItem> mData = new ArrayList<DrawerMenuItemsAdapter.DrawerMenuItem>();
 

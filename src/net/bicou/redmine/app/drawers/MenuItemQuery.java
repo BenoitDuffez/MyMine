@@ -22,6 +22,11 @@ public class MenuItemQuery extends MenuItem {
 	}
 
 	@Override
+	public int getViewType() {
+		return DrawerMenuFragment.MENU_VIEWTYPE_QUERY;
+	}
+
+	@Override
 	public View fillView(View convertView, ViewGroup parent) {
 		View v;
 		ViewHolder holder;
