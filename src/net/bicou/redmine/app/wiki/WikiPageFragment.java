@@ -142,9 +142,11 @@ public class WikiPageFragment extends SherlockFragment {
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putString(KEY_WIKI_PAGE, new Gson().toJson(mWikiPage));
-		outState.putLong(Constants.KEY_PROJECT_ID, mWikiPage.project.id);
-		outState.putLong(Constants.KEY_SERVER_ID, mWikiPage.project.server.rowId);
+		if (mWikiPage != null) {
+			outState.putString(KEY_WIKI_PAGE, new Gson().toJson(mWikiPage));
+			outState.putLong(Constants.KEY_PROJECT_ID, mWikiPage.project.id);
+			outState.putLong(Constants.KEY_SERVER_ID, mWikiPage.project.server.rowId);
+		}
 	}
 
 	private void triggerAsyncLoadWikiPage() {
