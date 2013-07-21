@@ -79,6 +79,13 @@
                     android:value="net.bicou.redmine.app.misc.MainActivity"/>
         </activity>
         <activity
+                android:name="net.bicou.redmine.app.wiki.WikiPageActivity"
+                android:parentActivityName="net.bicou.redmine.app.wiki.WikiActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.wiki.WikiActivity"/>
+        </activity>
+        <activity
                 android:name="net.bicou.redmine.app.misc.AboutActivity"
                 android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
             <meta-data

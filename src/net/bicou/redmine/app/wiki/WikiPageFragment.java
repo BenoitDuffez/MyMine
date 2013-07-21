@@ -14,6 +14,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
@@ -104,15 +107,44 @@ public class WikiPageFragment extends SherlockFragment {
 			// empty fragment, need to call updateCurrentProject
 		}
 
+		setHasOptionsMenu(true);
+
 		return mLayout;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.menu_wiki_page, menu);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(final Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		MenuItem item = menu.findItem(R.id.menu_wiki_fullscreen);
+		if (item != null) {
+			item.setVisible(getActivity() instanceof WikiActivity && ((WikiActivity) getActivity()).isSplitScreen());
+		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_wiki_fullscreen:
+			Intent intent = new Intent(getActivity(), WikiPageActivity.class);
+			intent.putExtras(getArguments());
+			startActivity(intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putString(KEY_WIKI_PAGE, new Gson().toJson(mWikiPage));
-		outState.putLong(Constants.KEY_PROJECT_ID, mProject.id);
-		outState.putLong(Constants.KEY_SERVER_ID, mProject.server.rowId);
+		outState.putLong(Constants.KEY_PROJECT_ID, mWikiPage.project.id);
+		outState.putLong(Constants.KEY_SERVER_ID, mWikiPage.project.server.rowId);
 	}
 
 	private void triggerAsyncLoadWikiPage() {

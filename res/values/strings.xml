@@ -279,5 +279,6 @@
     <string name="project_overview_issues_card_tracker">• %1$s: %2$d open / %3$d closed</string>
     <string name="drawer_wiki_all_pages">All pages</string>
     <string name="wiki_list_item_updated_on">Upd: %1$s</string>
+    <string name="menu_wiki_fullscreen">Display wiki page full-screen</string>
 
 </resources>
