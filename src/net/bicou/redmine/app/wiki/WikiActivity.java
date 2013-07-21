@@ -119,6 +119,9 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 		new RefreshProjectsTask(WikiActivity.this, new RefreshProjectsTask.ProjectsLoadCallbacks() {
 			@Override
 			public void onProjectsLoaded(List<Project> projectList) {
+				if (mProjects == null) {
+					mProjects = new ArrayList<Project>();
+				}
 				mProjects.addAll(projectList);
 				if (mDesiredWikiPage != null) {
 					int pos = 0;
