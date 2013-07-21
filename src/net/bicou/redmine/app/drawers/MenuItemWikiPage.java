@@ -45,7 +45,7 @@ public class MenuItemWikiPage extends MenuItem {
 		}
 
 		holder.page.setText(page);
-		holder.server.setText(server);
+		holder.server.setText(server.replace("http://", "").replace("https://", ""));
 		holder.project.setText(project);
 
 		return v;

@@ -43,7 +43,7 @@ public class MenuItemQuery extends MenuItem {
 		}
 
 		holder.query.setText(query);
-		holder.server.setText(server);
+		holder.server.setText(server.replace("http://", "").replace("https://", ""));
 
 		return v;
 	}
