@@ -2,7 +2,9 @@ package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
@@ -103,28 +105,6 @@ public class Issue {
 				}
 			} catch (final Exception e) {
 				L.e("Unhandled exception while creating an Issue: " + e, e);
-			}
-		}
-
-		// This has to be done when server and project are not null
-		if (fixed_version != null && fixed_version.id > 0) {
-			final VersionsDbAdapter vdb = new VersionsDbAdapter(db);
-			try {
-				fixed_version.name = vdb.getName(server, project, fixed_version.id);
-			} catch (Exception e) {// May crash, see 1ce751712db2f789c0db04cd01b751e5
-				L.e("Got an unexpected exception. Here's the current object state: project=" + project + " server=" + server);
-				L.e(this.toString());
-				L.e("sending bug report", null);
-			}
-		}
-		if (status != null && status.id > 0) {
-			final IssueStatusesDbAdapter isdb = new IssueStatusesDbAdapter(db);
-			try {
-				status.name = isdb.getName(server, status.id);
-			} catch (Exception e) {// May crash, see 1ce751712db2f789c0db04cd01b751e5
-				L.e("Got an unexpected exception. Here's the current object state: project=" + project + " server=" + server);
-				L.e(this.toString());
-				L.e("sending bug report", null);
 			}
 		}
 
