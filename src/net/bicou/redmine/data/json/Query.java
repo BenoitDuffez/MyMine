@@ -1,19 +1,17 @@
 package net.bicou.redmine.data.json;
 
-import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.sqlite.DbAdapter;
-import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
-import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
-import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import android.database.Cursor;
 import android.database.SQLException;
+import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 
 public class Query {
 	public int id;
 	public String name;
 	public boolean is_public;
 	public int project_id;
-	public Project project;
 	public Server server;
 
 	public Query(final Server server, final Cursor c, final DbAdapter db) {
@@ -28,8 +26,7 @@ public class Query {
 				} else if (col.equals(QueriesDbAdapter.KEY_NAME)) {
 					name = c.getString(columnIndex);
 				} else if (col.equals(QueriesDbAdapter.KEY_PROJECT_ID)) {
-					final ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
-					project = pdb.select(server, c.getLong(columnIndex));
+					project_id = c.getInt(columnIndex);
 				} else if (col.equals(QueriesDbAdapter.KEY_SERVER_ID)) {
 					if (server == null) {
 						final ServersDbAdapter sdb = new ServersDbAdapter(db);

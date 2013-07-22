@@ -7,6 +7,7 @@ import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssuesList;
+import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.sqlite.*;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.platform.IssuesManager;
@@ -100,9 +101,19 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 		IssuesDbAdapter db = new IssuesDbAdapter(ctx);
 		db.open();
 
+		// Get URL, which may be linked to a project
+		QueriesDbAdapter qdb = new QueriesDbAdapter(db);
+		Query query = qdb.select(server, mFilter.id, null);
+		final String url;
+		if (query != null && query.project_id > 0) {
+			url = "projects/" + query.project_id + "/issues.json";
+		} else {
+			url = "issues.json";
+		}
+
 		// Fetch issues
 		do {
-			issues = new JsonDownloader<IssuesList>(IssuesList.class).setDownloadAllIfList(false).fetchObject(ctx, server, "issues.json", args);
+			issues = new JsonDownloader<IssuesList>(IssuesList.class).setDownloadAllIfList(false).fetchObject(ctx, server, url, args);
 			if (issues == null) {
 				break;
 			}

@@ -50,7 +50,7 @@ public class QueriesDbAdapter extends DbAdapter {
 		values.put(KEY_ID, query.id);
 		values.put(KEY_NAME, query.name);
 		values.put(KEY_IS_PUBLIC, query.is_public ? 0 : 1);
-		values.put(KEY_PROJECT_ID, query.project == null ? 0 : query.project.id);
+		values.put(KEY_PROJECT_ID, query.project_id);
 	}
 
 	public long insert(final Query query) {
