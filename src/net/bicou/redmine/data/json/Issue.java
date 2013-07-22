@@ -4,7 +4,6 @@ import android.database.Cursor;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
-import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
@@ -90,7 +89,6 @@ public class Issue {
 				} else if (col.equals(IssuesDbAdapter.KEY_PARENT_ID)) {
 					parent = new Reference();
 					parent.id = c.getLong(columnIndex);
-					parent.name = db.getName(server, parent.id);
 				} else if (col.equals(IssuesDbAdapter.KEY_ASSIGNED_TO_ID)) {
 					// TODO
 				} else if (col.equals(IssuesDbAdapter.KEY_ESTIMATED_HOURS)) {
@@ -98,8 +96,6 @@ public class Issue {
 				} else if (col.equals(IssuesDbAdapter.KEY_SPENT_HOURS)) {
 					spent_hours = c.getDouble(columnIndex);
 				} else if (col.equals(IssuesDbAdapter.KEY_SERVER_ID)) {
-					final ServersDbAdapter sdb = new ServersDbAdapter(db);
-					server = sdb.getServer(c.getLong(columnIndex));
 				} else {
 					L.e("Unhandled column! " + col, null);
 				}
