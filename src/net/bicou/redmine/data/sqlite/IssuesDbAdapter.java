@@ -39,6 +39,7 @@ public class IssuesDbAdapter extends DbAdapter {
 	public static final String KEY_ASSIGNED_TO_ID = "assigned_to_id";
 	public static final String KEY_ESTIMATED_HOURS = "estimated_hours";
 	public static final String KEY_SPENT_HOURS = "spent_hours";
+	public static final String KEY_IS_PRIVATE = "is_private";
 
 	public static final String KEY_SERVER_ID = "server_id";
 
@@ -67,6 +68,7 @@ public class IssuesDbAdapter extends DbAdapter {
 			KEY_ASSIGNED_TO_ID,
 			KEY_ESTIMATED_HOURS,
 			KEY_SPENT_HOURS,
+			KEY_IS_PRIVATE,
 
 			KEY_SERVER_ID,
 	};
@@ -149,6 +151,7 @@ public class IssuesDbAdapter extends DbAdapter {
 		values.put(KEY_ESTIMATED_HOURS, issue.estimated_hours);
 		values.put(KEY_SPENT_HOURS, issue.spent_hours);
 		values.put(KEY_SERVER_ID, issue.server.rowId);
+		values.put(KEY_IS_PRIVATE, issue.is_private ? 1 : 0);
 
 		if (issue.attachments != null && issue.attachments.size() > 0) {
 			ContentValues cv = new ContentValues();
@@ -189,6 +192,7 @@ public class IssuesDbAdapter extends DbAdapter {
 		values.put(KEY_ASSIGNED_TO_ID, issue.assigned_to == null ? 0 : issue.assigned_to.id);
 		values.put(KEY_ESTIMATED_HOURS, issue.estimated_hours);
 		values.put(KEY_SPENT_HOURS, issue.spent_hours);
+		values.put(KEY_IS_PRIVATE, issue.is_private ? 1 : 0);
 		return mDb.update(TABLE_ISSUES, values, KEY_ID + "=" + issue.id + " AND " + KEY_SERVER_ID + " = " + issue.server.rowId, null);
 	}
 

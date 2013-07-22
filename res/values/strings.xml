@@ -131,6 +131,7 @@
     <string name="issue_status_na">N/A</string>
     <string name="issue_estimated_hours">Estimated hours</string>
     <string name="issue_parent">Parent</string>
+    <string name="issue_is_private">Private</string>
 
     <string name="issue_filter_all">ALL</string>
     <string name="issue_filter_queries">Queries</string>
@@ -280,5 +281,7 @@
     <string name="drawer_wiki_all_pages">All pages</string>
     <string name="wiki_list_item_updated_on">Upd: %1$s</string>
     <string name="menu_wiki_fullscreen">Display wiki page full-screen</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

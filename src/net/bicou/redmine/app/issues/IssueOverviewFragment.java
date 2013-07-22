@@ -111,6 +111,10 @@ public class IssueOverviewFragment extends SherlockFragment {
 	}
 
 	private static String refactorImageUrls(IssuesDbAdapter db, Server server, String textile) {
+		if (TextUtils.isEmpty(textile)) {
+			return "";
+		}
+
 		Pattern regex = Pattern.compile("(!>?)([^!]+)!", 0);
 		Matcher m = regex.matcher(textile);
 		String path;

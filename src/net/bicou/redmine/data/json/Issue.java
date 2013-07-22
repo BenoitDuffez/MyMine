@@ -33,6 +33,7 @@ public class Issue {
 	public List<Journal> journals;
 	public List<ChangeSet> changesets;
 	public List<Attachment> attachments;
+	public boolean is_private;
 
 	public Server server;
 	public Project project;
@@ -95,6 +96,8 @@ public class Issue {
 					estimated_hours = c.getDouble(columnIndex);
 				} else if (col.equals(IssuesDbAdapter.KEY_SPENT_HOURS)) {
 					spent_hours = c.getDouble(columnIndex);
+				} else if (col.equals(IssuesDbAdapter.KEY_IS_PRIVATE)) {
+					is_private = c.getInt(columnIndex) > 0;
 				} else if (col.equals(IssuesDbAdapter.KEY_SERVER_ID)) {
 				} else {
 					L.e("Unhandled column! " + col, null);

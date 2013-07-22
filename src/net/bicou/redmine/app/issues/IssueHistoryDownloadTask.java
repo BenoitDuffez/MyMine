@@ -108,8 +108,6 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 
 	/**
 	 * Download the issue and its journals
-	 *
-	 * @return
 	 */
 	private IssueHistory downloadHistory() {
 		// Download issue JSON
@@ -124,13 +122,6 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 
 	/**
 	 * Translate a version change
-	 *
-	 *
-	 *
-	 * @param d
-	 * @param ids
-	 * @param db
-	 * @return
 	 */
 	private PropertyChange onVersionChanged(final JournalDetail d, IdPair ids, DbAdapter db) {
 		String propName, oldVal, newVal;
@@ -264,6 +255,12 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_description), null, sb.toString());
 	}
 
+	private PropertyChange onIsPrivateChange(JournalDetail d, IdPair ids, DbAdapter db) {
+		String o = mActivity.getString(ids.oldId > 0 ? R.string.yes : R.string.no);
+		String n = mActivity.getString(ids.newId > 0 ? R.string.yes : R.string.no);
+		return new PropertyChange(mActivity.getString(R.string.issue_is_private), o, n);
+	}
+
 	private PropertyChange onParentChange(JournalDetail d, IdPair ids, DbAdapter db) {
 		String o = ids.oldId > 0 ? "#" + Long.toString(ids.oldId) : null;
 		String n = ids.newId > 0 ? "#" + Long.toString(ids.newId) : null;
@@ -303,6 +300,8 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 					propChange = onIssueCategoryChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_DESCRIPTION.equals(d.name)) {
 					propChange = onDescriptionChange(d, ids, db);
+				} else if (IssuesDbAdapter.KEY_IS_PRIVATE.equals(d.name)) {
+					propChange = onIsPrivateChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_PARENT_ID.equals(d.name)) {
 					propChange = onParentChange(d, ids, db);
 				} else {
@@ -313,8 +312,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 				// Make a sentence of what happened to that property
 				String propertyChange;
 				if (!TextUtils.isEmpty(d.old_value) && !TextUtils.isEmpty(d.new_value)) {
-					propertyChange = mActivity.getString(R.string.issue_journal_property_changed_fromto, propChange.propName, propChange.oldVal,
-							propChange.newVal);
+					propertyChange = mActivity.getString(R.string.issue_journal_property_changed_fromto, propChange.propName, propChange.oldVal, propChange.newVal);
 				} else if (!TextUtils.isEmpty(d.old_value)) {
 					propertyChange = mActivity.getString(R.string.issue_journal_property_deleted, propChange.propName, propChange.oldVal);
 				} else {
