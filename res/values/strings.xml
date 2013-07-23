@@ -32,13 +32,8 @@
     </string>
     <string name="loading_sync_check_button">Check sync settings</string>
     <string name="loading_sync_title">Coffee break!</string>
-    <string name="loading_sync_help_slidingmenu">Don\'t forget that the app menu is here! Just drag the left edge of your screen.</string>
 
     <string name="no_projects">The project list is empty</string>
-    <string name="cant_load">Unable to load the data from the server</string>
-    <string name="update_complete">Update complete!</string>
-
-    <string name="add_server">Add new server</string>
 
     <string name="help_text">
         In order to use this app, you need to setup the server connection. To do that, just add a new
@@ -47,13 +42,10 @@
         and you will control exactly what you want to sync on which server.
     </string>
 
-    <string name="title_menu">Main menu</string>
     <string name="title_projects">Projects</string>
     <string name="title_wiki_pages">Wiki Pages</string>
     <string name="title_issues">Issues</string>
-    <string name="title_setup">New server setup</string>
 
-    <string name="auth_in_progress">Authenticating&#8230;</string>
     <string name="sync_account_type">Redmine Server</string>
     <string name="sync_issues">Issues (and their statuses, priorities, etc.)</string>
     <string name="sync_projects">Projects (and their versions, etc.)</string>
@@ -64,35 +56,20 @@
 
     <string name="menu_projects">Projects</string>
     <string name="menu_issues">Issues</string>
-    <string name="menu_roadmap">Roadmap</string>
     <string name="menu_wiki">Wiki</string>
     <string name="menu_about">About</string>
-    <string name="menu_certs">Certificates</string>
     <string name="menu_settings">Settings</string>
 
-    <string name="wiki_title">Wiki</string>
-    <string name="wiki_error_must_select_project">You have to select a project first!</string>
     <string name="no_wiki_pages">This project doesn\'t have any wiki page.</string>
 
-    <string name="none">None</string>
     <string name="not_applicable">N/A</string>
 
     <!-- Overview -->
-    <string name="overview_title">Overview</string>
-    <string name="overview_issues">Issues</string>
-    <string name="overview_members">Members</string>
-    <string name="overview_project_metadata_format">
-        Created on: %1$s
-        \nUpdated on: %2$s
-    </string>
-    <string name="overview_versions">Versions</string>
-
     <string name="overview_card_issues_logged">assigned to you</string>
     <string name="overview_card_issues_anonymous">on all combined servers</string>
     <string name="overview_card_issues_title">Issues</string>
     <string name="overview_card_issues_subtitle" formatted="false">{0,choice,0#There is no issue %s|1#There is only one issue %s|1&lt;There are {0} issues %s}
     </string>
-    <string name="overview_card_issues_action">See issues</string>
 
     <string name="overview_card_projects_title">Projects</string>
     <string name="overview_card_projects_subtitle">{0,choice,0#There is no synced project yet. Have you set up an account?|1#You are following one project|1&lt;You
@@ -132,6 +109,8 @@
     <string name="issue_estimated_hours">Estimated hours</string>
     <string name="issue_parent">Parent</string>
     <string name="issue_is_private">Private</string>
+    <string name="issue_tracker_id_format">%1$s #%2$d</string>
+    <string name="issue_spent_time_format">%1$.2f hrs</string>
 
     <string name="issue_filter_all">ALL</string>
     <string name="issue_filter_queries">Queries</string>
@@ -139,9 +118,6 @@
 
     <string name="issue_overview_title">Overview</string>
     <string name="issue_journal_title">History</string>
-    <string name="issue_journal_item_user">User:</string>
-    <string name="issue_journal_item_details">Details:</string>
-    <string name="issue_journal_item_notes">Notes:</string>
     <string name="issue_history_none">Nothing</string>
 
     <string name="issue_journal_cant_download">Can\'t download, please check your Internet connection</string>
@@ -156,7 +132,6 @@
     <string name="issue_changeset_revision">Revision r%1$s</string>
 
     <string name="issue_menu_open_browser">Open in browser</string>
-    <string name="issues_activity_title">Issues</string>
     <string name="issues_menu_search">Search issues&#8230;</string>
     <string name="issues_menu_refresh">Refresh issues</string>
     <string name="issues_search_hint">Search Redmine issues&#8230;</string>
@@ -201,10 +176,7 @@
         Notice: you can use this app only with a REST-enabled Redmine server. We will not ask for your
         username or password.
     </string>
-    <string name="setup_checking">Let me check the pipes&#8230;</string>
     <string name="setup_check_failed">Agh! Please double check, I couldn\'t get in&#8230; :(</string>
-    <string name="setup_ok">Great! I found %1$d projects there!</string>
-    <string name="setup_nochange">That\'s the same server!</string>
     <string name="setup_success">Welcome aboard, %s!</string>
     <string name="setup_anonymous">It worked! You\'re anonymous on that server</string>
     <string name="setup_sync_help">I couldn\'t bring you to the settings app. Just add an account in the Android Settings app.</string>
@@ -253,7 +225,6 @@
 
     <string name="menu_cert_add">Add new certificate</string>
     <string name="menu_cert_import">Allow access to a system certificate</string>
-    <string name="menu_certs_delete">Delete</string>
     <string name="certs_list_title">Trusted certificates</string>
     <string name="certs_list_empty">
         No trusted certificate. Initiate a connection to a non-trusted SSL-enabled server to be prompted to
@@ -267,16 +238,16 @@
     <string name="roadmap_no_roadmaps">No roadmaps defined.</string>
     <string name="roadmap_list_title">Roadmap</string>
     <string name="roadmap_list_item_due_date">Due date: %1$s</string>
-    <string name="roadmap_percent_complete">%1$d %% complete</string>
     <string name="roadmap_issues_count">Issues: %1$d (incl. %2$d open)</string>
     <string name="roadmap_due_date">Due date: %1$s</string>
 
-
+    <!-- Drawer -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_title">@string/app_name</string>
     <string name="drawer_menu_customize">Customize this menu&#8230;</string>
-    <string name="drawer_favorites">Favorites</string>
+
+    <!-- Unsorted strings... -->
     <string name="project_overview_issues_card_tracker">• %1$s: %2$d open / %3$d closed</string>
     <string name="drawer_wiki_all_pages">All pages</string>
     <string name="wiki_list_item_updated_on">Upd: %1$s</string>
