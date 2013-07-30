@@ -1,0 +1,61 @@
+<resources>
+
+    <string name="title_activity_settings">Paramètres</string>
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">Général</string>
+    <string name="pref_certificates">Gérer les certificats SSL</string>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Données &amp; synchro</string>
+    <string name="pref_title_sync_frequency">Fréquence de synchro</string>
+
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>15 minutes</item>
+        <item>1 heure</item>
+        <item>3 heures</item>
+        <item>6 heures</item>
+        <item>12 heures</item>
+        <item>24 heures</item>
+        <item>Jamais</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>720</item>
+        <item>1440</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_sync_issues_period">Période à synchroniser pour les problèmes</string>
+    <string-array name="pref_sync_issues_period_titles">
+        <item>2 semaines</item>
+        <item>1 mois</item>
+        <item>3 mois</item>
+        <item>6 mois</item>
+        <item>12 mois</item>
+        <item>Depuis toujours</item>
+    </string-array>
+    <string-array name="pref_sync_issues_period_days">
+        <item>14</item>
+        <item>30</item>
+        <item>91</item>
+        <item>182</item>
+        <item>365</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">Paramètres de synchro système</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_title_new_message_notifications">Notifications pour les nouveaux messages</string>
+    <string name="pref_title_ringtone">Sonnerie</string>
+    <string name="pref_ringtone_silent">Silencieux</string>
+    <string name="pref_title_vibrate">Vibreur</string>
+
+</resources>
