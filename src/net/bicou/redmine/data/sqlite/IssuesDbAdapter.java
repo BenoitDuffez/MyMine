@@ -11,7 +11,6 @@ import net.bicou.redmine.app.issues.IssuesListFilter.FilterType;
 import net.bicou.redmine.app.issues.order.OrderColumn;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.*;
-import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
@@ -289,8 +288,6 @@ public class IssuesDbAdapter extends DbAdapter {
 		String sql = "SELECT " + Util.join(selection.toArray(), ", ") //
 				+ " FROM " + TABLE_ISSUES + " LEFT JOIN " + Util.join(joined.toArray(), " LEFT JOIN ") //
 				+ " WHERE " + TABLE_ISSUES + "." + KEY_ID + " = " + id + " AND " + TABLE_ISSUES + "." + KEY_SERVER_ID + " = " + server.rowId;
-
-		L.d("Issue: " + sql);
 
 		return mDb.rawQuery(sql, null);
 	}
