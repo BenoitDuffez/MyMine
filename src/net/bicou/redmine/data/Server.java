@@ -1,16 +1,14 @@
 package net.bicou.redmine.data;
 
+import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.google.gson.Gson;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.util.L;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.google.gson.Gson;
 
 public class Server implements Parcelable {
 	public long rowId;
@@ -62,9 +60,8 @@ public class Server implements Parcelable {
 
 	/**
 	 * Used to test if a server is valid and readable. Will read and return all projects in this server.
-	 * 
+	 *
 	 * @author bicou
-	 * 
 	 */
 	public interface RedmineServerTestCallback {
 		public void testResult(Boolean validServer);
@@ -75,7 +72,7 @@ public class Server implements Parcelable {
 		apiKey = key;
 	}
 
-	public Server(final Cursor c, final DbAdapter db) {
+	public Server(final Cursor c) {
 		serverUrl = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_SERVER_URL));
 		apiKey = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_API_KEY));
 		authUsername = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_AUTH_USERNAME));
@@ -86,29 +83,7 @@ public class Server implements Parcelable {
 		}
 		final int userId = c.getColumnIndex(ServersDbAdapter.KEY_USER_ID) >= 0 ? c.getInt(c.getColumnIndex(ServersDbAdapter.KEY_USER_ID)) : 0;
 		if (userId > 0) {
-			final UsersDbAdapter udb = new UsersDbAdapter(db);
-			user = udb.select(this, userId);
-		}
-	}
-
-	public Server(final Cursor c, final SQLiteDatabase db) {
-		serverUrl = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_SERVER_URL));
-		apiKey = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_API_KEY));
-		if (c.getColumnIndex(DbAdapter.KEY_ROWID) >= 0) {
-			rowId = c.getLong(c.getColumnIndex(DbAdapter.KEY_ROWID));
-		}
-		authUsername = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_AUTH_USERNAME));
-		authPassword = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_AUTH_PASSWORD));
-
-		final int userId = c.getColumnIndex(ServersDbAdapter.KEY_USER_ID) >= 0 ? c.getInt(c.getColumnIndex(ServersDbAdapter.KEY_USER_ID)) : 0;
-		if (userId > 0) {
-			final Cursor u = db.query(UsersDbAdapter.TABLE_USERS, null, UsersDbAdapter.KEY_SERVER_ID + "=" + rowId + " AND " + UsersDbAdapter.KEY_ID + "=" + userId,
-					null, null, null, null, null);
-			if (u != null) {
-				if (u.moveToFirst()) {
-					user = new User(u);
-				}
-			}
+			user = new User(c, UsersDbAdapter.TABLE_USERS + "_");
 		}
 	}
 

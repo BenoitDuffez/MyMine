@@ -65,8 +65,8 @@
     <string name="not_applicable">N/A</string>
 
     <!-- Overview -->
-    <string name="overview_card_issues_logged">assigned to you</string>
-    <string name="overview_card_issues_anonymous">on all combined servers</string>
+    <string name="overview_card_issues_count_myself">assigned to you</string>
+    <string name="overview_card_issues_count_all">on all combined servers</string>
     <string name="overview_card_issues_title">Issues</string>
     <string name="overview_card_issues_subtitle" formatted="false">{0,choice,0#There is no issue %s|1#There is only one issue %s|1&lt;There are {0} issues %s}
     </string>
@@ -111,6 +111,7 @@
     <string name="issue_is_private">Private</string>
     <string name="issue_tracker_id_format">%1$s #%2$d</string>
     <string name="issue_spent_time_format">%1$.2f hrs</string>
+    <string name="issue_author_name_format">%1$s added %2$s</string>
 
     <string name="issue_filter_all">ALL</string>
     <string name="issue_filter_queries">Queries</string>
@@ -254,5 +255,13 @@
     <string name="menu_wiki_fullscreen">Display wiki page full-screen</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <!-- Used to make strings with dates in the past -->
+    <string name="time_delay_moments">moments ago</string>
+    <string name="time_delay_minutes"><![CDATA[{0} {0,choice,0#minutes|1#minute|1<minutes} ago]]></string>
+    <string name="time_delay_hours"><![CDATA[{0} {0,choice,0#hours|1#hour|1<hours} ago]]></string>
+    <string name="time_delay_days"><![CDATA[{0} {0,choice,0#days|1#day|1<days} ago]]></string>
+    <string name="time_delay_months"><![CDATA[{0} {0,choice,0#months|1#month|1<months} ago]]></string>
+    <string name="time_delay_years"><![CDATA[{0} {0,choice,0#years|1#year|1<years} ago]]></string>
 
 </resources>

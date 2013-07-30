@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class User {
-	public int id;
+	public long id;
 	public String firstname;
 	public String lastname;
 	public String mail;
@@ -63,8 +63,15 @@ public class User {
 	}
 
 	public User(final Cursor c) {
+		this(c, "");
+	}
+
+	public User(Cursor c, String columnPrefix) {
 		for (final String col : UsersDbAdapter.USER_FIELDS) {
-			final int columnIndex = c.getColumnIndex(col);
+			final int columnIndex = c.getColumnIndex(columnPrefix + col);
+			if (columnIndex < 0) {
+				continue;
+			}
 
 			try {
 				if (col.equals(UsersDbAdapter.KEY_ID)) {

@@ -1,22 +1,29 @@
 package net.bicou.redmine.app.issues;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.wiki.WikiPageLoader;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Attachment;
 import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.util.L;
@@ -24,15 +31,18 @@ import net.bicou.redmine.util.Util;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.MessageFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class IssueOverviewFragment extends SherlockFragment {
-	TextView mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion;
+	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mAuthor, mParent;
+	ImageView mAuthorAvatar, mAssignedAvatar;
 	WebView mDescription;
 	Issue mIssue;
+	java.text.DateFormat mLongDateFormat;
+	java.text.DateFormat mTimeFormat;
 
 	public static IssueOverviewFragment newInstance(final Bundle args) {
 		final IssueOverviewFragment f = new IssueOverviewFragment();
@@ -45,24 +55,109 @@ public class IssueOverviewFragment extends SherlockFragment {
 		final View v = inflater.inflate(R.layout.frag_issue_overview, container, false);
 		L.d("");
 
+		mTrackerAndId = (TextView) v.findViewById(R.id.issue_tracker_id);
 		mSubject = (TextView) v.findViewById(R.id.issue_subject);
 		mStatus = (TextView) v.findViewById(R.id.issue_status);
 		mPriority = (TextView) v.findViewById(R.id.issue_priority);
-		mAssignee = (TextView) v.findViewById(R.id.issue_assignee);
-		mCategory = (TextView) v.findViewById(R.id.issue_category);
 		mTargetVersion = (TextView) v.findViewById(R.id.issue_target_version);
+		mCategory = (TextView) v.findViewById(R.id.issue_category);
 		mDescription = (WebView) v.findViewById(R.id.issue_description);
+		mStartDate = (TextView) v.findViewById(R.id.issue_start_date);
+		mDueDate = (TextView) v.findViewById(R.id.issue_due_date);
+		mPercentDone = (TextView) v.findViewById(R.id.issue_percent_done);
+		mSpentTime = (TextView) v.findViewById(R.id.issue_spent_time);
+		mAuthor = (TextView) v.findViewById(R.id.issue_author);
+		mAuthorAvatar = (ImageView) v.findViewById(R.id.issue_author_avatar);
+		mAssignee = (TextView) v.findViewById(R.id.issue_assignee);
+		//		mAssignedAvatar=v.findViewById(R.id.issue_assign)
+		mParent = (TextView) v.findViewById(R.id.issue_parent);
 
 		mIssue = new Gson().fromJson(getArguments().getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
 
+		mTrackerAndId.setText(getString(R.string.issue_tracker_id_format, mIssue.tracker.name, mIssue.id));
 		mSubject.setText(mIssue.subject != null ? mIssue.subject : "");
 		mStatus.setText(mIssue.status != null ? mIssue.status.name : "-");
 		mPriority.setText(mIssue.priority != null ? mIssue.priority.name : "-");
-		mAssignee.setText(mIssue.assigned_to != null ? mIssue.assigned_to.name : "-");
 		mCategory.setText(mIssue.category != null ? mIssue.category.name : "-");
 		mTargetVersion.setText(mIssue.fixed_version != null ? mIssue.fixed_version.name : "-");
+		java.text.DateFormat format = DateFormat.getMediumDateFormat(getActivity());
+		mStartDate.setText(Util.isEpoch(mIssue.start_date) ? "" : format.format(mIssue.start_date.getTime()));
+		mDueDate.setText(Util.isEpoch(mIssue.due_date) ? "" : format.format(mIssue.due_date.getTime()));
+		mPercentDone.setText(String.format("%d%%", mIssue.done_ratio));
+		mSpentTime.setText(getString(R.string.issue_spent_time_format, mIssue.spent_hours));
+		mIssue.author = displayNameAndAvatar(mAuthor, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
+		mIssue.assigned_to = displayNameAndAvatar(mAssignee, mAssignedAvatar, mIssue.assigned_to, "%1$s", null);
+		mParent.setText(mIssue.parent != null && mIssue.parent.id > 0 ? Long.toString(mIssue.parent.id) : "");
 
 		return v;
+	}
+
+	private User displayNameAndAvatar(TextView name, ImageView avatar, User user, String textResId, Calendar date) {
+		if (user == null || user.id <= 0) {
+			return null;
+		}
+
+		UsersDbAdapter db = new UsersDbAdapter(getActivity());
+		db.open();
+		User u = db.select(mIssue.server, mIssue.author.id);
+		db.close();
+
+		if (u != null) {
+			u.createGravatarUrl();
+			if (!TextUtils.isEmpty(u.gravatarUrl) && avatar != null) {
+				ImageLoader.getInstance().displayImage(u.gravatarUrl, avatar);
+				avatar.setVisibility(View.VISIBLE);
+			} else if (avatar != null) {
+				avatar.setVisibility(View.INVISIBLE);
+			}
+
+			if (name != null) {
+				String formattedDate;
+				if (date != null && date.getTimeInMillis() > 10000) {
+					long delta = (new GregorianCalendar().getTimeInMillis() - date.getTimeInMillis()) / 1000;
+					if (delta < 60) {
+						formattedDate = getString(R.string.time_delay_moments);
+					} else if (delta < 3600) {
+						formattedDate = MessageFormat.format(getString(R.string.time_delay_minutes), (int) (delta / 60));
+					} else if (delta < 3600 * 24) {
+						formattedDate = MessageFormat.format(getString(R.string.time_delay_hours), (int) (delta / 3600));
+					} else if (delta < 3600 * 24 * 30) {
+						formattedDate = MessageFormat.format(getString(R.string.time_delay_days), (int) (delta / (3600 * 24)));
+					} else if (delta < 3600 * 24 * 365) {
+						formattedDate = MessageFormat.format(getString(R.string.time_delay_months), (int) (delta / (3600 * 24 * 30)));
+					} else {
+						formattedDate = MessageFormat.format(getString(R.string.time_delay_years), (int) (delta / (3600 * 24 * 365)));
+					}
+				} else {
+					formattedDate = "";
+				}
+
+				name.setText(String.format(textResId, mIssue.author.getName(), formattedDate));
+				name.setOnClickListener(mDatePopupClickListener);
+				name.setTag(date);
+			}
+		}
+
+		return u;
+	}
+
+	private View.OnClickListener mDatePopupClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(final View view) {
+			Object tag = view.getTag();
+			if (tag != null && tag instanceof Calendar) {
+				Date date = ((Calendar) tag).getTime();
+				String fullDate = mLongDateFormat.format(date) + " " + mTimeFormat.format(date);
+				Toast.makeText(getActivity(), fullDate, Toast.LENGTH_LONG).show();
+			}
+		}
+	};
+
+	@Override
+	public void onAttach(final Activity activity) {
+		super.onAttach(activity);
+		mLongDateFormat = DateFormat.getLongDateFormat(activity);
+		mTimeFormat = DateFormat.getTimeFormat(activity);
 	}
 
 	@Override

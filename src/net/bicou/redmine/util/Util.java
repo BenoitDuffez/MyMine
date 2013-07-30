@@ -11,8 +11,13 @@ import net.java.textilej.parser.builder.HtmlDocumentBuilder;
 import net.java.textilej.parser.markup.textile.TextileDialect;
 
 import java.io.StringWriter;
+import java.util.Calendar;
 
 public class Util {
+	public static boolean isEpoch(Calendar cal) {
+		return cal == null || cal.getTimeInMillis() < 24 * 3600 * 1000;
+	}
+
 	public static String htmlFromTextile(final String textile) {
 		if (textile == null) {
 			return "";

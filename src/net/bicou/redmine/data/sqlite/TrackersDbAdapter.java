@@ -27,8 +27,6 @@ public class TrackersDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
@@ -42,6 +40,10 @@ public class TrackersDbAdapter extends DbAdapter {
 
 	public TrackersDbAdapter(final DbAdapter db) {
 		super(db);
+	}
+
+	public static String getFieldAlias(String field, String col) {
+		return TABLE_TRACKERS + "." + field + " AS " + col + "_" + field;
 	}
 
 	private void putValues(final Server server, final ContentValues values, Tracker tracker) {

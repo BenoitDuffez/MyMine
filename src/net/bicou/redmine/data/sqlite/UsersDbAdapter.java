@@ -1,15 +1,14 @@
 package net.bicou.redmine.data.sqlite;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.util.Util;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsersDbAdapter extends DbAdapter {
 	public static final String TABLE_USERS = "users";
@@ -36,12 +35,10 @@ public class UsersDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 * 
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
-			"CREATE TABLE " + TABLE_USERS + "(" + Util.join(USER_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
+				"CREATE TABLE " + TABLE_USERS + "(" + Util.join(USER_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
 		};
 	}
 
@@ -51,6 +48,10 @@ public class UsersDbAdapter extends DbAdapter {
 
 	public UsersDbAdapter(final DbAdapter db) {
 		super(db);
+	}
+
+	public static String getFieldAlias(String table, String field) {
+		return table + "." + field + " AS " + table + "_" + field;
 	}
 
 	private void putValues(final Server server, final ContentValues values, final User user) {

@@ -29,8 +29,6 @@ public class IssueStatusesDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
@@ -46,6 +44,10 @@ public class IssueStatusesDbAdapter extends DbAdapter {
 
 	public IssueStatusesDbAdapter(final DbAdapter db) {
 		super(db);
+	}
+
+	public static String getFieldAlias(String field, String col) {
+		return TABLE_ISSUE_STATUSES + "." + field + " AS " + col + "_" + field;
 	}
 
 	public long insert(final Server server, final IssueStatus issueStatus) {
@@ -91,8 +93,6 @@ public class IssueStatusesDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes issues
-	 *
-	 * @return
 	 */
 	public int deleteAll(final Server server) {
 		return mDb.delete(TABLE_ISSUE_STATUSES, KEY_SERVER_ID + " = " + server.rowId, null);

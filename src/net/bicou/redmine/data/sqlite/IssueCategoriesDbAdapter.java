@@ -30,8 +30,6 @@ public class IssueCategoriesDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
@@ -47,6 +45,10 @@ public class IssueCategoriesDbAdapter extends DbAdapter {
 
 	public IssueCategoriesDbAdapter(final DbAdapter db) {
 		super(db);
+	}
+
+	public static String getFieldAlias(String field, final String col) {
+		return TABLE_ISSUE_CATEGORIES + "." + field + " AS " + col + "_" + field;
 	}
 
 	private void putValues(ContentValues values, IssueCategory issueCategory) {
@@ -88,7 +90,7 @@ public class IssueCategoriesDbAdapter extends DbAdapter {
 		IssueCategory issueCategory = null;
 		if (c != null) {
 			if (c.moveToFirst()) {
-				issueCategory = new IssueCategory(server, project, c, this);
+				issueCategory = new IssueCategory(server, project, c);
 			}
 			c.close();
 		}
@@ -104,8 +106,6 @@ public class IssueCategoriesDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes issues for a given project on a given server
-	 *
-	 * @return
 	 */
 	public int deleteAll(final Server server, Project project) {
 		String where = KEY_SERVER_ID + " = " + server.rowId + " AND " + KEY_PROJECT_ID + " = " + project.id;

@@ -11,6 +11,7 @@ import net.bicou.redmine.app.issues.IssuesListFilter.FilterType;
 import net.bicou.redmine.app.issues.order.OrderColumn;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.*;
+import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
@@ -232,8 +233,66 @@ public class IssuesDbAdapter extends DbAdapter {
 	}
 
 	public Cursor selectCursor(final Server server, final long id, final String[] columns) {
-		final String where = KEY_ID + " = " + id + " AND " + KEY_SERVER_ID + " = " + server.rowId;
-		return mDb.query(TABLE_ISSUES, columns, where, null, null, null, null);
+		String[] cols = columns == null ? ISSUE_FIELDS : columns;
+		List<String> selection = new ArrayList<String>();
+		List<String> joined = new ArrayList<String>();
+
+		for (String col : cols) {
+			selection.add(TABLE_ISSUES + "." + col);
+
+			if (col.equals(KEY_CATEGORY_ID)) {
+				selection.add(IssueCategoriesDbAdapter.getFieldAlias(IssueCategoriesDbAdapter.KEY_NAME, col));
+				joined.add(IssueCategoriesDbAdapter.TABLE_ISSUE_CATEGORIES + " ON " + Util.join(new String[] {
+						IssueCategoriesDbAdapter.TABLE_ISSUE_CATEGORIES + "." + IssueCategoriesDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
+						IssueCategoriesDbAdapter.TABLE_ISSUE_CATEGORIES + "." + IssueCategoriesDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
+						IssueCategoriesDbAdapter.TABLE_ISSUE_CATEGORIES + "." + IssueCategoriesDbAdapter.KEY_PROJECT_ID + " = " + TABLE_ISSUES + "." +
+								KEY_PROJECT_ID,
+				}, " AND "));
+			} else if (col.equals(KEY_PRIORITY_ID)) {
+				selection.add(IssuePrioritiesDbAdapter.getFieldAlias(IssuePrioritiesDbAdapter.KEY_NAME, col));
+				joined.add(IssuePrioritiesDbAdapter.TABLE_ISSUE_PRIORITIES + " ON " + Util.join(new String[] {
+						IssuePrioritiesDbAdapter.TABLE_ISSUE_PRIORITIES + "." + IssuePrioritiesDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
+						IssuePrioritiesDbAdapter.TABLE_ISSUE_PRIORITIES + "." + IssuePrioritiesDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." +
+								KEY_SERVER_ID,
+				}, " AND "));
+			} else if (col.equals(KEY_ASSIGNED_TO_ID)) {
+				selection.add(UsersDbAdapter.getFieldAlias(col, UsersDbAdapter.KEY_ID));
+				selection.add(UsersDbAdapter.getFieldAlias(col, UsersDbAdapter.KEY_FIRSTNAME));
+				selection.add(UsersDbAdapter.getFieldAlias(col, UsersDbAdapter.KEY_LASTNAME));
+				joined.add(UsersDbAdapter.TABLE_USERS + " " + col + " ON " + Util.join(new String[] {
+						col + "." + UsersDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
+						col + "." + UsersDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
+				}, " AND "));
+			} else if (col.equals(KEY_AUTHOR_ID)) {
+				selection.add(UsersDbAdapter.getFieldAlias(col, UsersDbAdapter.KEY_ID));
+				selection.add(UsersDbAdapter.getFieldAlias(col, UsersDbAdapter.KEY_FIRSTNAME));
+				selection.add(UsersDbAdapter.getFieldAlias(col, UsersDbAdapter.KEY_LASTNAME));
+				joined.add(UsersDbAdapter.TABLE_USERS + " " + col + " ON " + Util.join(new String[] {
+						col + "." + UsersDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
+						col + "." + UsersDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
+				}, " AND "));
+			} else if (col.equals(KEY_STATUS_ID)) {
+				selection.add(IssueStatusesDbAdapter.getFieldAlias(IssueStatusesDbAdapter.KEY_NAME, col));
+				joined.add(IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + " ON " + Util.join(new String[] {
+						IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + IssueStatusesDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
+						IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + IssueStatusesDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
+				}, " AND "));
+			} else if (col.equals(KEY_TRACKER_ID)) {
+				selection.add(TrackersDbAdapter.getFieldAlias(TrackersDbAdapter.KEY_NAME, col));
+				joined.add(TrackersDbAdapter.TABLE_TRACKERS + " ON " + Util.join(new String[] {
+						TrackersDbAdapter.TABLE_TRACKERS + "." + TrackersDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
+						TrackersDbAdapter.TABLE_TRACKERS + "." + TrackersDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
+				}, " AND "));
+			}
+		}
+
+		String sql = "SELECT " + Util.join(selection.toArray(), ", ") //
+				+ " FROM " + TABLE_ISSUES + " LEFT JOIN " + Util.join(joined.toArray(), " LEFT JOIN ") //
+				+ " WHERE " + TABLE_ISSUES + "." + KEY_ID + " = " + id + " AND " + TABLE_ISSUES + "." + KEY_SERVER_ID + " = " + server.rowId;
+
+		L.d("Issue: " + sql);
+
+		return mDb.rawQuery(sql, null);
 	}
 
 	public Issue select(final Server server, final long issueId, final String[] columns) {
@@ -241,7 +300,8 @@ public class IssuesDbAdapter extends DbAdapter {
 		Issue issue = null;
 		if (c != null) {
 			if (c.moveToFirst()) {
-				issue = new Issue(server, c, this);
+				issue = new Issue(server, c);
+				issue.attachments = loadAttachments(issue);
 			}
 			c.close();
 		}

@@ -43,8 +43,6 @@ public class VersionsDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
@@ -107,7 +105,7 @@ public class VersionsDbAdapter extends DbAdapter {
 		Cursor c = mDb.query(TABLE_VERSIONS, null, where, null, null, null, orderBy);
 		if (c != null) {
 			while (c.moveToNext()) {
-				versions.add(new Version(c, this));
+				versions.add(new Version(c));
 			}
 			c.close();
 		}

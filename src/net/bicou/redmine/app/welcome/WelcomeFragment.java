@@ -99,34 +99,33 @@ public class WelcomeFragment extends Fragment {
 
 		// Load issues
 		final List<Server> servers = sdb.selectAll();
-		int numIssues = 0;
-		boolean isAnon = true;
+		int numIssuesTotal = 0, numIssuesMyself = 0;
 		final IssuesDbAdapter idb = new IssuesDbAdapter(sdb);
-		if (isAnon) {
-			numIssues = idb.countAll();
-		} else {
-			for (final Server server : servers) {
-				if (server.user != null) {
-					isAnon = false;
-					numIssues += idb.countIssues(server, server.user);
-				}
+		numIssuesTotal = idb.countAll();
+
+		for (final Server server : servers) {
+			if (server.user != null) {
+				numIssuesMyself += idb.countIssues(server, server.user);
 			}
 		}
 
 		// Build description strings
-		final String issuesSubTitle = res.getString(R.string.overview_card_issues_subtitle);
-		final int whereId = isAnon ? R.string.overview_card_issues_anonymous : R.string.overview_card_issues_logged;
-		issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssues), getString(whereId));
+		String issuesSubTitle = res.getString(R.string.overview_card_issues_subtitle).replace("'", "‘");
+		issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssuesTotal), getString(R.string.overview_card_issues_count_all));
+		if (numIssuesMyself>0){
+			issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssuesMyself), getString(R.string.overview_card_issues_count_all));
+		}
 
 		// Load projects
 		final ProjectsDbAdapter pdb = new ProjectsDbAdapter(sdb);
 		final int numProjects = pdb.getNumProjects();
-		projectsDescription = MessageFormat.format(res.getString(R.string.overview_card_projects_subtitle), numProjects);
+		String projectsSubTitle = res.getString(R.string.overview_card_projects_subtitle).replace("'", "‘");
+		projectsDescription = MessageFormat.format(projectsSubTitle, numProjects);
 
 		// Load servers
 		final int numServers = sdb.getNumServers();
 		sdb.close();
-		final String serversSubTitle = res.getString(R.string.overview_card_servers_subtitle);
+		final String serversSubTitle = res.getString(R.string.overview_card_servers_subtitle).replace("'", "‘");
 		serversDescription = MessageFormat.format(serversSubTitle, numServers);
 
 		// Issues
@@ -144,7 +143,7 @@ public class WelcomeFragment extends Fragment {
 		intent.putExtra(Settings.EXTRA_AUTHORITIES, SyncUtils.SYNC_AUTHORITIES);
 		cards.add(new OverviewCard(intent) //
 				.setContent(R.string.overview_card_servers_title, serversDescription, R.drawable.card_server, R.drawable.icon_servers) //
-						//				.addAction(ID_SYNC, R.string.overview_card_servers_sync) //
+						//				.addAction(ID_SYNC, R.string.overview_card_servers_sync) //4
 				.addAction(ID_SERVERS_ADD, R.string.overview_card_servers_add));
 
 		return cards;

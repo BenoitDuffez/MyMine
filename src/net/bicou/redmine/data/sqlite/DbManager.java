@@ -157,7 +157,7 @@ public class DbManager extends SQLiteOpenHelper {
 			final Cursor c = db.query(ServersDbAdapter.TABLE_SERVERS, null, null, null, null, null, null);
 			if (c != null) {
 				while (c.moveToNext()) {
-					servers.add(new Server(c, db));
+					servers.add(new Server(c));
 				}
 			}
 

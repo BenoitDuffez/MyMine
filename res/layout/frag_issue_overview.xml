@@ -1,140 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:padding="@dimen/main_content_padding">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/main_content_padding">
 
-	<TableLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:padding="8dp"
-		android:background="#FFFFFF">
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-		<TableRow style="@style/IssueTableRow">
-			<net.bicou.redmine.widget.RobotoThinTextView
-				android:id="@+id/issue_subject"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:layout_span="2"
-				android:textSize="32sp" />
-		</TableRow>
+        <net.bicou.redmine.widget.RobotoThinTextView
+                android:id="@+id/issue_tracker_id"
+                android:text="Tracker #12345"
+                android:layout_toLeftOf="@+id/issue_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="32sp"/>
 
-		<TableRow style="@style/IssueTableRow">
+        <net.bicou.redmine.widget.RobotoLightTextView
+                android:id="@+id/issue_subject"
+                android:text="@+id/issue_subject"
+                android:layout_below="@+id/issue_tracker_id"
+                android:layout_toLeftOf="@+id/issue_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"/>
 
-			<net.bicou.redmine.widget.RobotoTextView
-				android:id="@+id/issue_parent"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_span="2"
-				android:layout_weight="1"
-				android:textAppearance="?android:attr/textAppearanceSmall" />
-		</TableRow>
+        <ImageView
+                android:id="@+id/issue_author_avatar"
+                android:src="@drawable/favorite"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                />
 
-		<TableRow style="@style/IssueTableRow">
+        <TextView
+                android:id="@+id/issue_author"
+                android:text="User Added X days ago"
+                android:gravity="center_vertical|right"
+                android:layout_marginLeft="8dp"
+                android:layout_below="@+id/issue_author_avatar"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                />
 
-			<net.bicou.redmine.widget.RobotoTextView
-				style="@style/IssueLabel"
-				android:layout_weight="1"
-				android:text="@string/issue_status" />
-			<net.bicou.redmine.widget.RobotoTextView
-				android:id="@+id/issue_status"
-				android:layout_weight="1"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content" />
-		</TableRow>
+        <net.bicou.redmine.widget.RobotoTextView
+                android:id="@+id/issue_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/issue_subject"
+                android:text="@+id/issue_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-		<TableRow style="@style/IssueTableRow">
-			<net.bicou.redmine.widget.RobotoTextView
-				style="@style/IssueLabel"
-				android:layout_weight="1"
-				android:text="@string/issue_priority" />
-			<net.bicou.redmine.widget.RobotoTextView
-				android:layout_weight="1"
-				android:id="@+id/issue_priority"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content" />
-		</TableRow>
+        <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/issue_parent"
+                android:padding="8dp"
+                android:background="#FFFFFF">
 
-		<TableRow style="@style/IssueTableRow">
-			<net.bicou.redmine.widget.RobotoTextView
-				android:layout_weight="1"
-				style="@style/IssueLabel"
-				android:text="@string/issue_assignee" />
-			<net.bicou.redmine.widget.RobotoTextView
-				android:id="@+id/issue_assignee"
-				android:layout_weight="1"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content" />
-		</TableRow>
+            <TableRow style="@style/IssueTableRow">
 
-		<TableRow style="@style/IssueTableRow">
-			<net.bicou.redmine.widget.RobotoTextView
-				android:layout_weight="1"
-				style="@style/IssueLabel"
-				android:text="@string/issue_category" />
-			<net.bicou.redmine.widget.RobotoTextView
-				android:layout_weight="1"
-				android:id="@+id/issue_category"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content" />
-		</TableRow>
+                <net.bicou.redmine.widget.RobotoTextView
+                        style="@style/IssueLabel"
+                        android:layout_weight="1"
+                        android:text="@string/issue_status"/>
 
-		<TableRow style="@style/IssueTableRow">
-			<net.bicou.redmine.widget.RobotoTextView
-				style="@style/IssueLabel"
-				android:layout_weight="1"
-				android:text="@string/issue_target_version" />
-			<net.bicou.redmine.widget.RobotoTextView
-				android:id="@+id/issue_target_version"
-				android:layout_weight="1"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content" />
-		</TableRow>
+                <net.bicou.redmine.widget.RobotoTextView
+                        android:id="@+id/issue_status"
+                        android:text="@+id/issue_status"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
+
+            <TableRow style="@style/IssueTableRow">
+
+                <net.bicou.redmine.widget.RobotoTextView
+                        style="@style/IssueLabel"
+                        android:layout_weight="1"
+                        android:text="@string/issue_priority"/>
+
+                <net.bicou.redmine.widget.RobotoTextView
+                        android:layout_weight="1"
+                        android:id="@+id/issue_priority"
+                        android:text="@+id/issue_priority"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
+
+            <TableRow style="@style/IssueTableRow">
+
+                <net.bicou.redmine.widget.RobotoTextView
+                        android:layout_weight="1"
+                        style="@style/IssueLabel"
+                        android:text="@string/issue_assignee"/>
+
+                <net.bicou.redmine.widget.RobotoTextView
+                        android:id="@+id/issue_assignee"
+                        android:text="@+id/issue_assignee"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
+
+            <TableRow style="@style/IssueTableRow">
+
+                <net.bicou.redmine.widget.RobotoTextView
+                        android:layout_weight="1"
+                        style="@style/IssueLabel"
+                        android:text="@string/issue_category"/>
+
+                <net.bicou.redmine.widget.RobotoTextView
+                        android:layout_weight="1"
+                        android:id="@+id/issue_category"
+                        android:text="@+id/issue_category"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
+
+            <TableRow style="@style/IssueTableRow">
+
+                <TextView
+                        style="@style/IssueLabel"
+                        android:layout_weight="1"
+                        android:text="@string/issue_target_version"/>
+
+                <TextView
+                        android:id="@+id/issue_target_version"
+                        android:text="@+id/issue_target_version"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
 
 
-		<TableRow style="@style/IssueTableRow">
+            <TableRow style="@style/IssueTableRow">
 
-			<View
-				android:layout_weight="1"
-				android:layout_span="2"
-				android:layout_width="match_parent"
-				android:layout_height="12dp" />
+                <TextView
+                        style="@style/IssueLabel"
+                        android:layout_weight="1"
+                        android:text="@string/issue_start_date"/>
 
-		</TableRow>
+                <TextView
+                        android:id="@+id/issue_start_date"
+                        android:text="@+id/issue_start_date"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
 
-		<TableRow style="@style/IssueTableRow">
+            <TableRow style="@style/IssueTableRow">
 
-			<net.bicou.redmine.widget.RobotoTextView
-				style="@style/IssueLabel"
-				android:layout_weight="1"
-				android:text="@string/issue_description"
-				android:layout_span="2" />
+                <TextView
+                        style="@style/IssueLabel"
+                        android:layout_weight="1"
+                        android:text="@string/issue_due_date"/>
 
-		</TableRow>
+                <TextView
+                        android:id="@+id/issue_due_date"
+                        android:text="@+id/issue_due_date"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
 
-		<TableRow
-			style="@style/IssueTableRow"
-			android:layout_marginTop="8dp">
-			<View
-				android:background="#CC0000"
-				android:layout_marginBottom="12dp"
-				android:layout_weight="1"
-				android:layout_span="2"
-				android:layout_width="match_parent"
-				android:layout_height="4dp" />
-		</TableRow>
+            <TableRow style="@style/IssueTableRow">
 
-		<TableRow style="@style/IssueTableRow">
+                <TextView
+                        style="@style/IssueLabel"
+                        android:layout_weight="1"
+                        android:text="@string/issue_percent_done"/>
 
-			<WebView
-				android:id="@+id/issue_description"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:layout_span="2" />
-		</TableRow>
+                <TextView
+                        android:id="@+id/issue_percent_done"
+                        android:text="@+id/issue_percent_done"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
 
-	</TableLayout>
+            <TableRow style="@style/IssueTableRow">
+
+                <TextView
+                        style="@style/IssueLabel"
+                        android:layout_weight="1"
+                        android:text="@string/issue_spent_time"/>
+
+                <TextView
+                        android:id="@+id/issue_spent_time"
+                        android:text="@+id/issue_spent_time"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </TableRow>
+
+
+            <TableRow style="@style/IssueTableRow">
+
+                <View
+                        android:layout_weight="1"
+                        android:layout_span="2"
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"/>
+
+            </TableRow>
+
+            <TableRow style="@style/IssueTableRow">
+
+                <net.bicou.redmine.widget.RobotoTextView
+                        style="@style/IssueLabel"
+                        android:layout_weight="1"
+                        android:text="@string/issue_description"
+                        android:layout_span="2"/>
+
+            </TableRow>
+
+            <TableRow
+                    style="@style/IssueTableRow"
+                    android:layout_marginTop="8dp">
+
+                <View
+                        android:background="#CC0000"
+                        android:layout_marginBottom="12dp"
+                        android:layout_weight="1"
+                        android:layout_span="2"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"/>
+            </TableRow>
+
+            <TableRow style="@style/IssueTableRow">
+
+                <WebView
+                        android:id="@+id/issue_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_span="2"/>
+            </TableRow>
+
+        </TableLayout>
+    </RelativeLayout>
+
 </ScrollView>

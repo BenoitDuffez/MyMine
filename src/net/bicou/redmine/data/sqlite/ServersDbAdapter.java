@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +28,6 @@ public class ServersDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
@@ -45,13 +44,35 @@ public class ServersDbAdapter extends DbAdapter {
 		super(other);
 	}
 
+	private String[] getAllColumns() {
+		List<String> selection = new ArrayList<String>();
+		for (String col : SERVER_FIELDS) {
+			selection.add(col);
+		}
+		for (String col : UsersDbAdapter.USER_FIELDS) {
+			selection.add(UsersDbAdapter.TABLE_USERS + "." + col + " AS " + UsersDbAdapter.TABLE_USERS + "_" + col);
+		}
+		return selection.toArray(new String[] { });
+	}
+
+	private String getDefaultSelection() {
+		return Util.join(new String[] {
+				UsersDbAdapter.TABLE_USERS + "." + UsersDbAdapter.KEY_ID + " = " + TABLE_SERVERS + "." + KEY_USER_ID,
+				UsersDbAdapter.TABLE_USERS + "." + UsersDbAdapter.KEY_SERVER_ID + " = " + TABLE_SERVERS + "." + KEY_ROWID,
+		}, " AND ");
+	}
+
+	private String getDefaultTables() {
+		return TABLE_SERVERS + ", " + UsersDbAdapter.TABLE_USERS;
+	}
+
 	public List<Server> selectAll() {
-		final Cursor c = mDb.query(TABLE_SERVERS, null, null, null, null, null, null);
+		final Cursor c = mDb.query(getDefaultTables(), getAllColumns(), getDefaultSelection(), null, null, null, null);
 
 		final List<Server> servers = new ArrayList<Server>();
 		if (c != null) {
 			while (c.moveToNext()) {
-				servers.add(new Server(c, this));
+				servers.add(new Server(c));
 			}
 			c.close();
 		}
@@ -70,12 +91,13 @@ public class ServersDbAdapter extends DbAdapter {
 	}
 
 	public Server getServer(final long rowId) {
-		final Cursor c = mDb.query(TABLE_SERVERS, null, KEY_ROWID + " = " + rowId, null, null, null, null);
+		String selection = getDefaultSelection() + " AND " + KEY_ROWID + " = " + rowId;
+		final Cursor c = mDb.query(getDefaultTables(), getAllColumns(), selection, null, null, null, null);
 
 		Server server = null;
 		if (c != null) {
 			if (c.moveToFirst()) {
-				server = new Server(c, this);
+				server = new Server(c);
 			}
 			c.close();
 		}
@@ -103,17 +125,17 @@ public class ServersDbAdapter extends DbAdapter {
 	}
 
 	public Server getServer(final String serverUrl) {
-		final String[] cols = null;
-		final String cond = KEY_SERVER_URL + " = ?";
+		final String[] cols = getAllColumns();
+		final String cond = getDefaultSelection() + " AND " + KEY_SERVER_URL + " = ?";
 		final String[] args = {
 				serverUrl
 		};
-		final Cursor c = mDb.query(TABLE_SERVERS, cols, cond, args, null, null, null);
+		final Cursor c = mDb.query(getDefaultTables(), cols, cond, args, null, null, null);
 
 		Server server = null;
 		if (c != null) {
 			if (c.moveToFirst()) {
-				server = new Server(c, this);
+				server = new Server(c);
 			}
 			c.close();
 		}

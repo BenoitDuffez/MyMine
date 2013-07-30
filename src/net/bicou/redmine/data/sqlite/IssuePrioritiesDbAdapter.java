@@ -27,8 +27,6 @@ public class IssuePrioritiesDbAdapter extends DbAdapter {
 
 	/**
 	 * Table creation statements
-	 *
-	 * @return
 	 */
 	public static final String[] getCreateTablesStatements() {
 		return new String[] {
@@ -44,6 +42,10 @@ public class IssuePrioritiesDbAdapter extends DbAdapter {
 
 	public IssuePrioritiesDbAdapter(final DbAdapter db) {
 		super(db);
+	}
+
+	public static String getFieldAlias(String field, String prefix) {
+		return TABLE_ISSUE_PRIORITIES + "." + field + " AS " + prefix + "_" + field;
 	}
 
 	private void putValues(ContentValues values, IssuePriority issuePriority) {
@@ -82,7 +84,7 @@ public class IssuePrioritiesDbAdapter extends DbAdapter {
 		IssuePriority issuePriority = null;
 		if (c != null) {
 			if (c.moveToFirst()) {
-				issuePriority = new IssuePriority(server, c, this);
+				issuePriority = new IssuePriority(server, c);
 			}
 			c.close();
 		}
@@ -98,8 +100,6 @@ public class IssuePrioritiesDbAdapter extends DbAdapter {
 
 	/**
 	 * Removes issues
-	 *
-	 * @return
 	 */
 	public int deleteAll(final Server server) {
 		return mDb.delete(TABLE_ISSUE_PRIORITIES, KEY_SERVER_ID + " = " + server.rowId, null);

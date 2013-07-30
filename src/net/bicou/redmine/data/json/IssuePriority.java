@@ -2,7 +2,6 @@ package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.util.L;
 
@@ -10,7 +9,11 @@ public class IssuePriority extends Reference {
 	public boolean is_default;
 	public Server server;
 
-	public IssuePriority(Server s, final Cursor c, final DbAdapter db) {
+	public IssuePriority(Server s) {
+		server = s;
+	}
+
+	public IssuePriority(Server s, final Cursor c) {
 		server = s;
 		for (final String col : IssuePrioritiesDbAdapter.ISSUE_CATEGORY_FIELDS) {
 			try {

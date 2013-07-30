@@ -2,8 +2,9 @@ package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
-import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
@@ -13,10 +14,10 @@ import java.util.List;
 public class Issue {
 	public long id;
 	// public Reference project;
-	public Reference tracker;
-	public Reference priority;
-	public Reference status;
-	public Reference author;
+	public Tracker tracker;
+	public IssuePriority priority;
+	public IssueStatus status;
+	public User author;
 	public String subject;
 	public String description;
 	public Calendar start_date;
@@ -24,10 +25,10 @@ public class Issue {
 	public Calendar created_on;
 	public Calendar updated_on;
 	public Calendar due_date;
-	public Reference fixed_version;
-	public Reference category;
+	public Version fixed_version;
+	public IssueCategory category;
 	public Reference parent;
-	public Reference assigned_to;
+	public User assigned_to;
 	public double estimated_hours;
 	public double spent_hours;
 	public List<Journal> journals;
@@ -38,32 +39,38 @@ public class Issue {
 	public Server server;
 	public Project project;
 
-	public Issue(final Server server, final Cursor c, final IssuesDbAdapter db) {
+	public Issue(final Server server, final Cursor c) {
 		this.server = server;
-		construct(c, db);
+		project = new Project(); // created early because some fields will hold a reference onto it
+		construct(c);
 	}
 
-	private void construct(final Cursor c, final IssuesDbAdapter db) {
+	private void construct(final Cursor c) {
 		for (final String col : IssuesDbAdapter.ISSUE_FIELDS) {
 			try {
 				final int columnIndex = c.getColumnIndex(col);
 				if (columnIndex < 0) {
 					continue;
 				}
+
 				if (col.equals(IssuesDbAdapter.KEY_ID)) {
 					id = c.getLong(columnIndex);
 				} else if (col.equals(IssuesDbAdapter.KEY_PROJECT_ID)) {
-					final ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
-					project = pdb.select(server, c.getLong(columnIndex));
+					// TODO
 				} else if (col.equals(IssuesDbAdapter.KEY_TRACKER_ID)) {
-					// TODO
+					tracker = new Tracker(server, c, col + "_");
 				} else if (col.equals(IssuesDbAdapter.KEY_PRIORITY_ID)) {
-					// TODO
+					priority = new IssuePriority(server);
+					priority.id = c.getLong(columnIndex);
+					priority.name = c.getString(c.getColumnIndex(col + "_" + IssuePrioritiesDbAdapter.KEY_NAME));
 				} else if (col.equals(IssuesDbAdapter.KEY_STATUS_ID)) {
-					status = new Reference();
+					status = new IssueStatus();
 					status.id = c.getLong(columnIndex);
+					status.name = c.getString(c.getColumnIndex(col + "_" + IssueStatusesDbAdapter.KEY_NAME));
 				} else if (col.equals(IssuesDbAdapter.KEY_AUTHOR_ID)) {
-					// TODO
+					author = new User(c, col + "_");
+				} else if (col.equals(IssuesDbAdapter.KEY_ASSIGNED_TO_ID)) {
+					assigned_to = new User(c, col + "_");
 				} else if (col.equals(IssuesDbAdapter.KEY_SUBJECT)) {
 					subject = c.getString(columnIndex);
 				} else if (col.equals(IssuesDbAdapter.KEY_DESCRIPTION)) {
@@ -83,15 +90,12 @@ public class Issue {
 					due_date = new GregorianCalendar();
 					due_date.setTimeInMillis(c.getLong(columnIndex));
 				} else if (col.equals(IssuesDbAdapter.KEY_FIXED_VERSION_ID)) {
-					fixed_version = new Reference();
-					fixed_version.id = c.getLong(columnIndex);
+					fixed_version = new Version(c, col + "_");
 				} else if (col.equals(IssuesDbAdapter.KEY_CATEGORY_ID)) {
-					// TODO
+					category = new IssueCategory(server, project);
 				} else if (col.equals(IssuesDbAdapter.KEY_PARENT_ID)) {
 					parent = new Reference();
 					parent.id = c.getLong(columnIndex);
-				} else if (col.equals(IssuesDbAdapter.KEY_ASSIGNED_TO_ID)) {
-					// TODO
 				} else if (col.equals(IssuesDbAdapter.KEY_ESTIMATED_HOURS)) {
 					estimated_hours = c.getDouble(columnIndex);
 				} else if (col.equals(IssuesDbAdapter.KEY_SPENT_HOURS)) {
@@ -106,9 +110,6 @@ public class Issue {
 				L.e("Unhandled exception while creating an Issue: " + e, e);
 			}
 		}
-
-		// Load attachments
-		attachments = db.loadAttachments(this);
 	}
 
 	public String toString() {

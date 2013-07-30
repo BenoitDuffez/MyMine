@@ -2,9 +2,7 @@ package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
-import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.util.L;
 
 /**
@@ -12,13 +10,18 @@ import net.bicou.redmine.util.L;
  */
 public class IssueCategory extends Reference {
 	public Project project;
-	public User assigned_to;
+	public Reference assigned_to;
 
 	public Server server;
 
-	public IssueCategory(Server server, Project project, Cursor cursor, DbAdapter db) {
+	public IssueCategory(Server server, Project project) {
 		this.server = server;
 		this.project = project;
+	}
+
+	public IssueCategory(Server server, Project project, Cursor cursor) {
+		this(server, project);
+
 		int columnIndex;
 		for (String col : IssueCategoriesDbAdapter.ISSUE_CATEGORY_FIELDS) {
 			try {
@@ -26,8 +29,8 @@ public class IssueCategory extends Reference {
 				if (IssueCategoriesDbAdapter.KEY_ID.equals(col)) {
 					id = cursor.getInt(columnIndex);
 				} else if (IssueCategoriesDbAdapter.KEY_ASSIGNED_TO_ID.equals(col)) {
-					UsersDbAdapter udb = new UsersDbAdapter(db);
-					assigned_to = udb.select(server, cursor.getInt(columnIndex));
+					assigned_to = new Reference();
+					assigned_to.id = cursor.getLong(columnIndex);
 				} else if (IssueCategoriesDbAdapter.KEY_NAME.equals(col)) {
 					name = cursor.getString(columnIndex);
 				} else if (IssueCategoriesDbAdapter.KEY_PROJECT_ID.equals(col)) {

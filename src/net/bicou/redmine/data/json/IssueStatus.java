@@ -9,6 +9,9 @@ public class IssueStatus extends Reference {
 	public boolean is_default;
 	public boolean is_closed;
 
+	public IssueStatus() {
+	}
+
 	public IssueStatus(final Cursor c, final DbAdapter db) {
 		super(c);
 
