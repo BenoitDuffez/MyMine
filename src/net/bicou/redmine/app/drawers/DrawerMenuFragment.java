@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.google.gson.Gson;
+import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListFilter;
@@ -124,6 +125,8 @@ public class DrawerMenuFragment extends SherlockListFragment {
 			WikiPage page = (WikiPage) item;
 			Intent intent = new Intent(getActivity(), WikiActivity.class);
 			if (page.server != null) {
+				intent.putExtra(Constants.KEY_SERVER_ID, page.server.rowId);
+				intent.putExtra(Constants.KEY_PROJECT_ID, page.project.id);
 				intent.putExtra(WikiPageFragment.KEY_WIKI_PAGE, new Gson().toJson(page));
 			}
 			startActivity(intent);
