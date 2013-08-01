@@ -6,6 +6,7 @@
         android:padding="@dimen/main_content_padding">
 
     <RelativeLayout
+            android:id="@+id/issue_main_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
