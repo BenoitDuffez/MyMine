@@ -94,9 +94,55 @@ public class WikiUtils {
 		}
 	}
 
-	public static String htmlFromTextile(final String textile) {
+	public static String htmlFromTextile(String textile) {
 		if (textile == null) {
 			return "";
+		}
+
+		// Table of contents
+		String headerPattern = "[hH]([0-4])\\. ([^\r\n]+)";
+		int pos = textile.indexOf("{{toc}}");
+		if (pos >= 0) {
+			String toc = "<style type=\"text/css\">" +
+					"div#toc { background: #ffe; border-color: #333; padding: 1em; margin-left: 2em; display: inline-block; }" +
+					"div#toc ol { padding: 0em 1em; margin: 0em; }" +
+					"</style>" +
+					"<div id=\"toc\">";
+			Pattern h = Pattern.compile(headerPattern);
+			Matcher headingsMatcher = h.matcher(textile);
+			int prevLevel = 0, level;
+			String title;
+			while (headingsMatcher.find()) {
+				L.i(headingsMatcher.group());
+				level = Integer.parseInt(headingsMatcher.group(1));
+				if (level > prevLevel) {
+					for (int i = prevLevel; i < level; i++) {
+						toc += "<ol>";
+					}
+				} else if (level < prevLevel) {
+					for (int i = level; i < prevLevel; i++) {
+						toc += "</ol>";
+					}
+				}
+
+				// Remove link if there is one
+				title = headingsMatcher.group(2);
+				if (title.matches("^\\[\\[.+?\\]\\]$")) {
+					title = title.substring(2, title.length() - 2);
+				}
+
+				// Place bullet and item
+				String anchor = title.replaceAll("[^a-zA-Z0-9_]", "");
+				toc += "<li><a href=\"#" + anchor + "\">" + title + "</a></li>";
+				prevLevel = level;
+			}
+			while (prevLevel > 0) {
+				toc += "</ol>";
+				prevLevel--;
+			}
+			toc += "</div>";
+
+			textile = textile.replace("{{toc}}", toc);
 		}
 
 		final MarkupParser parser = new MarkupParser(new TextileDialect());
@@ -124,7 +170,7 @@ public class WikiUtils {
 		html = "";
 		final StringBuilder b = new StringBuilder();
 		int blockQuoteLevel = 0;
-		int firstCharPos, pos;
+		int firstCharPos;
 		char c;
 		for (final String line : lines) {
 			if (line.length() > 0) {
