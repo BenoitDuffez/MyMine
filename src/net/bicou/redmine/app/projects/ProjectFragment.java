@@ -22,6 +22,7 @@ import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.welcome.CardsAdapter;
 import net.bicou.redmine.app.welcome.OverviewCard;
+import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Tracker;
@@ -30,7 +31,6 @@ import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.util.L;
-import net.bicou.redmine.util.Util;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -209,7 +209,7 @@ public class ProjectFragment extends SherlockFragment {
 				mParent.setText(Html.fromHtml(getString(R.string.project_parent, mProject.parent.name)));
 			}
 			if (!TextUtils.isEmpty(mProject.description)) {
-				Spanned description = Html.fromHtml(Util.htmlFromTextile(mProject.description));
+				Spanned description = Html.fromHtml(WikiUtils.htmlFromTextile(mProject.description));
 				mDescription.setText(description);
 				mShortDescription.setText(description);
 			}

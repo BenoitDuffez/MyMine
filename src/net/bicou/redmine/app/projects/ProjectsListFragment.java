@@ -113,7 +113,7 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 
 		@Override
 		public Cursor loadInBackground() {
-			return mHelper.selectAllCursor(null, new String[] {
+			return mHelper.selectAllCursor(0, new String[] {
 					ProjectsDbAdapter.KEY_ID + " AS " + DbAdapter.KEY_ROWID,
 					ProjectsDbAdapter.KEY_NAME,
 					ProjectsDbAdapter.KEY_DESCRIPTION,
@@ -121,7 +121,7 @@ public class ProjectsListFragment extends SherlockListFragment implements Loader
 					ProjectsDbAdapter.KEY_UPDATED_ON,
 					// ProjectsDbAdapter.KEY_PARENT_ID,
 					ProjectsDbAdapter.KEY_SERVER_ID,
-			});
+			}, null);
 		}
 	}
 
