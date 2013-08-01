@@ -194,24 +194,32 @@ public class WikiPageFragment extends SherlockFragment {
 		if (params.project == null && params.wikiPage != null && params.wikiPage.project != null) {
 			params.project = params.wikiPage.project;
 		}
+
+		if (params.wikiPage == null || TextUtils.isEmpty(params.wikiPage.text)) {
+			return null;
+		}
+
 		params.resultHtml = WikiUtils.htmlFromTextile(params.wikiPage.text);
 
 		return params;
 	}
 
 	public void refreshUI(WikiPageLoadParameters result) {
+		// Null checks
+		if (result == null || mWikiPage == null || mWikiPage.text == null) {
+			// TODO: result==null means non existing wiki page which means we should popup a create wiki page dialog
+			mWikiTitle.setText(result == null ? R.string.wiki_page_not_found : R.string.wiki_empty_page);
+			mWikiTitle.setVisibility(View.VISIBLE);
+			mFavorite.setVisibility(View.GONE);
+			mWebView.setVisibility(View.GONE);
+			return;
+		}
+
 		mWikiPage = result.wikiPage;
 		mHtmlContents = result.resultHtml;
 		mProject = result.project;
 
 		mClient.setProject(mProject);
-
-		// Null checks
-		if (mWikiPage == null || mWikiPage.text == null) {
-			mWikiTitle.setText(R.string.wiki_empty_page);
-			mWikiTitle.setVisibility(View.VISIBLE);
-			return;
-		}
 
 		// Title
 		String wikiPageTitle = mWikiPage.title;
