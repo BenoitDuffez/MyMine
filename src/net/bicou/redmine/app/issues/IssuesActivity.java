@@ -16,6 +16,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 import net.bicou.android.splitscreen.SplitActivity;
+import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
@@ -38,8 +39,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
 	public static final int ACTION_REFRESH_ISSUES = 0;
-	public static final int ACTION_ISSUE_LOAD_OVERVIEW = 1;
-	public static final int ACTION_ISSUE_LOAD_ATTACHMENTS = 2;
+	public static final int ACTION_ISSUE_LOAD_ISSUE = 1;
+	public static final int ACTION_ISSUE_LOAD_OVERVIEW = 2;
+	public static final int ACTION_ISSUE_LOAD_ATTACHMENTS = 3;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -102,6 +104,11 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 		super.onCreate(savedInstanceState);
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
+
+		Bundle args = getIntent().getExtras();
+		if (args != null && args.containsKey(Constants.KEY_ISSUE_ID)) {
+			selectContent(args);
+		}
 	}
 
 	void saveNewColumnsOrder(final IssuesOrder orderColumns) {
@@ -253,6 +260,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			db.close();
 			break;
 
+		case ACTION_ISSUE_LOAD_ISSUE:
+			return IssueOverviewFragment.loadIssue(applicationContext, (Bundle) parameters);
+
 		case ACTION_ISSUE_LOAD_OVERVIEW:
 			return IssueOverviewFragment.loadIssueOverview(applicationContext, (Issue) parameters);
 
@@ -273,13 +283,18 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			break;
 
+		case ACTION_ISSUE_LOAD_ISSUE:
 		case ACTION_ISSUE_LOAD_OVERVIEW:
 		case ACTION_ISSUE_LOAD_ATTACHMENTS:
 			IssueFragment content = getContentFragment();
 			if (content != null) {
 				Fragment frag = content.getFragmentFromViewPager(0);
 				if (frag != null && frag instanceof IssueOverviewFragment) {
-					((IssueOverviewFragment) frag).onIssueOverviewLoaded((String) result);
+					if (action == ACTION_ISSUE_LOAD_ISSUE) {
+						((IssueOverviewFragment) frag).onIssueLoaded(result);
+					} else {
+						((IssueOverviewFragment) frag).onIssueOverviewLoaded((String) result);
+					}
 				}
 			}
 			break;

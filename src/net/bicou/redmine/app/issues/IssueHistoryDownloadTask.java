@@ -6,12 +6,12 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.json.*;
 import net.bicou.redmine.data.sqlite.*;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.util.DiffMatchPatch;
 import net.bicou.redmine.util.L;
-import net.bicou.redmine.util.Util;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -227,8 +227,8 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	}
 
 	private PropertyChange onDescriptionChange(JournalDetail d, IdPair ids, DbAdapter db) {
-		String oldHtml = Util.htmlFromTextile(d.old_value);
-		String newHtml = Util.htmlFromTextile(d.new_value);
+		String oldHtml = WikiUtils.htmlFromTextile(d.old_value);
+		String newHtml = WikiUtils.htmlFromTextile(d.new_value);
 		DiffMatchPatch diff = new DiffMatchPatch();
 		LinkedList<DiffMatchPatch.Diff> diffs = diff.diff_main(oldHtml, newHtml, false);
 		diff.diff_cleanupEfficiency(diffs);
@@ -364,7 +364,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 
 			// Notes
 			if (TextUtils.isEmpty(journal.notes) == false) {
-				String html = Util.htmlFromTextile(journal.notes);
+				String html = WikiUtils.htmlFromTextile(journal.notes);
 				html = html.replace("<pre>", "<tt>").replace("</pre>", "</tt>");
 				// Fake lists
 				html = html.replace("<li>", " &nbsp; &nbsp; • ").replace("</li>", "<br />");

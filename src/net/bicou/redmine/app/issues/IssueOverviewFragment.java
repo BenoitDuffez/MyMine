@@ -15,16 +15,20 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.wiki.WikiPageLoader;
+import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Attachment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
+import net.bicou.redmine.net.JsonDownloadError;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
@@ -43,6 +47,8 @@ public class IssueOverviewFragment extends SherlockFragment {
 	Issue mIssue;
 	java.text.DateFormat mLongDateFormat;
 	java.text.DateFormat mTimeFormat;
+	WikiUtils.WikiWebViewClient mClient;
+	ViewGroup mMainLayout;
 
 	public static IssueOverviewFragment newInstance(final Bundle args) {
 		final IssueOverviewFragment f = new IssueOverviewFragment();
@@ -55,6 +61,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 		final View v = inflater.inflate(R.layout.frag_issue_overview, container, false);
 		L.d("");
 
+		mMainLayout = (ViewGroup) v.findViewById(R.id.issue_main_layout);
 		mTrackerAndId = (TextView) v.findViewById(R.id.issue_tracker_id);
 		mSubject = (TextView) v.findViewById(R.id.issue_subject);
 		mStatus = (TextView) v.findViewById(R.id.issue_status);
@@ -72,7 +79,72 @@ public class IssueOverviewFragment extends SherlockFragment {
 		//		mAssignedAvatar=v.findViewById(R.id.issue_assign)
 		mParent = (TextView) v.findViewById(R.id.issue_parent);
 
-		mIssue = new Gson().fromJson(getArguments().getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
+		mMainLayout.setVisibility(View.INVISIBLE);
+
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ISSUE, savedInstanceState == null ? getArguments() : savedInstanceState);
+
+		return v;
+	}
+
+	@Override
+	public void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(mIssue, Issue.class));
+	}
+
+	public static Object loadIssue(Context context, Bundle args) {
+		Issue issue = new Gson().fromJson(args.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
+
+		if (issue != null) {
+			return issue;
+		}
+
+		// Load from the server, because there's a possibility it's not been synced
+		ServersDbAdapter sdb = new ServersDbAdapter(context);
+		sdb.open();
+		Server server = sdb.getServer(args.getLong(Constants.KEY_SERVER_ID));
+		IssuesDbAdapter idb = new IssuesDbAdapter(sdb);
+
+		String uri = "issues/" + args.getLong(Constants.KEY_ISSUE_ID) + ".json";
+		JsonDownloader<Issue> downloader = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true);
+		issue = downloader.fetchObject(context, server, uri);
+
+		if (issue == null) {
+			JsonDownloadError error = downloader.getError();
+			if (error != null) {
+				return error;
+			}
+		} else {
+			issue.server = server;
+			idb.delete(issue);
+			idb.insert(issue);
+		}
+		sdb.close();
+
+		return issue;
+	}
+
+	public void onIssueLoaded(Object result) {
+		if (result == null) {
+			return;
+		}
+
+		if (result instanceof JsonDownloadError) {
+			((JsonDownloadError) result).displayCrouton(getSherlockActivity(), mMainLayout);
+		}
+
+		mIssue = (Issue) result;
+		mIssue.project.server = mIssue.server;
+
+		// Trigger UI update
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_OVERVIEW, mIssue);
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ATTACHMENTS, mIssue);
+
+		// Update UI
+		mMainLayout.setVisibility(View.VISIBLE);
+
+		mClient = new WikiUtils.WikiWebViewClient(getSherlockActivity());
+		mClient.setProject(mIssue.project);
 
 		mTrackerAndId.setText(getString(R.string.issue_tracker_id_format, mIssue.tracker.name, mIssue.id));
 		mSubject.setText(mIssue.subject != null ? mIssue.subject : "");
@@ -88,8 +160,6 @@ public class IssueOverviewFragment extends SherlockFragment {
 		mIssue.author = displayNameAndAvatar(mAuthor, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
 		mIssue.assigned_to = displayNameAndAvatar(mAssignee, mAssignedAvatar, mIssue.assigned_to, "%1$s", null);
 		mParent.setText(mIssue.parent != null && mIssue.parent.id > 0 ? Long.toString(mIssue.parent.id) : "");
-
-		return v;
 	}
 
 	private User displayNameAndAvatar(TextView name, ImageView avatar, User user, String textResId, Calendar date) {
@@ -160,13 +230,6 @@ public class IssueOverviewFragment extends SherlockFragment {
 		mTimeFormat = DateFormat.getTimeFormat(activity);
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_OVERVIEW, mIssue);
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ATTACHMENTS, mIssue);
-	}
-
 	public static String loadIssueOverview(Context context, Issue issue) {
 		WikiDbAdapter db = new WikiDbAdapter(context);
 		db.open();
@@ -176,7 +239,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 		textile = loader.handleMarkupReplacements(issue.project, textile);
 
 		db.close();
-		return Util.htmlFromTextile(textile);
+		return WikiUtils.htmlFromTextile(textile);
 	}
 
 	public static Object loadIssueAttachments(Context context, Issue issue) {
@@ -202,7 +265,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 
 		db.close();
 
-		return Util.htmlFromTextile(textile);
+		return WikiUtils.htmlFromTextile(textile);
 	}
 
 	private static String refactorImageUrls(IssuesDbAdapter db, Server server, String textile) {
@@ -244,5 +307,6 @@ public class IssueOverviewFragment extends SherlockFragment {
 	public void onIssueOverviewLoaded(String html) {
 		mDescription.loadData(html, "text/html; charset=UTF-8", null);
 		mDescription.reload();
+		mDescription.setWebViewClient(mClient);
 	}
 }
