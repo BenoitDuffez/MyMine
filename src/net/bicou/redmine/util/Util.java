@@ -6,90 +6,12 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
-import net.java.textilej.parser.MarkupParser;
-import net.java.textilej.parser.builder.HtmlDocumentBuilder;
-import net.java.textilej.parser.markup.textile.TextileDialect;
 
-import java.io.StringWriter;
 import java.util.Calendar;
 
 public class Util {
 	public static boolean isEpoch(Calendar cal) {
 		return cal == null || cal.getTimeInMillis() < 24 * 3600 * 1000;
-	}
-
-	public static String htmlFromTextile(final String textile) {
-		if (textile == null) {
-			return "";
-		}
-
-		final MarkupParser parser = new MarkupParser(new TextileDialect());
-		final StringWriter sw = new StringWriter();
-		final HtmlDocumentBuilder builder = new HtmlDocumentBuilder(sw);
-		builder.setEmitAsDocument(false);
-		parser.setBuilder(builder);
-		parser.parse(textile.trim());
-
-		// Bring back html entities
-		String html = sw.toString();
-		html = html.replace("&amp;nbsp;", "&nbsp;");
-
-		// Turn on block quotes by >
-		final String[] lines = html.replace("<br/>", "<br/>\n").replace("</p>", "</p>\n").split("\n");
-		html = "";
-		final StringBuilder b = new StringBuilder();
-		int blockQuoteLevel = 0;
-		int firstCharPos, pos;
-		char c;
-		for (final String line : lines) {
-			if (line.length() > 0) {
-				firstCharPos = 0;
-
-				if (line.charAt(0) == '<') {
-					while (firstCharPos < line.length() && line.charAt(firstCharPos) != '>') {
-						firstCharPos++;
-					}
-					firstCharPos++;
-				}
-
-				if (firstCharPos < line.length() && line.charAt(firstCharPos) == '>') {
-					int newBlockQuoteLevel = 1;
-					pos = firstCharPos + 1;
-					while (pos < line.length()) {
-						c = line.charAt(pos++);
-						firstCharPos++;
-
-						if (c == '>') {
-							newBlockQuoteLevel++;
-						} else if (c == ' ' || c == '\t') {
-							continue;
-						} else {
-							break;
-						}
-					}
-
-					if (newBlockQuoteLevel > blockQuoteLevel) {
-						for (int i = newBlockQuoteLevel; i > blockQuoteLevel; i--) {
-							b.append("<blockquote>");
-						}
-					} else {
-						for (int i = blockQuoteLevel; i > newBlockQuoteLevel; i--) {
-							b.append("</blockquote>");
-						}
-					}
-					blockQuoteLevel = newBlockQuoteLevel;
-					b.append(line.substring(firstCharPos));
-				} else {
-					while (blockQuoteLevel > 0) {
-						b.append("</blockquote>");
-						blockQuoteLevel--;
-					}
-					b.append(line);
-				}
-			}
-		}
-
-		return b.toString();
 	}
 
 	public static String joinFirstWords(final Object[] values, final String delim) {
