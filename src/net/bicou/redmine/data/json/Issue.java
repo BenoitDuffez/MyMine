@@ -57,6 +57,7 @@ public class Issue {
 					id = c.getLong(columnIndex);
 				} else if (col.equals(IssuesDbAdapter.KEY_PROJECT_ID)) {
 					// TODO
+					project.id = c.getInt(columnIndex);
 				} else if (col.equals(IssuesDbAdapter.KEY_TRACKER_ID)) {
 					tracker = new Tracker(server, c, col + "_");
 				} else if (col.equals(IssuesDbAdapter.KEY_PRIORITY_ID)) {

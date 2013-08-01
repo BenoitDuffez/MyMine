@@ -73,17 +73,32 @@ public class Server implements Parcelable {
 	}
 
 	public Server(final Cursor c) {
-		serverUrl = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_SERVER_URL));
-		apiKey = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_API_KEY));
-		authUsername = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_AUTH_USERNAME));
-		authPassword = c.getString(c.getColumnIndex(ServersDbAdapter.KEY_AUTH_PASSWORD));
+		this(c, "");
+	}
 
-		if (c.getColumnIndex(DbAdapter.KEY_ROWID) >= 0) {
-			rowId = c.getLong(c.getColumnIndex(DbAdapter.KEY_ROWID));
-		}
-		final int userId = c.getColumnIndex(ServersDbAdapter.KEY_USER_ID) >= 0 ? c.getInt(c.getColumnIndex(ServersDbAdapter.KEY_USER_ID)) : 0;
-		if (userId > 0) {
-			user = new User(c, UsersDbAdapter.TABLE_USERS + "_");
+	public Server(final Cursor c, String columnPrefix) {
+		int colIndex;
+		for (String col : ServersDbAdapter.SERVER_FIELDS) {
+			colIndex = c.getColumnIndex(columnPrefix + col);
+			if (colIndex < 0) {
+				continue;
+			}
+			if (ServersDbAdapter.KEY_SERVER_URL.equals(col)) {
+				serverUrl = c.getString(colIndex);
+			} else if (ServersDbAdapter.KEY_API_KEY.equals(col)) {
+				apiKey = c.getString(colIndex);
+			} else if (ServersDbAdapter.KEY_AUTH_USERNAME.equals(col)) {
+				authUsername = c.getString(colIndex);
+			} else if (ServersDbAdapter.KEY_AUTH_PASSWORD.equals(col)) {
+				authPassword = c.getString(colIndex);
+			} else if (DbAdapter.KEY_ROWID.equals(col)) {
+				rowId = c.getLong(colIndex);
+			} else if (ServersDbAdapter.KEY_USER_ID.equals(col)) {
+				final int userId = c.getColumnIndex(ServersDbAdapter.KEY_USER_ID) >= 0 ? c.getInt(c.getColumnIndex(ServersDbAdapter.KEY_USER_ID)) : 0;
+				if (userId > 0) {
+					user = new User(c, UsersDbAdapter.TABLE_USERS + "_");
+				}
+			}
 		}
 	}
 

@@ -537,6 +537,24 @@ public class IssuesDbAdapter extends DbAdapter {
 		}
 	}
 
+	public int delete(final Issue issue) {
+		if (issue == null) {
+			return 0;
+		}
+
+		if (issue.id <= 0) {
+			return 0;
+		}
+
+		List<String> where = new ArrayList<String>();
+		if (issue.server != null && issue.server.rowId > 0) {
+			where.add(KEY_SERVER_ID + " = " + issue.server.rowId);
+		}
+		where.add(KEY_ID + " = " + issue.id);
+
+		return mDb.delete(TABLE_ISSUES, Util.join(where.toArray(new String[] { }), " AND "), null);
+	}
+
 	public String getName(final Server server, final long issueId) {
 		final Issue i = select(server, issueId, new String[] {
 				KEY_SUBJECT

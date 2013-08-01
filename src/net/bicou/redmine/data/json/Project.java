@@ -74,17 +74,24 @@ public class Project implements Parcelable {
 	}
 
 	public Project() {
-
 	}
 
-	public Project(final Cursor c, final ProjectsDbAdapter db) {
+	public Project(final Cursor c) {
+		this(c, "");
+	}
+
+	public Project(final Cursor c, String columnPrefix) {
 		for (String col : ProjectsDbAdapter.PROJECT_FIELDS) {
 			final int pos = col.indexOf(" ");
 			if (pos > 0) {
 				col = col.substring(0, pos);
 			}
 			try {
-				int columnIndex = c.getColumnIndex(col);
+				int columnIndex = c.getColumnIndex(columnPrefix + col);
+				if (columnIndex < 0) {
+					continue;
+				}
+
 				if (col.equals(ProjectsDbAdapter.KEY_ID)) {
 					id = c.getLong(columnIndex);
 				} else if (col.equals(ProjectsDbAdapter.KEY_NAME)) {
@@ -100,9 +107,7 @@ public class Project implements Parcelable {
 					updated_on = new GregorianCalendar();
 					created_on.setTimeInMillis(c.getLong(columnIndex));
 				} else if (col.equals(ProjectsDbAdapter.KEY_SERVER_ID)) {
-					final long serverId = c.getLong(columnIndex);
-					final ServersDbAdapter sdb = new ServersDbAdapter(db);
-					server = sdb.getServer(serverId);
+					server = new Server(c, ServersDbAdapter.TABLE_SERVERS + "_");
 				} else if (col.equals(ProjectsDbAdapter.KEY_PARENT_ID)) {
 					parent = new Reference();
 					parent.id = c.getLong(columnIndex);
