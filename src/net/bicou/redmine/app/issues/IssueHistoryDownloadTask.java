@@ -9,6 +9,7 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.json.*;
 import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.net.JsonDownloadError;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.util.DiffMatchPatch;
 import net.bicou.redmine.util.L;
@@ -26,6 +27,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	SherlockFragmentActivity mActivity;
 	JournalsDownloadCallbacks mCallbacks;
 	File mCacheFolder;
+	JsonDownloadError mError;
 
 	private static class PropertyChange {
 		public String propName;
@@ -77,6 +79,8 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		void onPreExecute();
 
 		void onJournalsDownloaded(IssueHistory history);
+
+		void onJournalsFailed(JsonDownloadError error);
 	}
 
 	public IssueHistoryDownloadTask(final SherlockFragmentActivity act, final JournalsDownloadCallbacks callbacks, final Issue issue) {
@@ -115,9 +119,14 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		final NameValuePair[] args = new BasicNameValuePair[] {
 				new BasicNameValuePair("include", "journals,changesets"),
 		};
-		return new JsonDownloader<IssueHistory>(IssueHistory.class) //
-				.setStripJsonContainer(true) //
-				.fetchObject(mActivity, mIssue.server, url, args);
+
+		JsonDownloader<IssueHistory> downloader = new JsonDownloader<IssueHistory>(IssueHistory.class).setStripJsonContainer(true);
+		IssueHistory history = downloader.fetchObject(mActivity, mIssue.server, url, args);
+		if (history == null) {
+			mError = downloader.getError();
+		}
+
+		return history;
 	}
 
 	/**
@@ -394,7 +403,11 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	@Override
 	protected void onPostExecute(final IssueHistory history) {
 		if (mCallbacks != null) {
-			mCallbacks.onJournalsDownloaded(history);
+			if (history == null || history.journals == null) {
+				mCallbacks.onJournalsFailed(mError);
+			} else {
+				mCallbacks.onJournalsDownloaded(history);
+			}
 		}
 	}
 
