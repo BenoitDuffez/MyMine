@@ -3,6 +3,7 @@ package net.bicou.redmine.data.sqlite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.text.TextUtils;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.WikiPage;
@@ -142,59 +143,69 @@ public class WikiDbAdapter extends DbAdapter {
 
 	public List<WikiPage> selectFavorites() {
 		List<WikiPage> pages = new ArrayList<WikiPage>();
-		Cursor c = mDb.query(TABLE_WIKI, null, KEY_IS_FAVORITE + " > 0", null, null, null, null);
+
+		Cursor c = selectAllCursor(null, null, null, TABLE_WIKI + "." + KEY_IS_FAVORITE + " > 0");
 		if (c.moveToFirst()) {
 			do {
-				pages.add(new WikiPage(c, this));
+				pages.add(new WikiPage(c));
 			} while (c.moveToNext());
 		}
+
 		return pages;
 	}
 
-	public Cursor selectAllCursor(final Server server, Project project, final String[] columns) {
+	public Cursor selectAllCursor(final Server server, Project project, final String[] desiredColumns, String additionalCondition) {
 		final Cursor c;
+		String[] columns = desiredColumns == null ? WIKI_FIELDS : desiredColumns;
 
-		if (columns == null) {
-			List<String> selection = new ArrayList<String>();
-			if (server != null) {
-				selection.add(KEY_SERVER_ID + " = " + server.rowId);
-			}
-			if (project != null) {
-				selection.add(KEY_PROJECT_ID + " = " + project.id);
-			}
-			c = mDb.query(TABLE_WIKI, columns, Util.join(selection.toArray(), " AND "), null, null, null, null);
-		} else {
-			final List<String> tables = new ArrayList<String>();
-			final List<String> cols = new ArrayList<String>();
-			final List<String> args = new ArrayList<String>();
-			final List<String> onArgs = new ArrayList<String>();
+		final List<String> tables = new ArrayList<String>();
+		final List<String> cols = new ArrayList<String>();
+		final List<String> args = new ArrayList<String>();
+		final List<String> onArgs = new ArrayList<String>();
 
-			tables.add(TABLE_WIKI);
-			if (server != null) {
-				args.add(TABLE_WIKI + "." + KEY_SERVER_ID + " = " + server.rowId);
-			}
-			if (server != null) {
-				args.add(TABLE_WIKI + "." + KEY_PROJECT_ID + " = " + project.id);
-			}
-
-			// Handle fake columns
-			for (final String col : columns) {
-				onArgs.clear();
-				if (KEY_SERVER_ID.equals(col)) {
-					cols.add(ServersDbAdapter.TABLE_SERVERS + "." + ServersDbAdapter.KEY_SERVER_URL + " AS " + col);
-					onArgs.add(ServersDbAdapter.TABLE_SERVERS + "." + DbAdapter.KEY_ROWID + " = " + TABLE_WIKI + "." + KEY_SERVER_ID);
-					tables.add("LEFT JOIN " + ServersDbAdapter.TABLE_SERVERS + " ON " + Util.join(onArgs.toArray(), " AND "));
-				}
-				cols.add(TABLE_WIKI + "." + col);
-			}
-
-			final String where = args.size() > 0 ? " WHERE " + Util.join(args.toArray(), " AND ") : "";
-			final String sql = "SELECT " + Util.join(cols.toArray(), ", ") + " FROM " + Util.join(tables.toArray(), " ") + where;
-
-			c = mDb.rawQuery(sql, null);
+		if (!TextUtils.isEmpty(additionalCondition)) {
+			args.add(additionalCondition);
+		}
+		if (server != null && server.rowId > 0) {
+			args.add(TABLE_WIKI + "." + KEY_SERVER_ID + " = " + server.rowId);
+		}
+		if (project != null && project.id > 0) {
+			args.add(TABLE_WIKI + "." + KEY_PROJECT_ID + " = " + project.id);
 		}
 
+		// Handle sub objects
+		for (final String col : columns) {
+			onArgs.clear();
+			if (KEY_SERVER_ID.equals(col)) {
+				for (String serverColumn : ServersDbAdapter.SERVER_FIELDS) {
+					cols.add(ServersDbAdapter.TABLE_SERVERS + "." + serverColumn + " AS " + ServersDbAdapter.TABLE_SERVERS + "_" + serverColumn);
+				}
+
+				onArgs.add(ServersDbAdapter.TABLE_SERVERS + "." + DbAdapter.KEY_ROWID + " = " + TABLE_WIKI + "." + KEY_SERVER_ID);
+				tables.add(ServersDbAdapter.TABLE_SERVERS + " ON " + Util.join(onArgs.toArray(), " AND "));
+			} else if (KEY_PROJECT_ID.equals(col)) {
+				for (String projectColumn : ProjectsDbAdapter.PROJECT_FIELDS) {
+					cols.add(ProjectsDbAdapter.TABLE_PROJECTS + "." + projectColumn + " AS " + ProjectsDbAdapter.TABLE_PROJECTS + "_" + projectColumn);
+				}
+
+				onArgs.add(ProjectsDbAdapter.TABLE_PROJECTS + "." + ProjectsDbAdapter.KEY_ID + " = " + TABLE_WIKI + "." + KEY_PROJECT_ID);
+				tables.add(ProjectsDbAdapter.TABLE_PROJECTS + " ON " + Util.join(onArgs.toArray(), " AND "));
+			}
+
+			cols.add(TABLE_WIKI + "." + col);
+		}
+
+		String sql = "SELECT " + Util.join(cols.toArray(), ", ") + " FROM " + TABLE_WIKI;
+		if (tables.size() > 0) {
+			sql += " LEFT JOIN " + Util.join(tables.toArray(), " LEFT JOIN ");
+		}
+		if (args.size() > 0) {
+			sql += " WHERE " + Util.join(args.toArray(), " AND ");
+		}
+
+		c = mDb.rawQuery(sql, null);
 		c.moveToFirst();
+
 		return c;
 	}
 }

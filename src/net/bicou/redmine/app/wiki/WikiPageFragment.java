@@ -1,15 +1,13 @@
 package net.bicou.redmine.app.wiki;
 
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -20,17 +18,12 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.WikiPage;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
 import net.bicou.redmine.util.L;
-import net.bicou.redmine.util.Util;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class WikiPageFragment extends SherlockFragment {
 	public static final String KEY_WIKI_PAGE = "net.bicou.redmine.WikiPage";
@@ -39,21 +32,33 @@ public class WikiPageFragment extends SherlockFragment {
 	Project mProject;
 
 	public static final String DEFAULT_PAGE_URI = "Wiki";
-	/**
-	 * Whether we shouldn't wait for the project spinner to trigger an update
-	 */
-	public static final String KEY_WIKI_DIRECT_LOAD = "net.bicou.redmine.WikiDirectLoad";
 
 	ViewGroup mLayout;
 	WikiPage mWikiPage;
 	WebView mWebView;
 	TextView mWikiTitle;
 	CheckBox mFavorite;
+	String mHtmlContents;
+
+	WikiUtils.WikiWebViewClient mClient;
 
 	/**
 	 * The relative part. For example http://server.com/projects/1/wiki/TermsOfUse has a wiki page URI of TermsOfUse
 	 */
 	String mWikiPageURI;
+
+	public static final int ACTION_LOAD_WIKI_PAGE = 0;
+
+	public static class WikiPageLoadParameters {
+		public String uri;
+		public Project project;
+		public SherlockFragmentActivity croutonActivity;
+		public ViewGroup croutonLayout;
+		public WikiPage wikiPage;
+		public String resultHtml;
+		public long projectId;
+		public long serverId;
+	}
 
 	public static WikiPageFragment newInstance(final Bundle args) {
 		final WikiPageFragment f = new WikiPageFragment();
@@ -67,8 +72,10 @@ public class WikiPageFragment extends SherlockFragment {
 		mLayout = (ViewGroup) inflater.inflate(R.layout.frag_wikipage, container, false);
 		mWebView = (WebView) mLayout.findViewById(R.id.wiki_page);
 		mWikiTitle = (TextView) mLayout.findViewById(R.id.wiki_title);
-		mWebView.setWebViewClient(new WikiWebViewClient());
 		mFavorite = (CheckBox) mLayout.findViewById(R.id.wiki_favorite);
+
+		mClient = new WikiUtils.WikiWebViewClient(getSherlockActivity());
+		mWebView.setWebViewClient(mClient);
 
 		mFavorite.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -84,28 +91,22 @@ public class WikiPageFragment extends SherlockFragment {
 		long projectId = getArguments().getLong(Constants.KEY_PROJECT_ID);
 		long serverId = getArguments().getLong(Constants.KEY_SERVER_ID);
 		mWikiPageURI = getArguments().getString(KEY_WIKI_PAGE_URI);
-		ProjectsDbAdapter db = new ProjectsDbAdapter(getActivity());
-		db.open();
-		mProject = db.select(serverId, projectId, null);
 
 		if (savedInstanceState != null) {
 			mWikiPage = new Gson().fromJson(savedInstanceState.getString(KEY_WIKI_PAGE), WikiPage.class);
 		} else if (getArguments().keySet().contains(KEY_WIKI_PAGE)) {
 			mWikiPage = new Gson().fromJson(getArguments().getString(KEY_WIKI_PAGE), WikiPage.class);
-		} else {
-			WikiDbAdapter wdb = new WikiDbAdapter(db);
-			mWikiPage = wdb.select(mProject.server, mProject, mWikiPageURI);
 		}
-		db.close();
 
-		if (mWikiPage != null) {
-			refreshUI();
-		} else if (getArguments().getBoolean(KEY_WIKI_DIRECT_LOAD)) {
-			triggerAsyncLoadWikiPage();
-		} else {
-			// TODO
-			// empty fragment, need to call updateCurrentProject
-		}
+		WikiPageLoadParameters params = new WikiPageLoadParameters();
+		params.wikiPage = mWikiPage;
+		params.project = mProject;
+		params.uri = mWikiPageURI;
+		params.croutonLayout = mLayout;
+		params.croutonActivity = getSherlockActivity();
+		params.serverId = serverId;
+		params.projectId = projectId;
+		AsyncTaskFragment.runTask(getSherlockActivity(), ACTION_LOAD_WIKI_PAGE, params);
 
 		setHasOptionsMenu(true);
 
@@ -149,114 +150,93 @@ public class WikiPageFragment extends SherlockFragment {
 		}
 	}
 
-	private void triggerAsyncLoadWikiPage() {
-		if (TextUtils.isEmpty(mWikiPageURI)) {
-			mWikiPageURI = DEFAULT_PAGE_URI;
+	/**
+	 * Loads the wiki page and returns its text in HTML format, ready to be loaded in the WebView
+	 * <p/>
+	 * If {@code params.wikiPage} is valid, the HTML is directly returned from its textile markup.<br /> Otherwise,
+	 * this will try to load the wiki page from its URI and
+	 * project/server
+	 */
+	public static WikiPageLoadParameters loadWikiPage(Context context, WikiPageLoadParameters params) {
+		if (params == null) {
+			return null;
 		}
 
-		if (mWikiPageURI.equals("index")) {
-			// TODO
-		} else {
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
-			new AsyncTask<Void, Void, WikiPage>() {
-				@Override
-				protected WikiPage doInBackground(final Void... params) {
-					WikiDbAdapter db = new WikiDbAdapter(getActivity());
-					WikiPageLoader loader = new WikiPageLoader(mProject.server, getSherlockActivity(), db) //
-							.enableCroutonNotifications(getSherlockActivity(), mLayout);
-					WikiPage page = loader.actualSyncLoadWikiPage(mProject, mWikiPageURI);
+		if (params.wikiPage == null || TextUtils.isEmpty(params.wikiPage.text)) {
+			if (TextUtils.isEmpty(params.uri)) {
+				params.uri = DEFAULT_PAGE_URI;
+			}
 
-					return page;
+			if (params.uri.equals("index")) {
+				// TODO
+			} else {
+				ProjectsDbAdapter db = new ProjectsDbAdapter(context);
+				db.open();
+
+				// Don't load project if it's already loaded
+				if (params.wikiPage != null && params.wikiPage.project != null && params.wikiPage.project.id > 0) {
+					params.project = params.wikiPage.project;
+				} else {
+					params.project = db.select(params.serverId, params.projectId, null);
 				}
 
-				@Override
-				protected void onPostExecute(final WikiPage wikiPage) {
-					mWikiPage = wikiPage;
-					final SherlockFragmentActivity act = getSherlockActivity();
-					if (act != null) {
-						refreshUI();
-						act.setSupportProgressBarIndeterminateVisibility(false);
-					}
-				}
-			}.execute();
+				WikiDbAdapter wdb = new WikiDbAdapter(db);
+
+				WikiPageLoader loader = new WikiPageLoader(params.project.server, context, wdb) //
+						.enableCroutonNotifications(params.croutonActivity, params.croutonLayout);
+				params.wikiPage = loader.actualSyncLoadWikiPage(params.project, params.uri);
+
+
+				db.close();
+			}
 		}
+
+		if (params.project == null && params.wikiPage != null && params.wikiPage.project != null) {
+			params.project = params.wikiPage.project;
+		}
+		params.resultHtml = WikiUtils.htmlFromTextile(params.wikiPage.text);
+
+		return params;
 	}
 
-	private void refreshUI() {
+	public void refreshUI(WikiPageLoadParameters result) {
+		mWikiPage = result.wikiPage;
+		mHtmlContents = result.resultHtml;
+		mProject = result.project;
+
+		mClient.setProject(mProject);
+
+		// Null checks
 		if (mWikiPage == null || mWikiPage.text == null) {
 			mWikiTitle.setText(R.string.wiki_empty_page);
+			mWikiTitle.setVisibility(View.VISIBLE);
 			return;
 		}
 
+		// Title
 		String wikiPageTitle = mWikiPage.title;
 		if (TextUtils.isEmpty(wikiPageTitle)) {
-			mWikiTitle.setText("");
+			mWikiTitle.setVisibility(View.GONE);
 		} else {
 			mWikiTitle.setVisibility(View.VISIBLE);
 			if (TextUtils.isEmpty(mWikiPageURI)) {
 				mWikiPageURI = "";
 				wikiPageTitle = DEFAULT_PAGE_URI;
 			} else {
-				try {
-					wikiPageTitle = URLDecoder.decode(mWikiPageURI, "UTF-8");
-				} catch (final UnsupportedEncodingException e) {
-					L.e("Unable to decode wiki page title: " + mWikiPageURI, e);
-				}
+				wikiPageTitle = WikiUtils.titleFromUri(mWikiPageURI);
 			}
-			mWikiTitle.setText(wikiPageTitle);
+			if (TextUtils.isEmpty(wikiPageTitle)) {
+				mWikiTitle.setVisibility(View.GONE);
+			} else {
+				mWikiTitle.setVisibility(View.VISIBLE);
+				mWikiTitle.setText(wikiPageTitle);
+			}
 		}
+
+		// Favorite icon state
 		mFavorite.setChecked(mWikiPage.is_favorite);
 
 		// HTML Contents
-		String html = Util.htmlFromTextile(mWikiPage.text);
-
-		// [[linkTarget|Link name]]
-		Pattern regex = Pattern.compile("\\[\\[([^\\|]+)\\|([^\\]]+)\\]\\]");
-		Matcher matcher = regex.matcher(html);
-		html = matcher.replaceAll("<a href=\"" + WikiPageLoader.getUrlPrefix(mProject, "") + "/wiki/$1\">$2</a>");
-
-		// [[link]]
-		regex = Pattern.compile("\\[\\[([^\\]]+)\\]\\]");
-		matcher = regex.matcher(html);
-		html = matcher.replaceAll("<a href=\"" + WikiPageLoader.getUrlPrefix(mProject, "") + "/wiki/$1\">$1</a>");
-
-		// Issue
-		// TODO
-		// regex = Pattern.compile("#([0-9]+)([^;0-9]{1})");
-		// matcher = regex.matcher(html);
-		// html = matcher.replaceAll("<a href=\"" + getUrlPrefix("/issues/$1") + "\">#$1</a>$2");
-
-		mWebView.loadData(html, "text/html; charset=UTF-8", null);
-	}
-
-	private class WikiWebViewClient extends WebViewClient {
-		@Override
-		public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
-			if (mProject == null) {
-				return true;
-			}
-
-			final int id = url.indexOf(WikiPageLoader.getUrlPrefix(mProject, "/wiki"));
-			if (id >= 0) {
-				final String newPage = url.substring(id + WikiPageLoader.getUrlPrefix(mProject, "/wiki/").length());
-				final Bundle args = new Bundle();
-				args.putString(KEY_WIKI_PAGE_URI, newPage);
-				args.putBoolean(KEY_WIKI_DIRECT_LOAD, true);
-				args.putLong(Constants.KEY_PROJECT_ID, mProject.id);
-				args.putLong(Constants.KEY_SERVER_ID, mProject.server.rowId);
-				((WikiActivity) getSherlockActivity()).selectContent(args);
-			} else {
-				final Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setData(Uri.parse(url));
-				startActivity(intent);
-			}
-			return true;
-		}
-
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			super.onPageFinished(view, url);
-			view.invalidate();
-		}
+		mWebView.loadData(mHtmlContents, "text/html; charset=UTF-8", null);
 	}
 }

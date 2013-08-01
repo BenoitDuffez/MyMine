@@ -2,7 +2,6 @@ package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
@@ -70,11 +69,7 @@ public class WikiPage {
 		}
 	}
 
-	public WikiPage(final Cursor c, DbAdapter db) {
-		this(c, null, null);
-		ServersDbAdapter sdb = new ServersDbAdapter(db);
-		server = sdb.getServer(c.getLong(c.getColumnIndex(WikiDbAdapter.KEY_SERVER_ID)));
-		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
-		project = pdb.select(server, c.getLong(c.getColumnIndex(WikiDbAdapter.KEY_PROJECT_ID)));
+	public WikiPage(final Cursor c) {
+		this(c, new Server(c, ServersDbAdapter.TABLE_SERVERS + "_"), new Project(c, ProjectsDbAdapter.TABLE_PROJECTS + "_"));
 	}
 }

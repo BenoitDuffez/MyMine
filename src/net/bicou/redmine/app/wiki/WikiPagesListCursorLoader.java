@@ -29,6 +29,6 @@ public final class WikiPagesListCursorLoader extends SimpleCursorLoader {
 				WikiDbAdapter.KEY_UPDATED_ON,
 				WikiDbAdapter.KEY_SERVER_ID,
 				WikiDbAdapter.KEY_PROJECT_ID,
-		});
+		}, null);
 	}
 }

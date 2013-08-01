@@ -1,15 +1,18 @@
 package net.bicou.redmine.app.wiki;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.google.gson.Gson;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ProjectsSpinnerAdapter;
 import net.bicou.redmine.app.RefreshProjectsTask;
 import net.bicou.redmine.app.misc.EmptyFragment;
@@ -20,7 +23,8 @@ import net.bicou.redmine.util.L;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageFragment> implements ActionBar.OnNavigationListener {
+public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageFragment> implements ActionBar.OnNavigationListener,
+		AsyncTaskFragment.TaskFragmentCallbacks {
 	private WikiPage mDesiredWikiPage;
 
 	@Override
@@ -40,8 +44,12 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
 		super.onCreate(savedInstanceState);
 		initProjectsSpinner(savedInstanceState);
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
 	}
 
 	@Override
@@ -161,5 +169,29 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 		}
 
 		return true;
+	}
+
+	@Override
+	public void onPreExecute(final int action, final Object parameters) {
+		setSupportProgressBarIndeterminateVisibility(true);
+	}
+
+	@Override
+	public Object doInBackGround(final Context applicationContext, final int action, final Object parameters) {
+		if (action == WikiPageFragment.ACTION_LOAD_WIKI_PAGE) {
+			return WikiPageFragment.loadWikiPage(applicationContext, (WikiPageFragment.WikiPageLoadParameters) parameters);
+		}
+		return null;
+	}
+
+	@Override
+	public void onPostExecute(final int action, final Object parameters, final Object result) {
+		setSupportProgressBarIndeterminateVisibility(false);
+		if (action == WikiPageFragment.ACTION_LOAD_WIKI_PAGE) {
+			WikiPageFragment frag = getContentFragment();
+			if (frag != null) {
+				frag.refreshUI((WikiPageFragment.WikiPageLoadParameters) parameters);
+			}
+		}
 	}
 }
