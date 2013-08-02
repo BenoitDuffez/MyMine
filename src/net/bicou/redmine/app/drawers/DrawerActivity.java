@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import net.bicou.redmine.R;
@@ -113,22 +112,6 @@ public abstract class DrawerActivity extends SherlockFragmentActivity {
 
 		// Sync the toggle state after onRestoreInstanceState has occurred.
 		mDrawerToggle.syncState();
-	}
-
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		// If the nav drawer is open, hide action items related to the content view
-		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerMenu);
-
-		MenuItem menuItem = menu.findItem(R.id.menu_drawer_customize);
-		if (menuItem == null) {
-			if (drawerOpen) {
-				getSupportMenuInflater().inflate(R.menu.menu_navigation_drawer, menu);
-			}
-		} else {
-			menuItem.setVisible(drawerOpen);
-		}
-
-		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
