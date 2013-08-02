@@ -23,8 +23,7 @@ import net.bicou.redmine.util.L;
 import java.io.IOException;
 
 /**
- * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns
- * its IBinder.
+ * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns its IBinder.
  */
 public class ProjectsSyncAdapterService extends Service {
 	public static final String SYNC_MARKER_KEY = "net.bicou.redmine.sync.Projects.marker";
@@ -47,9 +46,10 @@ public class ProjectsSyncAdapterService extends Service {
 	}
 
 	/**
-	 * SyncAdapter implementation for syncing sample SyncAdapter contacts to the platform ContactOperations provider. This sample shows a basic 2-way
-	 * sync between the client and a sample server. It also contains an example of how to update the contacts' status messages, which would be useful
-	 * for a messaging or social networking client.
+	 * SyncAdapter implementation for syncing sample SyncAdapter contacts to the platform ContactOperations provider. This sample shows a basic 2-way sync between
+	 * the
+	 * client and a sample server. It also contains an example of how to update the contacts' status messages, which would be useful for a messaging or social
+	 * networking client.
 	 */
 	private static class SyncAdapter extends AbstractThreadedSyncAdapter {
 		private final AccountManager mAccountManager;
@@ -71,7 +71,6 @@ public class ProjectsSyncAdapterService extends Service {
 			sdb.open();
 			final long serverId = sdb.getServerId(account.name);
 			Server server = sdb.getServer(serverId);
-			sdb.close();
 
 			// Init SSL and certificates
 			SupportSSLKeyManager.init(mContext);
@@ -92,6 +91,7 @@ public class ProjectsSyncAdapterService extends Service {
 					return;
 				}
 			}
+			sdb.close();
 
 			// Sync projects
 			final ProjectsList projects = NetworkUtilities.syncProjects(mContext, server, lastSyncMarker);
@@ -122,6 +122,7 @@ public class ProjectsSyncAdapterService extends Service {
 		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
 		 *
 		 * @param account the account we're syncing
+		 *
 		 * @return the change high-water-mark
 		 */
 		private long getServerSyncMarker(final Account account) {

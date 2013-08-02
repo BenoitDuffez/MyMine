@@ -20,8 +20,7 @@ import net.bicou.redmine.util.L;
 import java.io.IOException;
 
 /**
- * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns
- * its IBinder.
+ * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns its IBinder.
  */
 public class UsersSyncAdapterService extends Service {
 	public static final String SYNC_MARKER_KEY = "net.bicou.redmine.sync.Users.marker";
@@ -46,9 +45,10 @@ public class UsersSyncAdapterService extends Service {
 	}
 
 	/**
-	 * SyncAdapter implementation for syncing sample SyncAdapter contacts to the platform ContactOperations provider. This sample shows a basic 2-way
-	 * sync between the client and a sample server. It also contains an example of how to update the contacts' status messages, which would be useful
-	 * for a messaging or social networking client.
+	 * SyncAdapter implementation for syncing sample SyncAdapter contacts to the platform ContactOperations provider. This sample shows a basic 2-way sync between
+	 * the
+	 * client and a sample server. It also contains an example of how to update the contacts' status messages, which would be useful for a messaging or social
+	 * networking client.
 	 */
 	private static class SyncAdapter extends AbstractThreadedSyncAdapter {
 		private static final boolean NOTIFY_AUTH_FAILURE = true;
@@ -74,7 +74,6 @@ public class UsersSyncAdapterService extends Service {
 			final ServersDbAdapter db = new ServersDbAdapter(mContext);
 			db.open();
 			Server server = db.getServer(account.name);
-			db.close();
 
 			if (server == null) {
 				L.i("no server matching " + account.name + ", recreating it");
@@ -92,6 +91,7 @@ public class UsersSyncAdapterService extends Service {
 					return;
 				}
 			}
+			db.close();
 
 			// Init SSL and certificates
 			SupportSSLKeyManager.init(mContext);
@@ -114,8 +114,8 @@ public class UsersSyncAdapterService extends Service {
 		/**
 		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
 		 *
-		 * @param account
-		 *            the account we're syncing
+		 * @param account the account we're syncing
+		 *
 		 * @return the change high-water-mark
 		 */
 		private long getServerSyncMarker(final Account account) {
@@ -129,14 +129,11 @@ public class UsersSyncAdapterService extends Service {
 		/**
 		 * Save off the high-water-mark we receive back from the server.
 		 *
-		 * @param account
-		 *            The account we're syncing
-		 * @param marker
-		 *            The high-water-mark we want to save.
+		 * @param account The account we're syncing
+		 * @param marker  The high-water-mark we want to save.
 		 */
 		private void setServerSyncMarker(final Account account, final long marker) {
 			mAccountManager.setUserData(account, SYNC_MARKER_KEY, Long.toString(marker));
 		}
 	}
-
 }
