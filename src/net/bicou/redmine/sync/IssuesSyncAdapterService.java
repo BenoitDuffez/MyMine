@@ -89,7 +89,6 @@ public class IssuesSyncAdapterService extends Service {
 			final ServersDbAdapter db = new ServersDbAdapter(mContext);
 			db.open();
 			Server server = db.getServer(account.name);
-			db.close();
 
 			if (server == null) {
 				L.i("no server matching " + account.name + ", recreating it");
@@ -107,6 +106,7 @@ public class IssuesSyncAdapterService extends Service {
 					return;
 				}
 			}
+			db.close();
 
 			Synchronizer sync = new Synchronizer(mContext);
 			long newSyncState = sync.synchronizeIssues(server, syncResult, lastSyncMarker);
