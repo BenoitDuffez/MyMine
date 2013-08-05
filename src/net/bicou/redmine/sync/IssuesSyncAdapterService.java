@@ -89,24 +89,12 @@ public class IssuesSyncAdapterService extends Service {
 			final ServersDbAdapter db = new ServersDbAdapter(mContext);
 			db.open();
 			Server server = db.getServer(account.name);
+			db.close();
 
 			if (server == null) {
-				L.i("no server matching " + account.name + ", recreating it");
-				try {
-					final String authToken = mAccountManager.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
-					server = new Server(account.name, authToken);
-					db.insert(server);
-				} catch (OperationCanceledException e) {
-				} catch (IOException e) {
-				} catch (AuthenticatorException e) {
-				}
-
-				if (server == null) {
-					L.e("Really couldn't get the server", null);
-					return;
-				}
+				L.e("Couldn't get the server", null);
+				return;
 			}
-			db.close();
 
 			Synchronizer sync = new Synchronizer(mContext);
 			long newSyncState = sync.synchronizeIssues(server, syncResult, lastSyncMarker);

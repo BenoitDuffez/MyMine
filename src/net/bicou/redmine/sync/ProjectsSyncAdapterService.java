@@ -2,14 +2,11 @@ package net.bicou.redmine.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Service;
 import android.content.*;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
-import net.bicou.redmine.Constants;
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.IssueCategoriesList;
@@ -19,8 +16,6 @@ import net.bicou.redmine.data.json.VersionsList;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.platform.ProjectManager;
 import net.bicou.redmine.util.L;
-
-import java.io.IOException;
 
 /**
  * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns its IBinder.
@@ -69,29 +64,16 @@ public class ProjectsSyncAdapterService extends Service {
 			// Get server ID
 			final ServersDbAdapter sdb = new ServersDbAdapter(mContext);
 			sdb.open();
-			final long serverId = sdb.getServerId(account.name);
-			Server server = sdb.getServer(serverId);
+			final Server server = sdb.getServer(account.name);
+			sdb.close();
 
 			// Init SSL and certificates
 			SupportSSLKeyManager.init(mContext);
 
 			if (server == null) {
-				L.i("no server matching " + account.name + ", recreating it");
-				try {
-					final String authToken = mAccountManager.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
-					server = new Server(account.name, authToken);
-					sdb.insert(server);
-				} catch (OperationCanceledException e) {
-				} catch (IOException e) {
-				} catch (AuthenticatorException e) {
-				}
-
-				if (server == null) {
-					L.e("Really couldn't get the server", null);
-					return;
-				}
+				L.e("Couldn't get the server", null);
+				return;
 			}
-			sdb.close();
 
 			// Sync projects
 			final ProjectsList projects = NetworkUtilities.syncProjects(mContext, server, lastSyncMarker);

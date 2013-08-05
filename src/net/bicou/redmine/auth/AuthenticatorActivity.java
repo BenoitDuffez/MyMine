@@ -3,13 +3,11 @@ package net.bicou.redmine.auth;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -26,62 +24,44 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.auth.AdvancedServerSettingsFragment.ServerSettingsListener;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.ProjectsList;
-import net.bicou.redmine.data.sqlite.ServersDbAdapter;
-import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.net.JsonDownloadError;
 import net.bicou.redmine.net.JsonDownloadError.ErrorType;
-import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
-import net.bicou.redmine.sync.NetworkUtilities;
 import net.bicou.redmine.sync.SyncUtils;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+
+import java.security.cert.X509Certificate;
 
 /**
  * Activity which displays login screen to the user.
  */
 public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity implements DialogInterface.OnClickListener, DialogInterface.OnCancelListener,
-		ServerSettingsListener {
-	/** The Intent flag to confirm credentials. */
-	public static final String PARAM_CONFIRM_CREDENTIALS = "confirmCredentials";
-
-	/** The Intent extra to store apiKey. */
-	public static final String PARAM_APIKEY = "apiKey";
-
-	/** The Intent extra to store serverUrl. */
+		ServerSettingsListener, AsyncTaskFragment.TaskFragmentCallbacks {
 	public static final String PARAM_SERVER_URL = "serverUrl";
-
-	/** The Intent extra to store serverUrl. */
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
 
 	private AccountManager mAccountManager;
-
-	/** Keep track of the login task so can cancel it if requested */
-	private UserLoginTask mAuthTask = null;
-
-	/** Was the original caller asking for an entirely new account? */
 	protected boolean mRequestNewAccount = false;
 
-	private String mApiKey;
 	private EditText mApiKeyEdit;
 
-	private String mServerUrl;
 	private EditText mServerUrlEdit;
 
-	private JsonDownloadError mError;
 	KeyStoreDiskStorage mKeyStoreDisk;
 
 	private static final String KEY_SERVER_URL = "net.bicou.redmine.auth.ServerURL";
 	private static final String KEY_SERVER_API_KEY = "net.bicou.redmine.auth.ServerAPIKey";
+	private static final String KEY_AUTH_USERNAME = "net.bicou.redmine.auth.HttpUserName";
+	private static final String KEY_AUTH_PASSWORD = "net.bicou.redmine.auth.HttpUserPassword";
 
 	public boolean mIsAuthSettingsFragmentShown = false;
 	private String mAuthUsername, mAuthPassword;
 	private ViewGroup mCroutonHolder;
+	private X509Certificate[] mUntrustedCertChain;
 
 	/**
 	 * {@inheritDoc}
@@ -92,14 +72,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setProgressBarIndeterminate(true);
 		setProgressBarIndeterminateVisibility(false);
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
 
 		mAccountManager = AccountManager.get(this);
 		mKeyStoreDisk = new KeyStoreDiskStorage(AuthenticatorActivity.this);
 
 		// Load data from intent
 		final Intent intent = getIntent();
-		mServerUrl = intent.getStringExtra(PARAM_SERVER_URL);
-		mRequestNewAccount = mServerUrl == null;
+		mRequestNewAccount = intent.getStringExtra(PARAM_SERVER_URL) == null;
 		L.i("    request new: " + mRequestNewAccount);
 
 		// Handle layout and views
@@ -107,9 +87,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 		mCroutonHolder = (ViewGroup) findViewById(R.id.setup_crouton_holder);
 		mServerUrlEdit = (EditText) findViewById(R.id.setup_server_url);
 		mApiKeyEdit = (EditText) findViewById(R.id.setup_api_key);
-		if (!TextUtils.isEmpty(mServerUrl)) {
-			mServerUrlEdit.setText(mServerUrl);
-		}
+		mServerUrlEdit.setText(intent.getStringExtra(PARAM_SERVER_URL));
 
 		// Restore state
 		if (savedInstanceState != null) {
@@ -121,6 +99,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 			if (!TextUtils.isEmpty(apiKey)) {
 				mApiKeyEdit.setText(apiKey);
 			}
+			mAuthUsername = savedInstanceState.getString(KEY_AUTH_USERNAME);
+			mAuthPassword = savedInstanceState.getString(KEY_AUTH_PASSWORD);
 		}
 
 		// Handle help link
@@ -147,107 +127,107 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 	}
 
 	@Override
+	public void onCredentialsEntered(final String username, final String password) {
+		mAuthUsername = username;
+		mAuthPassword = password;
+	}
+
+	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putString(KEY_SERVER_URL, mServerUrlEdit.getText().toString());
 		outState.putString(KEY_SERVER_API_KEY, mApiKeyEdit.getText().toString());
+		outState.putString(KEY_AUTH_USERNAME, mAuthUsername);
+		outState.putString(KEY_AUTH_PASSWORD, mAuthPassword);
 	}
 
 	/**
-	 * Handles onClick event on the Submit button. Sends serverUrl/apiKey to the server for authentication. The button is configured to call
-	 * handleLogin() in the layout XML.
+	 * Handles onClick event on the Submit button. Sends serverUrl/apiKey to the server for authentication. The button is configured to call handleLogin() in the
+	 * layout
+	 * XML.
 	 *
-	 * @param view
-	 *            The Submit button for which this method is invoked
+	 * @param view The Submit button for which this method is invoked
 	 */
 	public void checkServer(final View view) {
+		String serverUrl;
 		if (mRequestNewAccount) {
-			mServerUrl = mServerUrlEdit.getText().toString();
+			serverUrl = mServerUrlEdit.getText() == null ? null : mServerUrlEdit.getText().toString();
+		} else {
+			serverUrl = "";
 		}
-		mApiKey = mApiKeyEdit.getText().toString();
+		String apiKey = mApiKeyEdit.getText() == null ? null : mApiKeyEdit.getText().toString();
 
-		// Show a progress dialog, and kick off a background task to perform
-		// the user login attempt.
-		setProgressBarIndeterminateVisibility(true);
-		mAuthTask = new UserLoginTask();
-		mAuthTask.execute();
+		UserLoginTask.UserLoginParameters params = new UserLoginTask.UserLoginParameters(serverUrl, apiKey, mAuthUsername, mAuthPassword);
+		AsyncTaskFragment.runTask(this, 0, params);
+	}
+
+	@Override
+	public void onPreExecute(final int action, final Object parameters) {
+		L.d("");
+		setSupportProgressBarVisibility(true);
+	}
+
+	@Override
+	public Object doInBackGround(final Context applicationContext, final int action, final Object parameters) {
+		L.d("");
+		return UserLoginTask.tryUserLogin(applicationContext, (UserLoginTask.UserLoginParameters) parameters);
+	}
+
+	@Override
+	public void onPostExecute(final int action, final Object parameters, final Object result) {
+		L.d("");
+		setSupportProgressBarVisibility(false);
+		if (result != null && result instanceof UserLoginTask.UserLoginResult && ((UserLoginTask.UserLoginResult) result).success()) {
+			onLoginSuccessful(((UserLoginTask.UserLoginResult) result).server);
+		} else {
+			onLoginFailed(result == null ? null : ((UserLoginTask.UserLoginResult) result).error);
+		}
 	}
 
 	/**
-	 * Called when response is received from the server for authentication request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult
-	 * which is sent back to the caller. We store the authToken that's returned from the server as the 'apiKey' for this account - so we're never
-	 * storing the user's actual apiKey locally.
-	 *
-	 * @param result
-	 *            the confirmCredentials result.
+	 * Called when response is received from the server for authentication request. See onAuthenticationResult(). Sets the AccountAuthenticatorResult which is sent
+	 * back
+	 * to the caller. We store the authToken that's returned from the server as the 'apiKey' for this account - so we're never storing the user's actual apiKey
+	 * locally.
 	 */
-	private void onLoginSuccessful() {
+	private void onLoginSuccessful(Server server) {
 		L.d("");
-		final Account account = new Account(mServerUrl, Constants.ACCOUNT_TYPE);
+		// Create account
+		final Account account = new Account(server.serverUrl, Constants.ACCOUNT_TYPE);
 		if (mRequestNewAccount) {
-			mAccountManager.addAccountExplicitly(account, mApiKey, null);
-			// Set contacts sync for this account.
-			ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
+			mAccountManager.addAccountExplicitly(account, server.apiKey, null);
 		} else {
-			mAccountManager.setPassword(account, mApiKey);
+			mAccountManager.setPassword(account, server.apiKey);
 		}
 
-		saveServer();
+		// Save data
+		UserLoginTask.saveServer(this, server);
 		SyncUtils.enableSync(account, this);
 
+		// Validate account creation
 		final Intent intent = new Intent();
-		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, mServerUrl);
+		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, server.serverUrl);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
 		setAccountAuthenticatorResult(intent.getExtras());
 		setResult(RESULT_OK, intent);
 		finish();
 	}
 
-	Server mServer;
-
-	/**
-	 * Ran in the background, in order do DB management
-	 *
-	 * @param projectsList
-	 */
-	private void saveServer() {
-		L.d("");
-
-		// Save server
-		final ServersDbAdapter sdb = new ServersDbAdapter(this);
-		sdb.open();
-		sdb.insert(mServer);
-		sdb.close();
-
-		// Save user, if any
-		if (mServer.user != null) {
-			final UsersDbAdapter udb = new UsersDbAdapter(this);
-			udb.open();
-			udb.insert(mServer, mServer.user);
-			udb.close();
-		}
-
-		// Show up toast
-		final int toastId = mServer.user != null ? R.string.setup_success : R.string.setup_anonymous;
-		final String toast = getString(toastId, mServer.user == null ? "" : mServer.user.firstname + " " + mServer.user.lastname);
-		Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
-	}
-
-	private void onLoginFailed() {
+	private void onLoginFailed(JsonDownloadError error) {
 		L.e("onAuthenticationResult: failed to authenticate");
 		if (mRequestNewAccount) {
 			final String errorMessage;
 
-			switch (mError.errorType) {
+			switch (error.errorType) {
 			case TYPE_NETWORK:
 				final String details;
-				if (mError.exception == null) {
-					details = mError.getMessage(this);
+				if (error.exception == null) {
+					details = error.getMessage(this);
 				} else {
-					details = mError.exception.getClass().getSimpleName() + mError.exception.getMessage() == null ? //
-							mError.exception.getCause().toString() : mError.exception.getMessage();
+					details = error.exception.getClass().getSimpleName() + error.exception.getMessage() == null ? //
+							error.exception.getCause().toString() : error.exception.getMessage();
 				}
-				errorMessage = getString(mError.errorType == ErrorType.TYPE_JSON ? R.string.auth_error_json : R.string.auth_error_network, details);
+				errorMessage = getString(error.errorType == ErrorType.TYPE_JSON ? R.string.auth_error_json : R.string.auth_error_network, details);
 				break;
 			default:
 			case TYPE_RESPONSE:
@@ -261,37 +241,18 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 
 			Crouton.makeText(this, errorMessage + "\n" + getString(R.string.setup_button_tryagain), Style.ALERT, mCroutonHolder).show();
 		} else {
-			Crouton.makeText(this, mError.getMessage(this) + getString(R.string.setup_check_failed), Style.ALERT, mCroutonHolder).show();
+			Crouton.makeText(this, error.getMessage(this) + getString(R.string.setup_check_failed), Style.ALERT, mCroutonHolder).show();
 		}
 
-		if (mError != null && mError.chain != null) {
+		if (error != null && error.chain != null) {
 			showSSLCertDialog();
-		}
-	}
-
-	/**
-	 * Called when the authentication process completes (see attemptLogin()).
-	 *
-	 * @param authToken
-	 *            the authentication token returned by the server, or NULL if authentication failed.
-	 */
-	public void onAuthenticationResult(final boolean success) {
-		L.d("");
-		// Our task is complete, so clear it out
-		mAuthTask = null;
-		setProgressBarIndeterminateVisibility(false);
-
-		if (success) {
-			onLoginSuccessful();
-		} else {
-			onLoginFailed();
 		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (mError != null && mError.chain != null) {
+		if (mUntrustedCertChain != null) {
 			showSSLCertDialog();
 		}
 	}
@@ -299,7 +260,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 	// TODO: better UI
 	private void showSSLCertDialog() {
 		new AlertDialog.Builder(this).setTitle(R.string.auth_accept_cert) //
-				.setMessage(mError.chain[0].toString()) //
+				.setMessage(mUntrustedCertChain[0].toString()) //
 				.setPositiveButton(android.R.string.yes, this) //
 						// .setNeutralButton(R.string.mtm_decision_once, this) //
 				.setNegativeButton(android.R.string.no, this) //
@@ -313,7 +274,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 		switch (btnId) {
 		case DialogInterface.BUTTON_POSITIVE:
 			// Save cert
-			mKeyStoreDisk.storeCert(mError.chain);
+			mKeyStoreDisk.storeCert(mUntrustedCertChain);
 			checkServer(null);
 			break;
 
@@ -325,64 +286,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 
 	@Override
 	public void onCancel(final DialogInterface dialog) {
-	}
-
-	public void onAuthenticationCancel() {
-		L.d("");
-		mAuthTask = null;
-		setProgressBarIndeterminateVisibility(false);
-	}
-
-	/**
-	 * Represents an asynchronous task used to authenticate a user against the SampleSync Service
-	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-		JsonDownloader<?> mTask;
-
-		@Override
-		protected Boolean doInBackground(final Void... params) {
-			// Validate server URL
-			if (mServerUrl.indexOf("://") < 0) {
-				mServerUrl = "http://" + mServerUrl;
-			}
-
-			mServer = new Server(mServerUrl, mApiKey);
-			mServer.authUsername = mAuthUsername;
-			mServer.authPassword = mAuthPassword;
-
-			final String url = "projects.json";
-			final NameValuePair[] args = new BasicNameValuePair[] {
-					new BasicNameValuePair("limit", "1")
-			};
-			boolean authResult = false;
-
-			try {
-				mTask = new JsonDownloader<ProjectsList>(ProjectsList.class).setDownloadAllIfList(false);
-				authResult = mTask.fetchObject(AuthenticatorActivity.this, mServer, url, args) != null;
-				mError = mTask.getError();
-			} catch (final Exception e) {
-				L.e("Failed to authenticate", e);
-				L.i(e.toString());
-				mError = new JsonDownloadError(ErrorType.TYPE_UNKNOWN, e);
-				mError.setMessage(R.string.err_unknown, e.getMessage());
-			}
-
-			if (authResult && mError == null) {
-				mServer.user = NetworkUtilities.whoAmI(AuthenticatorActivity.this, mServer);
-			}
-
-			return authResult && mError == null;
-		}
-
-		@Override
-		protected void onPostExecute(final Boolean success) {
-			onAuthenticationResult(success);
-		}
-
-		@Override
-		protected void onCancelled() {
-			onAuthenticationCancel();
-		}
 	}
 
 	@Override
@@ -425,11 +328,5 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 	protected void onDestroy() {
 		super.onDestroy();
 		Crouton.cancelAllCroutons();
-	}
-
-	@Override
-	public void onCredentialsEntered(final String username, final String password) {
-		mAuthUsername = username;
-		mAuthPassword = password;
 	}
 }
