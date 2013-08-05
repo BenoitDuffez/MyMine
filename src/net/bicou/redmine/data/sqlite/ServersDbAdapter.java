@@ -63,11 +63,12 @@ public class ServersDbAdapter extends DbAdapter {
 	}
 
 	private String getDefaultTables() {
-		return TABLE_SERVERS + ", " + UsersDbAdapter.TABLE_USERS;
+		return TABLE_SERVERS + " LEFT JOIN " + UsersDbAdapter.TABLE_USERS;
 	}
 
 	public List<Server> selectAll() {
-		final Cursor c = mDb.query(getDefaultTables(), getAllColumns(), getDefaultSelection(), null, null, null, null);
+		String sql = "SELECT " + Util.join(getAllColumns(), ", ") + " FROM " + getDefaultTables() + " ON " + getDefaultSelection();
+		final Cursor c = mDb.rawQuery(sql, null);
 
 		final List<Server> servers = new ArrayList<Server>();
 		if (c != null) {
@@ -91,8 +92,9 @@ public class ServersDbAdapter extends DbAdapter {
 	}
 
 	public Server getServer(final long rowId) {
-		String selection = getDefaultSelection() + " AND " + KEY_ROWID + " = " + rowId;
-		final Cursor c = mDb.query(getDefaultTables(), getAllColumns(), selection, null, null, null, null);
+		String selection = KEY_ROWID + " = " + rowId;
+		String sql = "SELECT " + Util.join(getAllColumns(), ", ") + " FROM " + getDefaultTables() + " ON " + getDefaultSelection() + " WHERE " + selection;
+		final Cursor c = mDb.rawQuery(sql, null);
 
 		Server server = null;
 		if (c != null) {
@@ -104,33 +106,10 @@ public class ServersDbAdapter extends DbAdapter {
 		return server;
 	}
 
-	public long getServerId(final String serverUrl) {
-		final String[] cols = {
-				KEY_ROWID
-		};
-		final String cond = KEY_SERVER_URL + " = ?";
-		final String[] args = {
-				serverUrl
-		};
-		final Cursor c = mDb.query(TABLE_SERVERS, cols, cond, args, null, null, null);
-
-		long serverId = 0;
-		if (c != null) {
-			if (c.moveToFirst()) {
-				serverId = c.getLong(0);
-			}
-			c.close();
-		}
-		return serverId;
-	}
-
 	public Server getServer(final String serverUrl) {
-		final String[] cols = getAllColumns();
-		final String cond = getDefaultSelection() + " AND " + KEY_SERVER_URL + " = ?";
-		final String[] args = {
-				serverUrl
-		};
-		final Cursor c = mDb.query(getDefaultTables(), cols, cond, args, null, null, null);
+		final String selection = KEY_SERVER_URL + " = ?";
+		String sql = "SELECT " + Util.join(getAllColumns(), ", ") + " FROM " + getDefaultTables() + " ON " + getDefaultSelection() + " WHERE " + selection;
+		final Cursor c = mDb.rawQuery(sql, new String[] { serverUrl });
 
 		Server server = null;
 		if (c != null) {
