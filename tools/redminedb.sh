@@ -1,4 +1,10 @@
 #! /bin/bash
 
-adb $1 shell su -c "cat /data/data/net.bicou.redmine/databases/redmine.db > /sdcard/redmine.db" && adb $1 pull /sdcard/redmine.db .redmine.db && /opt/local/bin/sqlite3 -column -header .redmine.db
+package=net.bicou.redmine
+db=redmine.db
+
+adb $1 shell "cat /data/data/$package/databases/$db > /sdcard/$db"
+adb $1 shell su -c "cat /data/data/$package/databases/$db > /sdcard/$db"
+adb $1 pull /sdcard/$db .$db
+/opt/local/bin/sqlite3 -column -header .$db
 
