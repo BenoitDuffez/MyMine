@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.bicou.redmine"
           android:versionCode="1307160020"
-          android:versionName="0.9.1">
+          android:versionName="0.9.1-debug">
 
     <uses-sdk
             android:minSdkVersion="8"
-            android:targetSdkVersion="17"/>
+            android:targetSdkVersion="18"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
@@ -55,6 +55,14 @@
             <meta-data
                     android:name="android.app.searchable"
                     android:resource="@xml/search"/>
+        </activity>
+
+        <activity
+                android:name="net.bicou.redmine.app.issues.edit.EditIssueActivity"
+                android:parentActivityName="net.bicou.redmine.app.issues.IssuesActivity">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="net.bicou.redmine.app.issues.IssuesActivity"/>
         </activity>
 
         <activity
