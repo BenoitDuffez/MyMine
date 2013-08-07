@@ -31,7 +31,7 @@
         <item>-1</item>
     </string-array>
 
-    <string name="pref_title_sync_issues_period">Période à synchroniser pour les problèmes</string>
+    <string name="pref_title_sync_issues_period">Période à synchroniser pour les tickets</string>
     <string-array name="pref_sync_issues_period_titles">
         <item>2 semaines</item>
         <item>1 mois</item>

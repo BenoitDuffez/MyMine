@@ -8,7 +8,6 @@ import net.bicou.redmine.data.json.Tracker;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TrackersDbAdapter extends DbAdapter {
 	public static final String TABLE_TRACKERS = "trackers";
@@ -71,10 +70,10 @@ public class TrackersDbAdapter extends DbAdapter {
 		return mDb.delete(TABLE_TRACKERS, where, null);
 	}
 
-	public List<Tracker> selectAll(final Server server) {
+	public ArrayList<Tracker> selectAll(final Server server) {
 		final String selection = KEY_SERVER_ID + " = " + server.rowId;
 		final Cursor c = mDb.query(TABLE_TRACKERS, TRACKER_FIELDS, selection, null, null, null, null);
-		final List<Tracker> list = new ArrayList<Tracker>();
+		final ArrayList<Tracker> list = new ArrayList<Tracker>();
 
 		if (c != null) {
 			while (c.moveToNext()) {

@@ -9,7 +9,6 @@ import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class VersionsDbAdapter extends DbAdapter {
@@ -49,6 +48,10 @@ public class VersionsDbAdapter extends DbAdapter {
 				"CREATE TABLE " + TABLE_VERSIONS + " (" + Util.join(VERSION_FIELDS, ", ") + ", " //
 						+ "PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + ", " + KEY_PROJECT_ID + "))",
 		};
+	}
+
+	public static String getFieldAlias(String field, String col) {
+		return TABLE_VERSIONS + "." + field + " AS " + col + "_" + field;
 	}
 
 	public VersionsDbAdapter(final Context ctx) {
@@ -95,14 +98,31 @@ public class VersionsDbAdapter extends DbAdapter {
 		return mDb.delete(TABLE_VERSIONS, where, null);
 	}
 
-	public List<Version> selectAll(Server server, Project project) {
-		final String where = KEY_SERVER_ID + " = " + server.rowId + " AND " + KEY_PROJECT_ID + " = " + project.id;
+	public ArrayList<Version> selectAll(Server server, Project project) {
+		final String where = Util.join(new String[] {
+				KEY_SERVER_ID + " = " + server.rowId,
+				KEY_PROJECT_ID + " = " + project.id,
+		}, " AND ");
+		return selectAll(server, project, where, null);
+	}
+
+	public ArrayList<Version> selectAllOpen(Server server, Project project) {
+		final String where = Util.join(new String[] {
+				KEY_SERVER_ID + " = " + server.rowId,
+				KEY_PROJECT_ID + " = " + project.id,
+				KEY_STATUS + " = ?",
+		}, " AND ");
+		String[] args = { "open" };
+		return selectAll(server, project, where, args);
+	}
+
+	private ArrayList<Version> selectAll(Server server, Project project, String where, String[] args) {
 		String orderBy = Util.join(new String[] {
 				KEY_STATUS + " DESC",
 				KEY_DUE_DATE + " DESC",
 		}, ", ");
-		List<Version> versions = new ArrayList<Version>();
-		Cursor c = mDb.query(TABLE_VERSIONS, null, where, null, null, null, orderBy);
+		ArrayList<Version> versions = new ArrayList<Version>();
+		Cursor c = mDb.query(TABLE_VERSIONS, null, where, args, null, null, orderBy);
 		if (c != null) {
 			while (c.moveToNext()) {
 				versions.add(new Version(c));

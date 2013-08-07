@@ -9,6 +9,8 @@ import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Reference;
 import net.bicou.redmine.util.Util;
 
+import java.util.ArrayList;
+
 public class IssueCategoriesDbAdapter extends DbAdapter {
 	public static final String TABLE_ISSUE_CATEGORIES = "issue_categories";
 
@@ -98,10 +100,20 @@ public class IssueCategoriesDbAdapter extends DbAdapter {
 		return issueCategory;
 	}
 
-	public Cursor selectAllCursor(final Server server, final String[] columns) {
-		final Cursor c = mDb.query(TABLE_ISSUE_CATEGORIES, columns, KEY_SERVER_ID + " = " + server.rowId, null, null, null, null);
-		c.moveToFirst();
-		return c;
+	public ArrayList<IssueCategory> selectAll(final Server server, final Project project) {
+		String condition = KEY_SERVER_ID + " = " + server.rowId + " AND " + KEY_PROJECT_ID + " = " + project.id;
+		final Cursor c = mDb.query(TABLE_ISSUE_CATEGORIES, null, condition, null, null, null, null);
+		ArrayList<IssueCategory> categories = null;
+		if (c != null) {
+			if (c.moveToFirst()) {
+				categories = new ArrayList<IssueCategory>();
+				do {
+					categories.add(new IssueCategory(server, project, c));
+				} while (c.moveToNext());
+			}
+			c.close();
+		}
+		return categories;
 	}
 
 	/**

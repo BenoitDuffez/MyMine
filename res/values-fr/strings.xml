@@ -30,7 +30,7 @@
     <string name="loading_sync_check_button">Vérifier les paramètres de synchro</string>
     <string name="loading_sync_title">Pause café !</string>
 
-    <string name="no_projects">La liste des projets est vide.</string>
+    <string name="no_projects">La liste des tickets est vide.</string>
 
     <string name="help_text">Afin d\'utiliser cette appli, vous devez configurer la connexion à votre serveur. Pour cela, ajoutez simplement un compte
         <b>Serveur Redmine</b>
@@ -38,41 +38,41 @@
         contrôler exactement ce que vous voulez synchroniser depuis le serveur.
     </string>
 
-    <string name="title_projects">Projets</string>
+    <string name="title_projects">Tickets</string>
     <string name="title_wiki_pages">Pages Wiki</string>
-    <string name="title_issues">Problèmes</string>
+    <string name="title_issues">Tickets</string>
 
     <string name="sync_account_type">Serveur Redmine</string>
-    <string name="sync_issues">Problèmes (et leur statuts, priorités, etc.)</string>
-    <string name="sync_projects">Projets (et leurs versions, etc.)</string>
+    <string name="sync_issues">Tickets (et leur statuts, priorités, etc.)</string>
+    <string name="sync_projects">Tickets (et leurs versions, etc.)</string>
     <string name="sync_wiki">Pages Wiki</string>
     <string name="sync_users">Utilisateurs</string>
     <string name="sync_settings_title">Paramètres du compte</string>
     <string name="sync_settings_summary">Fréquence de synchro, notifications, etc.</string>
 
-    <string name="menu_projects">Projets</string>
-    <string name="menu_issues">Problèmes</string>
+    <string name="menu_projects">Tickets</string>
+    <string name="menu_issues">Tickets</string>
     <string name="menu_wiki">Wiki</string>
     <string name="menu_about">À propos</string>
     <string name="menu_settings">Paramètres</string>
 
-    <string name="no_wiki_pages">Ce projet n\'a aucune page wiki.</string>
+    <string name="no_wiki_pages">Ce ticket n\'a aucune page wiki.</string>
 
     <string name="not_applicable">N/A</string>
 
     <!-- Overview -->
     <string name="overview_card_issues_count_myself">dont vous êtes le responsable</string>
     <string name="overview_card_issues_count_all">sur tous les serveurs combinés</string>
-    <string name="overview_card_issues_title">Problèmes</string>
-    <string name="overview_card_issues_subtitle" formatted="false">{0,choice,0#Il n\'y a pas de problème %s|1#Il n\'y a qu\'un problème %s|1&lt;Il y a {0}
-        problèmes %s}
+    <string name="overview_card_issues_title">Tickets</string>
+    <string name="overview_card_issues_subtitle" formatted="false">{0,choice,0#Il n\'y a pas de ticket %s|1#Il n\'y a qu\'un ticket %s|1&lt;Il y a {0}
+        tickets %s}
     </string>
 
-    <string name="overview_card_projects_title">Projets</string>
-    <string name="overview_card_projects_subtitle">{0,choice,0#Il n\'y a pas encore de projet synchronisé. Avez-vous configuré un projet ?|1#Vous suivez un
-        seul projet|1&lt;Vous suivez {0} projets}
+    <string name="overview_card_projects_title">Tickets</string>
+    <string name="overview_card_projects_subtitle">{0,choice,0#Il n\'y a pas encore de ticket synchronisé. Avez-vous configuré un ticket ?|1#Vous suivez un
+        seul ticket|1&lt;Vous suivez {0} tickets}
     </string>
-    <string name="overview_card_projects_action">Voir les projets</string>
+    <string name="overview_card_projects_action">Voir les tickets</string>
     <string name="overview_card_projects_action2">Voir les feuilles de route</string>
 
     <string name="overview_card_servers_title">Serveurs Redmine</string>
@@ -85,7 +85,7 @@
     <!-- Issue-related -->
     <string name="issue_listview_target_version">Ver: %1$s</string>
     <string name="issue_id">ID</string>
-    <string name="issue_project">Projet</string>
+    <string name="issue_project">Ticket</string>
     <string name="issue_tracker">Type</string>
     <string name="issue_author">Auteur</string>
     <string name="issue_subject">Sujet</string>
@@ -111,7 +111,7 @@
 
     <string name="issue_filter_all">TOUT</string>
     <string name="issue_filter_queries">Requêtes</string>
-    <string name="issue_filter_projects">Projets</string>
+    <string name="issue_filter_projects">Tickets</string>
 
     <string name="issue_overview_title">Aperçu</string>
     <string name="issue_journal_title">Historique</string>
@@ -129,16 +129,16 @@
     <string name="issue_changeset_revision">Révision r%1$s</string>
 
     <string name="issue_menu_open_browser">Ouvrir dans le navigateur</string>
-    <string name="issues_menu_search">Rechercher un problème&#8230;</string>
-    <string name="issues_menu_refresh">Rafraîchir les problèmes</string>
-    <string name="issues_search_hint">Rechercher dans les problème Redmine&#8230;</string>
+    <string name="issues_menu_search">Rechercher un ticket&#8230;</string>
+    <string name="issues_menu_refresh">Rafraîchir les tickets</string>
+    <string name="issues_search_hint">Rechercher dans les ticket Redmine&#8230;</string>
 
-    <string name="issues_ordering">Trier la liste des problèmes par :</string>
-    <string name="issues_menu_ordering">Tri des problèmes&#8230;</string>
+    <string name="issues_ordering">Trier la liste des tickets par :</string>
+    <string name="issues_menu_ordering">Tri des tickets&#8230;</string>
     <string name="issues_ordering_asc">ASC</string>
     <string name="issues_ordering_desc">DESC</string>
     <string name="issues_ordering_then">puis&#8230;</string>
-    <string name="issues_list_empty">La liste des problèmes est vide.</string>
+    <string name="issues_list_empty">La liste des tickets est vide.</string>
     <string name="issues_list_empty_search">La recherche n\'a retourné aucun résultat</string>
 
     <!-- Project -->
@@ -155,7 +155,7 @@
         : %1$s
     </string>
     <string name="project_parent">
-        <b>Projet parent</b>
+        <b>Ticket parent</b>
         : %1$s
     </string>
     <string name="project_list_item_updated_on">MÀJ : %1$s</string>
@@ -230,11 +230,11 @@
     <!-- Roadmap -->
     <string name="roadmap_version">Version</string>
     <string name="roadmap_show_wiki">Voir la page wiki</string>
-    <string name="roadmap_related_issues">Problèmes liés</string>
+    <string name="roadmap_related_issues">Tickets liés</string>
     <string name="roadmap_no_roadmaps">Aucune feuille de route définie.</string>
     <string name="roadmap_list_title">Feuille de route</string>
     <string name="roadmap_list_item_due_date">Date d\'échéance : %1$s</string>
-    <string name="roadmap_issues_count">Problèmes : %1$d (dont %2$d ouverts)</string>
+    <string name="roadmap_issues_count">Tickets : %1$d (dont %2$d ouverts)</string>
     <string name="roadmap_due_date">Date d\'échéance : %1$s</string>
 
     <!-- Drawer -->

@@ -1,7 +1,6 @@
 package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
-import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.util.L;
 
@@ -12,7 +11,7 @@ public class IssueStatus extends Reference {
 	public IssueStatus() {
 	}
 
-	public IssueStatus(final Cursor c, final DbAdapter db) {
+	public IssueStatus(final Cursor c) {
 		super(c);
 
 		for (final String col : IssueStatusesDbAdapter.ISSUE_STATUS_FIELDS) {

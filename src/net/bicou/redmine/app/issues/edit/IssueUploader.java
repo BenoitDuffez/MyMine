@@ -1,0 +1,324 @@
+package net.bicou.redmine.app.issues.edit;
+
+import android.content.Context;
+import android.text.TextUtils;
+import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.util.L;
+
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+/**
+ * Created by bicou on 07/08/13.
+ */
+public class IssueUploader {
+	private enum FieldChange {
+		NO_CHANGE,
+
+		// Native object (integer, double, string...)
+		ADDED,
+		CHANGED,
+		REMOVED,
+
+		// Object (with an ID field)
+		ID_ADDED,
+		ID_CHANGED,
+		ID_REMOVED,
+	}
+
+	EditIssueFragment.IssueModification mModification;
+	Context mContext;
+
+	public IssueUploader(final Context context, final EditIssueFragment.IssueModification modification) {
+		if (modification.newIssue == null || modification.newIssue.server == null) {
+			return;
+		}
+		mContext = context;
+		mModification = modification;
+	}
+
+	public String convertToJson() {
+		if (mModification == null) {
+			throw new IllegalArgumentException("Invalid issue modification provided");
+		}
+
+		IssuesDbAdapter db = new IssuesDbAdapter(mContext);
+		db.open();
+		mModification.oldIssue = db.select(mModification.newIssue.server, mModification.newIssue.id, null);
+		db.close();
+
+		HashMap<String, Object> fields = getDeltas(mModification.oldIssue, mModification.newIssue);
+
+		if (!TextUtils.isEmpty(mModification.notes)) {
+			fields.put("notes", mModification.notes);
+		}
+
+		if (fields.size() > 0) {
+			fields.put("updated_on", new GregorianCalendar());
+			return buildJson(fields);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Builds a HashMap of the differences between the two objects
+	 */
+	private HashMap<String, Object> getDeltas(Issue oldIssue, Issue newIssue) {
+		HashMap<String, Object> fields = new HashMap<String, Object>();
+
+		handleField(newIssue, oldIssue, "project", fields);
+		handleField(newIssue, oldIssue, "tracker", fields);
+		handleField(newIssue, oldIssue, "status", fields);
+		handleField(newIssue, oldIssue, "priority", fields);
+		handleField(newIssue, oldIssue, "category", fields);
+		handleField(newIssue, oldIssue, "parent", fields);
+		handleField(newIssue, oldIssue, "fixed_version", fields);
+		handleField(newIssue, oldIssue, "assigned_to", fields);
+		handleField(newIssue, oldIssue, "author", fields);
+
+		handleField(newIssue, oldIssue, "subject", fields);
+		handleField(newIssue, oldIssue, "description", fields);
+		handleField(newIssue, oldIssue, "start_date", fields);
+		handleField(newIssue, oldIssue, "created_on", fields);
+		handleField(newIssue, oldIssue, "due_date", fields);
+		handleField(newIssue, oldIssue, "done_ratio", fields);
+		handleField(newIssue, oldIssue, "estimated_hours", fields);
+		handleField(newIssue, oldIssue, "spent_hours", fields);
+		handleField(newIssue, oldIssue, "is_private", fields);
+
+		//TODO
+		//		public List<Journal> journals;
+		//		public List<ChangeSet> changesets;
+		//		public List<Attachment> attachments;
+
+		return fields;
+	}
+
+	/**
+	 * Converts the HashMap of fields into a json representation
+	 */
+	private String buildJson(final HashMap<String, Object> fields) {
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
+		Iterator<String> iterator = fields.keySet().iterator();
+		Object item;
+		String key;
+		boolean first = true;
+
+		String json = "{\"issue\":{";
+		while (iterator.hasNext()) {
+			if (first) {
+				first = false;
+			} else {
+				json += ",";
+			}
+
+			key = iterator.next();
+			item = fields.get(key);
+
+			json += "\"" + key + "\":";
+
+			if (item instanceof Integer || item instanceof Long) {
+				json += String.format(Locale.ENGLISH, "%d", ((Number) item).longValue());
+			} else if (item instanceof Float || item instanceof Double) {
+				json += String.format(Locale.ENGLISH, "%.2f", ((Number) item).doubleValue());
+			} else if (item instanceof String) {
+				json += String.format(Locale.ENGLISH, "\"%s\"", ((String) item).replace("\"", "\\\""));
+			} else if (item instanceof Calendar) {
+				json += String.format(Locale.ENGLISH, "\"%s\"", sdf.format(((Calendar) item).getTime()));
+			} else if (item instanceof Boolean) {
+				json += (Boolean) item;
+			} else {
+				try {
+					Field id = item.getClass().getField("id");
+					json += (Long) id.get(item);
+				} catch (NoSuchFieldException e) {
+					L.e("Unhandled native type: " + item.getClass(), e);
+				} catch (IllegalAccessException e) {
+					L.e("Shouldn't happen", e);
+				}
+			}
+		}
+		json += "}}";
+
+		return json;
+	}
+
+	/**
+	 * Try to get the value of one field from an object, and put that value in the HashMap
+	 * <p/>
+	 * If the object is a native object (Integer/Long, Float/Double, String, Boolean), its value is added to the Map.  The map key will be the field name.
+	 * <p/>
+	 * If the object is not a native object,this method will try to get the "id" field of this object. The Map key will be fieldName + "_id".
+	 */
+	private void handleField(Issue newIssue, Issue oldIssue, String fieldName, Map<String, Object> fields) {
+		Field field;
+		try {
+			field = newIssue.getClass().getField(fieldName);
+		} catch (NoSuchFieldException e) {
+			L.e("Can't upload issue change: " + fieldName, e);
+			return;
+		}
+
+		Object oldOne;
+		try {
+			oldOne = field.get(oldIssue);
+		} catch (IllegalAccessException e) {
+			L.e("Can't upload issue change: " + fieldName, e);
+			return;
+		} catch (NullPointerException e) {
+			oldOne = null;
+		}
+
+		Object newOne;
+		try {
+			newOne = field.get(newIssue);
+		} catch (IllegalAccessException e) {
+			L.e("Can't upload issue change: " + fieldName, e);
+			return;
+		} catch (NullPointerException e) {
+			newOne = null;
+		}
+
+		FieldChange fieldChange = detectFieldChange(newOne, oldOne);
+		if (fieldChange != FieldChange.NO_CHANGE) {
+			L.d("Field " + fieldName + " " + fieldChange + ": o/n=" + oldOne + "/" + newOne);
+		}
+		switch (fieldChange) {
+		case REMOVED:
+			Object deletedValue;
+			if (newOne instanceof Integer || newOne instanceof Long || newOne instanceof Float || newOne instanceof Double || newOne instanceof Calendar) {
+				deletedValue = 0;
+			} else {
+				deletedValue = "";
+			}
+			fields.put(fieldName, deletedValue);
+			break;
+
+		case ADDED:
+		case CHANGED:
+			fields.put(fieldName, newOne);
+			break;
+
+		case ID_ADDED:
+		case ID_CHANGED:
+			try {
+				Field id = newOne.getClass().getField("id");
+				fields.put(fieldName + "_id", id.get(newOne));
+			} catch (NoSuchFieldException e) {
+				L.e("Shouldn't happen.", e);
+			} catch (IllegalAccessException e) {
+				L.e("Shouldn't happen.", e);
+			}
+			break;
+		}
+	}
+
+	/**
+	 * Detects the kind of change between the two values
+	 */
+	private FieldChange detectFieldChange(Object newOne, Object oldOne) {
+		if (newOne == null && oldOne == null) {
+			return FieldChange.NO_CHANGE;
+		}
+
+		if (oldOne == null) {
+			try {
+				Long newId = (Long) newOne.getClass().getField("id").get(newOne);
+				if (newId > 0) {
+					return FieldChange.ID_ADDED;
+				} else {
+					return FieldChange.NO_CHANGE;
+				}
+			} catch (NoSuchFieldException e) {
+				return FieldChange.ADDED;
+			} catch (IllegalAccessException e) {
+				L.e("Should not happen", e);
+				throw new IllegalStateException(e);
+			}
+		}
+
+		if (newOne == null) {
+			try {
+				Long oldId = (Long) oldOne.getClass().getField("id").get(oldOne);
+				if (oldId > 0) {
+					return FieldChange.ID_REMOVED;
+				} else {
+					return FieldChange.NO_CHANGE;
+				}
+			} catch (NoSuchFieldException e) {
+				return FieldChange.REMOVED;
+			} catch (IllegalAccessException e) {
+				L.e("Should not happen", e);
+				throw new IllegalStateException(e);
+			}
+		}
+
+		if (newOne instanceof Integer || newOne instanceof Long) {
+			Long n = ((Number) newOne).longValue();
+			Long o = ((Number) oldOne).longValue();
+			if (o.equals(n)) {
+				return FieldChange.NO_CHANGE;
+			} else {
+				return FieldChange.CHANGED;
+			}
+		}
+
+		if (newOne instanceof Float || newOne instanceof Double) {
+			Double n = ((Number) newOne).doubleValue(), o = ((Number) oldOne).doubleValue();
+			if (o.equals(n)) {
+				return FieldChange.NO_CHANGE;
+			} else {
+				return FieldChange.CHANGED;
+			}
+		}
+
+		if (newOne instanceof String) {
+			if (((String) newOne).compareTo((String) oldOne) == 0) {
+				return FieldChange.NO_CHANGE;
+			} else {
+				return FieldChange.CHANGED;
+			}
+		}
+
+		if (newOne instanceof Calendar) {
+			if (((Calendar) newOne).compareTo((Calendar) oldOne) == 0) {
+				return FieldChange.NO_CHANGE;
+			} else {
+				return FieldChange.CHANGED;
+			}
+		}
+
+		if (newOne instanceof Boolean) {
+			Boolean o = (Boolean) oldOne, n = (Boolean) newOne;
+			if ((o == Boolean.FALSE && n == Boolean.TRUE) || (o == Boolean.TRUE && n == Boolean.FALSE)) {
+				return FieldChange.CHANGED;
+			} else {
+				return FieldChange.NO_CHANGE;
+			}
+		}
+
+		try {
+			Field idField = newOne.getClass().getField("id");
+			Long oldId = (Long) idField.get(oldOne), newId = (Long) idField.get(newOne);
+			if (oldId <= 0 && newId > 0) {
+				return FieldChange.ID_ADDED;
+			}
+			if (oldId > 0 && newId <= 0) {
+				return FieldChange.ID_REMOVED;
+			}
+			if (oldId.equals(newId)) {
+				return FieldChange.NO_CHANGE;
+			}
+			return FieldChange.NO_CHANGE;
+		} catch (NoSuchFieldException e) {
+			L.e("Unhandled native type: " + newOne.getClass().getName(), e);
+		} catch (IllegalAccessException e) {
+			L.e("Should not happen", e);
+		}
+
+		throw new IllegalStateException("Unreachable code (well, should be)");
+	}
+}

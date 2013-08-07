@@ -8,6 +8,8 @@ import net.bicou.redmine.data.json.IssueStatus;
 import net.bicou.redmine.data.json.Reference;
 import net.bicou.redmine.util.Util;
 
+import java.util.ArrayList;
+
 public class IssueStatusesDbAdapter extends DbAdapter {
 	public static final String TABLE_ISSUE_STATUSES = "issue_statuses";
 
@@ -77,18 +79,12 @@ public class IssueStatusesDbAdapter extends DbAdapter {
 		IssueStatus issueStatus = null;
 		if (c != null) {
 			if (c.moveToFirst()) {
-				issueStatus = new IssueStatus(c, this);
+				issueStatus = new IssueStatus(c);
 			}
 			c.close();
 		}
 
 		return issueStatus;
-	}
-
-	public Cursor selectAllCursor(final Server server, final String[] columns) {
-		final Cursor c = mDb.query(TABLE_ISSUE_STATUSES, columns, KEY_SERVER_ID + " = " + server.rowId, null, null, null, null);
-		c.moveToFirst();
-		return c;
 	}
 
 	/**
@@ -112,5 +108,21 @@ public class IssueStatusesDbAdapter extends DbAdapter {
 		}
 
 		return statusName;
+	}
+
+	public ArrayList<IssueStatus> selectAll(final Server server) {
+		String condition = KEY_SERVER_ID + " = " + server.rowId;
+		final Cursor c = mDb.query(TABLE_ISSUE_STATUSES, null, condition, null, null, null, null);
+		ArrayList<IssueStatus> statuses = null;
+		if (c != null) {
+			if (c.moveToFirst()) {
+				statuses = new ArrayList<IssueStatus>();
+				do {
+					statuses.add(new IssueStatus(c));
+				} while (c.moveToNext());
+			}
+			c.close();
+		}
+		return statuses;
 	}
 }

@@ -8,4 +8,11 @@
             android:showAsAction="ifRoom|collapseActionView"
             android:title="@string/issues_menu_search"/>
 
+
+    <item
+            android:id="@+id/menu_issues_add"
+            android:title="@string/menu_issues_add"
+            android:showAsAction="always"
+            android:icon="@android:drawable/ic_menu_add"/>
+
 </menu>

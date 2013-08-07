@@ -240,6 +240,7 @@ public class IssuesDbAdapter extends DbAdapter {
 			selection.add(TABLE_ISSUES + "." + col);
 
 			if (col.equals(KEY_CATEGORY_ID)) {
+				selection.add(IssueCategoriesDbAdapter.getFieldAlias(IssueCategoriesDbAdapter.KEY_ID, col));
 				selection.add(IssueCategoriesDbAdapter.getFieldAlias(IssueCategoriesDbAdapter.KEY_NAME, col));
 				joined.add(IssueCategoriesDbAdapter.TABLE_ISSUE_CATEGORIES + " ON " + Util.join(new String[] {
 						IssueCategoriesDbAdapter.TABLE_ISSUE_CATEGORIES + "." + IssueCategoriesDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
@@ -248,6 +249,7 @@ public class IssuesDbAdapter extends DbAdapter {
 								KEY_PROJECT_ID,
 				}, " AND "));
 			} else if (col.equals(KEY_PRIORITY_ID)) {
+				selection.add(IssuePrioritiesDbAdapter.getFieldAlias(IssuePrioritiesDbAdapter.KEY_ID, col));
 				selection.add(IssuePrioritiesDbAdapter.getFieldAlias(IssuePrioritiesDbAdapter.KEY_NAME, col));
 				joined.add(IssuePrioritiesDbAdapter.TABLE_ISSUE_PRIORITIES + " ON " + Util.join(new String[] {
 						IssuePrioritiesDbAdapter.TABLE_ISSUE_PRIORITIES + "." + IssuePrioritiesDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
@@ -271,16 +273,26 @@ public class IssuesDbAdapter extends DbAdapter {
 						col + "." + UsersDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
 				}, " AND "));
 			} else if (col.equals(KEY_STATUS_ID)) {
+				selection.add(IssueStatusesDbAdapter.getFieldAlias(IssueStatusesDbAdapter.KEY_ID, col));
 				selection.add(IssueStatusesDbAdapter.getFieldAlias(IssueStatusesDbAdapter.KEY_NAME, col));
 				joined.add(IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + " ON " + Util.join(new String[] {
 						IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + IssueStatusesDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
 						IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + IssueStatusesDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
 				}, " AND "));
 			} else if (col.equals(KEY_TRACKER_ID)) {
+				selection.add(TrackersDbAdapter.getFieldAlias(TrackersDbAdapter.KEY_ID, col));
 				selection.add(TrackersDbAdapter.getFieldAlias(TrackersDbAdapter.KEY_NAME, col));
 				joined.add(TrackersDbAdapter.TABLE_TRACKERS + " ON " + Util.join(new String[] {
 						TrackersDbAdapter.TABLE_TRACKERS + "." + TrackersDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
 						TrackersDbAdapter.TABLE_TRACKERS + "." + TrackersDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
+				}, " AND "));
+			} else if (col.equals(KEY_FIXED_VERSION_ID)) {
+				selection.add(VersionsDbAdapter.getFieldAlias(VersionsDbAdapter.KEY_ID, col));
+				selection.add(VersionsDbAdapter.getFieldAlias(VersionsDbAdapter.KEY_NAME, col));
+				joined.add(VersionsDbAdapter.TABLE_VERSIONS + " ON " + Util.join(new String[] {
+						VersionsDbAdapter.TABLE_VERSIONS + "." + VersionsDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + col,
+						VersionsDbAdapter.TABLE_VERSIONS + "." + VersionsDbAdapter.KEY_PROJECT_ID + " = " + TABLE_ISSUES + "." + KEY_PROJECT_ID,
+						VersionsDbAdapter.TABLE_VERSIONS + "." + VersionsDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID,
 				}, " AND "));
 			}
 		}

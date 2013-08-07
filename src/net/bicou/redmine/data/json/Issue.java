@@ -39,6 +39,15 @@ public class Issue {
 	public Server server;
 	public Project project;
 
+	public Issue(Server server, Project project) {
+		this.server = server;
+		this.project = project;
+		start_date = new GregorianCalendar();
+		created_on = new GregorianCalendar();
+		updated_on = new GregorianCalendar();
+		due_date = new GregorianCalendar();
+	}
+
 	public Issue(final Server server, final Cursor c) {
 		this.server = server;
 		project = new Project(); // created early because some fields will hold a reference onto it

@@ -23,6 +23,7 @@ public class Server implements Parcelable {
 	//
 
 	public Server(final Parcel source) {
+		rowId = source.readLong();
 		serverUrl = source.readString();
 		apiKey = source.readString();
 		authUsername = source.readString();
@@ -37,6 +38,7 @@ public class Server implements Parcelable {
 
 	@Override
 	public void writeToParcel(final Parcel dest, final int flags) {
+		dest.writeLong(rowId);
 		dest.writeString(apiKey);
 		dest.writeString(serverUrl);
 		dest.writeString(authUsername);
@@ -55,17 +57,6 @@ public class Server implements Parcelable {
 			return new Server(source);
 		}
 	};
-
-	//
-
-	/**
-	 * Used to test if a server is valid and readable. Will read and return all projects in this server.
-	 *
-	 * @author bicou
-	 */
-	public interface RedmineServerTestCallback {
-		public void testResult(Boolean validServer);
-	}
 
 	public Server(final String url, final String key) {
 		serverUrl = url;
@@ -122,6 +113,6 @@ public class Server implements Parcelable {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " { url: " + serverUrl + " }";
+		return this.getClass().getSimpleName() + " { #" + rowId + ", url: " + serverUrl + " }";
 	}
 }

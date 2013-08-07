@@ -1,8 +1,10 @@
 package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.Util;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -60,6 +62,10 @@ public class Version {
 					sharing = c.getString(columnIndex);
 				} else if (col.equals(VersionsDbAdapter.KEY_STATUS)) {
 					status = VersionStatus.valueOf(c.getString(columnIndex).toUpperCase(Locale.ENGLISH));
+				} else if (col.equals(VersionsDbAdapter.KEY_SERVER_ID)) {
+					// No op
+				} else if (col.equals(VersionsDbAdapter.KEY_PROJECT_ID)) {
+					project = new Project(c, ProjectsDbAdapter.TABLE_PROJECTS + "_");
 				} else if (col.equals(VersionsDbAdapter.KEY_ID)) {
 					id = c.getInt(columnIndex);
 				} else {
@@ -69,5 +75,12 @@ public class Version {
 				L.e("Can't parse " + getClass().getSimpleName() + " column: " + col + " prefix: " + columnPrefix, e);
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " " + getClass().getSimpleName() + " { name: " + name + ", description: " + description + ", status: " + status + ", " +
+				"sharing: " + sharing + ", create/updated/due dates: " + (Util.isEpoch(created_on) ? "epoch" : created_on.getTime()) + "/" + (Util.isEpoch
+				(updated_on) ? "epoch" : updated_on.getTime()) + "/" + (Util.isEpoch(due_date) ? "epoch" : due_date.getTime()) + " }";
 	}
 }

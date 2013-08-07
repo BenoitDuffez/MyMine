@@ -4,8 +4,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.IssueStatus;
 import net.bicou.redmine.data.json.Reference;
 import net.bicou.redmine.util.L;
+
+import java.util.ArrayList;
 
 public abstract class DbAdapter {
 	Context mContext;

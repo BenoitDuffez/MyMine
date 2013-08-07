@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import com.actionbarsherlock.app.ActionBar;
@@ -15,10 +16,13 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
+import com.google.gson.Gson;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.issues.edit.EditIssueActivity;
+import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment.IssuesOrderSelectionListener;
@@ -35,7 +39,8 @@ import net.bicou.redmine.util.L;
 
 import java.util.List;
 
-public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks {
+public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks,
+		ServerProjectPickerFragment.ServerProjectSelectionListener {
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
 	public static final int ACTION_REFRESH_ISSUES = 0;
@@ -139,7 +144,23 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+		L.d("");
 		supportInvalidateOptionsMenu();
+	}
+
+	private void showServerProjectPickerDialog() {
+		DialogFragment newFragment = ServerProjectPickerFragment.newInstance();
+		newFragment.show(getSupportFragmentManager(), "serverProjectPicker");
+	}
+
+	@Override
+	public void onServerProjectPicked(final Server server, final Project project) {
+		if (server != null && server.rowId > 0 && project != null && project.id > 0) {
+			Intent intent = new Intent(this, EditIssueActivity.class);
+			intent.putExtra(Constants.KEY_SERVER, server);
+			intent.putExtra(Constants.KEY_PROJECT, project);
+			startActivity(intent);
+		}
 	}
 
 	@Override
@@ -147,6 +168,23 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
+			return true;
+
+		case R.id.menu_issues_add:
+			showServerProjectPickerDialog();
+			return true;
+
+		case R.id.menu_issue_edit:
+			Fragment content = getContentFragment();
+			if (content != null && content instanceof IssueFragment) {
+				Issue issue = ((IssueFragment) content).getIssue();
+				if (issue != null) {
+					String json = new Gson().toJson(issue, Issue.class);
+					Intent intent = new Intent(this, EditIssueActivity.class);
+					intent.putExtra(IssueFragment.KEY_ISSUE_JSON, json);
+					startActivity(intent);
+				}
+			}
 			return true;
 
 		case R.id.menu_issue_browser:

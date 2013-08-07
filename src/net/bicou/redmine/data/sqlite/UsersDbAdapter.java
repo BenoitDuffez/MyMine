@@ -94,7 +94,7 @@ public class UsersDbAdapter extends DbAdapter {
 	}
 
 	public List<User> selectAll(final Server server) {
-		final String selection = KEY_SERVER_ID + " = " + server.rowId;
+		final String selection = server != null && server.rowId > 0 ? KEY_SERVER_ID + " = " + server.rowId : null;
 		final Cursor c = mDb.query(TABLE_USERS, USER_FIELDS, selection, null, null, null, null);
 		final List<User> list = new ArrayList<User>();
 
@@ -107,19 +107,4 @@ public class UsersDbAdapter extends DbAdapter {
 
 		return list;
 	}
-	// public String getName(final Server server, final long rowId) {
-	// final Cursor c = selectCursor(server, rowId, new String[] {
-	// KEY_NAME
-	// });
-	//
-	// String statusName = null;
-	// if (c != null) {
-	// if (c.moveToFirst()) {
-	// statusName = c.getString(0);
-	// }
-	// c.close();
-	// }
-	//
-	// return statusName;
-	// }
 }

@@ -144,7 +144,11 @@ public class ProjectsDbAdapter extends DbAdapter {
 	}
 
 	public List<Project> selectAll() {
-		final Cursor c = selectAllCursor(0, null, null);
+		return selectAll(null);
+	}
+
+	public List<Project> selectAll(Server server) {
+		final Cursor c = selectAllCursor(server == null ? 0 : server.rowId, null, null);
 		final List<Project> projects = new ArrayList<Project>();
 		if (c != null) {
 			if (c.moveToFirst()) {

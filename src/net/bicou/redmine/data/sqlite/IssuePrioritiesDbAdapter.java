@@ -8,6 +8,8 @@ import net.bicou.redmine.data.json.IssuePriority;
 import net.bicou.redmine.data.json.Reference;
 import net.bicou.redmine.util.Util;
 
+import java.util.ArrayList;
+
 public class IssuePrioritiesDbAdapter extends DbAdapter {
 	public static final String TABLE_ISSUE_PRIORITIES = "issue_priorities";
 
@@ -92,16 +94,26 @@ public class IssuePrioritiesDbAdapter extends DbAdapter {
 		return issuePriority;
 	}
 
-	public Cursor selectAllCursor(final Server server, final String[] columns) {
-		final Cursor c = mDb.query(TABLE_ISSUE_PRIORITIES, columns, KEY_SERVER_ID + " = " + server.rowId, null, null, null, null);
-		c.moveToFirst();
-		return c;
-	}
-
 	/**
 	 * Removes issues
 	 */
 	public int deleteAll(final Server server) {
 		return mDb.delete(TABLE_ISSUE_PRIORITIES, KEY_SERVER_ID + " = " + server.rowId, null);
+	}
+
+	public ArrayList<IssuePriority> selectAll(final Server server) {
+		String condition = KEY_SERVER_ID + " = " + server.rowId;
+		final Cursor c = mDb.query(TABLE_ISSUE_PRIORITIES, null, condition, null, null, null, null);
+		ArrayList<IssuePriority> priorities = null;
+		if (c != null) {
+			if (c.moveToFirst()) {
+				priorities = new ArrayList<IssuePriority>();
+				do {
+					priorities.add(new IssuePriority(server, c));
+				} while (c.moveToNext());
+			}
+			c.close();
+		}
+		return priorities;
 	}
 }

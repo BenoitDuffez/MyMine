@@ -45,8 +45,8 @@ public class IssueOverviewFragment extends SherlockFragment {
 	ImageView mAuthorAvatar, mAssignedAvatar;
 	WebView mDescription;
 	Issue mIssue;
-	java.text.DateFormat mLongDateFormat;
-	java.text.DateFormat mTimeFormat;
+	static java.text.DateFormat mLongDateFormat;
+	static java.text.DateFormat mTimeFormat;
 	WikiUtils.WikiWebViewClient mClient;
 	ViewGroup mMainLayout;
 
@@ -157,24 +157,24 @@ public class IssueOverviewFragment extends SherlockFragment {
 		mDueDate.setText(Util.isEpoch(mIssue.due_date) ? "" : format.format(mIssue.due_date.getTime()));
 		mPercentDone.setText(String.format("%d%%", mIssue.done_ratio));
 		mSpentTime.setText(getString(R.string.issue_spent_time_format, mIssue.spent_hours));
-		mIssue.author = displayNameAndAvatar(mAuthor, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
-		mIssue.assigned_to = displayNameAndAvatar(mAssignee, mAssignedAvatar, mIssue.assigned_to, "%1$s", null);
+		mIssue.author = displayNameAndAvatar(getActivity(), mIssue, mAuthor, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format),
+				mIssue.created_on);
+		mIssue.assigned_to = displayNameAndAvatar(getActivity(), mIssue, mAssignee, mAssignedAvatar, mIssue.assigned_to, "%1$s", null); // TODO
 		mParent.setText(mIssue.parent != null && mIssue.parent.id > 0 ? Long.toString(mIssue.parent.id) : "");
 	}
 
-	private User displayNameAndAvatar(TextView name, ImageView avatar, User user, String textResId, Calendar date) {
+	public static User displayNameAndAvatar(Context context, Issue issue, TextView name, ImageView avatar, User user, String textResId, Calendar date) {
 		if (user == null || user.id <= 0) {
 			return null;
 		}
 
-		UsersDbAdapter db = new UsersDbAdapter(getActivity());
+		UsersDbAdapter db = new UsersDbAdapter(context);
 		db.open();
-		User u = db.select(mIssue.server, mIssue.author.id);
+		User u = db.select(issue.server, user.id);
 		db.close();
 
 		if (u != null) {
-			u.createGravatarUrl();
-			if (!TextUtils.isEmpty(u.gravatarUrl) && avatar != null) {
+			if (u.createGravatarUrl() && avatar != null) {
 				ImageLoader.getInstance().displayImage(u.gravatarUrl, avatar);
 				avatar.setVisibility(View.VISIBLE);
 			} else if (avatar != null) {
@@ -186,23 +186,23 @@ public class IssueOverviewFragment extends SherlockFragment {
 				if (date != null && date.getTimeInMillis() > 10000) {
 					long delta = (new GregorianCalendar().getTimeInMillis() - date.getTimeInMillis()) / 1000;
 					if (delta < 60) {
-						formattedDate = getString(R.string.time_delay_moments);
+						formattedDate = context.getString(R.string.time_delay_moments);
 					} else if (delta < 3600) {
-						formattedDate = MessageFormat.format(getString(R.string.time_delay_minutes), (int) (delta / 60));
+						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_minutes), (int) (delta / 60));
 					} else if (delta < 3600 * 24) {
-						formattedDate = MessageFormat.format(getString(R.string.time_delay_hours), (int) (delta / 3600));
+						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_hours), (int) (delta / 3600));
 					} else if (delta < 3600 * 24 * 30) {
-						formattedDate = MessageFormat.format(getString(R.string.time_delay_days), (int) (delta / (3600 * 24)));
+						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_days), (int) (delta / (3600 * 24)));
 					} else if (delta < 3600 * 24 * 365) {
-						formattedDate = MessageFormat.format(getString(R.string.time_delay_months), (int) (delta / (3600 * 24 * 30)));
+						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_months), (int) (delta / (3600 * 24 * 30)));
 					} else {
-						formattedDate = MessageFormat.format(getString(R.string.time_delay_years), (int) (delta / (3600 * 24 * 365)));
+						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_years), (int) (delta / (3600 * 24 * 365)));
 					}
 				} else {
 					formattedDate = "";
 				}
 
-				name.setText(String.format(textResId, mIssue.author.getName(), formattedDate));
+				name.setText(String.format(textResId, u.getName(), formattedDate));
 				name.setOnClickListener(mDatePopupClickListener);
 				name.setTag(date);
 			}
@@ -211,14 +211,14 @@ public class IssueOverviewFragment extends SherlockFragment {
 		return u;
 	}
 
-	private View.OnClickListener mDatePopupClickListener = new View.OnClickListener() {
+	private static View.OnClickListener mDatePopupClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(final View view) {
 			Object tag = view.getTag();
 			if (tag != null && tag instanceof Calendar) {
 				Date date = ((Calendar) tag).getTime();
 				String fullDate = mLongDateFormat.format(date) + " " + mTimeFormat.format(date);
-				Toast.makeText(getActivity(), fullDate, Toast.LENGTH_LONG).show();
+				Toast.makeText(view.getContext(), fullDate, Toast.LENGTH_LONG).show();
 			}
 		}
 	};

@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    
-	<item
-	android:id="@+id/menu_issue_browser"
-	android:title="@string/issue_menu_open_browser"
-	android:showAsAction="never" />
-	
+
+    <item
+            android:id="@+id/menu_issue_edit"
+            android:title="@string/issue_menu_edit"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:showAsAction="always"/>
+
+    <item
+            android:id="@+id/menu_issue_browser"
+            android:title="@string/issue_menu_open_browser"
+            android:showAsAction="never"/>
+
 </menu>
 

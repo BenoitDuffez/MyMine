@@ -5,6 +5,7 @@ import android.database.SQLException;
 import android.text.TextUtils;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.Util;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -21,11 +22,12 @@ public class User {
 	public String mail;
 	public Calendar created_on;
 	public Calendar last_login_on;
+	public String login;
 
 	// Not from json:
 	public String gravatarUrl;
 
-	public void createGravatarUrl() {
+	public boolean createGravatarUrl() {
 		gravatarUrl = "";
 
 		MessageDigest md;
@@ -35,9 +37,9 @@ public class User {
 			digest = md.digest(mail.toLowerCase(Locale.ENGLISH).trim().getBytes("UTF-8"));
 			md.reset();
 		} catch (final NoSuchAlgorithmException e) {
-			return;
+			return false;
 		} catch (final UnsupportedEncodingException e) {
-			return;
+			return false;
 		}
 
 		final BigInteger bigInt = new BigInteger(1, digest);
@@ -49,10 +51,12 @@ public class User {
 		}
 
 		if (TextUtils.isEmpty(md5)) {
-			return;
+			return false;
 		}
 
 		gravatarUrl = String.format("http://www.gravatar.com/avatar/%s?d=identicon", md5);
+
+		return !TextUtils.isEmpty(gravatarUrl);
 	}
 
 	public String getName() {
@@ -97,5 +101,12 @@ public class User {
 				L.e("unable to retrieve column " + col, e);
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " " + getClass().getSimpleName() + " { #" + id + ", login: " + login + ", name: " + getName() + ", mail:" + mail + ", " +
+				"avatar: " + gravatarUrl + ", " + "created/last login: " + (Util.isEpoch(created_on) ? "epoch" : created_on.getTime()) + "/" + (Util.isEpoch
+				(last_login_on) ? "epoch" : last_login_on.getTime()) + " }";
 	}
 }
