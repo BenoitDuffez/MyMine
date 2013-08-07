@@ -152,6 +152,7 @@ public class EditIssueFragment extends SherlockFragment {
 	}
 
 	private void saveIssueChangesAndClose() {
+		mIssue.done_ratio = (int) (mPercentDone.getProgress() / 10.0);
 		IssueModification modification = new IssueModification();
 		modification.notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
 		modification.newIssue = mIssue;
