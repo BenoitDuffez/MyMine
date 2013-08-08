@@ -29,6 +29,7 @@
 
         <EditText
                 android:id="@+id/issue_edit_subject"
+                android:hint="@string/issue_edit_subject_hint"
                 android:layout_below="@+id/issue_edit_tracker"
                 android:layout_toLeftOf="@+id/issue_edit_author"
                 android:layout_width="match_parent"

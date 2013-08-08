@@ -279,5 +279,6 @@
     <string name="issue_edit_spinner_no_change"><![CDATA[<none>]]></string>
     <string name="menu_issues_add">Add new issue</string>
     <string name="issue_add_server_project_picker_dialog_title">Please select the target server and project</string>
+    <string name="issue_edit_subject_hint">Enter issue subject</string>
 
 </resources>
