@@ -36,6 +36,7 @@ public class JsonUploader extends JsonNetworkManager {
 		mObjectSerializer = object;
 
 		mRemoteOperation = mObjectSerializer.getRemoteOperation();
+		L.i("Uploading " + mObjectSerializer + " operation: " + mRemoteOperation);
 		if (mRemoteOperation == ObjectSerializer.RemoteOperation.NO_OP) {
 			return null;
 		}
