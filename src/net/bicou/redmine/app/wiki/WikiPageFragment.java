@@ -94,8 +94,10 @@ public class WikiPageFragment extends SherlockFragment {
 
 		if (savedInstanceState != null) {
 			mWikiPage = new Gson().fromJson(savedInstanceState.getString(KEY_WIKI_PAGE), WikiPage.class);
+			mProject = savedInstanceState.getParcelable(Constants.KEY_PROJECT);
 		} else if (getArguments().keySet().contains(KEY_WIKI_PAGE)) {
 			mWikiPage = new Gson().fromJson(getArguments().getString(KEY_WIKI_PAGE), WikiPage.class);
+			mProject = getArguments().getParcelable(Constants.KEY_PROJECT);
 		}
 
 		WikiPageLoadParameters params = new WikiPageLoadParameters();
@@ -133,7 +135,7 @@ public class WikiPageFragment extends SherlockFragment {
 		switch (item.getItemId()) {
 		case R.id.menu_wiki_fullscreen:
 			Intent intent = new Intent(getActivity(), WikiPageActivity.class);
-			intent.putExtras(getArguments());
+			intent.putExtras(saveInstanceState(getArguments()));
 			startActivity(intent);
 			return true;
 		}
@@ -143,11 +145,17 @@ public class WikiPageFragment extends SherlockFragment {
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (mWikiPage != null) {
+		saveInstanceState(outState);
+	}
+
+	private Bundle saveInstanceState(Bundle outState) {
+		if (outState != null && mWikiPage != null) {
 			outState.putString(KEY_WIKI_PAGE, new Gson().toJson(mWikiPage));
+			outState.putParcelable(Constants.KEY_PROJECT, mWikiPage.project);
 			outState.putLong(Constants.KEY_PROJECT_ID, mWikiPage.project.id);
 			outState.putLong(Constants.KEY_SERVER_ID, mWikiPage.project.server.rowId);
 		}
+		return outState;
 	}
 
 	/**
@@ -186,7 +194,6 @@ public class WikiPageFragment extends SherlockFragment {
 						.enableCroutonNotifications(params.croutonActivity, params.croutonLayout);
 				params.wikiPage = loader.actualSyncLoadWikiPage(params.project, params.uri);
 
-
 				db.close();
 			}
 		}
@@ -205,19 +212,22 @@ public class WikiPageFragment extends SherlockFragment {
 	}
 
 	public void refreshUI(WikiPageLoadParameters result) {
-		// Null checks
-		if (result == null || mWikiPage == null || mWikiPage.text == null) {
+		if (result == null) {
 			// TODO: result==null means non existing wiki page which means we should popup a create wiki page dialog
+			return;
+		}
+		mWikiPage = result.wikiPage;
+		mHtmlContents = result.resultHtml;
+		mProject = result.project;
+
+		// Null checks
+		if (mWikiPage == null || mWikiPage.text == null) {
 			mWikiTitle.setText(result == null ? R.string.wiki_page_not_found : R.string.wiki_empty_page);
 			mWikiTitle.setVisibility(View.VISIBLE);
 			mFavorite.setVisibility(View.GONE);
 			mWebView.setVisibility(View.GONE);
 			return;
 		}
-
-		mWikiPage = result.wikiPage;
-		mHtmlContents = result.resultHtml;
-		mProject = result.project;
 
 		mClient.setProject(mProject);
 
