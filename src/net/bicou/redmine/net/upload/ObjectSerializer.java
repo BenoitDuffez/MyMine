@@ -316,7 +316,7 @@ public abstract class ObjectSerializer<T> {
 			if (oldId.equals(newId)) {
 				return FieldChange.NO_CHANGE;
 			}
-			return FieldChange.NO_CHANGE;
+			return FieldChange.ID_CHANGED;
 		} catch (NoSuchFieldException e) {
 			L.e("Unhandled native type: " + newOne.getClass().getName(), e);
 		} catch (IllegalAccessException e) {
