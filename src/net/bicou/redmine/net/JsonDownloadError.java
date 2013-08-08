@@ -1,14 +1,10 @@
 package net.bicou.redmine.net;
 
 import android.app.Activity;
-import android.content.Context;
-import android.text.TextUtils;
 import android.view.ViewGroup;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.R;
-
-import java.security.cert.X509Certificate;
 
 /**
  * Container for an useful explanation on the failure. Can be JSON parsing-related, network-related, unexpected response, invalid Android behavior or unknown. If
@@ -17,7 +13,7 @@ import java.security.cert.X509Certificate;
  *
  * @author bicou
  */
-public class JsonDownloadError {
+public class JsonDownloadError extends JsonNetworkError {
 	public static enum ErrorType {
 		TYPE_JSON,
 		TYPE_NETWORK,
@@ -26,52 +22,18 @@ public class JsonDownloadError {
 		TYPE_UNKNOWN,
 	}
 
-	;
-
-	// The error must be accessed through getMessage()
-	private String mErrorMessage;
-	private int errorMessageResId;
-
-	// These are public
 	public JsonDownloadError.ErrorType errorType;
-	public Exception exception;
-	public X509Certificate[] chain;
-	public int httpResponseCode;
 
 	public JsonDownloadError(final JsonDownloadError.ErrorType type) {
 		errorType = type;
 	}
 
 	public JsonDownloadError(final JsonDownloadError.ErrorType type, final Exception e) {
+		super(e);
 		errorType = type;
-		exception = e;
 	}
 
-	public void setMessage(final int resId, final String text) {
-		mErrorMessage = text;
-		errorMessageResId = resId;
-	}
-
-	public void setMessage(final String text) {
-		mErrorMessage = text;
-	}
-
-	public void setMessage(final int resId) {
-		errorMessageResId = resId;
-	}
-
-	public String getMessage(final Context ctx) {
-		if (errorMessageResId > 0) {
-			if (TextUtils.isEmpty(mErrorMessage)) {
-				return ctx.getString(errorMessageResId);
-			} else {
-				return ctx.getString(errorMessageResId, mErrorMessage);
-			}
-		} else {
-			return mErrorMessage;
-		}
-	}
-
+	@Override
 	public void displayCrouton(Activity activity, ViewGroup viewGroup) {
 		final String message;
 		switch (errorType) {
