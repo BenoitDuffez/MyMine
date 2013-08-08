@@ -64,7 +64,6 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 			if ("offset".equals(arg.getName())) {
 				addOffset = false;
 			}
-			args.add(arg);
 		}
 		if (addOffset && mCurrentOffset > 0) {
 			args.add(new BasicNameValuePair("offset", Integer.toString(mCurrentOffset)));
