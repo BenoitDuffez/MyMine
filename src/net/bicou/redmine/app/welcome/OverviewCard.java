@@ -19,9 +19,10 @@ public class OverviewCard {
 	boolean enabled;
 
 	public static class CardAction {
-		int mId, mTextResId;
+		Object mId;
+		int mTextResId;
 
-		public CardAction(final int id, final int text) {
+		public CardAction(final Object id, final int text) {
 			mId = id;
 			mTextResId = text;
 		}
@@ -40,7 +41,7 @@ public class OverviewCard {
 		return this;
 	}
 
-	public OverviewCard addAction(final int id, final int actionText) {
+	public OverviewCard addAction(final Object id, final int actionText) {
 		actions.add(new CardAction(id, actionText));
 		return this;
 	}

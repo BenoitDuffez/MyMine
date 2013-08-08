@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import com.origamilabs.library.views.StaggeredGridView;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssuesActivity;
+import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.misc.HelpSetupFragment;
 import net.bicou.redmine.app.projects.ProjectsActivity;
 import net.bicou.redmine.app.roadmap.RoadmapActivity;
@@ -42,7 +44,7 @@ public class WelcomeFragment extends Fragment {
 		mStaggeredGridView = (StaggeredGridView) v.findViewById(R.id.overview_container);
 
 		// Add the cards views
-		mAdapter = new CardsAdapter(mCardsActionsCallback);
+		mAdapter = new CardsAdapter().setCallbacks(mCardsActionsCallback);
 		mStaggeredGridView.setAdapter(mAdapter);
 		mStaggeredGridView.setOnItemClickListener(new StaggeredGridView.OnItemClickListener() {
 			@Override
@@ -69,18 +71,27 @@ public class WelcomeFragment extends Fragment {
 		return v;
 	}
 
-	final int ID_PROJECTS = 10, ID_ROADMAPS = 11;
-	final int ID_SERVERS_ADD = 20, ID_SYNC = 21;
+	public enum WelcomeCardAction {
+		ROADMAPS,
+		ADD_SERVER,
+		ADD_ISSUE,
+	}
+
 	CardsAdapter.CardActionCallback mCardsActionsCallback = new CardsAdapter.CardActionCallback() {
 		@Override
-		public void onActionSelected(int actionId) {
-			switch (actionId) {
-			case ID_ROADMAPS:
+		public void onActionSelected(Object action) {
+			switch ((WelcomeCardAction) action) {
+			case ROADMAPS:
 				startActivity(new Intent(getActivity(), RoadmapActivity.class));
 				break;
 
-			case ID_SERVERS_ADD:
+			case ADD_SERVER:
 				startActivity(HelpSetupFragment.getNewAccountActivityIntent());
+				break;
+
+			case ADD_ISSUE:
+				DialogFragment newFragment = ServerProjectPickerFragment.newInstance();
+				newFragment.show(getActivity().getSupportFragmentManager(), "serverProjectPicker");
 				break;
 			}
 		}
@@ -112,7 +123,7 @@ public class WelcomeFragment extends Fragment {
 		// Build description strings
 		String issuesSubTitle = res.getString(R.string.overview_card_issues_subtitle).replace("'", "‘");
 		issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssuesTotal), getString(R.string.overview_card_issues_count_all));
-		if (numIssuesMyself>0){
+		if (numIssuesMyself > 0) {
 			issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssuesMyself), getString(R.string.overview_card_issues_count_all));
 		}
 
@@ -130,13 +141,14 @@ public class WelcomeFragment extends Fragment {
 
 		// Issues
 		cards.add(new OverviewCard(new Intent(getActivity(), IssuesActivity.class)) //
-				.setContent(R.string.overview_card_issues_title, issuesDescription, R.drawable.card_issues, R.drawable.icon_issues));
+				.setContent(R.string.overview_card_issues_title, issuesDescription, R.drawable.card_issues, R.drawable.icon_issues) //
+				.addAction(WelcomeCardAction.ADD_ISSUE, R.string.menu_issues_add));
 
 		// Projects
 		cards.add(new OverviewCard(new Intent(getActivity(), ProjectsActivity.class)) //
 				.setContent(R.string.overview_card_projects_title, projectsDescription, R.drawable.card_project, R.drawable.icon_projects) //
 						//				.addAction(ID_PROJECTS, R.string.overview_card_projects_action) //
-				.addAction(ID_ROADMAPS, R.string.overview_card_projects_action2));
+				.addAction(WelcomeCardAction.ROADMAPS, R.string.overview_card_projects_action2));
 
 		// Servers
 		Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
@@ -144,7 +156,7 @@ public class WelcomeFragment extends Fragment {
 		cards.add(new OverviewCard(intent) //
 				.setContent(R.string.overview_card_servers_title, serversDescription, R.drawable.card_server, R.drawable.icon_servers) //
 						//				.addAction(ID_SYNC, R.string.overview_card_servers_sync) //4
-				.addAction(ID_SERVERS_ADD, R.string.overview_card_servers_add));
+				.addAction(WelcomeCardAction.ADD_SERVER, R.string.overview_card_servers_add));
 
 		return cards;
 	}

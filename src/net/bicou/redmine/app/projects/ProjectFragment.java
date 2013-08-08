@@ -99,7 +99,7 @@ public class ProjectFragment extends SherlockFragment {
 			}
 		});
 
-		mAdapter = new CardsAdapter(mCardsActionsCallback);
+		mAdapter = new CardsAdapter();
 		mStaggeredGridView = (StaggeredGridView) v.findViewById(R.id.project_overview_container);
 		mStaggeredGridView.setAdapter(mAdapter);
 		mStaggeredGridView.setOnItemClickListener(mAdapter.getStaggeredItemClickListener());
@@ -127,14 +127,6 @@ public class ProjectFragment extends SherlockFragment {
 
 		return v;
 	}
-
-	CardsAdapter.CardActionCallback mCardsActionsCallback = new CardsAdapter.CardActionCallback() {
-		@Override
-		public void onActionSelected(int actionId) {
-			switch (actionId) {
-			}
-		}
-	};
 
 	public static List<OverviewCard> getProjectCards(Context context, Server server, Project project) {
 		List<OverviewCard> cards = new ArrayList<OverviewCard>();

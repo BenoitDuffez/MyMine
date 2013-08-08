@@ -26,11 +26,15 @@ public class CardsAdapter extends BaseAdapter {
 	private static final int TAG_ACTION = R.id.card_tag_action;
 
 	public interface CardActionCallback {
-		public void onActionSelected(int actionId);
+		public void onActionSelected(Object action);
 	}
 
-	public CardsAdapter(CardActionCallback callback) {
+	public CardsAdapter() {
+	}
+
+	public CardsAdapter setCallbacks(CardActionCallback callback) {
 		mCallback = callback;
+		return this;
 	}
 
 	public void setData(List<OverviewCard> cards) {
@@ -63,8 +67,7 @@ public class CardsAdapter extends BaseAdapter {
 	private View.OnClickListener mActionItemOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View view) {
-			Integer id = (Integer) view.getTag(TAG_ACTION);
-			mCallback.onActionSelected(id);
+			mCallback.onActionSelected(view.getTag(TAG_ACTION));
 		}
 	};
 

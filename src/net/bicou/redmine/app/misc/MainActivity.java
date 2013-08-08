@@ -16,9 +16,12 @@ import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.app.drawers.DrawerMenuFragment;
+import net.bicou.redmine.app.issues.edit.EditIssueActivity;
+import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.settings.SettingsActivity;
 import net.bicou.redmine.app.welcome.WelcomeFragment;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.util.L;
@@ -26,7 +29,7 @@ import net.bicou.redmine.util.L;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends DrawerActivity {
+public class MainActivity extends DrawerActivity implements ServerProjectPickerFragment.ServerProjectSelectionListener {
 	private static final String ALPHA_SHARED_PREFERENCES_FILE = "alpha";
 	private static final String KEY_ALPHA_VERSION_DISCLAIMER = "IS_DISCLAIMER_ACCEPTED";
 
@@ -217,6 +220,16 @@ public class MainActivity extends DrawerActivity {
 
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	public void onServerProjectPicked(final Server server, final Project project) {
+		if (server != null && server.rowId > 0 && project != null && project.id > 0) {
+			Intent intent = new Intent(this, EditIssueActivity.class);
+			intent.putExtra(Constants.KEY_SERVER, server);
+			intent.putExtra(Constants.KEY_PROJECT, project);
+			startActivity(intent);
 		}
 	}
 }
