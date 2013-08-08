@@ -43,12 +43,6 @@ public class EditIssueFragment extends SherlockFragment {
 	ImageView mAuthorAvatar, mAssigneeAvatar;
 	SeekBar mPercentDone;
 
-	public static class IssueModification {
-		public Issue newIssue;
-		public Issue oldIssue;
-		public String notes;
-	}
-
 	public static class IssueEditInformation {
 		public ArrayList<IssueStatus> statuses;
 		public ArrayList<IssueCategory> categories;
@@ -153,10 +147,12 @@ public class EditIssueFragment extends SherlockFragment {
 
 	private void saveIssueChangesAndClose() {
 		mIssue.done_ratio = (int) (mPercentDone.getProgress() / 10.0);
-		IssueModification modification = new IssueModification();
-		modification.notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
-		modification.newIssue = mIssue;
-		AsyncTaskFragment.runTask(getSherlockActivity(), EditIssueActivity.ACTION_UPLOAD_ISSUE, modification);
+		String notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
+		Object[] taskParams = new Object[] {
+				mIssue,
+				notes,
+		};
+		AsyncTaskFragment.runTask(getSherlockActivity(), EditIssueActivity.ACTION_UPLOAD_ISSUE, taskParams);
 	}
 
 	@SuppressWarnings("unchecked")

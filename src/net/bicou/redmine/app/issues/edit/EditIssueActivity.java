@@ -10,6 +10,8 @@ import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.net.upload.IssueSerializer;
+import net.bicou.redmine.net.upload.JsonUploader;
+import net.bicou.redmine.net.upload.ObjectSerializer;
 import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
@@ -45,7 +47,16 @@ public class EditIssueActivity extends SherlockFragmentActivity implements Async
 		if (action == ACTION_LOAD_ISSUE_DATA) {
 			return EditIssueFragment.loadSpinnersData(applicationContext, (Issue) parameters);
 		} else if (action == ACTION_UPLOAD_ISSUE) {
-			return new IssueSerializer(applicationContext, (EditIssueFragment.IssueModification) parameters).convertToJson();
+			Object[] params = (Object[]) parameters;
+			Issue issue = (Issue) params[0];
+			IssueSerializer issueSerializer = new IssueSerializer(applicationContext, issue, (String) params[1]);
+			final String uri;
+			if (issue.id <= 0 || issueSerializer.getRemoteOperation() == ObjectSerializer.RemoteOperation.ADD) {
+				uri = "issues.json";
+			} else {
+				uri = "issues/" + issue.id + ".json";
+			}
+			return new JsonUploader().uploadObject(applicationContext, issue.server, uri, issueSerializer);
 		}
 		return null;
 	}
