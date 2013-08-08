@@ -39,8 +39,8 @@ public class Server implements Parcelable {
 	@Override
 	public void writeToParcel(final Parcel dest, final int flags) {
 		dest.writeLong(rowId);
-		dest.writeString(apiKey);
 		dest.writeString(serverUrl);
+		dest.writeString(apiKey);
 		dest.writeString(authUsername);
 		dest.writeString(authPassword);
 		dest.writeString(new Gson().toJson(user));
