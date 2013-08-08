@@ -147,6 +147,7 @@ public class EditIssueFragment extends SherlockFragment {
 
 	private void saveIssueChangesAndClose() {
 		mIssue.done_ratio = (int) (mPercentDone.getProgress() / 10.0);
+		mIssue.subject = String.valueOf(mSubject.getText());
 		String notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
 		Object[] taskParams = new Object[] {
 				mIssue,
