@@ -13,9 +13,9 @@ public class WikiPageActivity extends SherlockFragmentActivity implements AsyncT
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
 		WikiPageFragment frag = WikiPageFragment.newInstance(getIntent().getExtras());
 		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, frag).commit();
-		AsyncTaskFragment.attachAsyncTaskFragment(this);
 	}
 
 	@Override
