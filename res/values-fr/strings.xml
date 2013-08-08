@@ -68,7 +68,7 @@
         tickets %s}
     </string>
 
-    <string name="overview_card_projects_title">Projet</string>
+    <string name="overview_card_projects_title">Projets</string>
     <string name="overview_card_projects_subtitle">{0,choice,0#Il n\'y a pas encore de projet synchronisé. Avez-vous configuré un projet ?|1#Vous suivez un
         seul projet|1&lt;Vous suivez {0} projet}
     </string>
