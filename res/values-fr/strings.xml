@@ -70,7 +70,7 @@
 
     <string name="overview_card_projects_title">Projets</string>
     <string name="overview_card_projects_subtitle">{0,choice,0#Il n\'y a pas encore de projet synchronisé. Avez-vous configuré un projet ?|1#Vous suivez un
-        seul projet|1&lt;Vous suivez {0} projet}
+        seul projet|1&lt;Vous suivez {0} projets}
     </string>
     <string name="overview_card_projects_action">Voir les projets</string>
     <string name="overview_card_projects_action2">Voir les feuilles de route</string>
