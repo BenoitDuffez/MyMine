@@ -12,6 +12,8 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -25,10 +27,9 @@ import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 import net.bicou.redmine.widget.CancelSaveActionBar;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by bicou on 02/08/13.
@@ -36,6 +37,7 @@ import java.util.List;
 public class EditIssueFragment extends SherlockFragment {
 	public static final String KEY_ISSUE_DESCRIPTION = "net.bicou.redmine.app.issues.edit.Description";
 
+	ViewGroup mMainLayout;
 	Issue mIssue;
 	Spinner mCategories, mVersions, mPriorities, mStatuses, mTrackers;
 	EditText mEstimatedHours, mNotes;
@@ -61,6 +63,7 @@ public class EditIssueFragment extends SherlockFragment {
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.frag_issue_edit, container, false);
+		mMainLayout = (ViewGroup) v.findViewById(R.id.issue_edit_main_layout);
 
 		// Labels
 		mId = (TextView) v.findViewById(R.id.issue_edit_id);
@@ -146,13 +149,48 @@ public class EditIssueFragment extends SherlockFragment {
 	}
 
 	private void saveIssueChangesAndClose() {
+		// Get the remaining data from the form
 		mIssue.done_ratio = 10 * mPercentDone.getProgress();
 		mIssue.subject = String.valueOf(mSubject.getText());
+
+		// Tricky one: estimated hours
+		Pattern hms = Pattern.compile("^(?:(?:([01]?\\d|2[0-3]):)?([0-5]?\\d):)?([0-5]?\\d)$");//([0-9]{1,2})?:?([0-9]{1,2})?:?([0-9]{1,2})");
+		Matcher matcher = hms.matcher(mEstimatedHours.getText());
+		try {
+			if (matcher.find()) {
+				int h, m, s;
+				if (matcher.group(1) == null && matcher.group(2) == null) {
+					h = Integer.parseInt(matcher.group(3));
+					m = 0;
+					s = 0;
+				} else if (matcher.group(1) == null) {
+					h = Integer.parseInt(matcher.group(2));
+					m = Integer.parseInt(matcher.group(3));
+					s = 0;
+				} else {
+					h = Integer.parseInt(matcher.group(1));
+					m = Integer.parseInt(matcher.group(2));
+					s = Integer.parseInt(matcher.group(3));
+				}
+				if (m > 60 || s > 60 || h < 0 || m < 0 || s < 0) {
+					throw new IllegalArgumentException("This message will never, ever be seen");
+				}
+				mIssue.estimated_hours = h + ((double) m) / 60 + ((double) s) / 3600;
+			} else {
+				throw new IllegalArgumentException("This message will never, ever be seen");
+			}
+		} catch (Exception e) {
+			Crouton.makeText(getSherlockActivity(), getString(R.string.issue_edit_estimated_hours_parse_error), Style.ALERT, mMainLayout).show();
+			return;
+		}
+
 		String notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
 		Object[] taskParams = new Object[] {
 				mIssue,
 				notes,
 		};
+
+		// If this line is reached, it means the form has been validated and we can try to upload this to the server
 		AsyncTaskFragment.runTask(getSherlockActivity(), EditIssueActivity.ACTION_UPLOAD_ISSUE, taskParams);
 	}
 
@@ -365,6 +403,17 @@ public class EditIssueFragment extends SherlockFragment {
 		mStartDate.setText(Util.isEpoch(mIssue.start_date) ? getString(R.string.issue_edit_field_unset) : format.format(mIssue.start_date.getTime()));
 		mDueDate.setText(Util.isEpoch(mIssue.due_date) ? getString(R.string.issue_edit_field_unset) : format.format(mIssue.due_date.getTime()));
 		mPercentDone.setProgress((int) (mIssue.done_ratio / 10.0));
+
+		int h = (int) Math.floor(mIssue.estimated_hours);
+		int m = (int) Math.floor((mIssue.estimated_hours - h) * 60);
+		int s = (int) Math.floor(((mIssue.estimated_hours - h) * 60 - m) * 60);
+		if (s > 0) {
+			mEstimatedHours.setText(String.format(Locale.ENGLISH, "%d:%02d:%02d", h, m, s));
+		} else if (m > 0) {
+			mEstimatedHours.setText(String.format(Locale.ENGLISH, "%d:%02d", h, m));
+		} else {
+			mEstimatedHours.setText(String.format(Locale.ENGLISH, "%d", h));
+		}
 	}
 
 	public void showDatePickerDialog(final View v) {

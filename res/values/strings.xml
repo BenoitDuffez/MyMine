@@ -281,5 +281,6 @@
     <string name="issue_add_server_project_picker_dialog_title">Please select the target server and project</string>
     <string name="issue_edit_subject_hint">Enter issue subject</string>
     <string name="overview_card_project_see_wiki">Show wiki pages</string>
+    <string name="issue_edit_estimated_hours_parse_error">Couldn\'t parse the number of hours, please enter it as HH or HH:MM or HH:MM:SS</string>
 
 </resources>
