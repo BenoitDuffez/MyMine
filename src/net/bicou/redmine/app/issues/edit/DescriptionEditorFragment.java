@@ -9,6 +9,8 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
  * Created by bicou on 06/08/13.
  */
 public class DescriptionEditorFragment extends SherlockDialogFragment {
+	DescriptionChangeListener mListener;
+
 	public interface DescriptionChangeListener {
 		public void onDescriptionChanged(String newDescription);
 	}
@@ -27,21 +29,34 @@ public class DescriptionEditorFragment extends SherlockDialogFragment {
 		} else {
 			description = savedInstanceState.getString(EditIssueFragment.KEY_ISSUE_DESCRIPTION);
 		}
-		return new DescriptionEditorDialog(getActivity(), description);
+		DescriptionEditorDialog dialog = new DescriptionEditorDialog(getActivity(), description);
+		if (mListener != null) {
+			dialog.setListener(mListener);
+		} else if (getActivity() != null && getActivity() instanceof DescriptionChangeListener) {
+			dialog.setListener((DescriptionChangeListener) getActivity());
+		} else {
+			throw new IllegalStateException("Can't bind listener!");
+		}
+		return dialog;
 	}
 
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
 		if (activity instanceof DescriptionChangeListener) {
-			((DescriptionEditorDialog) getDialog()).setListener((DescriptionChangeListener) activity);
+			mListener = (DescriptionChangeListener) activity;
+			if (getDialog() != null) {
+				((DescriptionEditorDialog) getDialog()).setListener(mListener);
+			}
 		}
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		((DescriptionEditorDialog) getDialog()).setListener(null);
+		if (getDialog() != null) {
+			((DescriptionEditorDialog) getDialog()).setListener(null);
+		}
 	}
 
 	@Override
