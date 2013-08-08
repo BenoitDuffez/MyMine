@@ -180,7 +180,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 		if (result != null && result instanceof UserLoginTask.UserLoginResult && ((UserLoginTask.UserLoginResult) result).success()) {
 			onLoginSuccessful(((UserLoginTask.UserLoginResult) result).server);
 		} else {
-			onLoginFailed(result == null ? null : ((UserLoginTask.UserLoginResult) result).error);
+			onLoginFailed(result == null ? null : (JsonDownloadError) ((UserLoginTask.UserLoginResult) result).error);
 		}
 	}
 

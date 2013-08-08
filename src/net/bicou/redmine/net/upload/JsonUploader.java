@@ -33,11 +33,16 @@ public class JsonUploader extends JsonNetworkManager {
 
 	public JsonUploadError uploadObject(Context context, Server s, String queryPath, ObjectSerializer object) {
 		mObjectSerializer = object;
-		Server server = new Server("http://bicou.net/mymine.php", s.apiKey);
+		L.d("Wanted to upload to server: " + s + ", with uri: " + queryPath);
+		queryPath = "mymine.php";
+
+		Server server = new Server("http://bicou.net/", s.apiKey);
 		server.rowId = s.rowId;
 		server.authUsername = s.authUsername;
 		server.authPassword = s.authPassword;
 		server.user = s.user;
+
+		L.d("Will upload to server: " + server + ", with uri: " + queryPath);
 		init(context, server, queryPath);
 		return uploadJson();
 	}
@@ -63,7 +68,6 @@ public class JsonUploader extends JsonNetworkManager {
 
 			final HttpClient httpClient = getHttpClient();
 			final HttpRequestBase request;
-			String objectJson;
 
 			switch (op) {
 			case DELETE:
@@ -79,7 +83,6 @@ public class JsonUploader extends JsonNetworkManager {
 			default:
 				throw new IllegalArgumentException("Invalid HTTP request");
 			}
-
 
 			// Ask for UTF-8
 			request.setHeader("Content-Type", "application/json; charset=utf-8");

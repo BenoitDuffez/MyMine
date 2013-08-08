@@ -10,6 +10,7 @@ import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.net.JsonDownloadError;
 import net.bicou.redmine.net.JsonDownloader;
+import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.sync.NetworkUtilities;
 import net.bicou.redmine.util.L;
 import org.apache.http.NameValuePair;
@@ -20,7 +21,7 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public class UserLoginTask {
 	public static class UserLoginResult {
-		public JsonDownloadError error;
+		public JsonNetworkError error;
 		public Server server;
 		public boolean authResult;
 

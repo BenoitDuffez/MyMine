@@ -16,7 +16,7 @@ import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
 import net.bicou.redmine.app.issues.IssueHistoryDownloadTask.JournalsDownloadCallbacks;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueHistory;
-import net.bicou.redmine.net.JsonDownloadError;
+import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
 
 import java.lang.reflect.Type;
@@ -94,7 +94,7 @@ public class IssueHistoryFragment extends SherlockListFragment implements Fragme
 				}
 
 				@Override
-				public void onJournalsFailed(final JsonDownloadError error) {
+				public void onJournalsFailed(final JsonNetworkError error) {
 					if (error == null) {
 						Crouton.makeText(getSherlockActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
 					} else {

@@ -9,8 +9,8 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.json.*;
 import net.bicou.redmine.data.sqlite.*;
-import net.bicou.redmine.net.JsonDownloadError;
 import net.bicou.redmine.net.JsonDownloader;
+import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.DiffMatchPatch;
 import net.bicou.redmine.util.L;
 import org.apache.http.NameValuePair;
@@ -27,7 +27,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	SherlockFragmentActivity mActivity;
 	JournalsDownloadCallbacks mCallbacks;
 	File mCacheFolder;
-	JsonDownloadError mError;
+	JsonNetworkError mError;
 
 	private static class PropertyChange {
 		public String propName;
@@ -80,7 +80,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 
 		void onJournalsDownloaded(IssueHistory history);
 
-		void onJournalsFailed(JsonDownloadError error);
+		void onJournalsFailed(JsonNetworkError error);
 	}
 
 	public IssueHistoryDownloadTask(final SherlockFragmentActivity act, final JournalsDownloadCallbacks callbacks, final Issue issue) {

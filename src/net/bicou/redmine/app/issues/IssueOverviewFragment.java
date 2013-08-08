@@ -30,6 +30,7 @@ import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
 import net.bicou.redmine.net.JsonDownloadError;
 import net.bicou.redmine.net.JsonDownloader;
+import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
 import org.apache.http.NameValuePair;
@@ -110,7 +111,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 		issue = downloader.fetchObject(context, server, uri);
 
 		if (issue == null) {
-			JsonDownloadError error = downloader.getError();
+			JsonNetworkError error = downloader.getError();
 			if (error != null) {
 				return error;
 			}
