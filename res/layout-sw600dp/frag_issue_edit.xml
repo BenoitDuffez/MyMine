@@ -217,14 +217,14 @@
                 <TextView
                         style="@style/IssueLabel"
                         android:layout_weight="1"
-                        android:text="@string/issue_spent_time"/>
+                        android:text="@string/issue_estimated_hours"/>
 
                 <EditText
-                        android:id="@+id/issue_edit_spent_time"
+                        android:id="@+id/issue_edit_estimated_hours
                         android:layout_weight="1"
-                        android:inputType="time"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                android:inputType="time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             </TableRow>
 
 

@@ -38,7 +38,7 @@ public class EditIssueFragment extends SherlockFragment {
 
 	Issue mIssue;
 	Spinner mCategories, mVersions, mPriorities, mStatuses, mTrackers;
-	EditText mSpentTime, mNotes;
+	EditText mEstimatedHours, mNotes;
 	TextView mId, mAuthorName, mAssigneeName, mParentIssue, mSubject, mStartDate, mDueDate;
 	ImageView mAuthorAvatar, mAssigneeAvatar;
 	SeekBar mPercentDone;
@@ -83,7 +83,7 @@ public class EditIssueFragment extends SherlockFragment {
 		mPercentDone = (SeekBar) v.findViewById(R.id.issue_edit_percent_done);
 
 		// Editable fields
-		mSpentTime = (EditText) v.findViewById(R.id.issue_edit_spent_time);
+		mEstimatedHours = (EditText) v.findViewById(R.id.issue_edit_estimated_hours);
 		mNotes = (EditText) v.findViewById(R.id.issue_edit_notes);
 
 		View.OnClickListener datePicker = new View.OnClickListener() {
@@ -146,7 +146,7 @@ public class EditIssueFragment extends SherlockFragment {
 	}
 
 	private void saveIssueChangesAndClose() {
-		mIssue.done_ratio = (int) (mPercentDone.getProgress() / 10.0);
+		mIssue.done_ratio = 10 * mPercentDone.getProgress();
 		mIssue.subject = String.valueOf(mSubject.getText());
 		String notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
 		Object[] taskParams = new Object[] {
@@ -353,7 +353,7 @@ public class EditIssueFragment extends SherlockFragment {
 			mAssigneeName.setText(getString(R.string.issue_edit_field_unset));
 		}
 
-		mSpentTime.setText(String.format("%.2f", mIssue.spent_hours));
+		mEstimatedHours.setText(String.format("%.2f", mIssue.spent_hours));
 		if (mIssue.id > 0) {
 			mId.setText(String.format("#%d", mIssue.id));
 		} else {
