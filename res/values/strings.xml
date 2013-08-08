@@ -280,5 +280,6 @@
     <string name="menu_issues_add">Add new issue</string>
     <string name="issue_add_server_project_picker_dialog_title">Please select the target server and project</string>
     <string name="issue_edit_subject_hint">Enter issue subject</string>
+    <string name="overview_card_project_see_wiki">Show wiki pages</string>
 
 </resources>

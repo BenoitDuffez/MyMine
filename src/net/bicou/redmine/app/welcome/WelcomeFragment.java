@@ -16,6 +16,7 @@ import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.misc.HelpSetupFragment;
 import net.bicou.redmine.app.projects.ProjectsActivity;
 import net.bicou.redmine.app.roadmap.RoadmapActivity;
+import net.bicou.redmine.app.wiki.WikiActivity;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
@@ -75,6 +76,7 @@ public class WelcomeFragment extends Fragment {
 		ROADMAPS,
 		ADD_SERVER,
 		ADD_ISSUE,
+		SHOW_WIKI,
 	}
 
 	CardsAdapter.CardActionCallback mCardsActionsCallback = new CardsAdapter.CardActionCallback() {
@@ -92,6 +94,10 @@ public class WelcomeFragment extends Fragment {
 			case ADD_ISSUE:
 				DialogFragment newFragment = ServerProjectPickerFragment.newInstance();
 				newFragment.show(getActivity().getSupportFragmentManager(), "serverProjectPicker");
+				break;
+
+			case SHOW_WIKI:
+				startActivity(new Intent(getActivity(), WikiActivity.class));
 				break;
 			}
 		}
@@ -148,7 +154,8 @@ public class WelcomeFragment extends Fragment {
 		cards.add(new OverviewCard(new Intent(getActivity(), ProjectsActivity.class)) //
 				.setContent(R.string.overview_card_projects_title, projectsDescription, R.drawable.card_project, R.drawable.icon_projects) //
 						//				.addAction(ID_PROJECTS, R.string.overview_card_projects_action) //
-				.addAction(WelcomeCardAction.ROADMAPS, R.string.overview_card_projects_action2));
+				.addAction(WelcomeCardAction.ROADMAPS, R.string.overview_card_projects_action2) //
+				.addAction(WelcomeCardAction.SHOW_WIKI, R.string.overview_card_project_see_wiki));
 
 		// Servers
 		Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
