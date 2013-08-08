@@ -36,16 +36,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class JsonNetworkManager {
-	URI mURI;
+	protected URI mURI;
 	Context mContext;
 
 	Server mServer;
 	String mQueryPath;
 	List<NameValuePair> mArgs;
 
-	MyMineSSLSocketFactory mSslSocketFactory;
-	MyMineSSLTrustManager mSSLTrustManager;
+	protected MyMineSSLSocketFactory mSslSocketFactory;
+	protected MyMineSSLTrustManager mSSLTrustManager;
 	protected JsonNetworkError mError;
+
+	public void init(Context context, Server server, String queryPath) {
+		init(context, server, queryPath, (List<NameValuePair>) null);
+	}
+
+	public void init(Context context, Server server, String queryPath, List<NameValuePair> args) {
+		mContext = context;
+		mServer = server;
+		mQueryPath = queryPath;
+		mArgs = args;
+	}
+
+	public void init(Context context, Server server, String queryPath, NameValuePair[] args) {
+		ArrayList<NameValuePair> argsList = new ArrayList<NameValuePair>();
+		for (final NameValuePair arg : args) {
+			argsList.add(arg);
+		}
+		init(context, server, queryPath, argsList);
+	}
 
 	public JsonNetworkError getError() {
 		return mError;

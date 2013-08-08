@@ -9,6 +9,7 @@ import com.actionbarsherlock.view.Window;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.User;
+import net.bicou.redmine.net.upload.IssueSerializer;
 import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
@@ -44,7 +45,7 @@ public class EditIssueActivity extends SherlockFragmentActivity implements Async
 		if (action == ACTION_LOAD_ISSUE_DATA) {
 			return EditIssueFragment.loadSpinnersData(applicationContext, (Issue) parameters);
 		} else if (action == ACTION_UPLOAD_ISSUE) {
-			return new IssueUploader(applicationContext, (EditIssueFragment.IssueModification) parameters).convertToJson();
+			return new IssueSerializer(applicationContext, (EditIssueFragment.IssueModification) parameters).convertToJson();
 		}
 		return null;
 	}

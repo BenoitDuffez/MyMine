@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -32,12 +31,8 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 	Class<T> mType;
 	private boolean mDownloadAllIfList = true;
 	boolean mStripJsonContainer = false;
-
 	int mCurrentOffset;
 
-	/**
-	 * This constructor can only be used if no callback is used, i.e. when the task is executed through {@code #syncExecute()}
-	 */
 	public JsonDownloader(final Class<T> type) {
 		mType = type;
 	}
@@ -86,9 +81,7 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 	 * @param uri    Target URI
 	 */
 	public T fetchObject(final Context ctx, final Server server, final String uri) {
-		mContext = ctx;
-		mServer = server;
-		mQueryPath = uri;
+		init(ctx, server, uri);
 		return downloadAndParse();
 	}
 
@@ -101,14 +94,7 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 	 * @param args   Optional HTTP GET arguments
 	 */
 	public T fetchObject(final Context ctx, final Server server, final String uri, final NameValuePair[] args) {
-		mContext = ctx;
-		mServer = server;
-		mQueryPath = uri;
-		mArgs = new ArrayList<NameValuePair>();
-		for (final NameValuePair arg : args) {
-			mArgs.add(arg);
-		}
-
+		init(ctx, server, uri, args);
 		return downloadAndParse();
 	}
 
@@ -121,11 +107,7 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 	 * @param args   Optional HTTP GET arguments
 	 */
 	public T fetchObject(final Context ctx, final Server server, final String uri, final List<NameValuePair> args) {
-		mContext = ctx;
-		mServer = server;
-		mQueryPath = uri;
-		mArgs = args;
-
+		init(ctx, server, uri, args);
 		return downloadAndParse();
 	}
 
@@ -281,7 +263,7 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 
 		// Edit json?
 		if (mStripJsonContainer) {
-			L.d("The JSON was altererd");
+			L.d("The JSON was striped from its main container");
 			json = stripJsonContainer(json);
 		}
 

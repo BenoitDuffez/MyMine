@@ -1,9 +1,6 @@
-package net.bicou.redmine.app.issues.edit;
+package net.bicou.redmine.net.upload;
 
 import android.content.Context;
-import android.text.TextUtils;
-import net.bicou.redmine.data.json.Issue;
-import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.util.L;
 
 import java.lang.reflect.Field;
@@ -13,7 +10,7 @@ import java.util.*;
 /**
  * Created by bicou on 07/08/13.
  */
-public class IssueUploader {
+public abstract class ObjectSerializer<T> {
 	private enum FieldChange {
 		NO_CHANGE,
 
@@ -28,73 +25,73 @@ public class IssueUploader {
 		ID_REMOVED,
 	}
 
-	EditIssueFragment.IssueModification mModification;
-	Context mContext;
+	public enum RemoteOperation {
+		ADD,
+		EDIT,
+		DELETE,
+	}
 
-	public IssueUploader(final Context context, final EditIssueFragment.IssueModification modification) {
-		if (modification.newIssue == null || modification.newIssue.server == null) {
-			return;
-		}
+	protected Context mContext;
+	private String mObjectName;
+	protected T mNewObject;
+	protected T mOldObject;
+	private RemoteOperation mRemoteOperation;
+
+	public ObjectSerializer(final Context context, String objectName, T newObject) {
+		mObjectName = objectName;
 		mContext = context;
-		mModification = modification;
+		mNewObject = newObject;
+		mOldObject = getOldObject();
+
+		if (mOldObject == null) {
+			mRemoteOperation = RemoteOperation.ADD;
+		} else {
+			mRemoteOperation = RemoteOperation.DELETE;
+		}
+	}
+
+	public ObjectSerializer<T> setIsDelete() {
+		mRemoteOperation = RemoteOperation.DELETE;
+		return this;
+	}
+
+	public RemoteOperation getRemoteOperation() {
+		return mRemoteOperation;
 	}
 
 	public String convertToJson() {
-		if (mModification == null) {
-			throw new IllegalArgumentException("Invalid issue modification provided");
-		}
-
-		IssuesDbAdapter db = new IssuesDbAdapter(mContext);
-		db.open();
-		mModification.oldIssue = db.select(mModification.newIssue.server, mModification.newIssue.id, null);
-		db.close();
-
-		HashMap<String, Object> fields = getDeltas(mModification.oldIssue, mModification.newIssue);
-
-		if (!TextUtils.isEmpty(mModification.notes)) {
-			fields.put("notes", mModification.notes);
-		}
-
+		HashMap<String, Object> fields = getDeltas();
 		if (fields.size() > 0) {
 			fields.put("updated_on", new GregorianCalendar());
 			return buildJson(fields);
 		}
-
 		return null;
 	}
 
 	/**
 	 * Builds a HashMap of the differences between the two objects
 	 */
-	private HashMap<String, Object> getDeltas(Issue oldIssue, Issue newIssue) {
+	private final HashMap<String, Object> getDeltas() {
 		HashMap<String, Object> fields = new HashMap<String, Object>();
-
-		handleField(newIssue, oldIssue, "project", fields);
-		handleField(newIssue, oldIssue, "tracker", fields);
-		handleField(newIssue, oldIssue, "status", fields);
-		handleField(newIssue, oldIssue, "priority", fields);
-		handleField(newIssue, oldIssue, "category", fields);
-		handleField(newIssue, oldIssue, "parent", fields);
-		handleField(newIssue, oldIssue, "fixed_version", fields);
-		handleField(newIssue, oldIssue, "assigned_to", fields);
-		handleField(newIssue, oldIssue, "author", fields);
-
-		handleField(newIssue, oldIssue, "subject", fields);
-		handleField(newIssue, oldIssue, "description", fields);
-		handleField(newIssue, oldIssue, "start_date", fields);
-		handleField(newIssue, oldIssue, "created_on", fields);
-		handleField(newIssue, oldIssue, "due_date", fields);
-		handleField(newIssue, oldIssue, "done_ratio", fields);
-		handleField(newIssue, oldIssue, "estimated_hours", fields);
-		handleField(newIssue, oldIssue, "spent_hours", fields);
-		handleField(newIssue, oldIssue, "is_private", fields);
-
-		//TODO
-		//		public List<Journal> journals;
-		//		public List<ChangeSet> changesets;
-		//		public List<Attachment> attachments;
-
+		saveAdditionalParameters(fields);
+		String[] fieldNames = getDefaultFields();
+		for (String field : fieldNames) {
+			handleField(mOldObject, mNewObject, field, fields);
+		}
 		return fields;
+	}
+
+	protected abstract T getOldObject();
+
+	/**
+	 * The list of fields members that should be serialized
+	 */
+	protected abstract String[] getDefaultFields();
+
+	/**
+	 * Can be overriden to add other data to the upload
+	 */
+	protected void saveAdditionalParameters(HashMap<String, Object> fields) {
 	}
 
 	/**
@@ -107,7 +104,7 @@ public class IssueUploader {
 		String key;
 		boolean first = true;
 
-		String json = "{\"issue\":{";
+		String json = String.format(Locale.ENGLISH, "{\"%s\":{", mObjectName);
 		while (iterator.hasNext()) {
 			if (first) {
 				first = false;
@@ -153,20 +150,20 @@ public class IssueUploader {
 	 * <p/>
 	 * If the object is not a native object,this method will try to get the "id" field of this object. The Map key will be fieldName + "_id".
 	 */
-	private void handleField(Issue newIssue, Issue oldIssue, String fieldName, Map<String, Object> fields) {
+	protected void handleField(T newObject, T oldObject, String fieldName, Map<String, Object> fields) {
 		Field field;
 		try {
-			field = newIssue.getClass().getField(fieldName);
+			field = newObject.getClass().getField(fieldName);
 		} catch (NoSuchFieldException e) {
-			L.e("Can't upload issue change: " + fieldName, e);
+			L.e("Can't upload \"+mObjectName+\" change: " + fieldName, e);
 			return;
 		}
 
 		Object oldOne;
 		try {
-			oldOne = field.get(oldIssue);
+			oldOne = field.get(oldObject);
 		} catch (IllegalAccessException e) {
-			L.e("Can't upload issue change: " + fieldName, e);
+			L.e("Can't upload \"+mObjectName+\" change: " + fieldName, e);
 			return;
 		} catch (NullPointerException e) {
 			oldOne = null;
@@ -174,9 +171,9 @@ public class IssueUploader {
 
 		Object newOne;
 		try {
-			newOne = field.get(newIssue);
+			newOne = field.get(newObject);
 		} catch (IllegalAccessException e) {
-			L.e("Can't upload issue change: " + fieldName, e);
+			L.e("Can't upload " + mObjectName + " change: " + fieldName, e);
 			return;
 		} catch (NullPointerException e) {
 			newOne = null;
