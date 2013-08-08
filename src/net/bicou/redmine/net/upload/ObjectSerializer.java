@@ -29,6 +29,7 @@ public abstract class ObjectSerializer<T> {
 		ADD,
 		EDIT,
 		DELETE,
+		NO_OP,
 	}
 
 	protected Context mContext;
@@ -36,6 +37,7 @@ public abstract class ObjectSerializer<T> {
 	protected T mNewObject;
 	protected T mOldObject;
 	private RemoteOperation mRemoteOperation;
+	private HashMap<String, Object> mFields;
 
 	public ObjectSerializer(final Context context, String objectName, T newObject) {
 		mObjectName = objectName;
@@ -43,16 +45,22 @@ public abstract class ObjectSerializer<T> {
 		mNewObject = newObject;
 		mOldObject = getOldObject();
 
+		mFields = getDeltas();
+
 		if (mOldObject == null) {
 			mRemoteOperation = RemoteOperation.ADD;
+		} else if (mFields.size() > 0) {
+			mRemoteOperation = RemoteOperation.EDIT;
 		} else {
-			mRemoteOperation = RemoteOperation.DELETE;
+			mRemoteOperation = RemoteOperation.NO_OP;
 		}
 	}
 
-	public ObjectSerializer<T> setIsDelete() {
-		mRemoteOperation = RemoteOperation.DELETE;
-		return this;
+	public ObjectSerializer(final Context context, String objectName, T newObject, boolean isDeleteOperation) {
+		this(context, objectName, newObject);
+		if (isDeleteOperation) {
+			mRemoteOperation = RemoteOperation.DELETE;
+		}
 	}
 
 	public RemoteOperation getRemoteOperation() {
@@ -60,10 +68,9 @@ public abstract class ObjectSerializer<T> {
 	}
 
 	public String convertToJson() {
-		HashMap<String, Object> fields = getDeltas();
-		if (fields.size() > 0) {
-			fields.put("updated_on", new GregorianCalendar());
-			return buildJson(fields);
+		if (mFields.size() > 0) {
+			mFields.put("updated_on", new GregorianCalendar());
+			return buildJson(mFields);
 		}
 		return null;
 	}
@@ -76,7 +83,7 @@ public abstract class ObjectSerializer<T> {
 		saveAdditionalParameters(fields);
 		String[] fieldNames = getDefaultFields();
 		for (String field : fieldNames) {
-			handleField(mOldObject, mNewObject, field, fields);
+			handleField(mNewObject, mOldObject, field, fields);
 		}
 		return fields;
 	}

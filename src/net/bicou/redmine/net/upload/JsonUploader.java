@@ -24,6 +24,7 @@ import java.util.zip.GZIPInputStream;
 
 public class JsonUploader extends JsonNetworkManager {
 	ObjectSerializer mObjectSerializer;
+	ObjectSerializer.RemoteOperation mRemoteOperation;
 
 	/**
 	 * This constructor can only be used if no callback is used, i.e. when the task is executed through {@code #syncExecute()}
@@ -33,6 +34,12 @@ public class JsonUploader extends JsonNetworkManager {
 
 	public JsonUploadError uploadObject(Context context, Server s, String queryPath, ObjectSerializer object) {
 		mObjectSerializer = object;
+
+		mRemoteOperation = mObjectSerializer.getRemoteOperation();
+		if (mRemoteOperation == ObjectSerializer.RemoteOperation.NO_OP) {
+			return null;
+		}
+
 		L.d("Wanted to upload to server: " + s + ", with uri: " + queryPath);
 		queryPath = "mymine.php";
 
@@ -42,7 +49,7 @@ public class JsonUploader extends JsonNetworkManager {
 		server.authPassword = s.authPassword;
 		server.user = s.user;
 
-		L.d("Will upload to server: " + server + ", with uri: " + queryPath);
+		L.i("Will upload to server: " + server + ", with uri: " + queryPath + " instead");
 		init(context, server, queryPath);
 		return uploadJson();
 	}
@@ -103,19 +110,23 @@ public class JsonUploader extends JsonNetworkManager {
 				return null;
 			}
 
-			// Handle proper incoming charset
+			// Handle proper incoming encoding (GZIP?)
 			HttpEntity entity = resp.getEntity();
 			Header contentEncoding = resp.getFirstHeader("Content-Encoding");
-			String charset = contentEncoding == null ? null : contentEncoding.getValue();
-			if (TextUtils.isEmpty(charset)) {
-				charset = "UTF-8";
-			}
-
-			// Handle gzip decompression
-			if (charset.equalsIgnoreCase("gzip")) {
+			String encoding = contentEncoding == null ? null : contentEncoding.getValue();
+			if (!TextUtils.isEmpty(encoding) && encoding.equalsIgnoreCase("gzip")) {
 				inputStream = new GZIPInputStream(entity.getContent());
 			} else {
 				inputStream = entity.getContent();
+			}
+
+			// Handle the incoming charset
+			Header contentType = resp.getFirstHeader("Content-Type");
+			String charset = contentType.getValue();
+			if (charset.contains("charset=")) {
+				charset = charset.substring(charset.indexOf("charset=") + "charset=".length());
+			} else {
+				charset = "UTF-8";
 			}
 
 			// Read response
@@ -125,7 +136,7 @@ public class JsonUploader extends JsonNetworkManager {
 				builder.append(line).append("\n");
 			}
 		} catch (final Exception e) {
-			L.e("Unable to upload " + mObjectSerializer + " from " + mURI + " because:" + e.toString());
+			L.e("Unable to upload " + mObjectSerializer + " to " + mURI, e);
 			mError = new JsonDownloadError(ErrorType.TYPE_NETWORK, e);
 			if (mSslSocketFactory != null) {
 				mError.chain = mSSLTrustManager.getServerCertificates();
