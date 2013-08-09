@@ -20,6 +20,7 @@ import net.bicou.redmine.app.projects.ProjectsActivity;
 import net.bicou.redmine.app.wiki.WikiActivity;
 import net.bicou.redmine.app.wiki.WikiPageFragment;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.json.WikiPage;
@@ -89,11 +90,23 @@ public class DrawerMenuFragment extends SherlockListFragment {
 		mData.add(new MainMenuSeparator(DrawerMenuFragment.this, R.string.menu_issues));
 		QueriesDbAdapter qdb = new QueriesDbAdapter(db);
 		ServersDbAdapter sdb = new ServersDbAdapter(db);
+		IssuesDbAdapter idb = new IssuesDbAdapter(db);
+
 		List<Server> servers = sdb.selectAll();
+		List<Issue> issues = new ArrayList<Issue>();
 		for (Server server : servers) {
 			List<Query> queries = qdb.selectAll(server);
 			for (Query query : queries) {
 				mData.add(new MainMenuItemQuery(this, query.name, server.serverUrl).setTag(query));
+			}
+			issues.addAll(idb.getFavorites(server));
+		}
+
+		if (issues.size() <= 0) {
+			mData.add(new MainMenuItemQuery(this, getString(R.string.drawer_main_no_favorite), ""));
+		} else {
+			for (Issue issue : issues) {
+				mData.add(new MainMenuItemQuery(this, issue.subject, issue.project.name).setTag(issue));
 			}
 		}
 	}
@@ -146,6 +159,11 @@ public class DrawerMenuFragment extends SherlockListFragment {
 				intent.putExtra(Constants.KEY_PROJECT_ID, page.project.id);
 				intent.putExtra(WikiPageFragment.KEY_WIKI_PAGE, new Gson().toJson(page));
 			}
+			startActivity(intent);
+		} else if (item instanceof Issue) {
+			Intent intent = new Intent(getActivity(), IssuesActivity.class);
+			intent.putExtra(Constants.KEY_ISSUE_ID, ((Issue) item).id);
+			intent.putExtra(Constants.KEY_SERVER_ID, ((Issue) item).server.rowId);
 			startActivity(intent);
 		} else {
 			throw new IllegalStateException("Unhandled drawer menu type: " + item);

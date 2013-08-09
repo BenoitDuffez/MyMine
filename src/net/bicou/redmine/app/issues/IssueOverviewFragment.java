@@ -9,9 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -45,6 +43,7 @@ import java.util.regex.Pattern;
 public class IssueOverviewFragment extends SherlockFragment {
 	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mAuthor, mParent;
 	ImageView mAuthorAvatar, mAssignedAvatar;
+	CheckBox mFavorite;
 	WebView mDescription;
 	Issue mIssue;
 	static java.text.DateFormat mLongDateFormat;
@@ -80,6 +79,18 @@ public class IssueOverviewFragment extends SherlockFragment {
 		mAssignee = (TextView) v.findViewById(R.id.issue_assignee);
 		//		mAssignedAvatar=v.findViewById(R.id.issue_assign)
 		mParent = (TextView) v.findViewById(R.id.issue_parent);
+		mFavorite = (CheckBox) v.findViewById(R.id.issue_is_favorite);
+
+		mFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+				mIssue.is_favorite = isChecked;
+				IssuesDbAdapter db = new IssuesDbAdapter(getActivity());
+				db.open();
+				db.update(mIssue);
+				db.close();
+			}
+		});
 
 		mMainLayout.setVisibility(View.INVISIBLE);
 
@@ -153,6 +164,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 				mIssue.created_on);
 		mIssue.assigned_to = displayNameAndAvatar(getActivity(), mIssue, mAssignee, mAssignedAvatar, mIssue.assigned_to, "%1$s", null); // TODO
 		mParent.setText(mIssue.parent != null && mIssue.parent.id > 0 ? Long.toString(mIssue.parent.id) : "");
+		mFavorite.setChecked(mIssue.is_favorite);
 	}
 
 	public static User displayNameAndAvatar(Context context, Issue issue, TextView name, ImageView avatar, User user, String textResId, Calendar date) {

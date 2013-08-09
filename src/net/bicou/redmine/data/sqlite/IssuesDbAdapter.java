@@ -40,6 +40,7 @@ public class IssuesDbAdapter extends DbAdapter {
 	public static final String KEY_ESTIMATED_HOURS = "estimated_hours";
 	public static final String KEY_SPENT_HOURS = "spent_hours";
 	public static final String KEY_IS_PRIVATE = "is_private";
+	public static final String KEY_IS_FAVORITE = "is_favorite";
 
 	public static final String KEY_SERVER_ID = "server_id";
 
@@ -69,6 +70,7 @@ public class IssuesDbAdapter extends DbAdapter {
 			KEY_ESTIMATED_HOURS,
 			KEY_SPENT_HOURS,
 			KEY_IS_PRIVATE,
+			KEY_IS_FAVORITE,
 
 			KEY_SERVER_ID,
 	};
@@ -152,6 +154,7 @@ public class IssuesDbAdapter extends DbAdapter {
 		values.put(KEY_SPENT_HOURS, issue.spent_hours);
 		values.put(KEY_SERVER_ID, issue.server.rowId);
 		values.put(KEY_IS_PRIVATE, issue.is_private ? 1 : 0);
+		values.put(KEY_IS_FAVORITE, issue.is_favorite ? 1 : 0);
 
 		if (issue.attachments != null && issue.attachments.size() > 0) {
 			ContentValues cv = new ContentValues();
@@ -193,6 +196,7 @@ public class IssuesDbAdapter extends DbAdapter {
 		values.put(KEY_ESTIMATED_HOURS, issue.estimated_hours);
 		values.put(KEY_SPENT_HOURS, issue.spent_hours);
 		values.put(KEY_IS_PRIVATE, issue.is_private ? 1 : 0);
+		values.put(KEY_IS_FAVORITE, issue.is_favorite ? 1 : 0);
 		return mDb.update(TABLE_ISSUES, values, KEY_ID + "=" + issue.id + " AND " + KEY_SERVER_ID + " = " + issue.server.rowId, null);
 	}
 
@@ -487,7 +491,7 @@ public class IssuesDbAdapter extends DbAdapter {
 			} else if (KEY_PROJECT.equals(col)) {
 				cols.add(ProjectsDbAdapter.TABLE_PROJECTS + "." + Reference.KEY_NAME + " AS " + col);
 				onArgs.add(ProjectsDbAdapter.TABLE_PROJECTS + "." + ProjectsDbAdapter.KEY_ID + " = " + TABLE_ISSUES + "." + KEY_PROJECT_ID);
-				onArgs.add(VersionsDbAdapter.TABLE_VERSIONS + "." + ProjectsDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID);
+				onArgs.add(ProjectsDbAdapter.TABLE_PROJECTS + "." + ProjectsDbAdapter.KEY_SERVER_ID + " = " + TABLE_ISSUES + "." + KEY_SERVER_ID);
 				tables.add("LEFT JOIN " + ProjectsDbAdapter.TABLE_PROJECTS + " ON " + Util.join(onArgs.toArray(), " AND "));
 			} else if (IssueStatusesDbAdapter.KEY_IS_CLOSED.equals(col)) {
 				cols.add(IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + col);
@@ -501,10 +505,12 @@ public class IssuesDbAdapter extends DbAdapter {
 			}
 		}
 
-		final String where = selection.size() > 0 ? " WHERE " + Util.join(selection.toArray(), " AND ") : "";
-		String sql = "SELECT " + Util.join(cols.toArray(), ", ") + " FROM " + Util.join(tables.toArray(), " ") + where;
-		String[] selA;
+		String sql = "SELECT " + Util.join(cols.toArray(), ", ") + " FROM " + Util.join(tables.toArray(), " ");
+		if (selection.size() > 0) {
+			sql += " WHERE " + Util.join(selection.toArray(), " AND ");
+		}
 
+		String[] selA;
 		if (selectionArgs == null || selectionArgs.size() <= 0) {
 			selA = null;
 		} else {
@@ -666,6 +672,29 @@ public class IssuesDbAdapter extends DbAdapter {
 		}
 
 		return nbIssues;
+	}
+
+	public List<Issue> getFavorites(Server server) {
+		List<String> selection = new ArrayList<String>() {{
+			add(TABLE_ISSUES + "." + KEY_IS_FAVORITE + " > 0");
+		}};
+		String[] cols = {
+				KEY_ID,
+				KEY_SUBJECT,
+				KEY_PROJECT,
+		};
+		Cursor c = findMatchingIssues(selection, null, cols, null);
+		List<Issue> issues = new ArrayList<Issue>();
+		if (c.moveToFirst()) {
+			do {
+				Issue issue = new Issue(server, c);
+				issue.project.name = c.getString(c.getColumnIndex(IssuesDbAdapter.KEY_PROJECT));
+				issue.server = server;
+				issues.add(issue);
+			} while (c.moveToNext());
+			c.close();
+		}
+		return issues;
 	}
 }
 

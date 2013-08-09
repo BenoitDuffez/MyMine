@@ -10,9 +10,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+        <CheckBox
+                android:id="@+id/issue_is_favorite"
+                android:button="@drawable/favorite"
+                android:padding="4dp"
+                android:layout_alignTop="@+id/issue_tracker_id"
+                android:layout_alignBottom="@+id/issue_tracker_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
         <net.bicou.redmine.widget.RobotoThinTextView
                 android:id="@+id/issue_tracker_id"
                 android:text="Tracker #12345"
+                android:layout_toRightOf="@+id/issue_is_favorite"
                 android:layout_toLeftOf="@+id/issue_author"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

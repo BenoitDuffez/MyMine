@@ -38,6 +38,7 @@ public class Issue {
 
 	public Server server;
 	public Project project;
+	public boolean is_favorite;
 
 	public Issue(Server server, Project project) {
 		this.server = server;
@@ -72,11 +73,17 @@ public class Issue {
 				} else if (col.equals(IssuesDbAdapter.KEY_PRIORITY_ID)) {
 					priority = new IssuePriority(server);
 					priority.id = c.getLong(columnIndex);
-					priority.name = c.getString(c.getColumnIndex(col + "_" + IssuePrioritiesDbAdapter.KEY_NAME));
+					int pId = c.getColumnIndex(col + "_" + IssuePrioritiesDbAdapter.KEY_NAME);
+					if (pId >= 0) {
+						priority.name = c.getString(pId);
+					}
 				} else if (col.equals(IssuesDbAdapter.KEY_STATUS_ID)) {
 					status = new IssueStatus();
 					status.id = c.getLong(columnIndex);
-					status.name = c.getString(c.getColumnIndex(col + "_" + IssueStatusesDbAdapter.KEY_NAME));
+					int sId = c.getColumnIndex(col + "_" + IssueStatusesDbAdapter.KEY_NAME);
+					if (sId >= 0) {
+						status.name = c.getString(sId);
+					}
 				} else if (col.equals(IssuesDbAdapter.KEY_AUTHOR_ID)) {
 					author = new User(c, col + "_");
 				} else if (col.equals(IssuesDbAdapter.KEY_ASSIGNED_TO_ID)) {
@@ -110,6 +117,8 @@ public class Issue {
 					estimated_hours = c.getDouble(columnIndex);
 				} else if (col.equals(IssuesDbAdapter.KEY_SPENT_HOURS)) {
 					spent_hours = c.getDouble(columnIndex);
+				} else if (col.equals(IssuesDbAdapter.KEY_IS_FAVORITE)) {
+					is_favorite = c.getInt(columnIndex) > 0;
 				} else if (col.equals(IssuesDbAdapter.KEY_IS_PRIVATE)) {
 					is_private = c.getInt(columnIndex) > 0;
 				} else if (col.equals(IssuesDbAdapter.KEY_SERVER_ID)) {

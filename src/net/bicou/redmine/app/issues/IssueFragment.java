@@ -104,18 +104,22 @@ public class IssueFragment extends SherlockFragment {
 		}
 		if (savedInstanceState == null) {
 			// Load issue
-			final ServersDbAdapter sdb = new ServersDbAdapter(getActivity());
-			sdb.open();
-			final Server server = sdb.getServer(args.getLong(Constants.KEY_SERVER_ID, 0));
+			if (getArguments().containsKey(KEY_ISSUE_JSON)) {
+				mIssue = new Gson().fromJson(savedInstanceState.getString(KEY_ISSUE_JSON), Issue.class);
+			} else {
+				final ServersDbAdapter sdb = new ServersDbAdapter(getActivity());
+				sdb.open();
+				final Server server = sdb.getServer(args.getLong(Constants.KEY_SERVER_ID, 0));
 
-			if (server == null) {
-				L.e("Server can't be null now!", null);
-				return v;
+				if (server == null) {
+					L.e("Server can't be null now!", null);
+					return v;
+				}
+
+				final IssuesDbAdapter db = new IssuesDbAdapter(sdb);
+				mIssue = db.select(server, args.getLong(Constants.KEY_ISSUE_ID), null);
+				db.close();
 			}
-
-			final IssuesDbAdapter db = new IssuesDbAdapter(sdb);
-			mIssue = db.select(server, args.getLong(Constants.KEY_ISSUE_ID), null);
-			db.close();
 		} else {
 			mIssue = new Gson().fromJson(savedInstanceState.getString(KEY_ISSUE_JSON), Issue.class);
 		}
