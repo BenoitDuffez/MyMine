@@ -34,6 +34,9 @@ import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.net.upload.IssueSerializer;
+import net.bicou.redmine.net.upload.JsonUploadError;
+import net.bicou.redmine.net.upload.JsonUploader;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
 
@@ -47,6 +50,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_ISSUE_LOAD_ISSUE = 1;
 	public static final int ACTION_ISSUE_LOAD_OVERVIEW = 2;
 	public static final int ACTION_ISSUE_LOAD_ATTACHMENTS = 3;
+	public static final int ACTION_DELETE_ISSUE = 4;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -165,6 +169,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
+		Fragment content = getContentFragment();
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
@@ -175,7 +180,6 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return true;
 
 		case R.id.menu_issue_edit:
-			Fragment content = getContentFragment();
 			if (content != null && content instanceof IssueFragment) {
 				Issue issue = ((IssueFragment) content).getIssue();
 				if (issue != null) {
@@ -187,10 +191,19 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			return true;
 
+		case R.id.menu_issue_delete:
+			// todo: add cancel button
+			if (content != null && content instanceof IssueFragment) {
+				Issue issue = ((IssueFragment) content).getIssue();
+				if (issue != null && issue.server != null && issue.id > 0) {
+					AsyncTaskFragment.runTask(this, ACTION_DELETE_ISSUE, issue);
+				}
+			}
+			return true;
+
 		case R.id.menu_issue_browser:
-			IssueFragment frag = getContentFragment();
-			if (frag != null) {
-				final Issue issue = frag.getIssue();
+			if (content != null && content instanceof IssueFragment) {
+				final Issue issue = ((IssueFragment) content).getIssue();
 				if (issue != null) {
 					String url = issue.server.serverUrl;
 					if (!url.endsWith("/")) {
@@ -306,6 +319,13 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 		case ACTION_ISSUE_LOAD_ATTACHMENTS:
 			return IssueOverviewFragment.loadIssueAttachments(applicationContext, (Issue) parameters);
+
+		case ACTION_DELETE_ISSUE:
+			Issue issue = (Issue) parameters;
+			IssueSerializer serializer = new IssueSerializer(this, issue, null, true);
+			String uri = "issues/" + issue.id + ".json";
+			JsonUploadError error = new JsonUploader().uploadObject(this, issue.server, uri, serializer);
+			return error;
 		}
 
 		return null;
@@ -335,6 +355,11 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 					}
 				}
 			}
+			break;
+
+		case ACTION_DELETE_ISSUE:
+			// todo: handle error
+			L.d("delete issue: " + result);
 			break;
 		}
 	}

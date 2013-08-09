@@ -14,7 +14,11 @@ public class IssueSerializer extends ObjectSerializer<Issue> {
 	String mNotes;
 
 	public IssueSerializer(final Context context, Issue issue, String notes) {
-		super(context, "issue", issue);
+		this(context, issue, notes, false);
+	}
+
+	public IssueSerializer(final Context context, Issue issue, String notes, boolean isDelete) {
+		super(context, "issue", issue, isDelete);
 		mNotes = notes;
 		if (issue == null || issue.server == null || issue.server.rowId <= 0) {
 			throw new IllegalArgumentException("Invalid issue modification parameters provided");
