@@ -20,6 +20,7 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListFilter;
+import net.bicou.redmine.app.issues.edit.EditIssueActivity;
 import net.bicou.redmine.app.welcome.CardsAdapter;
 import net.bicou.redmine.app.welcome.OverviewCard;
 import net.bicou.redmine.app.wiki.WikiUtils;
@@ -38,6 +39,8 @@ import java.util.List;
 
 public class ProjectFragment extends SherlockFragment {
 	public static final String KEY_PROJECT_JSON = "net.bicou.redmine.Project";
+	private static final int ADD_ISSUE = 0;
+
 	private Project mProject;
 	TextView mUpdatedOn, mCreatedOn, mTitle, mDescription, mServer, mParent, mShortDescription;
 	View mFullDescription;
@@ -100,6 +103,17 @@ public class ProjectFragment extends SherlockFragment {
 		});
 
 		mAdapter = new CardsAdapter();
+		mAdapter.setCallbacks(new CardsAdapter.CardActionCallback() {
+			@Override
+			public void onActionSelected(final Object action) {
+				if (action instanceof Integer && (Integer) action == ADD_ISSUE) {
+					Intent intent = new Intent(getActivity(), EditIssueActivity.class);
+					intent.putExtra(Constants.KEY_PROJECT, mProject);
+					intent.putExtra(Constants.KEY_SERVER, mProject.server);
+					startActivity(intent);
+				}
+			}
+		});
 		mStaggeredGridView = (StaggeredGridView) v.findViewById(R.id.project_overview_container);
 		mStaggeredGridView.setAdapter(mAdapter);
 		mStaggeredGridView.setOnItemClickListener(mAdapter.getStaggeredItemClickListener());
@@ -165,6 +179,7 @@ public class ProjectFragment extends SherlockFragment {
 		// Create the card
 		OverviewCard issuesCard = new OverviewCard(intent);
 		issuesCard.setContent(R.string.title_issues, issues.toString().trim(), 0, R.drawable.icon_issues);
+		issuesCard.addAction(ADD_ISSUE, R.string.menu_issues_add);
 		cards.add(issuesCard);
 	}
 
