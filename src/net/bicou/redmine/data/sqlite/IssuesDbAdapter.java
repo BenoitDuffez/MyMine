@@ -561,6 +561,8 @@ public class IssuesDbAdapter extends DbAdapter {
 		List<String> where = new ArrayList<String>();
 		if (issue.server != null && issue.server.rowId > 0) {
 			where.add(KEY_SERVER_ID + " = " + issue.server.rowId);
+		} else {
+			return 0;
 		}
 		where.add(KEY_ID + " = " + issue.id);
 
