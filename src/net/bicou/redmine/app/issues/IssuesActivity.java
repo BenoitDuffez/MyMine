@@ -35,6 +35,7 @@ import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
@@ -375,6 +376,10 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		case ACTION_DELETE_ISSUE:
 			L.d("delete issue: " + result);
 			if (result == null) {
+				IssuesDbAdapter db = new IssuesDbAdapter(this);
+				db.open();
+				db.delete((Issue) parameters);
+				db.close();
 				Crouton.makeText(this, getString(R.string.issue_delete_confirmed), Style.CONFIRM).show();
 			} else {
 				((JsonNetworkError) result).displayCrouton(this, null);
