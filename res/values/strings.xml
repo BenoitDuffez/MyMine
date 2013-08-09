@@ -286,5 +286,6 @@
         "<![CDATA[There are no users. This happens when you're not admin, we are working on getting this to work. If you need support, email redmine@bicou.net]]>"
     </string>
     <string name="users_picker_dialog_title">Pick the desired user</string>
+    <string name="drawer_main_no_favorite">There is no favorite</string>
 
 </resources>

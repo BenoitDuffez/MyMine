@@ -2,6 +2,7 @@ package net.bicou.redmine.app.drawers.main;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import net.bicou.redmine.R;
 
@@ -20,6 +21,7 @@ public class MainMenuItemWikiPage extends MainMenuItem<DrawerMenuFragment.Drawer
 
 	private static class ViewHolder {
 		TextView server, page, project;
+		ImageView icon;
 	}
 
 	@Override
@@ -30,6 +32,7 @@ public class MainMenuItemWikiPage extends MainMenuItem<DrawerMenuFragment.Drawer
 		if (convertView == null) {
 			v = drawerMenuFragment.getActivity().getLayoutInflater().inflate(R.layout.drawer_menu_wiki_page, parent, false);
 			holder = new ViewHolder();
+			holder.icon = (ImageView) v.findViewById(R.id.drawer_wiki_icon);
 			holder.page = (TextView) v.findViewById(R.id.drawer_wiki_name);
 			holder.server = (TextView) v.findViewById(R.id.drawer_wiki_server);
 			holder.project = (TextView) v.findViewById(R.id.drawer_wiki_project);
@@ -39,9 +42,12 @@ public class MainMenuItemWikiPage extends MainMenuItem<DrawerMenuFragment.Drawer
 			holder = (ViewHolder) convertView.getTag();
 		}
 
+		holder.icon.setVisibility(getTag() == null ? View.INVISIBLE : View.VISIBLE);
 		holder.page.setText(page);
-		holder.server.setText(server.replace("http://", "").replace("https://", ""));
-		holder.project.setText(project);
+		if (server != null) {
+			holder.server.setText(server.replace("http://", "").replace("https://", ""));
+			holder.project.setText(project);
+		}
 
 		return v;
 	}

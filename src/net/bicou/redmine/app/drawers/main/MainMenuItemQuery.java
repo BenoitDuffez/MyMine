@@ -2,6 +2,7 @@ package net.bicou.redmine.app.drawers.main;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import net.bicou.redmine.R;
 
@@ -19,6 +20,7 @@ public class MainMenuItemQuery extends MainMenuItem<DrawerMenuFragment.DrawerMen
 
 	private static class ViewHolder {
 		TextView server, query;
+		ImageView icon;
 	}
 
 	@Override
@@ -29,6 +31,7 @@ public class MainMenuItemQuery extends MainMenuItem<DrawerMenuFragment.DrawerMen
 		if (convertView == null) {
 			v = drawerMenuFragment.getActivity().getLayoutInflater().inflate(R.layout.drawer_menu_issue_query, parent, false);
 			holder = new ViewHolder();
+			holder.icon = (ImageView) v.findViewById(R.id.drawer_query_icon);
 			holder.query = (TextView) v.findViewById(R.id.drawer_query_name);
 			holder.server = (TextView) v.findViewById(R.id.drawer_query_server);
 			v.setTag(holder);
@@ -37,6 +40,7 @@ public class MainMenuItemQuery extends MainMenuItem<DrawerMenuFragment.DrawerMen
 			holder = (ViewHolder) convertView.getTag();
 		}
 
+		holder.icon.setVisibility(getTag() == null ? View.INVISIBLE : View.VISIBLE);
 		holder.query.setText(query);
 		holder.server.setText(server.replace("http://", "").replace("https://", ""));
 

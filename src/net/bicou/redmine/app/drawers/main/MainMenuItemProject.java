@@ -37,6 +37,8 @@ public class MainMenuItemProject extends MainMenuItem<DrawerMenuFragment.DrawerM
 			v = convertView;
 			holder = (ViewHolder) convertView.getTag();
 		}
+
+		holder.icon.setVisibility(getTag() == null ? View.INVISIBLE : View.VISIBLE);
 		holder.text.setText(mText);
 
 		return v;

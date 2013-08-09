@@ -76,8 +76,12 @@ public class DrawerMenuFragment extends SherlockListFragment {
 		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
 		List<Project> favs = pdb.getFavorites();
 
-		for (Project project : favs) {
-			mData.add(new MainMenuItemProject(DrawerMenuFragment.this, project.name).setTag(project));
+		if (favs.size() <= 0) {
+			mData.add(new MainMenuItemProject(this, getString(R.string.drawer_main_no_favorite)));
+		} else {
+			for (Project project : favs) {
+				mData.add(new MainMenuItemProject(this, project.name).setTag(project));
+			}
 		}
 	}
 
@@ -89,7 +93,7 @@ public class DrawerMenuFragment extends SherlockListFragment {
 		for (Server server : servers) {
 			List<Query> queries = qdb.selectAll(server);
 			for (Query query : queries) {
-				mData.add(new MainMenuItemQuery(DrawerMenuFragment.this, query.name, server.serverUrl).setTag(query));
+				mData.add(new MainMenuItemQuery(this, query.name, server.serverUrl).setTag(query));
 			}
 		}
 	}
@@ -99,13 +103,19 @@ public class DrawerMenuFragment extends SherlockListFragment {
 
 		// All pages shortcut
 		WikiPage dummy = new WikiPage();
-		mData.add(new MainMenuItemWikiAllPages(DrawerMenuFragment.this).setTag(dummy));
+		MainMenuItem<DrawerMenuViewType> allWikiPages = new MainMenuItemWikiPage(this, getString(R.string.drawer_wiki_all_pages), null, null).setTag(dummy);
 
 		// List of favorites
 		WikiDbAdapter wdb = new WikiDbAdapter(db);
 		List<WikiPage> pages = wdb.selectFavorites();
-		for (WikiPage page : pages) {
-			mData.add(new MainMenuItemWikiPage(DrawerMenuFragment.this, page.title, page.project.server.serverUrl, page.project.name).setTag(page));
+		if (pages.size() <= 0) {
+			mData.add(new MainMenuItemWikiPage(this, getString(R.string.drawer_main_no_favorite), "", ""));
+			mData.add(allWikiPages);
+		} else {
+			mData.add(allWikiPages);
+			for (WikiPage page : pages) {
+				mData.add(new MainMenuItemWikiPage(this, page.title, page.project.server.serverUrl, page.project.name).setTag(page));
+			}
 		}
 	}
 
@@ -113,7 +123,9 @@ public class DrawerMenuFragment extends SherlockListFragment {
 	public void onListItemClick(final ListView listView, final View v, final int position, final long id) {
 		Object item = mAdapter.getItem(position).getTag();
 
-		if (item instanceof Project) {
+		if (item == null) {
+			// No-op
+		} else if (item instanceof Project) {
 			Project project = (Project) item;
 			Intent intent = new Intent(getActivity(), ProjectsActivity.class);
 			intent.putExtra(ProjectFragment.KEY_PROJECT_JSON, new Gson().toJson(project));
