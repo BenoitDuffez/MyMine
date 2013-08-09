@@ -26,29 +26,17 @@ public class JsonUploader extends JsonNetworkManager {
 	ObjectSerializer mObjectSerializer;
 	ObjectSerializer.RemoteOperation mRemoteOperation;
 
-	/**
-	 * This constructor can only be used if no callback is used, i.e. when the task is executed through {@code #syncExecute()}
-	 */
 	public JsonUploader() {
 	}
 
-	public JsonUploadError uploadObject(Context context, Server s, String queryPath, ObjectSerializer object) {
+	public JsonUploadError uploadObject(Context context, Server server, String queryPath, ObjectSerializer object) {
 		mObjectSerializer = object;
 
 		mRemoteOperation = mObjectSerializer.getRemoteOperation();
-		L.i("Uploading " + mObjectSerializer + " operation: " + mRemoteOperation);
 		if (mRemoteOperation == ObjectSerializer.RemoteOperation.NO_OP) {
+			L.i("Aborted " + mObjectSerializer + " operation: " + mRemoteOperation);
 			return null;
 		}
-
-		L.d("Wanted to upload to server: " + s + ", with uri: " + queryPath);
-		queryPath = "mymine.php";
-
-		Server server = new Server("http://bicou.net/", s.apiKey);
-		server.rowId = s.rowId;
-		server.authUsername = s.authUsername;
-		server.authPassword = s.authPassword;
-		server.user = s.user;
 
 		L.i("Will upload to server: " + server + ", with uri: " + queryPath + " instead");
 		init(context, server, queryPath);
