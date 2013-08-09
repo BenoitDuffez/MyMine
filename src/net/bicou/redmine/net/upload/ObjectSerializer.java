@@ -325,4 +325,9 @@ public abstract class ObjectSerializer<T> {
 
 		throw new IllegalStateException("Unreachable code (well, should be)");
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " { operation: " + getRemoteOperation() + ", # of changes: " + (mFields == null ? 0 : mFields.size()) + " }";
+	}
 }

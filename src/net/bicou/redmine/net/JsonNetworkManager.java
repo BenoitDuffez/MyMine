@@ -3,17 +3,20 @@ package net.bicou.redmine.net;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import net.bicou.redmine.R;
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import net.bicou.redmine.net.ssl.MyMineSSLSocketFactory;
 import net.bicou.redmine.net.ssl.MyMineSSLTrustManager;
 import net.bicou.redmine.util.L;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -26,6 +29,10 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 
 import javax.net.ssl.KeyManager;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
@@ -34,6 +41,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 public abstract class JsonNetworkManager {
 	protected URI mURI;
@@ -140,5 +148,98 @@ public abstract class JsonNetworkManager {
 		}
 
 		return httpClient;
+	}
+
+	protected HttpRequestBase getHttpRequest() {
+		return new HttpGet(mURI);
+	}
+
+	/**
+	 * Actually downloads the JSON from the server. In case of failure, an object will be stored in {@link JsonNetworkManager#mError}.
+	 *
+	 * @return the JSON, as a {@code String}
+	 */
+	protected String downloadJson() {
+		BufferedReader reader = null;
+		InputStream inputStream = null;
+		final StringBuilder builder = new StringBuilder();
+		String json = null;
+
+		try {
+			buildURI();
+			L.i("Loading JSON from: " + mURI);
+			if (mURI == null) {
+				return null;
+			}
+
+			final HttpClient httpClient = getHttpClient();
+			final HttpRequestBase req = getHttpRequest();
+
+			// Ask for UTF-8
+			req.setHeader("Content-Type", "application/json; charset=utf-8");
+			req.setHeader("Accept-Encoding", "gzip");
+
+			// Execute request
+			final HttpResponse resp = httpClient.execute(req);
+
+			// Check result
+			if (resp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				L.d("Got HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
+				mError = new JsonDownloadError(JsonDownloadError.ErrorType.TYPE_NETWORK);
+				mError.httpResponseCode = resp.getStatusLine().getStatusCode();
+				mError.setMessage(R.string.err_http, "HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
+				return null;
+			}
+
+			// Handle proper incoming encoding (GZIP?)
+			HttpEntity entity = resp.getEntity();
+			Header contentEncoding = resp.getFirstHeader("Content-Encoding");
+			String encoding = contentEncoding == null ? null : contentEncoding.getValue();
+			if (!TextUtils.isEmpty(encoding) && encoding.equalsIgnoreCase("gzip")) {
+				inputStream = new GZIPInputStream(entity.getContent());
+			} else {
+				inputStream = entity.getContent();
+			}
+
+			// Handle the incoming charset
+			Header contentType = resp.getFirstHeader("Content-Type");
+			String charset = contentType.getValue();
+			if (charset.contains("charset=")) {
+				charset = charset.substring(charset.indexOf("charset=") + "charset=".length());
+			} else {
+				charset = "UTF-8";
+			}
+
+			// Read response
+			reader = new BufferedReader(new InputStreamReader(inputStream, charset));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				builder.append(line).append("\n");
+			}
+			json = builder.toString();
+		} catch (final Exception e) {
+			L.e("Unable to download  from " + mURI + " because:" + e.toString());
+			mError = new JsonDownloadError(JsonDownloadError.ErrorType.TYPE_NETWORK, e);
+			if (mSslSocketFactory != null) {
+				mError.chain = mSSLTrustManager.getServerCertificates();
+			}
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return json;
 	}
 }

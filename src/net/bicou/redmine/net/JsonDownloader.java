@@ -13,18 +13,11 @@ import net.bicou.redmine.data.json.Version.VersionStatus;
 import net.bicou.redmine.data.json.VersionStatusDeserializer;
 import net.bicou.redmine.net.JsonDownloadError.ErrorType;
 import net.bicou.redmine.util.L;
-import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Calendar;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 public class JsonDownloader<T> extends JsonNetworkManager {
 	T mObject;
@@ -111,145 +104,74 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private T downloadAndParse() {
-		if (AbsObjectList.class.isAssignableFrom(mType)) {
-			String json;
-			try {
-				// T object = mType.newInstance();
-				int downloadedObjects = 0, limit = 0, total = 0;
-				AbsObjectList<T> mObjectAsList = null, object;
-				mCurrentOffset = 0;
+	private T downloadAllObjects() {
+		String json;
+		try {
+			int downloadedObjects = 0, limit = 0, total = 0;
+			AbsObjectList<T> mObjectAsList = null, object;
+			mCurrentOffset = 0;
 
-				do {
-					json = downloadJson();
-					if (mError != null) {
-						return null;
-					}
-					object = (AbsObjectList<T>) parseJson(json);
-
-					if (object != null) {
-						limit = object.limit;
-						total = object.total_count;
-
-						mCurrentOffset += limit;
-
-						if (mObject == null) {
-							mObject = mType.newInstance();
-							mObjectAsList = (AbsObjectList<T>) mObject;
-							mObjectAsList.init(object);
-						}
-
-						downloadedObjects += object.getSize();
-						mObjectAsList.addObjects(object.getObjects());
-					} else {
-						break;
-					}
-
-					if (!mDownloadAllIfList) {
-						break;
-					}
-				} while (downloadedObjects < total);
-
-				if (mObjectAsList != null) {
-					mObjectAsList.downloadedObjects = downloadedObjects;
-					mObjectAsList.total_count = total;
-					mObjectAsList.limit = limit;
-					mObjectAsList.offset = 0;
+			do {
+				json = downloadJson();
+				if (mError != null) {
+					return null;
 				}
-			} catch (final InstantiationException e) {
-				L.e("unable to instantiate object", e);
-				mError = new JsonDownloadError(ErrorType.TYPE_ANDROID);
-				mError.setMessage(R.string.err_unable_to_instantiate_object, e.getMessage());
-			} catch (final IllegalAccessException e) {
-				L.e("unable to instantiate object", e);
-				mError = new JsonDownloadError(ErrorType.TYPE_ANDROID);
-				mError.setMessage(R.string.err_unable_to_instantiate_object, e.getMessage());
+				object = (AbsObjectList<T>) parseJson(json);
+
+				if (object != null) {
+					limit = object.limit;
+					total = object.total_count;
+
+					mCurrentOffset += limit;
+
+					if (mObject == null) {
+						mObject = mType.newInstance();
+						mObjectAsList = (AbsObjectList<T>) mObject;
+						mObjectAsList.init(object);
+					}
+
+					downloadedObjects += object.getSize();
+					if (mObjectAsList != null) {
+						mObjectAsList.addObjects(object.getObjects());
+					}
+				} else {
+					break;
+				}
+
+				if (!mDownloadAllIfList) {
+					break;
+				}
+			} while (downloadedObjects < total);
+
+			if (mObjectAsList != null) {
+				mObjectAsList.downloadedObjects = downloadedObjects;
+				mObjectAsList.total_count = total;
+				mObjectAsList.limit = limit;
+				mObjectAsList.offset = 0;
 			}
-		} else {
-			final String json = downloadJson();
-			mObject = parseJson(json);
+		} catch (final InstantiationException e) {
+			L.e("unable to instantiate object", e);
+			mError = new JsonDownloadError(ErrorType.TYPE_ANDROID);
+			mError.setMessage(R.string.err_unable_to_instantiate_object, e.getMessage());
+		} catch (final IllegalAccessException e) {
+			L.e("unable to instantiate object", e);
+			mError = new JsonDownloadError(ErrorType.TYPE_ANDROID);
+			mError.setMessage(R.string.err_unable_to_instantiate_object, e.getMessage());
 		}
 
 		return mObject;
 	}
 
-	/**
-	 * Actually downloads the JSON from the server. In case of failure, an object will be stored in {@link JsonDownloader#mError}.
-	 *
-	 * @return the JSON, as a {@code String}
-	 */
-	private String downloadJson() {
-		BufferedReader reader = null;
-		InputStream inputStream = null;
-		final StringBuilder builder = new StringBuilder();
-
-		try {
-			buildURI();
-			L.i("Loading JSON from: " + mURI);
-			if (mURI == null) {
+	private T downloadAndParse() {
+		if (AbsObjectList.class.isAssignableFrom(mType)) {
+			return downloadAllObjects();
+		} else {
+			final String json = downloadJson();
+			if (mError != null) {
 				return null;
 			}
-
-			final HttpClient httpClient = getHttpClient();
-			final HttpGet get = new HttpGet(mURI);
-			final HttpResponse resp = httpClient.execute(get);
-
-			// Ask for UTF-8
-			get.setHeader("Content-Type", "application/json; charset=utf-8");
-			get.setHeader("Accept-Encoding", "gzip");
-
-			if (resp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-				L.d("Got HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
-				mError = new JsonDownloadError(ErrorType.TYPE_NETWORK);
-				mError.setMessage(R.string.err_http, "HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
-				return null;
-			}
-
-			// Handle proper incoming charset
-			HttpEntity entity = resp.getEntity();
-			Header contentEncoding = resp.getFirstHeader("Content-Encoding");
-			String charset = contentEncoding == null ? null : contentEncoding.getValue();
-			if (TextUtils.isEmpty(charset)) {
-				charset = "UTF-8";
-			}
-
-			// Handle gzip decompression
-			if (charset.equalsIgnoreCase("gzip")) {
-				inputStream = new GZIPInputStream(entity.getContent());
-			} else {
-				inputStream = entity.getContent();
-			}
-
-			// Read response
-			reader = new BufferedReader(new InputStreamReader(inputStream, charset));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				builder.append(line).append("\n");
-			}
-		} catch (final Exception e) {
-			L.e("Unable to download " + mType.toString() + " from " + mURI + " because:" + e.toString());
-			mError = new JsonDownloadError(ErrorType.TYPE_NETWORK, e);
-			if (mSslSocketFactory != null) {
-				mError.chain = mSSLTrustManager.getServerCertificates();
-			}
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			return parseJson(json);
 		}
-
-		return builder.toString();
 	}
 
 	private T parseJson(String json) {
