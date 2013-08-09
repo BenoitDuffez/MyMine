@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.drawers;
+package net.bicou.redmine.app.drawers.main;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,22 +8,17 @@ import net.bicou.redmine.R;
 /**
  * Created by bicou on 19/07/13.
  */
-public class MenuItemQuery extends MenuItem {
+public class MainMenuItemQuery extends MainMenuItem<DrawerMenuFragment.DrawerMenuViewType> {
 	String server, query;
 
-	public MenuItemQuery(final DrawerMenuFragment drawerMenuFragment, String queryName, String serverName) {
-		super(drawerMenuFragment);
+	public MainMenuItemQuery(final DrawerMenuFragment drawerMenuFragment, String queryName, String serverName) {
+		super(drawerMenuFragment, DrawerMenuFragment.DrawerMenuViewType.QUERY);
 		query = queryName;
 		server = serverName;
 	}
 
 	private static class ViewHolder {
 		TextView server, query;
-	}
-
-	@Override
-	public int getViewType() {
-		return DrawerMenuFragment.MENU_VIEWTYPE_QUERY;
 	}
 
 	@Override

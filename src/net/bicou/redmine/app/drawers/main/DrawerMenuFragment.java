@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.drawers;
+package net.bicou.redmine.app.drawers.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.drawers.DrawerActivity;
+import net.bicou.redmine.app.drawers.DrawerMenuItem;
+import net.bicou.redmine.app.drawers.DrawerMenuItemsAdapter;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.projects.ProjectFragment;
@@ -30,14 +33,16 @@ import java.util.List;
  * Created by bicou on 14/06/13.
  */
 public class DrawerMenuFragment extends SherlockListFragment {
-	DrawerMenuItemsAdapter mAdapter;
-	public static final int MENU_VIEWTYPE_SEPARATOR = 0;
-	public static final int MENU_VIEWTYPE_PROJECT = 1;
-	public static final int MENU_VIEWTYPE_QUERY = 2;
-	public static final int MENU_VIEWTYPE_WIKI = 3;
-	public static final int MENU_VIEWTYPE_COUNT = 4;
+	DrawerMenuItemsAdapter<DrawerMenuViewType> mAdapter;
 
-	private List<DrawerMenuItemsAdapter.DrawerMenuItem> mData = new ArrayList<DrawerMenuItemsAdapter.DrawerMenuItem>();
+	public enum DrawerMenuViewType {
+		SEPARATOR,
+		PROJECT,
+		QUERY,
+		WIKI,
+	}
+
+	private List<DrawerMenuItem<DrawerMenuViewType>> mData = new ArrayList<DrawerMenuItem<DrawerMenuViewType>>();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,7 +50,7 @@ public class DrawerMenuFragment extends SherlockListFragment {
 
 		buildMenuContents();
 
-		mAdapter = new DrawerMenuItemsAdapter(getActivity(), mData);
+		mAdapter = new DrawerMenuItemsAdapter<DrawerMenuViewType>(getActivity(), mData);
 		setListAdapter(mAdapter);
 		return v;
 	}
@@ -67,40 +72,40 @@ public class DrawerMenuFragment extends SherlockListFragment {
 	}
 
 	private void buildProjects(final DbAdapter db) {
-		mData.add(new MenuSeparator(DrawerMenuFragment.this, R.string.menu_projects));
+		mData.add(new MainMenuSeparator(DrawerMenuFragment.this, R.string.menu_projects));
 		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
 		List<Project> favs = pdb.getFavorites();
 
 		for (Project project : favs) {
-			mData.add(new MenuItemProject(DrawerMenuFragment.this, project.name).setTag(project));
+			mData.add(new MainMenuItemProject(DrawerMenuFragment.this, project.name).setTag(project));
 		}
 	}
 
 	private void buildIssues(DbAdapter db) {
-		mData.add(new MenuSeparator(DrawerMenuFragment.this, R.string.menu_issues));
+		mData.add(new MainMenuSeparator(DrawerMenuFragment.this, R.string.menu_issues));
 		QueriesDbAdapter qdb = new QueriesDbAdapter(db);
 		ServersDbAdapter sdb = new ServersDbAdapter(db);
 		List<Server> servers = sdb.selectAll();
 		for (Server server : servers) {
 			List<Query> queries = qdb.selectAll(server);
 			for (Query query : queries) {
-				mData.add(new MenuItemQuery(DrawerMenuFragment.this, query.name, server.serverUrl).setTag(query));
+				mData.add(new MainMenuItemQuery(DrawerMenuFragment.this, query.name, server.serverUrl).setTag(query));
 			}
 		}
 	}
 
 	private void buildWikiPages(DbAdapter db) {
-		mData.add(new MenuSeparator(DrawerMenuFragment.this, R.string.menu_wiki));
+		mData.add(new MainMenuSeparator(DrawerMenuFragment.this, R.string.menu_wiki));
 
 		// All pages shortcut
 		WikiPage dummy = new WikiPage();
-		mData.add(new MenuItemWikiAllPages(DrawerMenuFragment.this).setTag(dummy));
+		mData.add(new MainMenuItemWikiAllPages(DrawerMenuFragment.this).setTag(dummy));
 
 		// List of favorites
 		WikiDbAdapter wdb = new WikiDbAdapter(db);
 		List<WikiPage> pages = wdb.selectFavorites();
 		for (WikiPage page : pages) {
-			mData.add(new MenuItemWikiPage(DrawerMenuFragment.this, page.title, page.project.server.serverUrl, page.project.name).setTag(page));
+			mData.add(new MainMenuItemWikiPage(DrawerMenuFragment.this, page.title, page.project.server.serverUrl, page.project.name).setTag(page));
 		}
 	}
 

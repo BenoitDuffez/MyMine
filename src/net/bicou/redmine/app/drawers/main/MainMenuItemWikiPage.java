@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.drawers;
+package net.bicou.redmine.app.drawers.main;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +8,14 @@ import net.bicou.redmine.R;
 /**
  * Created by bicou on 19/07/13.
  */
-public class MenuItemWikiAllPages extends MenuItemWikiPage {
-	public MenuItemWikiAllPages(final DrawerMenuFragment drawerMenuFragment) {
-		super(drawerMenuFragment, drawerMenuFragment.getString(R.string.drawer_wiki_all_pages), null, null);
+public class MainMenuItemWikiPage extends MainMenuItem<DrawerMenuFragment.DrawerMenuViewType> {
+	String server, page, project;
+
+	public MainMenuItemWikiPage(final DrawerMenuFragment drawerMenuFragment, String pageName, String serverName, String projectName) {
+		super(drawerMenuFragment, DrawerMenuFragment.DrawerMenuViewType.WIKI);
+		page = pageName;
+		server = serverName;
+		project = projectName;
 	}
 
 	private static class ViewHolder {
@@ -35,8 +40,8 @@ public class MenuItemWikiAllPages extends MenuItemWikiPage {
 		}
 
 		holder.page.setText(page);
-		holder.server.setVisibility(View.GONE);
-		holder.project.setVisibility(View.GONE);
+		holder.server.setText(server.replace("http://", "").replace("https://", ""));
+		holder.project.setText(project);
 
 		return v;
 	}

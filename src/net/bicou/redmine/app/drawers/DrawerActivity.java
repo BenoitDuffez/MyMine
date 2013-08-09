@@ -12,6 +12,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.drawers.main.DrawerMenuFragment;
 import net.bicou.redmine.app.misc.MainActivity;
 import net.bicou.redmine.util.L;
 

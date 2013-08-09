@@ -1,18 +1,20 @@
-package net.bicou.redmine.app.drawers;
+package net.bicou.redmine.app.drawers.main;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.drawers.DrawerMenuItem;
 
 /**
  * Created by bicou on 19/07/13.
  */
-class MenuSeparator implements DrawerMenuItemsAdapter.DrawerMenuItem {
+public class MainMenuSeparator extends DrawerMenuItem<DrawerMenuFragment.DrawerMenuViewType> {
 	private DrawerMenuFragment drawerMenuFragment;
 	int textId;
 
-	public MenuSeparator(final DrawerMenuFragment drawerMenuFragment, int text) {
+	public MainMenuSeparator(final DrawerMenuFragment drawerMenuFragment, int text) {
+		super(DrawerMenuFragment.DrawerMenuViewType.SEPARATOR);
 		this.drawerMenuFragment = drawerMenuFragment;
 		textId = text;
 	}
@@ -38,12 +40,7 @@ class MenuSeparator implements DrawerMenuItemsAdapter.DrawerMenuItem {
 	}
 
 	@Override
-	public int getViewType() {
-		return DrawerMenuFragment.MENU_VIEWTYPE_SEPARATOR;
-	}
-
-	@Override
-	public DrawerMenuItemsAdapter.DrawerMenuItem setTag(final Object tag) {
+	public DrawerMenuItem setTag(final Object tag) {
 		return null;
 	}
 

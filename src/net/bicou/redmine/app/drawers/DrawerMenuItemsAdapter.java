@@ -11,23 +11,11 @@ import java.util.List;
 /**
  * Created by bicou on 14/06/13.
  */
-public class DrawerMenuItemsAdapter extends BaseAdapter {
-	public interface DrawerMenuItem {
-		public View fillView(View convertView, ViewGroup parent);
-
-		public long getId();
-
-		public int getViewType();
-
-		public DrawerMenuItem setTag(Object tag);
-
-		public Object getTag();
-	}
-
-	List<DrawerMenuItem> mData;
+public class DrawerMenuItemsAdapter<T extends Enum> extends BaseAdapter {
+	List<DrawerMenuItem<T>> mData;
 	Context mContext;
 
-	public DrawerMenuItemsAdapter(Context ctx, List<DrawerMenuItem> data) {
+	public DrawerMenuItemsAdapter(Context ctx, List<DrawerMenuItem<T>> data) {
 		mContext = ctx;
 		mData = data;
 	}
@@ -86,7 +74,12 @@ public class DrawerMenuItemsAdapter extends BaseAdapter {
 
 	@Override
 	public int getViewTypeCount() {
-		return 2;
+		for (int i = 0; i < getCount(); i++) {
+			if (getItem(i) != null) {
+				return getItem(i).getViewTypeCount();
+			}
+		}
+		throw new IllegalStateException("This menu is invalid.");
 	}
 
 	@Override

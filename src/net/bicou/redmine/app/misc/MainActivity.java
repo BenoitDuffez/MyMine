@@ -15,7 +15,7 @@ import com.actionbarsherlock.view.MenuItem;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.drawers.DrawerActivity;
-import net.bicou.redmine.app.drawers.DrawerMenuFragment;
+import net.bicou.redmine.app.drawers.main.DrawerMenuFragment;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.settings.SettingsActivity;
