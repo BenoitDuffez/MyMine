@@ -41,7 +41,6 @@ import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.net.upload.IssueSerializer;
-import net.bicou.redmine.net.upload.JsonUploadError;
 import net.bicou.redmine.net.upload.JsonUploader;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
@@ -340,11 +339,16 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			Issue issue = (Issue) parameters;
 			IssueSerializer serializer = new IssueSerializer(this, issue, null, true);
 			String uri = "issues/" + issue.id + ".json";
-			JsonUploadError error = new JsonUploader().uploadObject(this, issue.server, uri, serializer);
-			return error;
+			return new JsonUploader().uploadObject(this, issue.server, uri, serializer);
 		}
 
 		return null;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Crouton.cancelAllCroutons();
 	}
 
 	@Override
@@ -364,10 +368,22 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			if (content != null) {
 				Fragment frag = content.getFragmentFromViewPager(0);
 				if (frag != null && frag instanceof IssueOverviewFragment) {
-					if (action == ACTION_ISSUE_LOAD_ISSUE) {
+					switch (action) {
+					case ACTION_ISSUE_LOAD_ISSUE:
 						((IssueOverviewFragment) frag).onIssueLoaded(result);
-					} else {
+						break;
+
+					case ACTION_ISSUE_LOAD_ATTACHMENTS:
+						if (result instanceof JsonNetworkError) {
+							((IssueOverviewFragment) frag).onNetworkError((JsonNetworkError) result);
+						} else {
+							((IssueOverviewFragment) frag).onIssueOverviewLoaded((String) result);
+						}
+						break;
+
+					case ACTION_ISSUE_LOAD_OVERVIEW:
 						((IssueOverviewFragment) frag).onIssueOverviewLoaded((String) result);
+						break;
 					}
 				}
 			}
@@ -375,7 +391,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 		case ACTION_DELETE_ISSUE:
 			L.d("delete issue: " + result);
-			if (result == null) {
+			if (result == null || !(result instanceof JsonNetworkError)) {
 				IssuesDbAdapter db = new IssuesDbAdapter(this);
 				db.open();
 				db.delete((Issue) parameters);

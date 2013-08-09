@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -28,7 +30,6 @@ import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
-import net.bicou.redmine.net.JsonDownloadError;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
@@ -110,15 +111,9 @@ public class IssueOverviewFragment extends SherlockFragment {
 		JsonDownloader<Issue> downloader = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true);
 		issue = downloader.fetchObject(context, server, uri);
 
-		if (issue == null) {
-			JsonNetworkError error = downloader.getError();
-			if (error != null) {
-				return error;
-			}
-		} else {
+		if (issue != null) {
 			issue.server = server;
-			idb.delete(issue);
-			idb.insert(issue);
+			idb.update(issue);
 		}
 		sdb.close();
 
@@ -128,10 +123,6 @@ public class IssueOverviewFragment extends SherlockFragment {
 	public void onIssueLoaded(Object result) {
 		if (result == null) {
 			return;
-		}
-
-		if (result instanceof JsonDownloadError) {
-			((JsonDownloadError) result).displayCrouton(getSherlockActivity(), mMainLayout);
 		}
 
 		mIssue = (Issue) result;
@@ -253,7 +244,9 @@ public class IssueOverviewFragment extends SherlockFragment {
 
 		String textile = issue.description;
 
-		Issue issueWithAttns = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true).fetchObject(context, issue.server, url, args);
+		JsonNetworkError error = null;
+		JsonDownloader<Issue> downloader = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true);
+		Issue issueWithAttns = downloader.fetchObject(context, issue.server, url, args);
 		if (issueWithAttns != null) {
 			issueWithAttns.server = issue.server;
 			if (issueWithAttns.attachments != null && issueWithAttns.attachments.size() > 0) {
@@ -262,11 +255,39 @@ public class IssueOverviewFragment extends SherlockFragment {
 				}
 			}
 			textile = refactorImageUrls(db, issue.server, textile);
+		} else {
+			error = downloader.getError();
+			if (error != null && error.httpResponseCode == 404) {
+				// 404 on an issue means it's been deleted
+				L.d("404 on issue, it's been deleted. Delete from db: " + db.delete(issue));
+			}
+			textile = null;
 		}
 
 		db.close();
 
-		return WikiUtils.htmlFromTextile(textile);
+		if (error != null) {
+			return error;
+		} else {
+			return WikiUtils.htmlFromTextile(textile);
+		}
+	}
+
+	public void onNetworkError(final JsonNetworkError error) {
+		if (error != null) {
+			if (error.httpResponseCode == 404) {
+				// 404 on an issue means it's been deleted
+				Crouton.makeText(getActivity(), "This issue was deleted on the server", Style.INFO).show();
+			} else {
+				error.displayCrouton(getActivity(), null);
+			}
+		}
+
+		getSherlockActivity().getSupportFragmentManager().popBackStack();
+		IssuesListFragment fragment = ((IssuesActivity) getActivity()).getMainFragment();
+		if (fragment != null) {
+			fragment.refreshList();
+		}
 	}
 
 	private static String refactorImageUrls(IssuesDbAdapter db, Server server, String textile) {
