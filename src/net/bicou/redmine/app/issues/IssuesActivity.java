@@ -1,7 +1,9 @@
 package net.bicou.redmine.app.issues;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,6 +19,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
 import com.google.gson.Gson;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
@@ -34,6 +38,7 @@ import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.net.upload.IssueSerializer;
 import net.bicou.redmine.net.upload.JsonUploadError;
 import net.bicou.redmine.net.upload.JsonUploader;
@@ -192,11 +197,21 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return true;
 
 		case R.id.menu_issue_delete:
-			// todo: add cancel button
 			if (content != null && content instanceof IssueFragment) {
-				Issue issue = ((IssueFragment) content).getIssue();
+				final Issue issue = ((IssueFragment) content).getIssue();
 				if (issue != null && issue.server != null && issue.id > 0) {
-					AsyncTaskFragment.runTask(this, ACTION_DELETE_ISSUE, issue);
+					new AlertDialog.Builder(this).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(final DialogInterface dialog, final int which) {
+							AsyncTaskFragment.runTask(IssuesActivity.this, ACTION_DELETE_ISSUE, issue);
+							dialog.dismiss();
+						}
+					}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(final DialogInterface dialog, final int which) {
+							dialog.dismiss();
+						}
+					}).setMessage(getString(R.string.issue_delete_confirm_dialog)).show();
 				}
 			}
 			return true;
@@ -358,8 +373,12 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			break;
 
 		case ACTION_DELETE_ISSUE:
-			// todo: handle error
 			L.d("delete issue: " + result);
+			if (result == null) {
+				Crouton.makeText(this, getString(R.string.issue_delete_confirmed), Style.CONFIRM).show();
+			} else {
+				((JsonNetworkError) result).displayCrouton(this, null);
+			}
 			break;
 		}
 	}

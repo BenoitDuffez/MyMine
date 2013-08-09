@@ -283,5 +283,7 @@
     <string name="overview_card_project_see_wiki">Show wiki pages</string>
     <string name="issue_edit_estimated_hours_parse_error">Couldn\'t parse the number of hours, please enter it as HH or HH:MM or HH:MM:SS</string>
     <string name="menu_issue_delete">Delete issue</string>
+    <string name="issue_delete_confirm_dialog">Are you sure you want to delete this issue? This cannot be undone.</string>
+    <string name="issue_delete_confirmed">The issue was deleted.</string>
 
 </resources>
