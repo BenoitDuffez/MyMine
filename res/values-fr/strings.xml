@@ -73,7 +73,7 @@
         seul projet|1&lt;Vous suivez {0} projets}
     </string>
     <string name="overview_card_projects_action">Voir les projets</string>
-    <string name="overview_card_projects_action2">Voir les feuilles de route</string>
+    <string name="overview_card_projects_see_roadmaps">Voir les feuilles de route</string>
 
     <string name="overview_card_servers_title">Serveurs Redmine</string>
     <string name="overview_card_servers_subtitle">{0,choice,0#Il n\'y a pas encore de serveur synchronisé. Avez-vous configuré un compte ?|1#Un seul serveur est

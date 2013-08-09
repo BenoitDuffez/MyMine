@@ -76,7 +76,8 @@
         are following {0} projects}
     </string>
     <string name="overview_card_projects_action">See projects</string>
-    <string name="overview_card_projects_action2">See roadmaps</string>
+    <string name="overview_card_projects_see_roadmaps">See roadmaps</string>
+    <string name="overview_card_projects_see_wiki">Show wiki pages</string>
 
     <string name="overview_card_servers_title">Redmine Servers</string>
     <string name="overview_card_servers_subtitle">{0,choice,0#There is no synced server yet. Have you set up an account?|1#One server is synced with this app|1&lt;{0}
@@ -146,11 +147,21 @@
     <string name="issues_list_empty_search">This search returned no result</string>
 
     <!-- Issue edit -->
-    <string name="issue_menu_edit">Edit issue</string>
+    <string name="issue_add_server_project_picker_dialog_title">Please select the target server and project</string>
     <string name="issue_edit_field_unset">Tap to set</string>
     <string name="issue_edit_edit_description_button">Edit description</string>
     <string name="issue_edit_notes">Notes</string>
     <string name="issue_edit_description_dialog_title">Edit issue description</string>
+    <string name="issue_edit_subject_hint">Enter issue subject</string>
+    <string name="issue_edit_select_assignee_button">Pick</string>
+    <string name="issue_edit_spinner_no_change"><![CDATA[<none>]]></string>
+    <string name="issue_edit_estimated_hours_parse_error">Couldn\'t parse the number of hours, please enter it as HH or HH:MM or HH:MM:SS</string>
+    <string name="issue_delete_confirm_dialog">Are you sure you want to delete this issue? This cannot be undone.</string>
+    <string name="issue_delete_confirmed">The issue was deleted.</string>
+
+    <string name="menu_issues_add">Add new issue</string>
+    <string name="issue_menu_edit">Edit issue</string>
+    <string name="menu_issue_delete">Delete issue</string>
 
     <!-- Project -->
     <string name="project_created_on">
@@ -170,6 +181,7 @@
         : %1$s
     </string>
     <string name="project_list_item_updated_on">Upd: %1$s</string>
+    <string name="project_overview_issues_card_tracker">• %1$s: %2$d open / %3$d closed</string>
 
     <!-- Setup -->
     <string name="setup_title">Redmine Server Management</string>
@@ -211,6 +223,8 @@
     <!-- Wiki -->
     <string name="wiki_empty_page">This page is empty.</string>
     <string name="wiki_page_not_found">This page doesn\'t exist.</string>
+    <string name="wiki_list_item_updated_on">Upd: %1$s</string>
+    <string name="menu_wiki_fullscreen">Display wiki page full-screen</string>
 
     <!-- Certs -->
     <string name="server_auth_settings_title">Authentication</string>
@@ -254,6 +268,7 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_title">@string/app_name</string>
     <string name="drawer_menu_customize">Customize this menu&#8230;</string>
+    <string name="drawer_wiki_all_pages">All pages</string>
 
     <!-- Used to make strings with dates in the past -->
     <string name="time_delay_moments">moments ago</string>
@@ -264,10 +279,6 @@
     <string name="time_delay_years"><![CDATA[{0} {0,choice,0#years|1#year|1<years} ago]]></string>
 
     <!-- Unsorted strings... -->
-    <string name="project_overview_issues_card_tracker">• %1$s: %2$d open / %3$d closed</string>
-    <string name="drawer_wiki_all_pages">All pages</string>
-    <string name="wiki_list_item_updated_on">Upd: %1$s</string>
-    <string name="menu_wiki_fullscreen">Display wiki page full-screen</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="save">Save</string>
@@ -275,15 +286,5 @@
         "<![CDATA[There are no users. This happens when you're not admin, we are working on getting this to work. If you need support, email redmine@bicou.net]]>"
     </string>
     <string name="users_picker_dialog_title">Pick the desired user</string>
-    <string name="issue_edit_select_assignee_button">Pick</string>
-    <string name="issue_edit_spinner_no_change"><![CDATA[<none>]]></string>
-    <string name="menu_issues_add">Add new issue</string>
-    <string name="issue_add_server_project_picker_dialog_title">Please select the target server and project</string>
-    <string name="issue_edit_subject_hint">Enter issue subject</string>
-    <string name="overview_card_project_see_wiki">Show wiki pages</string>
-    <string name="issue_edit_estimated_hours_parse_error">Couldn\'t parse the number of hours, please enter it as HH or HH:MM or HH:MM:SS</string>
-    <string name="menu_issue_delete">Delete issue</string>
-    <string name="issue_delete_confirm_dialog">Are you sure you want to delete this issue? This cannot be undone.</string>
-    <string name="issue_delete_confirmed">The issue was deleted.</string>
 
 </resources>

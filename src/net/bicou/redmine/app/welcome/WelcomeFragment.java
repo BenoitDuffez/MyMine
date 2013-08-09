@@ -154,8 +154,8 @@ public class WelcomeFragment extends Fragment {
 		cards.add(new OverviewCard(new Intent(getActivity(), ProjectsActivity.class)) //
 				.setContent(R.string.overview_card_projects_title, projectsDescription, R.drawable.card_project, R.drawable.icon_projects) //
 						//				.addAction(ID_PROJECTS, R.string.overview_card_projects_action) //
-				.addAction(WelcomeCardAction.ROADMAPS, R.string.overview_card_projects_action2) //
-				.addAction(WelcomeCardAction.SHOW_WIKI, R.string.overview_card_project_see_wiki));
+				.addAction(WelcomeCardAction.ROADMAPS, R.string.overview_card_projects_see_roadmaps) //
+				.addAction(WelcomeCardAction.SHOW_WIKI, R.string.overview_card_projects_see_wiki));
 
 		// Servers
 		Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
