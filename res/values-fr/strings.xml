@@ -74,6 +74,7 @@
     </string>
     <string name="overview_card_projects_action">Voir les projets</string>
     <string name="overview_card_projects_see_roadmaps">Voir les feuilles de route</string>
+    <string name="overview_card_projects_see_wiki">Voir les pages Wiki</string>
 
     <string name="overview_card_servers_title">Serveurs Redmine</string>
     <string name="overview_card_servers_subtitle">{0,choice,0#Il n\'y a pas encore de serveur synchronisé. Avez-vous configuré un compte ?|1#Un seul serveur est
@@ -108,6 +109,7 @@
     <string name="issue_is_private">Privé</string>
     <string name="issue_tracker_id_format">%1$s #%2$d</string>
     <string name="issue_spent_time_format">%1$.2f h</string>
+    <string name="issue_author_name_format">%1$s a ajouté %2$s</string>
 
     <string name="issue_filter_all">TOUT</string>
     <string name="issue_filter_queries">Requêtes</string>
@@ -131,7 +133,7 @@
     <string name="issue_menu_open_browser">Ouvrir dans le navigateur</string>
     <string name="issues_menu_search">Rechercher un ticket&#8230;</string>
     <string name="issues_menu_refresh">Rafraîchir les tickets</string>
-    <string name="issues_search_hint">Rechercher dans les ticket Redmine&#8230;</string>
+    <string name="issues_search_hint">Rechercher dans les tickets Redmine&#8230;</string>
 
     <string name="issues_ordering">Trier la liste des tickets par :</string>
     <string name="issues_menu_ordering">Tri des tickets&#8230;</string>
@@ -140,6 +142,23 @@
     <string name="issues_ordering_then">puis&#8230;</string>
     <string name="issues_list_empty">La liste des tickets est vide.</string>
     <string name="issues_list_empty_search">La recherche n\'a retourné aucun résultat</string>
+
+    <!-- Issue edit -->
+    <string name="issue_add_server_project_picker_dialog_title">Veuillez sélectionner le serveur et projet</string>
+    <string name="issue_edit_field_unset">Touchez pr changer</string>
+    <string name="issue_edit_edit_description_button">Changer la description</string>
+    <string name="issue_edit_notes">Notes</string>
+    <string name="issue_edit_description_dialog_title">Changer la description du ticket</string>
+    <string name="issue_edit_subject_hint">Saisissez le sujet du ticket</string>
+    <string name="issue_edit_select_assignee_button">Choisir</string>
+    <string name="issue_edit_spinner_no_change"><![CDATA[<rien>]]></string>
+    <string name="issue_edit_estimated_hours_parse_error">Impossible de décoder le nombre d\'heures, veuillez taper le temps comme HH, HH:MM ou HH:MM:SS</string>
+    <string name="issue_delete_confirm_dialog">Êtes-vous sûr(e) de vouloir supprimer ce ticket ? Cette action ne peut être annulée.</string>
+    <string name="issue_delete_confirmed">Ce ticket a été supprimé</string>
+
+    <string name="menu_issues_add">Ajouter un ticket</string>
+    <string name="issue_menu_edit">Éditer le ticket</string>
+    <string name="menu_issue_delete">Supprimer le ticket</string>
 
     <!-- Project -->
     <string name="project_created_on">
@@ -159,6 +178,7 @@
         : %1$s
     </string>
     <string name="project_list_item_updated_on">MÀJ : %1$s</string>
+    <string name="project_overview_issues_card_tracker">• %1$s : %2$d ouverts / %3$d fermés</string>
 
     <!-- Setup -->
     <string name="setup_title">Gestion du Serveur Redmine</string>
@@ -200,6 +220,8 @@
     <!-- Wiki -->
     <string name="wiki_empty_page">Cette page est vierge.</string>
     <string name="wiki_page_not_found">Cette page n\'existe pas.</string>
+    <string name="wiki_list_item_updated_on">MÀJ : %1$s</string>
+    <string name="menu_wiki_fullscreen">Afficher la page wiki en plein-écran</string>
 
     <!-- Certs -->
     <string name="server_auth_settings_title">Authentification</string>
@@ -242,13 +264,25 @@
     <string name="drawer_close">Fermer le panneau de navigation</string>
     <string name="drawer_title">@string/app_name</string>
     <string name="drawer_menu_customize">Personnaliser ce menu&#8230;</string>
+    <string name="drawer_wiki_all_pages">Toutes les pages</string>
+
+    <!-- Used to make strings with dates in the past -->
+    <string name="time_delay_moments">il y a qq instants</string>
+    <string name="time_delay_minutes"><![CDATA[il y a {0} {0,choice,0#minutes|1#minute|1<minutes}]]></string>
+    <string name="time_delay_hours"><![CDATA[il y a {0} {0,choice,0#heures|1#heure|1<heures}]]></string>
+    <string name="time_delay_days"><![CDATA[il y a {0} {0,choice,0#jours|1#jour|1<jours}]]></string>
+    <string name="time_delay_months"><![CDATA[il y a {0} {0,choice,0#mois|1#mois|1<mois}]]></string>
+    <string name="time_delay_years"><![CDATA[il y a {0} {0,choice,0#ans|1#an|1<ans}]]></string>
 
     <!-- Unsorted strings... -->
-    <string name="project_overview_issues_card_tracker">• %1$s : %2$d ouverts / %3$d fermés</string>
-    <string name="drawer_wiki_all_pages">Toutes les pages</string>
-    <string name="wiki_list_item_updated_on">MÀJ : %1$s</string>
-    <string name="menu_wiki_fullscreen">Afficher la page wiki en plein-écran</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
+    <string name="save">Enregistrer</string>
+    <string name="users_list_empty">
+        "<![CDATA[La liste des utilisateurs est vide. Cela peut arriver lorsque vous n\'êtes pas administrateur, nous travaillons afin
+        que cela puisse quand même fonctionner. En cas de besoin, envoyez un email à redmine@bicou.net]]>"
+    </string>
+    <string name="users_picker_dialog_title">Sélectionner l\'utilisateur</string>
+    <string name="drawer_main_no_favorite">Il n\'y a aucun favori</string>
 
 </resources>
