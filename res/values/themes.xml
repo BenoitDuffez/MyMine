@@ -31,8 +31,8 @@
 
         <item name="selectableItemBackground">@drawable/ab_background</item>
 
-        <item name="mainPaneStyle">@style/MainPaneStyle</item>
-        <item name="contentPaneStyle">@style/ContentPaneStyle</item>
+        <item name="leftPaneStyle">@style/LeftPaneStyle</item>
+        <item name="rightPaneStyle">@style/RightPaneStyle</item>
         <item name="containerStyle">@style/ContainerStyle</item>
         <item name="separatorStyle">@style/SeparatorStyle</item>
 

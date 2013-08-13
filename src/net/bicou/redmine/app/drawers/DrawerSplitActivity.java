@@ -9,11 +9,11 @@ import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.drawers.main.DrawerMenuFragment;
 import net.bicou.redmine.app.misc.MainActivity;
 import net.bicou.redmine.util.L;
+import net.bicou.splitactivity.SplitActivity;
 
 /**
  * Created by bicou on 12/06/13.

@@ -12,12 +12,12 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
-import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.splitactivity.SplitActivity;
 
 public class IssuesListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {
 	View mFragmentView;

@@ -10,7 +10,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.google.gson.Gson;
-import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -22,6 +21,7 @@ import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.util.L;
+import net.bicou.splitactivity.SplitActivity;
 
 import java.util.ArrayList;
 import java.util.List;

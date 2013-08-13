@@ -21,7 +21,6 @@ import com.actionbarsherlock.widget.SearchView;
 import com.google.gson.Gson;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -44,6 +43,7 @@ import net.bicou.redmine.net.upload.IssueSerializer;
 import net.bicou.redmine.net.upload.JsonUploader;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
+import net.bicou.splitactivity.SplitActivity;
 
 import java.util.List;
 

@@ -6,12 +6,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.app.welcome.OverviewCard;
 import net.bicou.redmine.data.json.Project;
+import net.bicou.splitactivity.SplitActivity;
 
 import java.util.List;
 

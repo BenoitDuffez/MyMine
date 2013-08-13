@@ -12,12 +12,12 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import net.bicou.android.splitscreen.SplitActivity;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
 import net.bicou.redmine.util.PreferencesManager;
+import net.bicou.splitactivity.SplitActivity;
 
 public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragment, CertificateFragment> implements AsyncTaskFragment.TaskFragmentCallbacks {
 	@Override
