@@ -1,6 +1,5 @@
 package net.bicou.redmine.app.issues.edit;
 
-import android.R;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -80,13 +79,13 @@ public class EditIssueActivity extends SherlockFragmentActivity implements Async
 
 	@Override
 	public void onDateSelected(final int id, final Calendar calendar) {
-		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(R.id.content);
+		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
 		frag.onDatePicked(id, calendar);
 	}
 
 	@Override
 	public void onDescriptionChanged(final String newDescription) {
-		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(R.id.content);
+		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
 		frag.onDescriptionChanged(newDescription);
 	}
 }
