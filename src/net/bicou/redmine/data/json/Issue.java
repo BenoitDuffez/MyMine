@@ -2,6 +2,7 @@ package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
@@ -110,6 +111,11 @@ public class Issue {
 					fixed_version = new Version(c, col + "_");
 				} else if (col.equals(IssuesDbAdapter.KEY_CATEGORY_ID)) {
 					category = new IssueCategory(server, project);
+					category.id = c.getLong(columnIndex);
+					int cId = c.getColumnIndex(col + "_" + IssueCategoriesDbAdapter.KEY_NAME);
+					if (cId > 0) {
+						category.name = c.getString(cId);
+					}
 				} else if (col.equals(IssuesDbAdapter.KEY_PARENT_ID)) {
 					parent = new Reference();
 					parent.id = c.getLong(columnIndex);
