@@ -7,8 +7,23 @@ import android.text.TextUtils;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.wiki.WikiUtils;
-import net.bicou.redmine.data.json.*;
-import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.data.json.ChangeSet;
+import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.data.json.IssueCategory;
+import net.bicou.redmine.data.json.IssueHistory;
+import net.bicou.redmine.data.json.IssuePriority;
+import net.bicou.redmine.data.json.Journal;
+import net.bicou.redmine.data.json.JournalDetail;
+import net.bicou.redmine.data.json.Tracker;
+import net.bicou.redmine.data.json.User;
+import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
+import net.bicou.redmine.data.sqlite.UsersDbAdapter;
+import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.DiffMatchPatch;
@@ -283,7 +298,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 
 		for (final JournalDetail d : journal.details) {
 			ids = IdPair.from(d);
-			if ("attr".equals(d.property)) {
+			if ("attr".equals(d.property) || "attribute".equals(d.property)) {
 				// Get the human readable name of the property that was changed
 				if (IssuesDbAdapter.KEY_FIXED_VERSION_ID.equals(d.name)) {
 					propChange = onVersionChanged(d, ids, db);
