@@ -91,7 +91,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		}
 
 		// Get issue sort order
-		if (args.keySet().contains(IssuesOrder.KEY_HAS_COLUMNS_ORDER) == false) {
+		if (!args.keySet().contains(IssuesOrder.KEY_HAS_COLUMNS_ORDER)) {
 			if (mCurrentOrder == null) {
 				if (savedInstanceState == null) {
 					mCurrentOrder = IssuesOrder.fromPreferences(this);
@@ -174,7 +174,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		Fragment content = getContentFragment();
+		IssueFragment content = getContentFragment();
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
@@ -185,8 +185,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return true;
 
 		case R.id.menu_issue_edit:
-			if (content != null && content instanceof IssueFragment) {
-				Issue issue = ((IssueFragment) content).getIssue();
+			if (content != null) {
+				Issue issue = content.getIssue();
 				if (issue != null) {
 					String json = new Gson().toJson(issue, Issue.class);
 					Intent intent = new Intent(this, EditIssueActivity.class);
@@ -197,8 +197,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return true;
 
 		case R.id.menu_issue_delete:
-			if (content != null && content instanceof IssueFragment) {
-				final Issue issue = ((IssueFragment) content).getIssue();
+			if (content != null) {
+				final Issue issue = content.getIssue();
 				if (issue != null && issue.server != null && issue.id > 0) {
 					new AlertDialog.Builder(this).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 						@Override
@@ -217,8 +217,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return true;
 
 		case R.id.menu_issue_browser:
-			if (content != null && content instanceof IssueFragment) {
-				final Issue issue = ((IssueFragment) content).getIssue();
+			if (content != null) {
+				final Issue issue = content.getIssue();
 				if (issue != null) {
 					String url = issue.server.serverUrl;
 					if (!url.endsWith("/")) {
