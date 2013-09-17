@@ -8,6 +8,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.R;
 
 /**
+ * Pseudo-action bar that displays a cancel/save action bar.
+ * TODO: should be absolutely deleted and replaced with a proper implementation
  * Created by bicou on 06/08/13.
  */
 public class CancelSaveActionBar {
@@ -32,7 +34,8 @@ public class CancelSaveActionBar {
 				case R.id.actionbar_button_cancel:
 					break;
 				}
-				activity.finish();
+				// Don't do anything if the button has been clicked, it's up to the client activity to disable this weird action bar
+				v.setOnClickListener(null);
 			}
 		};
 

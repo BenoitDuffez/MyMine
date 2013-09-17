@@ -68,6 +68,7 @@ public class EditIssueActivity extends SherlockFragmentActivity implements Async
 			frag.setupSpinners((EditIssueFragment.IssueEditInformation) result);
 		} else if (action == ACTION_UPLOAD_ISSUE) {
 			L.d("Upload issue json: " + result);
+			finish();
 		}
 	}
 
