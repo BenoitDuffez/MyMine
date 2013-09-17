@@ -10,7 +10,13 @@ import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.issues.IssuesListFilter.FilterType;
 import net.bicou.redmine.app.issues.order.OrderColumn;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.*;
+import net.bicou.redmine.data.json.Attachment;
+import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.data.json.IssueStatus;
+import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.data.json.Reference;
+import net.bicou.redmine.data.json.Tracker;
+import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.util.Util;
 
 import java.util.ArrayList;
