@@ -2,8 +2,16 @@ package net.bicou.redmine.platform;
 
 import android.content.SyncResult;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.*;
-import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.data.json.IssuePriority;
+import net.bicou.redmine.data.json.IssueStatus;
+import net.bicou.redmine.data.json.Query;
+import net.bicou.redmine.data.json.Tracker;
+import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
+import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
@@ -33,6 +41,9 @@ public class IssuesManager {
 				}
 			} else {
 				issueUpdateDate = issue.updated_on.getTimeInMillis();
+
+				// Update non-redmine statuses
+				issue.is_favorite = localIssue.is_favorite;
 
 				// Save current sync marker
 				if (issueUpdateDate > currentSyncMarker) {
