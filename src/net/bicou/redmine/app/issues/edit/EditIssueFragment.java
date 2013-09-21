@@ -7,7 +7,12 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -20,14 +25,29 @@ import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.IssueFragment;
 import net.bicou.redmine.app.issues.IssueOverviewFragment;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.*;
-import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.data.json.Issue;
+import net.bicou.redmine.data.json.IssueCategory;
+import net.bicou.redmine.data.json.IssuePriority;
+import net.bicou.redmine.data.json.IssueStatus;
+import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.data.json.Tracker;
+import net.bicou.redmine.data.json.User;
+import net.bicou.redmine.data.json.Version;
+import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
+import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
+import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.util.BasicSpinnerAdapter;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
-import net.bicou.redmine.widget.CancelSaveActionBar;
+import net.bicou.redmine.widget.DoneBarActivity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,7 +152,7 @@ public class EditIssueFragment extends SherlockFragment {
 
 		AsyncTaskFragment.runTask(getSherlockActivity(), EditIssueActivity.ACTION_LOAD_ISSUE_DATA, mIssue);
 
-		CancelSaveActionBar.setupActionBar(getSherlockActivity(), new CancelSaveActionBar.CancelSaveActionBarCallbacks() {
+		DoneBarActivity.setupActionBar(getSherlockActivity(), new DoneBarActivity.OnSaveActionListener() {
 			@Override
 			public void onSave() {
 				saveIssueChangesAndClose();
