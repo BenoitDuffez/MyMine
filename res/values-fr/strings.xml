@@ -19,6 +19,9 @@
     <string name="alert_alpha_title">Avertissement version alpha</string>
     <string name="alpha_ok">OK, ça me va !</string>
     <string name="alpha_ko">Bah.</string>
+    <string name="alert_010_upgrade_title">Oups !  Synchro à refaire</string>
+    <string name="alert_010_upgrade">Héhé... désolé. Il y a eu une modification non prévue dans le fonctionnement de l\'appli, et nous avons dû supprimer les pages Wiki de la mémoire du téléphone. Vous devrez donc attendre la prochaine synchro ou en déclencher une manuelle avant de pouvoir utiliser le Wiki.\n\nMais ne vous inquiétez pas, votre Wiki est INTACT ! C\'est juste la copie locale stockée sur ce téléphone qui a été corrompue.</string>
+    <string name="upgrade_010_ok">Merci pour l\'info</string>
 
     <string name="loading">Chargement&#8230;</string>
     <string name="loading_normal">Veuillez attendre un tout petit peu le temps qu\'on charge tout !</string>
@@ -284,5 +287,7 @@
     </string>
     <string name="users_picker_dialog_title">Sélectionner l\'utilisateur</string>
     <string name="drawer_main_no_favorite">Il n\'y a aucun favori</string>
+    <string name="issue_upload_failed">Impossible d\'uploader le ticket : %1$s</string>
+    <string name="issue_upload_successful">Ticket uploadé</string>
 
 </resources>
