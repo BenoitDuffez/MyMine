@@ -36,6 +36,7 @@ import java.util.List;
 public class MainActivity extends DrawerActivity implements ServerProjectPickerFragment.ServerProjectSelectionListener, AsyncTaskFragment.TaskFragmentCallbacks {
 	private static final String ALPHA_SHARED_PREFERENCES_FILE = "alpha";
 	private static final String KEY_ALPHA_VERSION_DISCLAIMER = "IS_DISCLAIMER_ACCEPTED";
+	private static final String KEY_UPDATE_TO_010_WIKI_PAGES = "IS_010_UPGRADED";
 
 	public static final String MYMINE_PREFERENCES_FILE = "mymine";
 	public static final String KEY_IS_FIRST_LAUNCH = "IS_FIRST_LAUNCH";
@@ -52,6 +53,7 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 		super.onCreate(savedInstanceState);
 
 		showAlphaVersionAlert();
+		show010UpgradeAlert();
 		final boolean isFirstLaunch = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).getBoolean(KEY_IS_FIRST_LAUNCH, true);
 
 		if (savedInstanceState == null && isFirstLaunch) {
@@ -174,6 +176,26 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 			});
 
 			// 3. Get the AlertDialog from create()
+			final AlertDialog dialog = builder.create();
+			dialog.show();
+		}
+	}
+
+	private void show010UpgradeAlert() {
+		final boolean isAccepted = getSharedPreferences(ALPHA_SHARED_PREFERENCES_FILE, 0).getBoolean(KEY_UPDATE_TO_010_WIKI_PAGES, false);
+
+		if (!isAccepted) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.alert_010_upgrade).setTitle(R.string.alert_010_upgrade_title);
+			builder.setPositiveButton(R.string.upgrade_010_ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					final Editor editor = getSharedPreferences(ALPHA_SHARED_PREFERENCES_FILE, 0).edit();
+					editor.putBoolean(KEY_UPDATE_TO_010_WIKI_PAGES, true);
+					editor.commit();
+				}
+			});
+
 			final AlertDialog dialog = builder.create();
 			dialog.show();
 		}

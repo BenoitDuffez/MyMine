@@ -20,6 +20,13 @@
     <string name="alert_alpha_title">Alpha version warning</string>
     <string name="alpha_ok">Fair enough!</string>
     <string name="alpha_ko">Nah.</string>
+    <string name="alert_010_upgrade_title">Oops. Sync again!</string>
+    <string name="alert_010_upgrade">
+        Wow, we\'re sorry. There was an unplanned modification in the internals of the app, and we had to delete wiki pages
+        from the phone cache. Please, trigger a manual sync or wait for the next sync to come before you use the Wiki!\n\nBut
+        worry not, your wiki pages are SAFE! It\'s just the local copy on this phone that got corrupted.
+    </string>
+    <string name="upgrade_010_ok">Thanks for the warning</string>
 
     <string name="loading">Loading&#8230;</string>
     <string name="loading_normal">Please wait just a little bit while we setup everything!</string>
