@@ -3,41 +3,61 @@ package net.bicou.redmine.app.misc;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
+import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.app.drawers.main.DrawerMenuFragment;
+import net.bicou.redmine.app.issues.IssueFragment;
+import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
+import net.bicou.redmine.app.issues.edit.EditIssueFragment;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.settings.SettingsActivity;
 import net.bicou.redmine.app.welcome.WelcomeFragment;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.net.JsonNetworkError;
+import net.bicou.redmine.net.upload.IssueSerializer;
+import net.bicou.redmine.net.upload.JsonUploader;
+import net.bicou.redmine.net.upload.ObjectSerializer;
 import net.bicou.redmine.util.L;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends DrawerActivity implements ServerProjectPickerFragment.ServerProjectSelectionListener {
+public class MainActivity extends DrawerActivity implements ServerProjectPickerFragment.ServerProjectSelectionListener, AsyncTaskFragment.TaskFragmentCallbacks {
 	private static final String ALPHA_SHARED_PREFERENCES_FILE = "alpha";
 	private static final String KEY_ALPHA_VERSION_DISCLAIMER = "IS_DISCLAIMER_ACCEPTED";
 
 	public static final String MYMINE_PREFERENCES_FILE = "mymine";
 	public static final String KEY_IS_FIRST_LAUNCH = "IS_FIRST_LAUNCH";
 
+	private static final int ACTION_LOAD_ACTIVITY = 0;
+	private static final int ACTION_UPLOAD_ISSUE = 1;
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
+
 		super.onCreate(savedInstanceState);
 
 		showAlphaVersionAlert();
@@ -52,6 +72,8 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 
 		getSupportFragmentManager().beginTransaction().replace(R.id.drawer_content, LoadingFragment.newInstance()).commit();
 		getSupportFragmentManager().beginTransaction().replace(R.id.navigation_drawer, new DrawerMenuFragment()).commit();
+
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
 	}
 
 	@Override
@@ -66,7 +88,7 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 	public void onResume() {
 		super.onResume();
 		L.d("");
-		refreshContents();
+		AsyncTaskFragment.runTask(this, ACTION_LOAD_ACTIVITY, null);
 	}
 
 	private static enum FragmentToDisplay {
@@ -75,101 +97,66 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 		DEFAULT,
 	}
 
-	private void refreshContents() {
-		new AsyncTask<Void, Void, FragmentToDisplay>() {
-			@Override
-			protected void onPreExecute() {
-				setSupportProgressBarIndeterminateVisibility(true);
-			}
+	private FragmentToDisplay getWhichFragmentToDisplay() {
+		final List<Account> accounts = new ArrayList<Account>();
+		AccountManager mgr = AccountManager.get(MainActivity.this);
+		if (mgr == null) {
+			return FragmentToDisplay.HELP;
+		}
+		Account[] availableAccounts = mgr.getAccountsByType(Constants.ACCOUNT_TYPE);
+		if (availableAccounts == null || availableAccounts.length <= 0) {
+			return FragmentToDisplay.HELP;
+		}
+		Collections.addAll(accounts, availableAccounts);
 
-			@Override
-			protected FragmentToDisplay doInBackground(final Void... params) {
-				final List<Account> accounts = new ArrayList<Account>();
-				for (final Account a : AccountManager.get(MainActivity.this).getAccountsByType(Constants.ACCOUNT_TYPE)) {
-					accounts.add(a);
+		final int nbAccounts = accounts.size();
+		final List<Server> serversToRemove, servers;
+
+		if (nbAccounts == 0) {
+			return FragmentToDisplay.HELP;
+		} else {
+			// Compare number of DB servers vs. Account servers
+			final ServersDbAdapter db = new ServersDbAdapter(MainActivity.this);
+			db.open();
+			servers = db.selectAll();
+			serversToRemove = new ArrayList<Server>();
+			serversToRemove.addAll(servers);
+			Account accountToRemove = null;
+			for (final Server server : servers) {
+				for (final Account account : accounts) {
+					if (account.name.equals(server.serverUrl)) {
+						serversToRemove.remove(server);
+						accountToRemove = account;
+						break;
+					}
 				}
-				final int nbAccounts = accounts.size();
-				final List<Server> serversToRemove, servers;
 
-				if (nbAccounts == 0) {
-					return FragmentToDisplay.HELP;
-				} else {
-					// Compare number of DB servers vs. Account servers
-					final ServersDbAdapter db = new ServersDbAdapter(MainActivity.this);
-					db.open();
-					servers = db.selectAll();
-					serversToRemove = new ArrayList<Server>();
-					serversToRemove.addAll(servers);
-					Account accountToRemove = null;
-					for (final Server server : servers) {
-						for (final Account account : accounts) {
-							if (account.name.equals(server.serverUrl)) {
-								serversToRemove.remove(server);
-								accountToRemove = account;
-								break;
-							}
-						}
-						if (accountToRemove != null) {
-							accounts.remove(accountToRemove);
-							accountToRemove = null;
-						}
-					}
-					// These are in the DB but not in accounts: they were deleted, so remove everything
-					for (final Server server : serversToRemove) {
-						L.d("Account " + server + " was deleted, removing all data");
-						db.delete(server.rowId);
-					}
-					final int nbServers = db.getNumServers();
-					db.close();
-
-					final ProjectsDbAdapter pdb = new ProjectsDbAdapter(MainActivity.this);
-					pdb.open();
-					final int nbProjects = pdb.getNumProjects();
-					pdb.close();
-
-					if (nbServers > 0 && nbProjects == 0) {
-						return FragmentToDisplay.WAIT_FOR_SYNC;
-					} else {
-						return FragmentToDisplay.DEFAULT;
-					}
+				if (accountToRemove != null) {
+					accounts.remove(accountToRemove);
+					accountToRemove = null;
 				}
 			}
 
-			@Override
-			protected void onPostExecute(final FragmentToDisplay result) {
-				final Fragment contents;
-				final Bundle args = new Bundle();
-
-				switch (result) {
-				default:
-				case DEFAULT:
-					contents = WelcomeFragment.newInstance(args);
-					break;
-				case HELP:
-					contents = HelpSetupFragment.newInstance(args);
-					break;
-				case WAIT_FOR_SYNC:
-					contents = WaitForSyncFragment.newInstance(args);
-					new Handler().postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							refreshContents();
-						}
-					}, 1000 * 30);
-					break;
-				}
-
-				try {
-					getSupportFragmentManager().beginTransaction().replace(R.id.drawer_content, contents).commit();
-				} catch (final Exception e) {
-					// FATAL EXCEPTION: main
-					// java.lang.RuntimeException: Unable to resume activity {net.bicou.redmine/net.bicou.redmine.app.MainActivity}:
-					// java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
-				}
-
-				setSupportProgressBarIndeterminateVisibility(false);
+			// These are in the DB but not in accounts: they were deleted, so remove everything
+			for (final Server server : serversToRemove) {
+				L.d("Account " + server + " was deleted, removing all data");
+				db.delete(server.rowId);
 			}
-		}.execute();
+
+			final int nbServers = db.getNumServers();
+			db.close();
+
+			final ProjectsDbAdapter pdb = new ProjectsDbAdapter(MainActivity.this);
+			pdb.open();
+			final int nbProjects = pdb.getNumProjects();
+			pdb.close();
+
+			if (nbServers > 0 && nbProjects == 0) {
+				return FragmentToDisplay.WAIT_FOR_SYNC;
+			} else {
+				return FragmentToDisplay.DEFAULT;
+			}
+		}
 	}
 
 	private void showAlphaVersionAlert() {
@@ -229,7 +216,102 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 			Intent intent = new Intent(this, EditIssueActivity.class);
 			intent.putExtra(Constants.KEY_SERVER, server);
 			intent.putExtra(Constants.KEY_PROJECT, project);
-			startActivity(intent);
+			startActivityForResult(intent, 0); // see #onActivityResult below
+		}
+	}
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, data.getExtras());
+		}
+	}
+
+	@Override
+	public void onPreExecute(final int action, final Object parameters) {
+		setSupportProgressBarIndeterminateVisibility(true);
+	}
+
+	@Override
+	public Object doInBackGround(final Context applicationContext, final int action, final Object parameters) {
+		switch (action) {
+		case ACTION_UPLOAD_ISSUE:
+			// TODO: maybe this should be centralized somewhere
+			Issue issue;
+			String uri;
+			Bundle params = (Bundle) parameters;
+			issue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
+			IssueSerializer issueSerializer = new IssueSerializer(applicationContext, issue, params.getString(EditIssueFragment.KEY_ISSUE_NOTES));
+			if (issue.id <= 0 || issueSerializer.getRemoteOperation() == ObjectSerializer.RemoteOperation.ADD) {
+				uri = "issues.json";
+			} else {
+				uri = "issues/" + issue.id + ".json";
+			}
+			Object result = new JsonUploader().uploadObject(applicationContext, issue.server, uri, issueSerializer);
+			if (result instanceof JsonNetworkError) {
+				//TODO
+				L.e("Unable to upload issue: " + issue + " because of an error: " + result, null);
+				return null;
+			} else {
+				return issue;
+			}
+
+		case ACTION_LOAD_ACTIVITY:
+			return getWhichFragmentToDisplay();
+		}
+		return null;
+	}
+
+	@Override
+	public void onPostExecute(final int action, final Object parameters, final Object result) {
+		setSupportProgressBarIndeterminateVisibility(false);
+		// TODO: maybe this should be centralized somewhere
+
+		switch (action) {
+		case ACTION_UPLOAD_ISSUE:
+			final Intent intent = new Intent(this, IssuesActivity.class);
+			final String json = ((Bundle) result).getString(IssueFragment.KEY_ISSUE_JSON);
+			if (!TextUtils.isEmpty(json)) {
+				Issue issue = new Gson().fromJson(json, Issue.class);
+				if (issue != null && issue.server != null) {
+					intent.putExtra(Constants.KEY_ISSUE_ID, issue.id);
+					intent.putExtra(Constants.KEY_SERVER_ID, issue.server.rowId);
+					startActivity(intent);
+				}
+			}
+			break;
+
+		case ACTION_LOAD_ACTIVITY:
+			final Fragment contents;
+			final Bundle args = new Bundle();
+
+			switch ((FragmentToDisplay) result) {
+			default:
+			case DEFAULT:
+				contents = WelcomeFragment.newInstance(args);
+				break;
+			case HELP:
+				contents = HelpSetupFragment.newInstance(args);
+				break;
+			case WAIT_FOR_SYNC:
+				contents = WaitForSyncFragment.newInstance(args);
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						AsyncTaskFragment.runTask(MainActivity.this, ACTION_LOAD_ACTIVITY, null);
+					}
+				}, 1000 * 30);
+				break;
+			}
+
+			try {
+				getSupportFragmentManager().beginTransaction().replace(R.id.drawer_content, contents).commit();
+			} catch (final Exception e) {
+				// FATAL EXCEPTION: main
+				// java.lang.RuntimeException: Unable to resume activity {net.bicou.redmine/net.bicou.redmine.app.MainActivity}:
+				// java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
+			}
+			break;
 		}
 	}
 }
