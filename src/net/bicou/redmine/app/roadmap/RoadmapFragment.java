@@ -1,6 +1,7 @@
 package net.bicou.redmine.app.roadmap;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -12,14 +13,18 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssueFragment;
+import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListCursorAdapter;
 import net.bicou.redmine.app.issues.IssuesListCursorLoader;
 import net.bicou.redmine.app.issues.IssuesListFilter;
@@ -296,8 +301,9 @@ public class RoadmapFragment extends SherlockListFragment implements LoaderManag
 		args.putLong(Constants.KEY_ISSUE_ID, issueId);
 		args.putLong(Constants.KEY_SERVER_ID, serverId);
 
-		final IssueFragment frag = IssueFragment.newInstance(args);
-		getFragmentManager().beginTransaction().replace(this.getId(), frag).addToBackStack("prout").commit();
+		Intent intent = new Intent(getActivity(), IssuesActivity.class);
+		intent.putExtras(args);
+		startActivity(intent);
 	}
 
 	@Override
