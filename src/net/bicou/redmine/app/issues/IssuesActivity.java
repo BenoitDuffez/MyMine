@@ -177,6 +177,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		L.d("requestCode=" + requestCode + ", resultCode=" + resultCode + ", data=" + data);
 		if (resultCode == RESULT_OK) {
 			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, data.getExtras());
 		}
