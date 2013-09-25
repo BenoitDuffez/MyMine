@@ -88,8 +88,6 @@ public class EditIssueFragment extends SherlockFragment {
 		View v = inflater.inflate(R.layout.frag_issue_edit, container, false);
 		mMainLayout = (ViewGroup) v.findViewById(R.id.issue_edit_main_layout);
 
-		L.d("saved=" + savedInstanceState);
-
 		// Labels
 		mId = (TextView) v.findViewById(R.id.issue_edit_id);
 		mAuthorName = (TextView) v.findViewById(R.id.issue_edit_author);
