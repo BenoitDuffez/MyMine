@@ -25,6 +25,7 @@ import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
+import net.bicou.redmine.app.issues.edit.EditIssueFragment;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
@@ -41,6 +42,7 @@ import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.net.upload.IssueSerializer;
 import net.bicou.redmine.net.upload.JsonUploader;
+import net.bicou.redmine.net.upload.ObjectSerializer;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
 import net.bicou.splitactivity.SplitActivity;
@@ -56,6 +58,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_ISSUE_LOAD_OVERVIEW = 2;
 	public static final int ACTION_ISSUE_LOAD_ATTACHMENTS = 3;
 	public static final int ACTION_DELETE_ISSUE = 4;
+	public static final int ACTION_UPLOAD_ISSUE = 5;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -168,7 +171,14 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			Intent intent = new Intent(this, EditIssueActivity.class);
 			intent.putExtra(Constants.KEY_SERVER, server);
 			intent.putExtra(Constants.KEY_PROJECT, project);
-			startActivity(intent);
+			startActivityForResult(intent, 0);
+		}
+	}
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, data.getExtras());
 		}
 	}
 
@@ -191,7 +201,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 					String json = new Gson().toJson(issue, Issue.class);
 					Intent intent = new Intent(this, EditIssueActivity.class);
 					intent.putExtra(IssueFragment.KEY_ISSUE_JSON, json);
-					startActivity(intent);
+					startActivityForResult(intent, 0);
 				}
 			}
 			return true;
@@ -315,6 +325,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public Object doInBackGround(Context applicationContext, final int action, final Object parameters) {
+		Issue issue;
+		String uri;
+
 		switch (action) {
 		case ACTION_REFRESH_ISSUES:
 			IssuesSyncAdapterService.Synchronizer synchronizer = new IssuesSyncAdapterService.Synchronizer(applicationContext);
@@ -336,10 +349,21 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return IssueOverviewFragment.loadIssueAttachments(applicationContext, (Issue) parameters);
 
 		case ACTION_DELETE_ISSUE:
-			Issue issue = (Issue) parameters;
+			issue = (Issue) parameters;
 			IssueSerializer serializer = new IssueSerializer(this, issue, null, true);
-			String uri = "issues/" + issue.id + ".json";
+			uri = "issues/" + issue.id + ".json";
 			return new JsonUploader().uploadObject(this, issue.server, uri, serializer);
+
+		case ACTION_UPLOAD_ISSUE:
+			Bundle params = (Bundle) parameters;
+			issue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
+			IssueSerializer issueSerializer = new IssueSerializer(applicationContext, issue, params.getString(EditIssueFragment.KEY_ISSUE_NOTES));
+			if (issue.id <= 0 || issueSerializer.getRemoteOperation() == ObjectSerializer.RemoteOperation.ADD) {
+				uri = "issues.json";
+			} else {
+				uri = "issues/" + issue.id + ".json";
+			}
+			return new JsonUploader().uploadObject(applicationContext, issue.server, uri, issueSerializer);
 		}
 
 		return null;
@@ -400,6 +424,16 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			} else {
 				((JsonNetworkError) result).displayCrouton(this, null);
 			}
+			break;
+
+
+		case ACTION_UPLOAD_ISSUE:
+			if (result instanceof JsonNetworkError) {
+				Crouton.makeText(this, String.format(getString(R.string.issue_upload_failed), ((JsonNetworkError) result).getMessage(this)), Style.ALERT).show();
+			} else {
+				Crouton.makeText(this, getString(R.string.issue_upload_successful), Style.CONFIRM).show();
+			}
+			L.d("Upload issue json: " + result);
 			break;
 		}
 	}

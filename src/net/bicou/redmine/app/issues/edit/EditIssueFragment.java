@@ -1,6 +1,8 @@
 package net.bicou.redmine.app.issues.edit;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
@@ -56,6 +58,7 @@ import java.util.regex.Pattern;
  */
 public class EditIssueFragment extends SherlockFragment {
 	public static final String KEY_ISSUE_DESCRIPTION = "net.bicou.redmine.app.issues.edit.Description";
+	public static final String KEY_ISSUE_NOTES = "net.bicou.redmine.app.issues.edit.Notes";
 
 	ViewGroup mMainLayout;
 	Issue mIssue;
@@ -205,13 +208,14 @@ public class EditIssueFragment extends SherlockFragment {
 		}
 
 		String notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
-		Object[] taskParams = new Object[] {
-				mIssue,
-				notes,
-		};
+		Bundle taskParams = new Bundle();
+		taskParams.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(mIssue, Issue.class));
+		taskParams.putString(EditIssueFragment.KEY_ISSUE_NOTES, notes);
+		Intent result = new Intent();
+		result.putExtras(taskParams);
 
 		// If this line is reached, it means the form has been validated and we can try to upload this to the server
-		AsyncTaskFragment.runTask(getSherlockActivity(), EditIssueActivity.ACTION_UPLOAD_ISSUE, taskParams);
+		getActivity().setResult(Activity.RESULT_OK, result);
 	}
 
 	@SuppressWarnings("unchecked")

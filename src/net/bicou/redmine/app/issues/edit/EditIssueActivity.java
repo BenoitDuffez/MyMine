@@ -8,10 +8,6 @@ import com.actionbarsherlock.view.Window;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.User;
-import net.bicou.redmine.net.upload.IssueSerializer;
-import net.bicou.redmine.net.upload.JsonUploader;
-import net.bicou.redmine.net.upload.ObjectSerializer;
-import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
 
@@ -21,7 +17,6 @@ import java.util.Calendar;
 public class EditIssueActivity extends SherlockFragmentActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener,
 		DatePickerFragment.DateSelectionListener, DescriptionEditorFragment.DescriptionChangeListener {
 	public static final int ACTION_LOAD_ISSUE_DATA = 0;
-	public static final int ACTION_UPLOAD_ISSUE = 1;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -45,17 +40,6 @@ public class EditIssueActivity extends SherlockFragmentActivity implements Async
 	public Object doInBackGround(final Context applicationContext, final int action, final Object parameters) {
 		if (action == ACTION_LOAD_ISSUE_DATA) {
 			return EditIssueFragment.loadSpinnersData(applicationContext, (Issue) parameters);
-		} else if (action == ACTION_UPLOAD_ISSUE) {
-			Object[] params = (Object[]) parameters;
-			Issue issue = (Issue) params[0];
-			IssueSerializer issueSerializer = new IssueSerializer(applicationContext, issue, (String) params[1]);
-			final String uri;
-			if (issue.id <= 0 || issueSerializer.getRemoteOperation() == ObjectSerializer.RemoteOperation.ADD) {
-				uri = "issues.json";
-			} else {
-				uri = "issues/" + issue.id + ".json";
-			}
-			return new JsonUploader().uploadObject(applicationContext, issue.server, uri, issueSerializer);
 		}
 		return null;
 	}
@@ -66,9 +50,6 @@ public class EditIssueActivity extends SherlockFragmentActivity implements Async
 		if (action == ACTION_LOAD_ISSUE_DATA) {
 			EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
 			frag.setupSpinners((EditIssueFragment.IssueEditInformation) result);
-		} else if (action == ACTION_UPLOAD_ISSUE) {
-			L.d("Upload issue json: " + result);
-			finish();
 		}
 	}
 

@@ -287,5 +287,7 @@
     </string>
     <string name="users_picker_dialog_title">Pick the desired user</string>
     <string name="drawer_main_no_favorite">There is no favorite</string>
+    <string name="issue_upload_failed">Unable to upload issue: %1$s</string>
+    <string name="issue_upload_successful">Issue uploaded</string>
 
 </resources>
