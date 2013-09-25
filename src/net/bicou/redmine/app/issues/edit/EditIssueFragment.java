@@ -88,6 +88,8 @@ public class EditIssueFragment extends SherlockFragment {
 		View v = inflater.inflate(R.layout.frag_issue_edit, container, false);
 		mMainLayout = (ViewGroup) v.findViewById(R.id.issue_edit_main_layout);
 
+		L.d("saved=" + savedInstanceState);
+
 		// Labels
 		mId = (TextView) v.findViewById(R.id.issue_edit_id);
 		mAuthorName = (TextView) v.findViewById(R.id.issue_edit_author);
@@ -168,11 +170,16 @@ public class EditIssueFragment extends SherlockFragment {
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
+		L.d("");
 		outState.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(mIssue, Issue.class));
 	}
 
-	private void saveIssueChangesAndClose() {
-		// Get the remaining data from the form
+	/**
+	 * Updates the {@link #mIssue} object with the values from the form widgets
+	 */
+	private void saveIssueChanges() {
+		// Spinners, 'assigned to', description, target/start dates are automatically saved into #mIssue when the widgets are modified by the user
+		// So, let's get the remaining data from the form
 		mIssue.done_ratio = 10 * mPercentDone.getProgress();
 		mIssue.subject = String.valueOf(mSubject.getText());
 
@@ -204,10 +211,18 @@ public class EditIssueFragment extends SherlockFragment {
 			}
 		} catch (Exception e) {
 			Crouton.makeText(getSherlockActivity(), getString(R.string.issue_edit_estimated_hours_parse_error), Style.ALERT, mMainLayout).show();
-			return;
 		}
+	}
 
+	/**
+	 * Triggered when the user chooses to commit the changes made to the form (create or edit issue)
+	 */
+	private void saveIssueChangesAndClose() {
+		saveIssueChanges();
+
+		// Notes are not part of the issue but only logged with an edit
 		String notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
+
 		Bundle taskParams = new Bundle();
 		taskParams.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(mIssue, Issue.class));
 		taskParams.putString(EditIssueFragment.KEY_ISSUE_NOTES, notes);
@@ -218,6 +233,15 @@ public class EditIssueFragment extends SherlockFragment {
 		getActivity().setResult(Activity.RESULT_OK, result);
 	}
 
+	/**
+	 * Background task that will load all versions, priorities, statuses and trackers for issues; and their corresponding ID that matches the actual values from the
+	 * {@link #mIssue} object.
+	 *
+	 * @param context Used to open the databases
+	 * @param issue   Used to calculate the positions in the arrays of versions, priorities, statuses and trackers
+	 *
+	 * @return An object containing all the information required to fill the spinners and correctly select the appropriate item
+	 */
 	@SuppressWarnings("unchecked")
 	public static IssueEditInformation loadSpinnersData(final Context context, Issue issue) {
 		if (issue == null || issue.server == null || issue.project == null || issue.server.rowId <= 0 || issue.project.id <= 0) {
@@ -291,6 +315,14 @@ public class EditIssueFragment extends SherlockFragment {
 		return info;
 	}
 
+	/**
+	 * Create an array with at least one null item at the first position, and then all items contained in the source array, if any. This is used to be able to not
+	 * choose a value from a spinner (for example: no specific target version)
+	 *
+	 * @param sourceArray The remaining items
+	 *
+	 * @return The array with null + all the remaining items from the source array
+	 */
 	private static ArrayList<?> getArrayWithDummy(List<?> sourceArray) {
 		ArrayList<Object> list = new ArrayList<Object>();
 		list.add(null);
@@ -302,6 +334,11 @@ public class EditIssueFragment extends SherlockFragment {
 		return list;
 	}
 
+	/**
+	 * Set selected spinner positions from the indices indicated into the {@link net.bicou.redmine.app.issues.edit.EditIssueFragment.IssueEditInformation}
+	 *
+	 * @param info Actual spinner position IDs corresponding to issue parameters
+	 */
 	public void setupSpinners(IssueEditInformation info) {
 		if (info != null) {
 			mCategories.setAdapter(new BasicSpinnerAdapter<IssueCategory>(getActivity(), info.categories) {
@@ -398,6 +435,9 @@ public class EditIssueFragment extends SherlockFragment {
 		refreshUI();
 	}
 
+	/**
+	 * Setup UI widgets so that their contents reflects the values in the current object {@link #mIssue}
+	 */
 	private void refreshUI() {
 		if (mIssue.author != null && mIssue.author.id > 0) {
 			mIssue.author = IssueOverviewFragment.displayNameAndAvatar(getActivity(), mIssue, mAuthorName, mAuthorAvatar, mIssue.author,
@@ -441,6 +481,7 @@ public class EditIssueFragment extends SherlockFragment {
 	}
 
 	public void showDatePickerDialog(final View v) {
+		saveIssueChanges();
 		Bundle args = new Bundle();
 		Calendar cal = new GregorianCalendar();
 		switch (v.getId()) {
@@ -479,6 +520,7 @@ public class EditIssueFragment extends SherlockFragment {
 	}
 
 	private void showEditDescriptionDialog(final View view) {
+		saveIssueChanges();
 		Bundle args = new Bundle();
 		args.putString(KEY_ISSUE_DESCRIPTION, mIssue.description);
 		DialogFragment newFragment = DescriptionEditorFragment.newInstance(args);
@@ -491,6 +533,7 @@ public class EditIssueFragment extends SherlockFragment {
 	}
 
 	private void showUserPickerDialog() {
+		saveIssueChanges();
 		Bundle args = new Bundle();
 		String userJson = mIssue.assigned_to == null || mIssue.assigned_to.id <= 0 ? "" : new Gson().toJson(mIssue.assigned_to, User.class);
 		args.putString(UserPickerFragment.KEY_USER, userJson);
