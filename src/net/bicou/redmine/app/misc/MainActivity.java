@@ -10,32 +10,23 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.app.drawers.main.DrawerMenuFragment;
-import net.bicou.redmine.app.issues.IssueFragment;
-import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
-import net.bicou.redmine.app.issues.edit.EditIssueFragment;
+import net.bicou.redmine.app.issues.edit.IssueUploader;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.settings.SettingsActivity;
 import net.bicou.redmine.app.welcome.WelcomeFragment;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
-import net.bicou.redmine.net.JsonNetworkError;
-import net.bicou.redmine.net.upload.IssueSerializer;
-import net.bicou.redmine.net.upload.JsonUploader;
-import net.bicou.redmine.net.upload.ObjectSerializer;
 import net.bicou.redmine.util.L;
 
 import java.util.ArrayList;
@@ -236,25 +227,7 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 	public Object doInBackGround(final Context applicationContext, final int action, final Object parameters) {
 		switch (action) {
 		case ACTION_UPLOAD_ISSUE:
-			// TODO: maybe this should be centralized somewhere
-			Issue issue;
-			String uri;
-			Bundle params = (Bundle) parameters;
-			issue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
-			IssueSerializer issueSerializer = new IssueSerializer(applicationContext, issue, params.getString(EditIssueFragment.KEY_ISSUE_NOTES));
-			if (issue.id <= 0 || issueSerializer.getRemoteOperation() == ObjectSerializer.RemoteOperation.ADD) {
-				uri = "issues.json";
-			} else {
-				uri = "issues/" + issue.id + ".json";
-			}
-			Object result = new JsonUploader().uploadObject(applicationContext, issue.server, uri, issueSerializer);
-			if (result instanceof JsonNetworkError) {
-				//TODO
-				L.e("Unable to upload issue: " + issue + " because of an error: " + result, null);
-				return null;
-			} else {
-				return issue;
-			}
+			return IssueUploader.uploadIssue(applicationContext, (Bundle) parameters);
 
 		case ACTION_LOAD_ACTIVITY:
 			return getWhichFragmentToDisplay();
@@ -265,20 +238,10 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 	@Override
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		setSupportProgressBarIndeterminateVisibility(false);
-		// TODO: maybe this should be centralized somewhere
 
 		switch (action) {
 		case ACTION_UPLOAD_ISSUE:
-			final Intent intent = new Intent(this, IssuesActivity.class);
-			final String json = ((Bundle) result).getString(IssueFragment.KEY_ISSUE_JSON);
-			if (!TextUtils.isEmpty(json)) {
-				Issue issue = new Gson().fromJson(json, Issue.class);
-				if (issue != null && issue.server != null) {
-					intent.putExtra(Constants.KEY_ISSUE_ID, issue.id);
-					intent.putExtra(Constants.KEY_SERVER_ID, issue.server.rowId);
-					startActivity(intent);
-				}
-			}
+			IssueUploader.handleResult(this, (Bundle) parameters, result);
 			break;
 
 		case ACTION_LOAD_ACTIVITY:

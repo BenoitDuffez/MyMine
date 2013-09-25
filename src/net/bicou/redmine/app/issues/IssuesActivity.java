@@ -25,7 +25,7 @@ import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
-import net.bicou.redmine.app.issues.edit.EditIssueFragment;
+import net.bicou.redmine.app.issues.edit.IssueUploader;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
@@ -42,7 +42,6 @@ import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.net.upload.IssueSerializer;
 import net.bicou.redmine.net.upload.JsonUploader;
-import net.bicou.redmine.net.upload.ObjectSerializer;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
 import net.bicou.splitactivity.SplitActivity;
@@ -53,6 +52,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		ServerProjectPickerFragment.ServerProjectSelectionListener {
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
+
+	// Constants for the async task fragment:
 	public static final int ACTION_REFRESH_ISSUES = 0;
 	public static final int ACTION_ISSUE_LOAD_ISSUE = 1;
 	public static final int ACTION_ISSUE_LOAD_OVERVIEW = 2;
@@ -171,7 +172,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			Intent intent = new Intent(this, EditIssueActivity.class);
 			intent.putExtra(Constants.KEY_SERVER, server);
 			intent.putExtra(Constants.KEY_PROJECT, project);
-			startActivityForResult(intent, 0);
+			startActivityForResult(intent, IssueUploader.CREATE_ISSUE);
 		}
 	}
 
@@ -179,7 +180,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		L.d("requestCode=" + requestCode + ", resultCode=" + resultCode + ", data=" + data);
 		if (resultCode == RESULT_OK) {
-			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, data.getExtras());
+			final Bundle extras = data.getExtras();
+			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
+			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
 		}
 	}
 
@@ -202,7 +205,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 					String json = new Gson().toJson(issue, Issue.class);
 					Intent intent = new Intent(this, EditIssueActivity.class);
 					intent.putExtra(IssueFragment.KEY_ISSUE_JSON, json);
-					startActivityForResult(intent, 0);
+					startActivityForResult(intent, IssueUploader.EDIT_ISSUE);
 				}
 			}
 			return true;
@@ -356,15 +359,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return new JsonUploader().uploadObject(this, issue.server, uri, serializer);
 
 		case ACTION_UPLOAD_ISSUE:
-			Bundle params = (Bundle) parameters;
-			issue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
-			IssueSerializer issueSerializer = new IssueSerializer(applicationContext, issue, params.getString(EditIssueFragment.KEY_ISSUE_NOTES));
-			if (issue.id <= 0 || issueSerializer.getRemoteOperation() == ObjectSerializer.RemoteOperation.ADD) {
-				uri = "issues.json";
-			} else {
-				uri = "issues/" + issue.id + ".json";
-			}
-			return new JsonUploader().uploadObject(applicationContext, issue.server, uri, issueSerializer);
+			return IssueUploader.uploadIssue(applicationContext, (Bundle) parameters);
 		}
 
 		return null;
@@ -429,12 +424,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 
 		case ACTION_UPLOAD_ISSUE:
-			if (result instanceof JsonNetworkError) {
-				Crouton.makeText(this, String.format(getString(R.string.issue_upload_failed), ((JsonNetworkError) result).getMessage(this)), Style.ALERT).show();
-			} else {
-				Crouton.makeText(this, getString(R.string.issue_upload_successful), Style.CONFIRM).show();
-			}
-			L.d("Upload issue json: " + result);
+			IssueUploader.handleResult(this, (Bundle) parameters, result);
 			break;
 		}
 	}
