@@ -258,7 +258,7 @@
 
             </TableRow>
 
-            <TableRow style="@style/IssueTableRow">
+            <TableRow style="@style/IssueTableRow" android:id="@+id/issue_edit_notes_label">
 
                 <net.bicou.redmine.widget.RobotoTextView
                         style="@style/IssueLabel"
@@ -269,7 +269,7 @@
             </TableRow>
 
             <TableRow
-                    style="@style/IssueTableRow"
+                    style="@style/IssueTableRow" android:id="@+id/issue_edit_notes_line"
                     android:layout_marginTop="8dp">
 
                 <View
@@ -281,7 +281,7 @@
                         android:layout_height="4dp"/>
             </TableRow>
 
-            <TableRow style="@style/IssueTableRow">
+            <TableRow style="@style/IssueTableRow" android:id="@+id/issue_edit_notes_container">
 
                 <EditText
                         android:id="@+id/issue_edit_notes"

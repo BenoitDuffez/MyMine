@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,6 +68,8 @@ public class EditIssueFragment extends SherlockFragment {
 	TextView mId, mAuthorName, mAssigneeName, mParentIssue, mSubject, mStartDate, mDueDate;
 	ImageView mAuthorAvatar, mAssigneeAvatar;
 	SeekBar mPercentDone;
+	View mNotesLabel, mNotesLine, mNotesContainer;
+	private boolean mIsCreationMode;
 
 	public static class IssueEditInformation {
 		public ArrayList<IssueStatus> statuses;
@@ -121,6 +124,11 @@ public class EditIssueFragment extends SherlockFragment {
 		mStartDate.setOnClickListener(datePicker);
 		mDueDate.setOnClickListener(datePicker);
 
+		// Used to hide the notes, if it's an issue creation (vs modification)
+		mNotesLabel = v.findViewById(R.id.issue_edit_notes_label);
+		mNotesLine = v.findViewById(R.id.issue_edit_notes_line);
+		mNotesContainer = v.findViewById(R.id.issue_edit_notes_container);
+
 		v.findViewById(R.id.issue_edit_change_description).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View view) {
@@ -147,7 +155,9 @@ public class EditIssueFragment extends SherlockFragment {
 		mIssue = new Gson().fromJson(json, Issue.class);
 
 		// Not edit, but create
-		if (mIssue == null) {
+		mIsCreationMode = mIssue == null || TextUtils.isEmpty(json);
+		L.d("mIsCreationMode=" + mIsCreationMode);
+		if (mIsCreationMode) {
 			Server server = getArguments().getParcelable(Constants.KEY_SERVER);
 			Project project = getArguments().getParcelable(Constants.KEY_PROJECT);
 			mIssue = new Issue(server, project);
@@ -476,6 +486,11 @@ public class EditIssueFragment extends SherlockFragment {
 		} else {
 			mEstimatedHours.setText(String.format(Locale.ENGLISH, "%d", h));
 		}
+
+		// In create mode, there's no notes
+		mNotesLabel.setVisibility(mIsCreationMode ? View.GONE : View.VISIBLE);
+		mNotesLine.setVisibility(mIsCreationMode ? View.GONE : View.VISIBLE);
+		mNotesContainer.setVisibility(mIsCreationMode ? View.GONE : View.VISIBLE);
 	}
 
 	public void showDatePickerDialog(final View v) {
