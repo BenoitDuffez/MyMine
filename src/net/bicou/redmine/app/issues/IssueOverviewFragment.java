@@ -92,7 +92,7 @@ public class IssueOverviewFragment extends SherlockFragment {
 		mFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-				mIssue.is_favorite = isChecked;
+				mIssue.is_favorite = isChecked;//TODO: may crash if the phone is ass-lagging and takes 1 minute to display the fucking activity: NPE...
 				IssuesDbAdapter db = new IssuesDbAdapter(getActivity());
 				db.open();
 				db.update(mIssue);
