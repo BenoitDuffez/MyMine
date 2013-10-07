@@ -1,13 +1,13 @@
 package net.bicou.redmine.platform;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-
+import android.content.Context;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
-import android.content.Context;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class UsersManager {
 	public static synchronized long updateUsers(final Context context, final Server server, final List<User> remoteList, final long lastSyncMarker) {
@@ -22,9 +22,13 @@ public class UsersManager {
 		lastKnownChange.setTimeInMillis(lastSyncMarker);
 
 		for (final User user : remoteList) {
+			if (user == null) {
+				continue;
+			}
+
 			localUser = null;
 			for (final User lu : localUsers) {
-				if (lu != null && lu.id > 0 && user != null && user.id > 0 && lu.id == user.id) {
+				if (lu != null && lu.id > 0 && user.id > 0 && lu.id == user.id) {
 					localUser = lu;
 					break;
 				}
