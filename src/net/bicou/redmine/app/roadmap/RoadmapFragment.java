@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
@@ -33,12 +32,13 @@ import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.util.Util;
 
 /**
  * Created by bicou on 28/05/13.
  */
-public class RoadmapFragment extends SherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class RoadmapFragment extends TrackedListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	TextView mVersionName, mDueDate, mPercentComplete, mIssuesCount, mDescription;
 	Button mShowWikiButton;
 	ProgressBar mProgressBar;

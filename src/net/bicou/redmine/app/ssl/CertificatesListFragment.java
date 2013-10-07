@@ -7,18 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.util.L;
 import net.bicou.splitactivity.SplitActivity;
 
 import java.util.List;
 
-public class CertificatesListFragment extends SherlockListFragment implements LoaderCallbacks<List<CertInfo>> {
+public class CertificatesListFragment extends TrackedListFragment implements LoaderCallbacks<List<CertInfo>> {
 	KeyStoreAdapter mAdapter;
 	ListView mListView;
 	ActionMode mActionMode;

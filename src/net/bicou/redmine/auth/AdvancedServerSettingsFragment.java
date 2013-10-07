@@ -13,9 +13,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
+import net.bicou.redmine.app.ga.TrackedDialogFragment;
 
-public class AdvancedServerSettingsFragment extends SherlockDialogFragment {
+public class AdvancedServerSettingsFragment extends TrackedDialogFragment {
 	ServerSettingsListener mListener;
 
 	public interface ServerSettingsListener {

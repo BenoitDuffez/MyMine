@@ -3,14 +3,14 @@ package net.bicou.redmine.app.settings;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedPreferenceFragment;
 
 /**
  * This fragment shows data and sync preferences only. It is used when the activity is showing a two-pane settings UI.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class DataSyncPreferenceFragment extends PreferenceFragment {
+public class DataSyncPreferenceFragment extends TrackedPreferenceFragment {
 	public DataSyncPreferenceFragment() {
 	}
 

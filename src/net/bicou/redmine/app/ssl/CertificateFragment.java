@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import net.bicou.redmine.net.ssl.MyMineSSLKeyManager;
 import net.bicou.redmine.util.L;
@@ -19,7 +19,7 @@ import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-public class CertificateFragment extends SherlockFragment {
+public class CertificateFragment extends TrackedFragment {
 	public static final String KEY_CERT_ALIAS = "net.bicou.redmine.ssl.Certificate";
 	X509Certificate mCertificate;
 	TextView mStartDate, mEndDate, mIssuer, mSubject, mKey, mAlgo;

@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.widget.IssuesListRelativeLayout;
 
 import java.text.DateFormat;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by bicou on 28/05/13.
  */
-public class RoadmapsListFragment extends SherlockListFragment {
+public class RoadmapsListFragment extends TrackedListFragment {
 	private List<Version> mList;
 	RoadmapsAdapter mAdapter;
 	RoadmapSelectionListener mListener;

@@ -11,17 +11,17 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.util.L;
 
 /**
  * Created by bicou on 19/07/13.
  */
-public class WikiPagesListFragment extends SherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class WikiPagesListFragment extends TrackedListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String KEY_PROJECT = "net.bicou;redmine.app.wiki.Project";
 	WikiDbAdapter mWikiPagesDbAdapter;
 	WikiPagesCursorAdapter mAdapter;

@@ -5,13 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import com.actionbarsherlock.app.SherlockFragment;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedFragment;
 
 /**
  * Created by bicou on 20/06/13.
  */
-public class EmptyFragment extends SherlockFragment {
+public class EmptyFragment extends TrackedFragment {
 	int mResId;
 	private static final String KEY_IMAGE_RESOURCE_ID = "net.bicou.redmine.app.misc.EmptyFragment";
 

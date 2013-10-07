@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.app.AsyncTaskFragment;
 
 /**
@@ -16,6 +17,18 @@ public class WikiPageActivity extends SherlockFragmentActivity implements AsyncT
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 		WikiPageFragment frag = WikiPageFragment.newInstance(getIntent().getExtras());
 		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, frag).commit();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override

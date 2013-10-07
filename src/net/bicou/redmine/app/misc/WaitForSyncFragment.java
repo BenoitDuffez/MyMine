@@ -8,12 +8,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import com.actionbarsherlock.app.SherlockFragment;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.sync.SyncUtils;
 import net.bicou.redmine.util.L;
 
-public class WaitForSyncFragment extends SherlockFragment {
+public class WaitForSyncFragment extends TrackedFragment {
 	public static WaitForSyncFragment newInstance(final Bundle args) {
 		final WaitForSyncFragment frag = new WaitForSyncFragment();
 		frag.setArguments(args);

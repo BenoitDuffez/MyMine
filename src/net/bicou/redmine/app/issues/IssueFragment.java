@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
@@ -19,11 +18,12 @@ import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 
 import java.util.Locale;
 
-public class IssueFragment extends SherlockFragment {
+public class IssueFragment extends TrackedFragment {
 	public static final String KEY_ISSUE_JSON = "net.bicou.redmine.Issue";
 
 	private Issue mIssue;

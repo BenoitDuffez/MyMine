@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class AboutFragment extends SherlockFragment {
+public class AboutFragment extends TrackedFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.frag_about, container, false);

@@ -14,7 +14,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -32,6 +31,7 @@ import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IssueOverviewFragment extends SherlockFragment {
+public class IssueOverviewFragment extends TrackedFragment {
 	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mAuthor, mParent;
 	ImageView mAuthorAvatar, mAssignedAvatar;
 	CheckBox mFavorite;

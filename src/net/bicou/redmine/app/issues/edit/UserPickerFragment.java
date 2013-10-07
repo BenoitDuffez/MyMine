@@ -2,15 +2,15 @@ package net.bicou.redmine.app.issues.edit;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.google.gson.Gson;
 import net.bicou.redmine.data.json.User;
+import net.bicou.redmine.app.ga.TrackedDialogFragment;
 import net.bicou.redmine.util.L;
 
 /**
  * Created by bicou on 06/08/13.
  */
-public class UserPickerFragment extends SherlockDialogFragment {
+public class UserPickerFragment extends TrackedDialogFragment {
 	public static final String KEY_USER = "net.bicou.redmine.app.issues.edit.User";
 
 	public static UserPickerFragment newInstance(Bundle args) {

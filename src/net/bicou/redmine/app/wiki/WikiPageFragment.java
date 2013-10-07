@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -23,9 +22,10 @@ import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.WikiPage;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 
-public class WikiPageFragment extends SherlockFragment {
+public class WikiPageFragment extends TrackedFragment {
 	public static final String KEY_WIKI_PAGE = "net.bicou.redmine.WikiPage";
 	public static final String KEY_WIKI_PAGE_URI = "net.bicou.redmine.WikiPageName";
 

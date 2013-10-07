@@ -33,6 +33,7 @@
     <orderEntry type="module" module-name="LVA" />
     <orderEntry type="module" module-name="SplitActivity" />
     <orderEntry type="module" module-name="StaggeredGridView" />
+    <orderEntry type="library" name="libGoogleAnalyticsServices" level="project" />
   </component>
 </module>
 

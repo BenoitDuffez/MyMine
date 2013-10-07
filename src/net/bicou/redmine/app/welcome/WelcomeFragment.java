@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.sync.SyncUtils;
 import net.bicou.redmine.util.L;
 
@@ -28,7 +28,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WelcomeFragment extends Fragment {
+public class WelcomeFragment extends TrackedFragment {
 	public static WelcomeFragment newInstance(final Bundle args) {
 		final WelcomeFragment f = new WelcomeFragment();
 		f.setArguments(args);

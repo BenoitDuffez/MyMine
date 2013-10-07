@@ -9,15 +9,15 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class IssuesOrderingPickColumnFragment extends SherlockDialogFragment {
+public class IssuesOrderingPickColumnFragment extends TrackedDialogFragment {
 	private static final String KEY_AVAILABLE_COLUMNS = "net.bicou.redmine.app.issues.OrderPickColumns";
 	private static final String KEY_AVAILABLE_COLUMNS_NAMES = "net.bicou.redmine.app.issues.OrderPickColumnsNames";
 

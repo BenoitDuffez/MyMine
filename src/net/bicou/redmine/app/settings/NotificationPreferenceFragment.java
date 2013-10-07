@@ -3,14 +3,14 @@ package net.bicou.redmine.app.settings;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedPreferenceFragment;
 
 /**
  * This fragment shows notification preferences only. It is used when the activity is showing a two-pane settings UI.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class NotificationPreferenceFragment extends PreferenceFragment {
+public class NotificationPreferenceFragment extends TrackedPreferenceFragment {
 	public NotificationPreferenceFragment() {
 	}
 

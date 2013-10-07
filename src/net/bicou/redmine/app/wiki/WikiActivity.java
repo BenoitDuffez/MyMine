@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
@@ -50,6 +51,18 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 		super.onCreate(savedInstanceState);
 		initProjectsSpinner(savedInstanceState);
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override

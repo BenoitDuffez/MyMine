@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
+import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.User;
@@ -29,6 +30,18 @@ public class EditIssueActivity extends SherlockFragmentActivity implements Async
 			Fragment content = EditIssueFragment.newInstance(getIntent().getExtras());
 			getSupportFragmentManager().beginTransaction().add(android.R.id.content, content).commit();
 		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override

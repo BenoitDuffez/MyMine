@@ -2,6 +2,7 @@ package net.bicou.redmine.app.settings;
 
 import java.util.List;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
@@ -49,6 +50,18 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setupActionBar();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 
 	/**
@@ -230,7 +243,7 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 	 * Binds a preference's summary to its value. More specifically, when the preference's value is changed, its summary (line of text below the
 	 * preference title) is updated to reflect the value. The summary is also immediately updated upon calling this method. The exact display format
 	 * is dependent on the type of preference.
-	 * 
+	 *
 	 * @see #sBindPreferenceSummaryToValueListener
 	 */
 	static void bindPreferenceSummaryToValue(final Preference preference) {

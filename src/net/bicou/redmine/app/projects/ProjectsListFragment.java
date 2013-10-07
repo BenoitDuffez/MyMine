@@ -14,18 +14,18 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.SimpleCursorLoader;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.util.L;
 
 import java.text.DateFormat;
 import java.util.Date;
 
-public class ProjectsListFragment extends SherlockListFragment implements LoaderCallbacks<Cursor> {
+public class ProjectsListFragment extends TrackedListFragment implements LoaderCallbacks<Cursor> {
 	View mFragmentView;
 
 	private ProjectsCursorAdapter mAdapter;

@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
@@ -41,6 +40,7 @@ import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.BasicSpinnerAdapter;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 /**
  * Created by bicou on 02/08/13.
  */
-public class EditIssueFragment extends SherlockFragment {
+public class EditIssueFragment extends TrackedFragment {
 	public static final String KEY_ISSUE_DESCRIPTION = "net.bicou.redmine.app.issues.edit.Description";
 	public static final String KEY_ISSUE_NOTES = "net.bicou.redmine.app.issues.edit.Notes";
 

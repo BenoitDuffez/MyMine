@@ -3,15 +3,15 @@ package net.bicou.redmine.app.issues.edit;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.app.ga.TrackedDialogFragment;
 
 /**
  * Created by bicou on 06/08/13.
  */
-public class ServerProjectPickerFragment extends SherlockDialogFragment {
+public class ServerProjectPickerFragment extends TrackedDialogFragment {
 	public interface ServerProjectSelectionListener {
 		public void onServerProjectPicked(Server server, Project project);
 	}

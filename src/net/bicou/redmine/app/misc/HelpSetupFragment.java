@@ -2,6 +2,7 @@ package net.bicou.redmine.app.misc;
 
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -14,9 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
-
-public class HelpSetupFragment extends SherlockFragment {
+public class HelpSetupFragment extends TrackedFragment {
 	Button button;
 	EditText url, apiKey;
 	Server mServer;

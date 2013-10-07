@@ -18,6 +18,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.SearchView;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -127,6 +128,18 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		if (args != null && args.containsKey(Constants.KEY_ISSUE_ID)) {
 			selectContent(args);
 		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 
 	void saveNewColumnsOrder(final IssuesOrder orderColumns) {

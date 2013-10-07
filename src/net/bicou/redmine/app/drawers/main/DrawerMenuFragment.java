@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
@@ -24,7 +23,13 @@ import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.json.WikiPage;
-import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
+import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.data.sqlite.WikiDbAdapter;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.util.L;
 
 import java.util.ArrayList;
@@ -33,7 +38,7 @@ import java.util.List;
 /**
  * Created by bicou on 14/06/13.
  */
-public class DrawerMenuFragment extends SherlockListFragment {
+public class DrawerMenuFragment extends TrackedListFragment {
 	DrawerMenuItemsAdapter<DrawerMenuViewType> mAdapter;
 
 	public enum DrawerMenuViewType {

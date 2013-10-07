@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.gson.Gson;
 import com.origamilabs.library.views.StaggeredGridView;
 import net.bicou.redmine.Constants;
@@ -31,13 +30,14 @@ import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectFragment extends SherlockFragment {
+public class ProjectFragment extends TrackedFragment {
 	public static final String KEY_PROJECT_JSON = "net.bicou.redmine.Project";
 	private static final int ADD_ISSUE = 0;
 

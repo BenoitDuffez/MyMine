@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.misc.EmptyFragment;
@@ -58,6 +59,18 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 				selectContent(args);
 			}
 		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override

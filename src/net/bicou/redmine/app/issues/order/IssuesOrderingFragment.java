@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedDialogFragment;
 
-public class IssuesOrderingFragment extends SherlockDialogFragment {
+public class IssuesOrderingFragment extends TrackedDialogFragment {
 	IssuesOrderColumnsAdapter mAdapter;
 	DragSortListView mDslv;
 	DragSortController mController;

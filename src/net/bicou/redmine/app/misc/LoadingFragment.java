@@ -1,15 +1,14 @@
 package net.bicou.redmine.app.misc;
 
-import net.bicou.redmine.R;
-import net.bicou.redmine.util.L;
-
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedFragment;
+import net.bicou.redmine.util.L;
 
-public class LoadingFragment extends Fragment {
+public class LoadingFragment extends TrackedFragment {
 	public static LoadingFragment newInstance() {
 		final LoadingFragment f = new LoadingFragment();
 		return f;

@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
@@ -16,12 +15,13 @@ import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
 import net.bicou.redmine.app.issues.IssueHistoryDownloadTask.JournalsDownloadCallbacks;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueHistory;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
 
 import java.lang.reflect.Type;
 
-public class IssueHistoryFragment extends SherlockListFragment implements FragmentActivationListener {
+public class IssueHistoryFragment extends TrackedListFragment implements FragmentActivationListener {
 	private IssueHistoryDownloadTask mUpdateTask;
 	private Issue mIssue;
 	TextView mEmptyView;

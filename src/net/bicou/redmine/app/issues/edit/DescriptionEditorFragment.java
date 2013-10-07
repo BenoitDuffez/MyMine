@@ -3,12 +3,12 @@ package net.bicou.redmine.app.issues.edit;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockDialogFragment;
+import net.bicou.redmine.app.ga.TrackedDialogFragment;
 
 /**
  * Created by bicou on 06/08/13.
  */
-public class DescriptionEditorFragment extends SherlockDialogFragment {
+public class DescriptionEditorFragment extends TrackedDialogFragment {
 	DescriptionChangeListener mListener;
 
 	public interface DescriptionChangeListener {
