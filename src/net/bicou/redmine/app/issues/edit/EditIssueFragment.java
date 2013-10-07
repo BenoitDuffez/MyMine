@@ -278,7 +278,7 @@ public class EditIssueFragment extends TrackedFragment {
 		IssuePriority priority;
 
 		// Try to find currently selected items
-		for (int i = 0; i < info.categories.size() && issue.category != null; i++) {
+		for (int i = 0; info.categories != null && i < info.categories.size() && issue.category != null; i++) {
 			category = info.categories.get(i);
 			if (category != null && category.id == issue.category.id) {
 				info.category = i;
@@ -286,7 +286,7 @@ public class EditIssueFragment extends TrackedFragment {
 			}
 		}
 
-		for (int i = 0; i < info.priorities.size() && issue.priority != null; i++) {
+		for (int i = 0; info.priorities != null && i < info.priorities.size() && issue.priority != null; i++) {
 			priority = info.priorities.get(i);
 			if (priority != null && priority.id == issue.priority.id) {
 				info.priority = i;
@@ -294,7 +294,7 @@ public class EditIssueFragment extends TrackedFragment {
 			}
 		}
 
-		for (int i = 0; i < info.versions.size() && issue.fixed_version != null; i++) {
+		for (int i = 0; info.versions != null && i < info.versions.size() && issue.fixed_version != null; i++) {
 			version = info.versions.get(i);
 			if (version != null && version.id == issue.fixed_version.id) {
 				info.version = i;
@@ -302,7 +302,7 @@ public class EditIssueFragment extends TrackedFragment {
 			}
 		}
 
-		for (int i = 0; i < info.statuses.size() && issue.status != null; i++) {
+		for (int i = 0; info.statuses != null && i < info.statuses.size() && issue.status != null; i++) {
 			status = info.statuses.get(i);
 			if (status != null && status.id == issue.status.id) {
 				info.status = i;
@@ -310,7 +310,7 @@ public class EditIssueFragment extends TrackedFragment {
 			}
 		}
 
-		for (int i = 0; i < info.trackers.size() && issue.tracker != null; i++) {
+		for (int i = 0; info.trackers != null && i < info.trackers.size() && issue.tracker != null; i++) {
 			tracker = info.trackers.get(i);
 			if (tracker != null && tracker.id == issue.tracker.id) {
 				info.tracker = i;
