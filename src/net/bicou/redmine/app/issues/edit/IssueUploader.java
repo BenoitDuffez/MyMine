@@ -60,7 +60,7 @@ public class IssueUploader {
 				}
 			} else {
 				Crouton.makeText(resultHolder, resultHolder.getString(R.string.issue_upload_successful), Style.CONFIRM).show();
-				L.e("Shouldn't happen!", null);
+				L.e("Shouldn't happen! params=" + params, null);
 			}
 		}
 		L.d("Upload issue json: " + result);
