@@ -104,8 +104,8 @@ public class IssueFragment extends TrackedFragment {
 		}
 		if (savedInstanceState == null) {
 			// Load issue
-			if (getArguments().containsKey(KEY_ISSUE_JSON)) {
-				mIssue = new Gson().fromJson(savedInstanceState.getString(KEY_ISSUE_JSON), Issue.class);
+			if (args.containsKey(KEY_ISSUE_JSON)) {
+				mIssue = new Gson().fromJson(args.getString(KEY_ISSUE_JSON), Issue.class);
 			} else {
 				final ServersDbAdapter sdb = new ServersDbAdapter(getActivity());
 				sdb.open();
