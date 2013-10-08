@@ -14,11 +14,11 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
-import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 
 import java.util.Locale;
@@ -86,7 +86,7 @@ public class IssueFragment extends TrackedFragment {
 	}
 
 	public Fragment getFragmentFromViewPager(int position) {
-		return mAdapter.getFragment(position);
+		return mAdapter == null ? null : mAdapter.getFragment(position);
 	}
 
 	@Override
