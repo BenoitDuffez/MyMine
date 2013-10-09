@@ -16,6 +16,7 @@
     <!-- For the main container of the whole screen -->
     <dimen name="main_horizontal_margin">12dp</dimen>
     <dimen name="main_vertical_margin">12dp</dimen>
+    <dimen name="dialog_like_horizontal_margin">@dimen/main_horizontal_margin</dimen>
 
     <!-- For a content container inside the whole screen -->
     <dimen name="main_content_padding">8dp</dimen>
