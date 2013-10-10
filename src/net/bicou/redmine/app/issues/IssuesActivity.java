@@ -193,7 +193,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		L.d("requestCode=" + requestCode + ", resultCode=" + resultCode + ", data=" + data);
 		if (resultCode == RESULT_OK) {
-			final Bundle extras = data.getExtras();
+			final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
 			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
 			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
 		}
