@@ -266,7 +266,7 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 
 		switch (action) {
 		case ACTION_UPLOAD_ISSUE:
-			IssueUploader.handleResult(this, (Bundle) parameters, result);
+			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
 			break;
 
 		case ACTION_LOAD_ACTIVITY:
