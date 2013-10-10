@@ -21,7 +21,6 @@ import com.actionbarsherlock.widget.SearchView;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -36,7 +35,6 @@ import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
-import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
@@ -418,7 +416,17 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			break;
 
 		case ACTION_DELETE_ISSUE:
-			IssueUploader.handleDelete(this, parameters, result);
+			IssueUploader.handleDelete(this, (Issue) parameters, result);
+			if (isSplitScreen()) {
+				selectEmptyFragment(new Bundle());
+				if (getMainFragment() != null) {
+					getMainFragment().refreshList();
+				}
+			} else if (getActiveContent() == ActiveContent.CONTENT) {
+				showMainFragment(getMainFragmentArgs(null));
+			} else if (getMainFragment() != null) {
+				getMainFragment().refreshList();
+			}
 			break;
 
 
