@@ -229,14 +229,17 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 			Intent intent = new Intent(this, EditIssueActivity.class);
 			intent.putExtra(Constants.KEY_SERVER, server);
 			intent.putExtra(Constants.KEY_PROJECT, project);
-			startActivityForResult(intent, 0); // see #onActivityResult below
+			startActivityForResult(intent, IssueUploader.CREATE_ISSUE); // see #onActivityResult below
 		}
 	}
 
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		L.d("requestCode=" + requestCode + ", resultCode=" + resultCode + ", data=" + data);
 		if (resultCode == RESULT_OK) {
-			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, data.getExtras());
+			final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
+			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
+			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
 		}
 	}
 
