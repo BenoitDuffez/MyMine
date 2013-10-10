@@ -24,6 +24,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.app.issues.IssueFragment;
 import net.bicou.redmine.app.issues.IssueOverviewFragment;
 import net.bicou.redmine.data.Server;
@@ -40,7 +41,6 @@ import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
-import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.BasicSpinnerAdapter;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
@@ -185,7 +185,7 @@ public class EditIssueFragment extends TrackedFragment {
 	/**
 	 * Updates the {@link #mIssue} object with the values from the form widgets
 	 */
-	private void saveIssueChanges() {
+	private boolean saveIssueChanges() {
 		// Spinners, 'assigned to', description, target/start dates are automatically saved into #mIssue when the widgets are modified by the user
 		// So, let's get the remaining data from the form
 		mIssue.done_ratio = 10 * mPercentDone.getProgress();
@@ -219,14 +219,19 @@ public class EditIssueFragment extends TrackedFragment {
 			}
 		} catch (Exception e) {
 			Crouton.makeText(getSherlockActivity(), getString(R.string.issue_edit_estimated_hours_parse_error), Style.ALERT, mMainLayout).show();
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
 	 * Triggered when the user chooses to commit the changes made to the form (create or edit issue)
 	 */
 	private void saveIssueChangesAndClose() {
-		saveIssueChanges();
+		if (!saveIssueChanges()) {
+			return;
+		}
 
 		// Notes are not part of the issue but only logged with an edit
 		String notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
