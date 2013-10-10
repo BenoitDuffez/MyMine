@@ -186,4 +186,38 @@ public class IssueUploader {
 
 		return object;
 	}
+
+	/**
+	 * Delete an issue
+	 *
+	 * @param applicationContext Required for network operations (SSL) and DB access
+	 * @param issue              The issue to be deleted
+	 *
+	 * @return The server's response, or a {@link net.bicou.redmine.net.JsonNetworkError}
+	 */
+	public static Object deleteIssue(final Context applicationContext, final Issue issue) {
+		IssueSerializer serializer = new IssueSerializer(applicationContext, issue, null, true);
+		String uri = "issues/" + issue.id + ".json";
+		return new JsonUploader().uploadObject(applicationContext, issue.server, uri, serializer);
+	}
+
+	/**
+	 * Handle the result of a delete issue
+	 *
+	 * @param resultHolder The activity that will receive the UI notification to the user
+	 * @param issue        The issue that was meant to be deleted
+	 * @param result       The server's response
+	 */
+	public static void handleDelete(Activity resultHolder, Issue issue, Object result) {
+		L.d("delete issue: " + result);
+		if (result == null || !(result instanceof JsonNetworkError)) {
+			IssuesDbAdapter db = new IssuesDbAdapter(resultHolder);
+			db.open();
+			db.delete(issue);
+			db.close();
+			Crouton.makeText(resultHolder, resultHolder.getString(R.string.issue_delete_confirmed), Style.CONFIRM).show();
+		} else {
+			((JsonNetworkError) result).displayCrouton(resultHolder, null);
+		}
+	}
 }

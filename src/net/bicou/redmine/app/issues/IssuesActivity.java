@@ -41,8 +41,6 @@ import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.net.JsonNetworkError;
-import net.bicou.redmine.net.upload.IssueSerializer;
-import net.bicou.redmine.net.upload.JsonUploader;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
 import net.bicou.splitactivity.SplitActivity;
@@ -366,10 +364,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return IssueOverviewFragment.loadIssueAttachments(applicationContext, (Issue) parameters);
 
 		case ACTION_DELETE_ISSUE:
-			issue = (Issue) parameters;
-			IssueSerializer serializer = new IssueSerializer(this, issue, null, true);
-			uri = "issues/" + issue.id + ".json";
-			return new JsonUploader().uploadObject(this, issue.server, uri, serializer);
+			return IssueUploader.deleteIssue(this, (Issue) parameters);
 
 		case ACTION_UPLOAD_ISSUE:
 			return IssueUploader.uploadIssue(applicationContext, (Bundle) parameters);
@@ -423,21 +418,12 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			break;
 
 		case ACTION_DELETE_ISSUE:
-			L.d("delete issue: " + result);
-			if (result == null || !(result instanceof JsonNetworkError)) {
-				IssuesDbAdapter db = new IssuesDbAdapter(this);
-				db.open();
-				db.delete((Issue) parameters);
-				db.close();
-				Crouton.makeText(this, getString(R.string.issue_delete_confirmed), Style.CONFIRM).show();
-			} else {
-				((JsonNetworkError) result).displayCrouton(this, null);
-			}
+			IssueUploader.handleDelete(this, parameters, result);
 			break;
 
 
 		case ACTION_UPLOAD_ISSUE:
-			IssueUploader.handleResult(this, (Bundle) parameters, result);
+			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
 			break;
 		}
 	}
