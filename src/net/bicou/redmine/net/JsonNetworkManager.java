@@ -186,11 +186,12 @@ public abstract class JsonNetworkManager {
 			final HttpResponse resp = httpClient.execute(req);
 
 			// Check result
-			if (resp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-				L.d("Got HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
+			final int statusCode = resp.getStatusLine().getStatusCode();
+			if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED) {
+				L.d("Got HTTP " + statusCode + ": " + resp.getStatusLine().getReasonPhrase());
 				mError = new JsonDownloadError(JsonDownloadError.ErrorType.TYPE_NETWORK);
-				mError.httpResponseCode = resp.getStatusLine().getStatusCode();
-				mError.setMessage(R.string.err_http, "HTTP " + resp.getStatusLine().getStatusCode() + ": " + resp.getStatusLine().getReasonPhrase());
+				mError.httpResponseCode = statusCode;
+				mError.setMessage(R.string.err_http, "HTTP " + statusCode + ": " + resp.getStatusLine().getReasonPhrase());
 				return null;
 			}
 
