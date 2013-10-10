@@ -43,6 +43,15 @@ public class IssueUploader {
 	 */
 	public static final String ISSUE_ACTION = "net.bicou.redmine.app.issues.IssueAction";
 
+	/**
+	 * Add or edit an issue
+	 *
+	 * @param applicationContext Required for network operations (SSL) and DB access
+	 * @param params             Bundle that contains the issue as a JSON string, the issue modification notes if it's an edit, and the issue action (see {@link
+	 *                           #ISSUE_ACTION}
+	 *
+	 * @return The server's response, or a {@link net.bicou.redmine.net.JsonNetworkError}
+	 */
 	public static Object uploadIssue(final Context applicationContext, final Bundle params) {
 		String uri;
 		Issue issue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
@@ -55,7 +64,14 @@ public class IssueUploader {
 		return new JsonUploader().uploadObject(applicationContext, issue.server, uri, issueSerializer);
 	}
 
-	public static void handleResult(Activity resultHolder, Bundle params, Object result) {
+	/**
+	 * Handle the result of an add/edit issue
+	 *
+	 * @param resultHolder The activity that will receive the UI notification to the user
+	 * @param params       The task launching params
+	 * @param result       The server's response
+	 */
+	public static void handleAddEdit(Activity resultHolder, Bundle params, Object result) {
 		L.d("Upload issue json: " + result);
 
 		// Network error?
