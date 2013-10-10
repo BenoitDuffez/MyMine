@@ -10,7 +10,11 @@ import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import net.bicou.redmine.net.ssl.MyMineSSLSocketFactory;
 import net.bicou.redmine.net.ssl.MyMineSSLTrustManager;
 import net.bicou.redmine.util.L;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -40,6 +44,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -68,9 +73,7 @@ public abstract class JsonNetworkManager {
 
 	public void init(Context context, Server server, String queryPath, NameValuePair[] args) {
 		ArrayList<NameValuePair> argsList = new ArrayList<NameValuePair>();
-		for (final NameValuePair arg : args) {
-			argsList.add(arg);
-		}
+		Collections.addAll(argsList, args);
 		init(context, server, queryPath, argsList);
 	}
 
