@@ -3,6 +3,8 @@
 package=net.bicou.redmine
 db=redmine.db
 
+rm .$db
+
 adb $1 shell "cat /data/data/$package/databases/$db > /sdcard/$db"
 adb $1 shell su -c "cat /data/data/$package/databases/$db > /sdcard/$db"
 adb $1 pull /sdcard/$db .$db
