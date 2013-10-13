@@ -155,9 +155,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 	}
 
 	/**
-	 * Handles onClick event on the Submit button. Sends serverUrl/apiKey to the server for authentication. The button is configured to call handleLogin() in the
-	 * layout
-	 * XML.
+	 * Handle the onClick event on the Submit button. Send serverUrl/apiKey to the server for authentication.
 	 *
 	 * @param view The Submit button for which this method is invoked
 	 */
@@ -190,10 +188,19 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		L.d("");
 		setSupportProgressBarVisibility(false);
-		if (result != null && result instanceof UserLoginTask.UserLoginResult && ((UserLoginTask.UserLoginResult) result).success()) {
-			onLoginSuccessful(((UserLoginTask.UserLoginResult) result).server);
+		if (result == null) {
+			onLoginFailed(null);
 		} else {
-			onLoginFailed(result == null ? null : (JsonDownloadError) ((UserLoginTask.UserLoginResult) result).error);
+			if (result instanceof UserLoginTask.UserLoginResult) {
+				final UserLoginTask.UserLoginResult loginResult = (UserLoginTask.UserLoginResult) result;
+				if (loginResult.success()) {
+					onLoginSuccessful(loginResult.server);
+				} else {
+					onLoginFailed((JsonDownloadError) loginResult.error);
+				}
+			} else {
+				onLoginFailed(null);
+			}
 		}
 	}
 
@@ -215,7 +222,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 
 		// Save data
 		UserLoginTask.saveServer(this, server);
-		SyncUtils.enableSync(account, this);
+		SyncUtils.enableSync(account, this); // TODO: slow
 
 		// Validate account creation
 		final Intent intent = new Intent();
@@ -234,13 +241,19 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 			switch (error.errorType) {
 			case TYPE_NETWORK:
 				final String details;
-				if (error.exception == null) {
-					details = error.getMessage(this);
+				if (error.chain != null) {
+					mUntrustedCertChain = error.chain;
+					showSSLCertDialog();
+					errorMessage = null;//don't show any crouton
 				} else {
-					details = error.exception.getClass().getSimpleName() + error.exception.getMessage() == null ? //
-							error.exception.getCause().toString() : error.exception.getMessage();
+					if (error.exception == null) {
+						details = error.getMessage(this);
+					} else {
+						details = error.exception.getClass().getSimpleName() + (error.exception.getMessage() == null ? //
+								error.exception.getCause().toString() : error.exception.getMessage());
+					}
+					errorMessage = getString(error.errorType == ErrorType.TYPE_JSON ? R.string.auth_error_json : R.string.auth_error_network, details);
 				}
-				errorMessage = getString(error.errorType == ErrorType.TYPE_JSON ? R.string.auth_error_json : R.string.auth_error_network, details);
 				break;
 			default:
 			case TYPE_RESPONSE:
@@ -252,13 +265,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 				break;
 			}
 
-			Crouton.makeText(this, errorMessage + "\n" + getString(R.string.setup_button_tryagain), Style.ALERT, mCroutonHolder).show();
+			if (errorMessage != null) {
+				Crouton.makeText(this, errorMessage + "\n" + getString(R.string.setup_button_tryagain), Style.ALERT, mCroutonHolder).show();
+			}
 		} else {
 			Crouton.makeText(this, error.getMessage(this) + getString(R.string.setup_check_failed), Style.ALERT, mCroutonHolder).show();
-		}
-
-		if (error != null && error.chain != null) {
-			showSSLCertDialog();
 		}
 	}
 
@@ -272,6 +283,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 
 	// TODO: better UI
 	private void showSSLCertDialog() {
+		if (mUntrustedCertChain == null || mUntrustedCertChain.length == 0) {
+			return;
+		}
+
 		new AlertDialog.Builder(this).setTitle(R.string.auth_accept_cert) //
 				.setMessage(mUntrustedCertChain[0].toString()) //
 				.setPositiveButton(android.R.string.yes, this) //
