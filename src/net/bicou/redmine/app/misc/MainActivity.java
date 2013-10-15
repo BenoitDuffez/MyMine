@@ -53,8 +53,10 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 		super.onCreate(savedInstanceState);
 
 		showAlphaVersionAlert();
-		show010UpgradeAlert();
 		final boolean isFirstLaunch = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).getBoolean(KEY_IS_FIRST_LAUNCH, true);
+		if (!isFirstLaunch) {
+			show010UpgradeAlert();
+		}
 
 		if (savedInstanceState == null && isFirstLaunch) {
 			// No longer the first launch
