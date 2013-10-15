@@ -387,7 +387,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 			journal.formatted_details = getFormattedDetails(journal, db);
 
 			// Notes
-			if (TextUtils.isEmpty(journal.notes) == false) {
+			if (!TextUtils.isEmpty(journal.notes)) {
 				String html = WikiUtils.htmlFromTextile(journal.notes);
 				html = html.replace("<pre>", "<tt>").replace("</pre>", "</tt>");
 				// Fake lists
