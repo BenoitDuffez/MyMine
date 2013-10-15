@@ -39,8 +39,10 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 		mIssue = issue;
 		mHistory = history;
 		mContext = context;
-		mDateFormat = DateFormat.getLongDateFormat(mContext);
-		mTimeFormat = DateFormat.getTimeFormat(mContext);
+		if (mContext != null) {
+			mDateFormat = DateFormat.getLongDateFormat(mContext);
+			mTimeFormat = DateFormat.getTimeFormat(mContext);
+		}
 	}
 
 	public int getCount() {
@@ -76,6 +78,10 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(final int position, View convertView, final ViewGroup parent) {
+		if (mContext == null) {
+			return null;
+		}
+
 		final JournalViewsHolder holder;
 		if (convertView == null) {
 			final LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
