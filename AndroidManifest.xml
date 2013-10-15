@@ -234,6 +234,7 @@
                 android:name="net.bicou.redmine.auth.AuthenticatorActivity"
                 android:configChanges="orientation"
                 android:excludeFromRecents="true"
+                android:exported="true"
                 android:label="@string/setup_title"
                 android:theme="@style/Theme.MyMine">
         </activity>
