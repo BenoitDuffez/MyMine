@@ -61,6 +61,19 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 		return position;
 	}
 
+	private CharSequence trim(CharSequence s) {
+		int start = 0, end = s.length();
+		while (start < end && Character.isWhitespace(s.charAt(start))) {
+			start++;
+		}
+
+		while (end > start && Character.isWhitespace(s.charAt(end - 1))) {
+			end--;
+		}
+
+		return s.subSequence(start, end);
+	}
+
 	@Override
 	public View getView(final int position, View convertView, final ViewGroup parent) {
 		final JournalViewsHolder holder;
@@ -102,7 +115,7 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 					holder.notes.setVisibility(View.GONE);
 				} else {
 					holder.notes.setVisibility(View.VISIBLE);
-					holder.notes.setText(journal.formatted_notes);
+					holder.notes.setText(trim(Html.fromHtml(journal.formatted_notes)));
 					Linkify.addLinks(holder.notes, Linkify.ALL & ~Linkify.PHONE_NUMBERS);
 				}
 
@@ -118,7 +131,7 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 				Date d = changeSet.committed_on.getTime();
 				holder.date.setText(String.format(Locale.ENGLISH, "%s — %s", mDateFormat.format(d), mTimeFormat.format(d)));
 				holder.details.setText(mContext.getString(R.string.issue_changeset_revision, changeSet.revision));// TODO create link to revision
-				holder.notes.setText(changeSet.commentsHtml);
+				holder.notes.setText(Html.fromHtml(changeSet.commentsHtml));
 
 				if (changeSet.user == null || TextUtils.isEmpty(changeSet.user.gravatarUrl)) {
 					holder.avatar.setVisibility(View.INVISIBLE);

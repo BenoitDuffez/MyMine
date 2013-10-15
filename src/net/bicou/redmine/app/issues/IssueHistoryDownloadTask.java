@@ -1,8 +1,6 @@
 package net.bicou.redmine.app.issues;
 
 import android.os.AsyncTask;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.TextUtils;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.R;
@@ -362,19 +360,6 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return formattedDetails;
 	}
 
-	private CharSequence trim(CharSequence s) {
-		int start = 0, end = s.length();
-		while (start < end && Character.isWhitespace(s.charAt(start))) {
-			start++;
-		}
-
-		while (end > start && Character.isWhitespace(s.charAt(end - 1))) {
-			end--;
-		}
-
-		return s.subSequence(start, end);
-	}
-
 	/**
 	 * Translate data in the journal into human-readable values
 	 */
@@ -392,7 +377,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 				html = html.replace("<pre>", "<tt>").replace("</pre>", "</tt>");
 				// Fake lists
 				html = html.replace("<li>", " &nbsp; &nbsp; • ").replace("</li>", "<br />");
-				journal.formatted_notes = (Spanned) trim(Html.fromHtml(html));
+				journal.formatted_notes = html;
 			}
 		}
 	}
@@ -404,7 +389,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 
 		UsersDbAdapter udb = new UsersDbAdapter(db);
 		for (ChangeSet changeSet : changeSets) {
-			changeSet.commentsHtml = Html.fromHtml(changeSet.comments.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br />"));
+			changeSet.commentsHtml = changeSet.comments.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br />");
 			// TODO: cache users?
 			if (changeSet.user != null) {
 				changeSet.user = udb.select(mIssue.server, changeSet.user.id);

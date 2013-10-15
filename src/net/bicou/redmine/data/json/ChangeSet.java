@@ -1,7 +1,5 @@
 package net.bicou.redmine.data.json;
 
-import android.text.Spanned;
-
 import java.util.Calendar;
 
 /**
@@ -13,5 +11,5 @@ public class ChangeSet {
 	public String comments;
 	public Calendar committed_on;
 
-	public Spanned commentsHtml;
+	public String commentsHtml;
 }
