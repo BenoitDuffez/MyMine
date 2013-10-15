@@ -103,6 +103,11 @@ public class IssueOverviewFragment extends TrackedFragment {
 
 		mMainLayout.setVisibility(View.INVISIBLE);
 
+		mClient = new WikiUtils.WikiWebViewClient(getSherlockActivity());
+		WebSettings settings = mDescription.getSettings();
+		settings.setDefaultTextEncodingName("utf-8");
+		mDescription.setWebViewClient(mClient);
+
 		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ISSUE, savedInstanceState == null ? getArguments() : savedInstanceState);
 
 		return v;
@@ -147,6 +152,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 
 		mIssue = (Issue) result;
 		mIssue.project.server = mIssue.server;
+		mClient.setProject(mIssue.project);
 
 		// Trigger UI update
 		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_OVERVIEW, mIssue);
@@ -154,9 +160,6 @@ public class IssueOverviewFragment extends TrackedFragment {
 
 		// Update UI
 		mMainLayout.setVisibility(View.VISIBLE);
-
-		mClient = new WikiUtils.WikiWebViewClient(getSherlockActivity());
-		mClient.setProject(mIssue.project);
 
 		mTrackerAndId.setText(getString(R.string.issue_tracker_id_format, mIssue.tracker.name, mIssue.id));
 		mSubject.setText(mIssue.subject != null ? mIssue.subject : "");
@@ -354,10 +357,6 @@ public class IssueOverviewFragment extends TrackedFragment {
 	}
 
 	public void onIssueOverviewLoaded(String html) {
-		WebSettings settings = mDescription.getSettings();
-		settings.setDefaultTextEncodingName("utf-8");
-		mDescription.loadDataWithBaseURL(null, html, "text/html; charset=UTF-8", "UTF-8", null);
-		mDescription.reload();
-		mDescription.setWebViewClient(mClient);
+		mDescription.loadData(html, "text/html; charset=UTF-8", "UTF-8");
 	}
 }
