@@ -356,7 +356,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 	public void onIssueOverviewLoaded(String html) {
 		WebSettings settings = mDescription.getSettings();
 		settings.setDefaultTextEncodingName("utf-8");
-		mDescription.loadData(html, "text/html; charset=UTF-8", null);
+		mDescription.loadDataWithBaseURL(null, html, "text/html; charset=UTF-8", "UTF-8", null);
 		mDescription.reload();
 		mDescription.setWebViewClient(mClient);
 	}
