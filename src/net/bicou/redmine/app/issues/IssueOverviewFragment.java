@@ -108,20 +108,25 @@ public class IssueOverviewFragment extends TrackedFragment {
 		settings.setDefaultTextEncodingName("utf-8");
 		mDescription.setWebViewClient(mClient);
 
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ISSUE, savedInstanceState == null ? getArguments() : savedInstanceState);
-
 		return v;
+	}
+
+	@Override
+	public void onViewStateRestored(final Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ISSUE, savedInstanceState == null ? getArguments() : savedInstanceState);
 	}
 
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
+		outState.putLong(Constants.KEY_SERVER_ID, getArguments().getLong(Constants.KEY_SERVER_ID));
+		outState.putLong(Constants.KEY_ISSUE_ID, getArguments().getLong(Constants.KEY_ISSUE_ID));
 		outState.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(mIssue, Issue.class));
 	}
 
-	public static Object loadIssue(Context context, Bundle args) {
+	public static Issue loadIssue(Context context, Bundle args) {
 		Issue issue = new Gson().fromJson(args.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
-
 		if (issue != null) {
 			return issue;
 		}
@@ -145,12 +150,12 @@ public class IssueOverviewFragment extends TrackedFragment {
 		return issue;
 	}
 
-	public void onIssueLoaded(Object result) {
+	public void onIssueLoaded(Issue result) {
 		if (result == null) {
 			return;
 		}
 
-		mIssue = (Issue) result;
+		mIssue = result;
 		mIssue.project.server = mIssue.server;
 		mClient.setProject(mIssue.project);
 

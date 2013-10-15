@@ -28,7 +28,6 @@ public class IssueFragment extends TrackedFragment {
 
 	private Issue mIssue;
 
-	private OnPageChangeListener mListener;
 	private IssueTabsAdapter mAdapter;
 
 	private static final int NB_TABS = 2;
@@ -51,6 +50,15 @@ public class IssueFragment extends TrackedFragment {
 		public IssueTabsAdapter(final FragmentManager fm, final Bundle args) {
 			super(fm);
 			this.args = args;
+			Bundle hack = new Bundle();
+			try {
+				for (int i = 0; i < mFragments.length; i++) {
+					hack.putInt("hack", i);
+					mFragments[i] = fm.getFragment(hack, "hack");
+				}
+			} catch (Exception e) {
+				// No need to fail here
+			}
 		}
 
 		@Override
@@ -129,7 +137,7 @@ public class IssueFragment extends TrackedFragment {
 		mAdapter = new IssueTabsAdapter(getChildFragmentManager(), args);
 
 		// Listener
-		mListener = new OnPageChangeListener() {
+		OnPageChangeListener listener = new OnPageChangeListener() {
 			@Override
 			public void onPageSelected(final int position) {
 				final Fragment f = mAdapter.getFragment(position);
@@ -150,7 +158,7 @@ public class IssueFragment extends TrackedFragment {
 		// Bind everything
 		final ViewPager pager = (ViewPager) v.findViewById(R.id.issue_pager);
 		pager.setAdapter(mAdapter);
-		pager.setOnPageChangeListener(mListener);
+		pager.setOnPageChangeListener(listener);
 
 		setHasOptionsMenu(true);
 

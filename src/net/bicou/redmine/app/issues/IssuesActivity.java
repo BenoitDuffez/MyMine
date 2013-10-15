@@ -397,7 +397,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 					final IssueOverviewFragment issueOverviewFragment = (IssueOverviewFragment) frag;
 					switch (action) {
 					case ACTION_ISSUE_LOAD_ISSUE:
-						issueOverviewFragment.onIssueLoaded(result);
+						issueOverviewFragment.onIssueLoaded((Issue) result);
 						break;
 
 					case ACTION_ISSUE_LOAD_ATTACHMENTS:
