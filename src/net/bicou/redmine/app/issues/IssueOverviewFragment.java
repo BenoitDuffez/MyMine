@@ -8,6 +8,7 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,6 +22,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.app.wiki.WikiPageLoader;
 import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.Server;
@@ -31,7 +33,6 @@ import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
-import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
@@ -353,6 +354,8 @@ public class IssueOverviewFragment extends TrackedFragment {
 	}
 
 	public void onIssueOverviewLoaded(String html) {
+		WebSettings settings = mDescription.getSettings();
+		settings.setDefaultTextEncodingName("utf-8");
 		mDescription.loadData(html, "text/html; charset=UTF-8", null);
 		mDescription.reload();
 		mDescription.setWebViewClient(mClient);
