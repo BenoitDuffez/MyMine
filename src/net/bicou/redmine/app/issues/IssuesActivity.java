@@ -394,21 +394,22 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			if (content != null) {
 				Fragment frag = content.getFragmentFromViewPager(0);
 				if (frag != null && frag instanceof IssueOverviewFragment) {
+					final IssueOverviewFragment issueOverviewFragment = (IssueOverviewFragment) frag;
 					switch (action) {
 					case ACTION_ISSUE_LOAD_ISSUE:
-						((IssueOverviewFragment) frag).onIssueLoaded(result);
+						issueOverviewFragment.onIssueLoaded(result);
 						break;
 
 					case ACTION_ISSUE_LOAD_ATTACHMENTS:
 						if (result instanceof JsonNetworkError) {
-							((IssueOverviewFragment) frag).onNetworkError((JsonNetworkError) result);
+							issueOverviewFragment.onNetworkError((JsonNetworkError) result);
 						} else {
-							((IssueOverviewFragment) frag).onIssueOverviewLoaded((String) result);
+							issueOverviewFragment.onIssueOverviewLoaded((String) result);
 						}
 						break;
 
 					case ACTION_ISSUE_LOAD_OVERVIEW:
-						((IssueOverviewFragment) frag).onIssueOverviewLoaded((String) result);
+						issueOverviewFragment.onIssueOverviewLoaded((String) result);
 						break;
 					}
 				}
