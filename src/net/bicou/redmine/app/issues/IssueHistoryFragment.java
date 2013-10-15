@@ -11,11 +11,11 @@ import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnim
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
 import net.bicou.redmine.app.issues.IssueHistoryDownloadTask.JournalsDownloadCallbacks;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueHistory;
-import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
 
@@ -47,13 +47,19 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 			try {
 				Type type = new TypeToken<IssueHistory>() {
 				}.getType();
-				setHistory((IssueHistory) new Gson().fromJson(savedInstanceState.getString(HISTORY_DATA), type));
+				mHistory = new Gson().fromJson(savedInstanceState.getString(HISTORY_DATA), type);
 			} catch (Exception e) {
 				L.e("Unable to deserialize saved issue history", e);
 			}
 		}
 
 		return mLayout;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		setHistory(mHistory);
 	}
 
 	void setHistory(final IssueHistory history) {
