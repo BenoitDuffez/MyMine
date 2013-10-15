@@ -307,7 +307,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		if (error != null) {
 			if (error.httpResponseCode == 404) {
 				// 404 on an issue means it's been deleted
-				Crouton.makeText(getActivity(), "This issue was deleted on the server", Style.INFO).show();
+				Crouton.makeText(getActivity(), getString(R.string.issue_deleted_from_server), Style.INFO).show();
 			} else {
 				error.displayCrouton(getActivity(), null);
 			}

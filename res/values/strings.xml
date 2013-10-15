@@ -296,5 +296,6 @@
     <string name="drawer_main_no_favorite">There is no favorite</string>
     <string name="issue_upload_failed">Unable to upload issue: %1$s</string>
     <string name="issue_upload_successful">Issue uploaded</string>
+    <string name="issue_deleted_from_server">This issue was deleted on the server</string>
 
 </resources>
