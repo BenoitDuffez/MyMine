@@ -89,7 +89,7 @@ class ServerProjectPickerDialog extends AlertDialog implements DialogInterface.O
 		if (servers.size() > 1) {
 			int sel = 0;
 			for (Server s : servers) {
-				if (s != null && server != null &&fix  s.rowId == server.rowId) {
+				if (s != null && server != null && s.rowId == server.rowId) {
 					mServerSelector.setSelection(sel);
 					break;
 				}
