@@ -12,6 +12,7 @@ import net.bicou.redmine.data.json.IssueHistory;
 import net.bicou.redmine.data.json.IssuePriority;
 import net.bicou.redmine.data.json.Journal;
 import net.bicou.redmine.data.json.JournalDetail;
+import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Tracker;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.sqlite.DbAdapter;
@@ -19,6 +20,7 @@ import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
@@ -289,6 +291,18 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		return new PropertyChange(mActivity.getString(R.string.issue_parent), o, n);
 	}
 
+	private PropertyChange onProjectChange(JournalDetail d, IdPair ids, DbAdapter db) {
+		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
+
+		Project o = pdb.select(mIssue.server, ids.oldId, null);
+		Project n = pdb.select(mIssue.server, ids.newId, null);
+
+		String oldValue = o == null ? null : o.name;
+		String newValue = n == null ? null : n.name;
+
+		return new PropertyChange(mActivity.getString(R.string.issue_project), oldValue, newValue);
+	}
+
 	private List<String> getFormattedDetails(final Journal journal, DbAdapter db) {
 		final List<String> formattedDetails = new ArrayList<String>();
 		PropertyChange propChange;
@@ -326,6 +340,8 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 					propChange = onIsPrivateChange(d, ids, db);
 				} else if (IssuesDbAdapter.KEY_PARENT_ID.equals(d.name)) {
 					propChange = onParentChange(d, ids, db);
+				} else if (IssuesDbAdapter.KEY_PROJECT_ID.equals(d.name)) {
+					propChange = onProjectChange(d, ids, db);
 				} else {
 					propChange = new PropertyChange(mActivity.getString(R.string.issue_journal_unknown_property, d.name), d.old_value, d.new_value);
 					L.e("Unknown property " + d.property + " name: " + d.name + " old=" + d.old_value + " new=" + d.new_value, null);
