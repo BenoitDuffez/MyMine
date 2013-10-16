@@ -3,7 +3,11 @@ package net.bicou.redmine.sync;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Service;
-import android.content.*;
+import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProviderClient;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
@@ -72,7 +76,7 @@ public class UsersSyncAdapterService extends Service {
 			db.close();
 
 			if (server == null) {
-				L.e("Couldn't get the server", null);
+				L.e("Couldn't get the server for account: " + account, null);
 				return;
 			}
 

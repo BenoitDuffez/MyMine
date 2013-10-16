@@ -71,7 +71,7 @@ public class ProjectsSyncAdapterService extends Service {
 			SupportSSLKeyManager.init(mContext);
 
 			if (server == null) {
-				L.e("Couldn't get the server", null);
+				L.e("Couldn't get the server for account: " + account, null);
 				return;
 			}
 

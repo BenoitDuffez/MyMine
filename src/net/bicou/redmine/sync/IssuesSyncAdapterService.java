@@ -2,12 +2,15 @@ package net.bicou.redmine.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.*;
+import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProviderClient;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SyncResult;
+import android.content.SyncStats;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -24,12 +27,16 @@ import net.bicou.redmine.data.json.IssuePrioritiesList;
 import net.bicou.redmine.data.json.IssueStatusesList;
 import net.bicou.redmine.data.json.IssuesList;
 import net.bicou.redmine.data.json.TrackersList;
-import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
+import net.bicou.redmine.data.sqlite.QueriesList;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.platform.IssuesManager;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.PreferencesManager;
-
-import java.io.IOException;
 
 /**
  * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns its IBinder.
@@ -92,7 +99,7 @@ public class IssuesSyncAdapterService extends Service {
 			db.close();
 
 			if (server == null) {
-				L.e("Couldn't get the server", null);
+				L.e("Couldn't get the server for account: " + account, null);
 				return;
 			}
 
