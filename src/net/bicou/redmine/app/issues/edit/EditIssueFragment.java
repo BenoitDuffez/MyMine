@@ -282,6 +282,23 @@ public class EditIssueFragment extends TrackedFragment {
 		IssueCategory category;
 		IssuePriority priority;
 
+		// Can't have nulls, have empty arrays instead
+		if (info.categories == null) {
+			info.categories = new ArrayList<IssueCategory>();
+		}
+		if (info.versions == null) {
+			info.versions = new ArrayList<Version>();
+		}
+		if (info.priorities == null) {
+			info.priorities = new ArrayList<IssuePriority>();
+		}
+		if (info.statuses == null) {
+			info.statuses = new ArrayList<IssueStatus>();
+		}
+		if (info.trackers == null) {
+			info.trackers = new ArrayList<Tracker>();
+		}
+
 		// Try to find currently selected items
 		for (int i = 0; info.categories != null && i < info.categories.size() && issue.category != null; i++) {
 			category = info.categories.get(i);
