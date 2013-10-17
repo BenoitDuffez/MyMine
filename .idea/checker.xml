@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ConditionCheckManager">
+    <option name="myIsNullCheckMethods">
+      <list>
+        <option value="android.text.TextUtils.isEmpty(*java.lang.CharSequence str*)" />
+      </list>
+    </option>
+  </component>
+</project>
+
