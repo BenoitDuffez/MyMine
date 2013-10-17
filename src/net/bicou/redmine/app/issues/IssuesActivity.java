@@ -338,9 +338,6 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public Object doInBackGround(Context applicationContext, final int action, final Object parameters) {
-		Issue issue;
-		String uri;
-
 		switch (action) {
 		case ACTION_REFRESH_ISSUES:
 			IssuesSyncAdapterService.Synchronizer synchronizer = new IssuesSyncAdapterService.Synchronizer(applicationContext);
