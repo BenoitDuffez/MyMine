@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/main_content_padding"
+                android:background="@color/white_layout_background"
+                android:padding="@dimen/main_content_padding">
+
+    <net.bicou.redmine.widget.RobotoThinTextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/roadmap_version"
+            android:id="@+id/roadmap_version"
+            android:layout_gravity="left|center_vertical"
+            android:gravity="center_horizontal"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:padding="8dp"
+            android:textSize="@dimen/title_font_size"/>
+
+    <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/roadmap_progress_bar"
+            android:layout_gravity="center_vertical"
+            android:indeterminate="false"
+            android:progress="60"
+            android:secondaryProgress="80"
+            android:layout_below="@+id/roadmap_version"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/roadmap_percent_complete"
+            style="@style/Widget.Sherlock.ProgressBar.Horizontal"
+            android:layout_alignBottom="@+id/roadmap_percent_complete"
+            android:layout_above="@+id/roadmap_percent_complete"
+            android:visibility="invisible"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="about 3 months late (17/02/2013)"
+            android:id="@+id/roadmap_due_date"
+            android:layout_below="@+id/roadmap_version"
+            android:layout_alignParentRight="true"
+            android:layout_above="@+id/roadmap_issue_count"
+            android:maxLines="2"
+            android:minLines="2"
+            android:lines="2"
+            android:ellipsize="marquee"
+            android:maxWidth="140dp"
+            android:gravity="center_vertical|right"/>
+
+    <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/roadmap_percent_complete"
+            android:layout_below="@+id/roadmap_version"
+            android:layout_toLeftOf="@+id/roadmap_due_date"
+            android:gravity="center_vertical|left"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/roadmap_issue_count"
+            android:layout_below="@+id/roadmap_progress_bar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is the issue description. It should not be very long."
+            android:id="@+id/roadmap_version_description"
+            android:layout_below="@+id/roadmap_issue_count"
+            android:layout_alignParentLeft="true"
+            android:layout_alignBottom="@+id/roadmap_show_wiki"
+            android:gravity="center_vertical"
+            android:layout_toLeftOf="@+id/roadmap_show_wiki"
+            android:singleLine="false"
+            android:padding="8dp"/>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/roadmap_show_wiki"
+            android:id="@+id/roadmap_show_wiki"
+            android:layout_below="@+id/roadmap_issue_count"
+            android:layout_alignParentRight="true"/>
+
+    <net.bicou.redmine.widget.RobotoThinTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/roadmap_related_issues"
+            android:id="@+id/roadmap_related_issues"
+            android:layout_below="@+id/roadmap_version_description"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:paddingTop="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="8dp"/>
+
+    <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@android:id/list"
+            android:layout_below="@+id/roadmap_related_issues"
+            android:layout_alignParentLeft="true"
+            android:choiceMode="singleChoice"/>
+
+</RelativeLayout>

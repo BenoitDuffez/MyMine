@@ -1,0 +1,2 @@
+include ':MyMine'
+include ':vendor:SplitActivity:SplitActivity'

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources>
+
+    <style
+            name="Theme.MyMine"
+            parent="MyMine.Base">
+
+        <item name="android:windowBackground">@drawable/grey_background_pattern</item>
+
+        <item name="android:editTextStyle">@style/EditTextMyMineTheme</item>
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMyMineTheme</item>
+        <item name="android:checkboxStyle">@style/CheckBoxMyMineTheme</item>
+        <item name="android:radioButtonStyle">@style/RadioButtonMyMineTheme</item>
+        <item name="android:buttonStyle">@style/ButtonMyMineTheme</item>
+        <item name="android:imageButtonStyle">@style/ImageButtonMyMineTheme</item>
+        <item name="android:spinnerStyle">@style/SpinnerMyMineTheme</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemMyMineTheme</item>
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarMyMineTheme</item>
+        <item name="android:seekBarStyle">@style/SeekBarMyMineTheme</item>
+        <item name="android:ratingBarStyle">@style/RatingBarMyMineTheme</item>
+        <item name="android:ratingBarStyleIndicator">@style/RatingBarBigMyMineTheme</item>
+        <item name="android:ratingBarStyleSmall">@style/RatingBarSmallMyMineTheme</item>
+        <item name="android:buttonStyleToggle">@style/ToggleMyMineTheme</item>
+        <item name="android:listViewStyle">@style/ListViewMyMineTheme</item>
+        <item name="android:listViewWhiteStyle">@style/ListViewMyMineTheme.White</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItemMyMineTheme</item>
+
+        <item name="selectableItemBackground">@drawable/ab_background</item>
+
+        <item name="android:editTextBackground">@drawable/edit_text_holo_light</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/btn_check_holo_light</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerMyMineTheme.DropDown</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
+        <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+
+        <item name="actionBarItemBackground">@drawable/selectable_background_mymine</item>
+        <item name="popupMenuStyle">@style/mymine_PopupMenu</item>
+        <item name="dropDownListViewStyle">@style/mymine_DropDownListView</item>
+        <item name="android:dropDownListViewStyle">@style/mymine_DropDownListView</item>
+
+        <!-- ActionBar related stuff -->
+        <item name="actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
+        <item name="android:actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
+        <item name="actionBarStyle">@style/mymine_solid_ActionBar</item>
+        <item name="android:actionBarStyle">@style/mymine_solid_ActionBar</item>
+
+        <item name="actionDropDownStyle">@style/mymine_DropDownNav</item>
+        <item name="android:actionDropDownStyle">@style/mymine_DropDownNav</item>
+
+        <item name="android:popupMenuStyle">@style/mymine_PopupMenu</item>
+        <item name="android:panelBackground">@drawable/menu_hardkey_panel_mymine</item>
+
+        <item name="android:selectableItemBackground">@drawable/ab_background</item>
+        <item name="selectableItemBackground">@drawable/ab_background</item>
+    </style>
+
+</resources>

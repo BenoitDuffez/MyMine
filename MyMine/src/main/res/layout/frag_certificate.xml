@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+        android:padding="@dimen/main_content_padding" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:padding="@dimen/main_content_padding" >
+
+        <TextView
+            style="@style/CertLabel"
+            android:text="@string/cert_start_date" />
+
+        <TextView
+            android:id="@+id/cert_start_date"
+            style="@style/CertData" />
+
+        <TextView
+            style="@style/CertLabel"
+            android:text="@string/cert_end_date" />
+
+        <TextView
+            android:id="@+id/cert_end_date"
+            style="@style/CertData" />
+
+        <TextView
+            style="@style/CertLabel"
+            android:text="@string/cert_issuer" />
+
+        <TextView
+            android:id="@+id/cert_issuer"
+            style="@style/CertData" />
+
+        <TextView
+            style="@style/CertLabel"
+            android:text="@string/cert_subject" />
+
+        <TextView
+            android:id="@+id/cert_subject"
+            style="@style/CertData" />
+
+        <TextView
+            style="@style/CertLabel"
+            android:text="@string/cert_key" />
+
+        <TextView
+            android:id="@+id/cert_key"
+            style="@style/CertData" />
+
+        <TextView
+            style="@style/CertLabel"
+            android:text="@string/cert_algo" />
+
+        <TextView
+            android:id="@+id/cert_algo"
+            style="@style/CertData" />
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<net.bicou.redmine.widget.IssuesListRelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:id="@+id/roadmap_list_item_layout"
+        android:background="@drawable/issueslist_item_background_indicator"
+        android:padding="8dp">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/roadmap_list_item_name"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:padding="8dp"
+            android:layout_toLeftOf="@+id/roadmap_list_item_date"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/roadmap_list_item_due_date"
+            android:id="@+id/roadmap_list_item_date"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/roadmap_list_item_name"
+            android:layout_alignBottom="@+id/roadmap_list_item_name"
+            android:gravity="center_vertical|right"
+            android:textColor="@color/faded_text"/>
+
+</net.bicou.redmine.widget.IssuesListRelativeLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:switchpref="http://schemas.android.com/apk/res-auto"
+    xmlns:dslv="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <net.bicou.redmine.widget.RobotoBoldTextView
+        android:id="@+id/issues_ordering_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ab_solid_mymine"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="@string/issues_ordering"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF" />
+
+    <com.mobeta.android.dslv.DragSortListView
+        android:id="@+id/issues_ordering_columns"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="3dp"
+        android:layout_weight="1"
+        android:dividerHeight="2dp"
+        android:padding="3dp"
+        dslv:collapsed_height="2dp"
+        dslv:drag_enabled="true"
+        dslv:drag_scroll_start="0.33"
+        dslv:float_alpha="0.6"
+        dslv:max_drag_scroll_speed="0.5"
+        dslv:slide_shuffle_speed="0.3"
+        dslv:track_drag_sort="false"
+        dslv:use_default_controller="false" />
+
+    <Button
+        android:id="@+id/issues_ordering_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="@string/issues_ordering_then" />
+
+</LinearLayout>

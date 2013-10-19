@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/main_content_padding"
+    android:background="#FFFFFF" >
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="8dp" >
+
+        <net.bicou.redmine.widget.RobotoThinTextView
+            android:id="@+id/server_auth_settings_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/server_auth_settings_title"
+            android:textSize="@dimen/title_font_size" />
+
+        <net.bicou.redmine.widget.RobotoThinTextView
+            android:id="@+id/server_auth_settings_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/server_auth_settings_title"
+            android:layout_marginBottom="20dp"
+            android:text="@string/server_auth_settings_hint"
+            android:textSize="16sp"
+            android:typeface="sans" />
+
+        <EditText
+            android:id="@+id/server_settings_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/server_auth_settings_hint"
+            android:ems="10"
+            android:hint="@string/server_auth_settings_username"
+            android:inputType="textNoSuggestions"
+            android:singleLine="true" >
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/server_settings_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/server_settings_username"
+            android:layout_marginBottom="20dp"
+            android:ems="10"
+            android:hint="@string/server_auth_settings_password"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            android:typeface="normal" />
+
+        <LinearLayout
+            android:id="@+id/server_auth_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/server_settings_password"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical" >
+
+            <net.bicou.redmine.widget.RobotoThinTextView
+                android:id="@+id/server_auth_settings_cert_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/server_auth_settings_cert_hint"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/server_auth_settings_view_keystore"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/server_auth_layout"
+            android:layout_centerHorizontal="true"
+            android:text="@string/server_auth_view_keystore" />
+
+        <Button
+            android:id="@+id/server_settings_ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/server_auth_settings_view_keystore"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:minWidth="120dp"
+            android:text="@android:string/ok"
+            android:typeface="sans" />
+
+    </RelativeLayout>
+
+</ScrollView>

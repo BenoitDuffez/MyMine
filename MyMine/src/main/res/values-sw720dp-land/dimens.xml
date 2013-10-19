@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="navigation_drawer_width">400dp</dimen>
+
+    <dimen name="main_content_padding">12dp</dimen>
+    <dimen name="main_horizontal_margin">96dp</dimen>
+    <dimen name="dialog_like_horizontal_margin">280dp</dimen>
+
+    <integer name="issues_order_pick_column_gridview_nb_columns">4</integer>
+
+    <integer name="issues_list_item_nb_lines">5</integer>
+
+</resources>

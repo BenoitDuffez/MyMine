@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:staggered="http://schemas.android.com/apk/res-auto"
+        android:paddingLeft="@dimen/main_horizontal_margin"
+        android:paddingRight="@dimen/main_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <com.origamilabs.library.views.StaggeredGridView
+            android:id="@+id/overview_container"
+            staggered:numColumns="@integer/overview_num_columns"
+            staggered:drawSelectorOnTop="true"
+            staggered:itemMargin="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+</LinearLayout>
