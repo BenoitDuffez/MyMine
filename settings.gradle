@@ -1,2 +1,5 @@
-include ':MyMine'
-include ':vendor:SplitActivity:SplitActivity'
+include 'MyMine'
+project(':MyMine').projectDir = new File('MyMine')
+
+include 'SplitActivity'
+project(':SplitActivity').projectDir = new File('vendor/SplitActivity/SplitActivity')

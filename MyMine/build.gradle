@@ -10,7 +10,18 @@ buildscript {
 apply plugin: 'android'
 
 dependencies {
-    compile project(':vendor:SplitActivity:SplitActivity')
+    repositories {
+        mavenCentral()
+    }
+    // Support Libraries
+    compile 'com.android.support:support-v4:18.0.+'
+    compile 'com.android.support:appcompat-v7:18.0.0'
+
+    compile project(':SplitActivity')
+    compile ('de.keyboardsurfer.android.widget:crouton:1.8.1') {
+      exclude module: 'support-v4'
+      compile 'com.android.support:support-v4:18.0.+'
+   }
 }
 
 android {
