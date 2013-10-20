@@ -4,5 +4,11 @@ project(':MyMine').projectDir = new File('MyMine')
 include 'dslv'
 project(':dslv').projectDir = new File('vendor/drag-sort-listview/library')
 
+include 'lva'
+project(':lva').projectDir = new File('vendor/ListViewAnimations/library')
+
+include 'aFileChooser'
+project(':aFileChooser').projectDir = new File('vendor/aFileChooser/aFileChooser')
+
 include 'SplitActivity'
 project(':SplitActivity').projectDir = new File('vendor/SplitActivity/SplitActivity')

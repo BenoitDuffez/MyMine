@@ -21,6 +21,9 @@ dependencies {
 
     compile project(':SplitActivity')
     compile project(':dslv')
+    compile project(':lva')
+    compile project(':aFileChooser')
+
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
     compile ('de.keyboardsurfer.android.widget:crouton:1.8.1') {
         exclude module: 'support-v4'
