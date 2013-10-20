@@ -18,10 +18,12 @@ dependencies {
     compile 'com.android.support:appcompat-v7:18.0.0'
 
     compile project(':SplitActivity')
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
     compile ('de.keyboardsurfer.android.widget:crouton:1.8.1') {
       exclude module: 'support-v4'
       compile 'com.android.support:support-v4:18.0.+'
    }
+   compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1-SNAPSHOT'
 }
 
 android {
