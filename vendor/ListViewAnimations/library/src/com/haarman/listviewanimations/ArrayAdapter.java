@@ -15,18 +15,23 @@
  */
 package com.haarman.listviewanimations;
 
-import android.widget.BaseAdapter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+
+import android.widget.BaseAdapter;
+
+import com.haarman.listviewanimations.view.DynamicListView;
+import com.haarman.listviewanimations.view.DynamicListView.Swappable;
 
 /**
- * A true ArrayList adapter providing access to all ArrayList methods.
+ * A true {@link ArrayList} adapter providing access to all ArrayList methods.
+ * Also implements {@link Swappable} for easy item swapping.
  */
-public abstract class ArrayAdapter<T> extends BaseAdapter {
+public abstract class ArrayAdapter<T> extends BaseAdapter implements DynamicListView.Swappable {
 
-	private ArrayList<T> mItems;
+	protected List<T> mItems;
 
 	/**
 	 * Creates a new ArrayAdapter with an empty list.
@@ -36,15 +41,17 @@ public abstract class ArrayAdapter<T> extends BaseAdapter {
 	}
 
 	/**
-	 * Creates a new ArrayAdapter with the specified list, or an empty list if
-	 * items == null.
+	 * Creates a new {@link ArrayAdapter} with a <b>copy</b> of the specified
+	 * list, or an empty list if items == null.
 	 */
-	public ArrayAdapter(ArrayList<T> items) {
-	    mItems = new ArrayList<T>();
+	
+	public ArrayAdapter(List<T> items) {
+		mItems = new ArrayList<T>();
 		if (items != null) {
 			mItems.addAll(items);
 		}
 	}
+	
 
 	@Override
 	public int getCount() {
@@ -64,6 +71,7 @@ public abstract class ArrayAdapter<T> extends BaseAdapter {
 	/**
 	 * Appends the specified element to the end of the list.
 	 */
+	// @ requires item != null;
 	public void add(T item) {
 		mItems.add(item);
 		notifyDataSetChanged();
@@ -92,7 +100,7 @@ public abstract class ArrayAdapter<T> extends BaseAdapter {
 	 * they are specified.
 	 */
 	public void addAll(T... items) {
-        Collections.addAll(mItems, items);
+		Collections.addAll(mItems, items);
 		notifyDataSetChanged();
 	}
 
@@ -191,4 +199,24 @@ public abstract class ArrayAdapter<T> extends BaseAdapter {
 		return mItems.indexOf(item);
 	}
 
+	@Override
+	public void swapItems(int positionOne, int positionTwo) {
+		T temp = getItem(positionOne);
+		set(positionOne, getItem(positionTwo));
+		set(positionTwo, temp);
+	}
+	
+	private BaseAdapter mDataSetChangedSlavedAdapter;
+	
+	public void propagateNotifyDataSetChanged(BaseAdapter slavedAdapter) {
+		mDataSetChangedSlavedAdapter = slavedAdapter;
+	}
+
+	@Override
+	public void notifyDataSetChanged() {
+		super.notifyDataSetChanged();
+		if (mDataSetChangedSlavedAdapter != null) {
+			mDataSetChangedSlavedAdapter.notifyDataSetChanged();
+		}
+	}
 }

@@ -18,12 +18,12 @@ package com.haarman.listviewanimations.itemmanipulationexamples;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -31,12 +31,13 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 
 import com.haarman.listviewanimations.ArrayAdapter;
+import com.haarman.listviewanimations.BaseActivity;
 import com.haarman.listviewanimations.MyListActivity;
 import com.haarman.listviewanimations.R;
 import com.haarman.listviewanimations.itemmanipulation.AnimateDismissAdapter;
 import com.haarman.listviewanimations.itemmanipulation.OnDismissCallback;
 
-public class AnimateDismissActivity extends Activity {
+public class AnimateDismissActivity extends BaseActivity {
 
 	private List<Integer> mSelectedPositions;
 	private MyListAdapter mAdapter;
@@ -51,7 +52,7 @@ public class AnimateDismissActivity extends Activity {
 		ListView listView = (ListView) findViewById(R.id.activity_animateremoval_listview);
 		mAdapter = new MyListAdapter(MyListActivity.getItems());
 		final AnimateDismissAdapter<String> animateDismissAdapter = new AnimateDismissAdapter<String>(mAdapter, new MyOnDismissCallback());
-		animateDismissAdapter.setListView(listView);
+		animateDismissAdapter.setAbsListView(listView);
 		listView.setAdapter(animateDismissAdapter);
 
 		Button button = (Button) findViewById(R.id.activity_animateremoval_button);
@@ -82,16 +83,16 @@ public class AnimateDismissActivity extends Activity {
 	private class MyOnDismissCallback implements OnDismissCallback {
 
 		@Override
-		public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+		public void onDismiss(AbsListView listView, int[] reverseSortedPositions) {
 			for (int position : reverseSortedPositions) {
 				mAdapter.remove(position);
 			}
 		}
 	}
 
-	private class MyListAdapter extends ArrayAdapter<String> {
+	private class MyListAdapter extends ArrayAdapter<Integer> {
 
-		public MyListAdapter(ArrayList<String> items) {
+		public MyListAdapter(ArrayList<Integer> items) {
 			super(items);
 		}
 
@@ -101,10 +102,9 @@ public class AnimateDismissActivity extends Activity {
 			if (tv == null) {
 				tv = (CheckedTextView) LayoutInflater.from(AnimateDismissActivity.this).inflate(R.layout.activity_animateremoval_row, parent, false);
 			}
-			tv.setText(getItem(position));
+			tv.setText(String.valueOf(getItem(position)));
 			tv.setChecked(mSelectedPositions.contains(position));
 			return tv;
 		}
 	}
-
 }

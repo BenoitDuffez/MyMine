@@ -3,18 +3,32 @@ ListViewAnimations ([Play Store Demo][1])
 
 ListViewAnimations is an Open Source Android library that allows developers to easily create ListViews with animations.
 Feel free to use it all you want in your Android apps provided that you cite this project and include the license in your app.
-
-ListViewAnimations uses the [NineOldAndroids][2] library to support devices <3.0.  
-It also uses Roman Nurik's BETA [SwipeDismissListViewTouchListener][5] to support swipe to dismiss.
+A mention to haarman.niek [at] gmail.com about your app using this library is very welcome! Start your message's title with `[LVA]`.
 
 Known applications using ListViewAnimations
 -----
+* Ultimate Tic-Tac-Toe ([Play Store][12])
+* Light Flow Lite - LED Control ([Play Store][18])
 * TreinVerkeer ([Play Store][6])
 * Running Coach ([Play Store][9])
+* Pearl Jam Lyrics ([Play Store][19])
+* Calorie Chart ([Play Store][20])
 * Car Hire ([Play Store][10])
-* Voorlees Verhaaltjes ([Play Store][11])
+* Super BART ([Play Store][11])
+* DK FlashCards ([Play Store][15])
 
-If you want your app to be listed as well please contact me via [Google Plus][8]!
+If you want your app to be listed as well please contact me via [Google Plus][8], or send me an email at haarman.niek [at] gmail.com, starting the title with `[LVA]`.
+
+Features
+-----
+ListViewAnimations provides the following features:
+* Appearance animations for items in ListViews, GridViews, and other AbsListViews;
+	* Built in animations include Alpha, SwingRightIn, SwingLeftIn, SwingBottomIn, SwingRightIn and ScaleIn.
+	* Other animations can easily be added
+* Swipe-to-Dismiss, Swipe-To-Dismiss with contextual undo (and optionally count down);
+* Drag-and-Drop reordering;
+* Animate dismissal of items;
+* Smoothly expand your items to reveal more content;
 
 Setup
 -----
@@ -25,74 +39,28 @@ Setup
 Or:
 
 * [Download the .jar file][4]
-* Add the .jar to your project's `libs` folder.
+* [Download the latest NineOldAndroids .jar file][17]
+* Add the .jar files to your project's `libs` folder, or add them as external jars to your project's build path.
 
 Usage
 -----
-This library uses the [Decorator Pattern][3] to stack multiple `BaseAdapterDecorator`s on each other:
+Please refer to the [Wiki][13] pages to learn more about how to use this library.
 
-* Implement your own `BaseAdapter`, or reuse an existing one.
-* Stack multiple `BaseAdapterDecorator`s on each other, with your `BaseAdapter` as a base.
-* Set the `ListView` to your last `BaseAdapterDecorator`.
-* Set your last `BaseAdapterDecorator` to the `ListView`.
-
-Example:
+Contribute
 -----
-
-	/* This example will stack two animations on top of eachother */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		MyListAdapter mAdapter = new MyListAdapter(this, getItems());
-		SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(mAdapter);
-		SwingRightInAnimationAdapter swingRightInAnimationAdapter = new SwingRightInAnimationAdapter(swingBottomInAnimationAdapter);
-		
-		// Or in short notation:
-		swingRightInAnimationAdapter = 
-			new SwingRightInAnimationAdapter(
-				new SwingBottomInAnimationAdapter(
-						new MyListAdapter(this, getItems())));
-		
-		// Assign the ListView to the AnimationAdapter and vice versa
-		swingRightInAnimationAdapter.setListView(getListView());
-		getListView().setAdapter(swingRightInAnimationAdapter);
-	}
-	
-	private class MyListAdapter extends com.haarman.listviewanimations.ArrayAdapter<String> {
-
-		private Context mContext;
-
-		public MyListAdapter(Context context, ArrayList<String> items) {
-			super(items);
-			mContext = context;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			TextView tv = (TextView) convertView;
-			if (tv == null) {
-				tv = (TextView) LayoutInflater.from(mContext).inflate(R.layout.list_row, parent, false);
-			}
-			tv.setText(getItem(position));
-			return tv;
-		}
-	}
-
-Custom AnimationAdapters
------
-Instead of using the ready-made adapters in the `.swinginadapters.prepared` package, you can also implement your own `AnimationAdapter`.
-Implement one of the following classes:
-
-* `ResourceAnimationAdapter`
-* `SingleAnimationAdapter`
-* `AnimationAdapter`
-
-See the examples.
+Please do! I'm happy to review and accept pull requests.
+Also if you've created an awesome appearance animation that you'd like to share, let 'em come!
 
 Developed By
 -----
 * Niek Haarman
+
+Special Thanks
+-----
+* Roman Nurik - The ListViewAnimations library uses a modified version of his [SwipeDismissListViewTouchListener][5] to support swipe-to-dismiss.
+* DevBytes - Drag-and-Drop reordering is done by a modified version of their [DynamicListView][16].
+* Jake Warthon - To support devices pre-HC (<3.0), a jar file of [NineOldAndroids][2] is included.
+* Emil Sjölander - If you're already using the [StickyListHeaders][14] library, the ListViewAnimations library makes sure your header views are animated as well. Therefore, a copy of the StickyListHeaders jar file is included.
 
 License
 -----
@@ -114,11 +82,20 @@ License
  [1]: https://play.google.com/store/apps/details?id=com.haarman.listviewanimations
  [2]: http://nineoldandroids.com/
  [3]: http://en.wikipedia.org/wiki/Decorator_pattern
- [4]: https://github.com/nhaarman/ListViewAnimations/blob/master/com.haarman.listviewanimations-1.9.jar?raw=true
+ [4]: https://github.com/nhaarman/ListViewAnimations/blob/master/com.haarman.listviewanimations-2.5.1.jar?raw=true
  [5]: https://gist.github.com/romannurik/2980593
  [6]: https://play.google.com/store/apps/details?id=com.haarman.treinverkeer
- [7]: https://www.twitter.com/haarmandev
+ [7]: https://www.twitter.com/niekfct
  [8]: https://plus.google.com/106017817931984343451
  [9]: https://play.google.com/store/apps/details?id=com.niek.runningapp
  [10]: https://play.google.com/store/apps/details?id=com.rentalcars.handset
- [11]: https://play.google.com/store/apps/details?id=sa.voorleesVerhaaltjes
+ [11]: https://play.google.com/store/apps/details?id=com.getgoodcode.bart
+ [12]: https://play.google.com/store/apps/details?id=com.haarman.ultimatettt
+ [13]: https://github.com/nhaarman/ListViewAnimations/wiki
+ [14]: http://emilsjolander.github.io/StickyListHeaders/
+ [15]: https://play.google.com/store/apps/details?id=com.ducky.flashcards
+ [16]: http://youtu.be/_BZIvjMgH-Q
+ [17]: https://github.com/JakeWharton/NineOldAndroids/downloads
+ [18]: https://play.google.com/store/apps/details?id=com.rageconsulting.android.lightflowlite
+ [19]: https://play.google.com/store/apps/details?id=com.juannale.pearljamlyricsapp
+ [20]: https://play.google.com/store/apps/details?id=com.cafetaso.foodinfo
