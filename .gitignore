@@ -5,3 +5,4 @@ tools/.*
 gen
 .gradle
 MyMine/build
+vendor/*/*/build

@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'http://repo1.maven.org/maven2' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.5.+'
@@ -13,17 +14,18 @@ dependencies {
     repositories {
         mavenCentral()
     }
+
     // Support Libraries
     compile 'com.android.support:support-v4:18.0.+'
     compile 'com.android.support:appcompat-v7:18.0.0'
 
     compile project(':SplitActivity')
+    compile project(':dslv')
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
     compile ('de.keyboardsurfer.android.widget:crouton:1.8.1') {
-      exclude module: 'support-v4'
-      compile 'com.android.support:support-v4:18.0.+'
-   }
-   compile 'com.mobeta.android.dslv:drag-sort-listview:0.6.1-SNAPSHOT'
+        exclude module: 'support-v4'
+        compile 'com.android.support:support-v4:18.0.+'
+    }
 }
 
 android {

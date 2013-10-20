@@ -1,5 +1,8 @@
 include 'MyMine'
 project(':MyMine').projectDir = new File('MyMine')
 
+include 'dslv'
+project(':dslv').projectDir = new File('vendor/drag-sort-listview/library')
+
 include 'SplitActivity'
 project(':SplitActivity').projectDir = new File('vendor/SplitActivity/SplitActivity')
