@@ -3,6 +3,7 @@ package net.bicou.redmine.app.roadmap;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +81,7 @@ public class RoadmapsListFragment extends TrackedListFragment {
 	}
 
 	public void updateRoadmap() {
-		AsyncTaskFragment.runTask(getSherlockActivity(), 0, null);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), 0, null);
 	}
 
 	public static List<Version> getRoadmap(Context ctx, Server server, Project project) {

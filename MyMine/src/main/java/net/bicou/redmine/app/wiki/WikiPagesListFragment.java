@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
-import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.util.L;
 
 /**
@@ -67,8 +68,8 @@ public class WikiPagesListFragment extends TrackedListFragment implements Loader
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		getSherlockActivity().setSupportProgressBarIndeterminate(true);
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminate(true);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
 		Project project = args.getParcelable(KEY_PROJECT);
 		return new WikiPagesListCursorLoader(getActivity(), getHelper(), project);
 	}
@@ -77,8 +78,8 @@ public class WikiPagesListFragment extends TrackedListFragment implements Loader
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
 
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
+		if (getActivity() != null) {
+			((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(data == null);
 		}
 
 		if (getListView() != null) {

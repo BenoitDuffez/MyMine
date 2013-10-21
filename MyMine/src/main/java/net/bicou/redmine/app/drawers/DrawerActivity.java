@@ -6,11 +6,11 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import android.view.View;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
+import android.view.Window;
 import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.drawers.main.DrawerMenuFragment;
@@ -20,7 +20,7 @@ import net.bicou.redmine.util.L;
 /**
  * Created by bicou on 12/06/13.
  */
-public abstract class DrawerActivity extends SherlockFragmentActivity {
+public abstract class DrawerActivity extends ActionBarActivity {
 	DrawerLayout mDrawerLayout;
 	View mDrawerMenu;
 	private String mTitle, mTitleDrawer;

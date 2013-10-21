@@ -3,26 +3,26 @@ package net.bicou.redmine.app.wiki;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.WikiPage;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
-import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 
 public class WikiPageFragment extends TrackedFragment {
@@ -52,7 +52,7 @@ public class WikiPageFragment extends TrackedFragment {
 	public static class WikiPageLoadParameters {
 		public String uri;
 		public Project project;
-		public SherlockFragmentActivity croutonActivity;
+		public ActionBarActivity croutonActivity;
 		public ViewGroup croutonLayout;
 		public WikiPage wikiPage;
 		public String resultHtml;
@@ -74,7 +74,7 @@ public class WikiPageFragment extends TrackedFragment {
 		mWikiTitle = (TextView) mLayout.findViewById(R.id.wiki_title);
 		mFavorite = (CheckBox) mLayout.findViewById(R.id.wiki_favorite);
 
-		mClient = new WikiUtils.WikiWebViewClient(getSherlockActivity());
+		mClient = new WikiUtils.WikiWebViewClient(getActivity());
 		mWebView.setWebViewClient(mClient);
 
 		mFavorite.setOnClickListener(new View.OnClickListener() {
@@ -105,10 +105,10 @@ public class WikiPageFragment extends TrackedFragment {
 		params.project = mProject;
 		params.uri = mWikiPageURI;
 		params.croutonLayout = mLayout;
-		params.croutonActivity = getSherlockActivity();
+		params.croutonActivity = (ActionBarActivity) getActivity();
 		params.serverId = serverId;
 		params.projectId = projectId;
-		AsyncTaskFragment.runTask(getSherlockActivity(), ACTION_LOAD_WIKI_PAGE, params);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), ACTION_LOAD_WIKI_PAGE, params);
 
 		setHasOptionsMenu(true);
 

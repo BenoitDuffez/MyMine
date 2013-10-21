@@ -4,8 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -13,7 +13,7 @@ import java.util.GregorianCalendar;
 /**
  * Created by bicou on 06/08/13.
  */
-public class DatePickerFragment extends SherlockDialogFragment {
+public class DatePickerFragment extends DialogFragment {
 	public static final String KEY_DEFAULT_DATE = "net.bicou.redmine.app.issues.edit.DefaultDate";
 	public static final String KEY_REQUEST_ID = "net.bicou.redmine.app.issues.edit.RequestId";
 	Calendar mDefaultDate;

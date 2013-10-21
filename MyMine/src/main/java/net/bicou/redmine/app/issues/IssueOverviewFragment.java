@@ -3,6 +3,7 @@ package net.bicou.redmine.app.issues;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -103,7 +104,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 
 		mMainLayout.setVisibility(View.INVISIBLE);
 
-		mClient = new WikiUtils.WikiWebViewClient(getSherlockActivity());
+		mClient = new WikiUtils.WikiWebViewClient(getActivity());
 		WebSettings settings = mDescription.getSettings();
 		settings.setDefaultTextEncodingName("utf-8");
 		mDescription.setWebViewClient(mClient);
@@ -114,7 +115,8 @@ public class IssueOverviewFragment extends TrackedFragment {
 	@Override
 	public void onViewStateRestored(final Bundle savedInstanceState) {
 		super.onViewStateRestored(savedInstanceState);
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ISSUE, savedInstanceState == null ? getArguments() : savedInstanceState);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ISSUE, savedInstanceState == null ? getArguments() :
+				savedInstanceState);
 	}
 
 	@Override
@@ -160,8 +162,8 @@ public class IssueOverviewFragment extends TrackedFragment {
 		mClient.setProject(mIssue.project);
 
 		// Trigger UI update
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_OVERVIEW, mIssue);
-		AsyncTaskFragment.runTask(getSherlockActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ATTACHMENTS, mIssue);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_ISSUE_LOAD_OVERVIEW, mIssue);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ATTACHMENTS, mIssue);
 
 		// Update UI
 		mMainLayout.setVisibility(View.VISIBLE);
@@ -318,7 +320,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 			}
 		}
 
-		getSherlockActivity().getSupportFragmentManager().popBackStack();
+		getActivity().getSupportFragmentManager().popBackStack();
 		IssuesListFragment fragment = ((IssuesActivity) getActivity()).getMainFragment();
 		if (fragment != null) {
 			fragment.refreshList();

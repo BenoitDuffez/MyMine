@@ -11,15 +11,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -319,7 +319,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorSherlockActivity 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		if (mIsAuthSettingsFragmentShown == false) {
-			final MenuInflater i = getSupportMenuInflater();
+			final MenuInflater i = getMenuInflater();
 			i.inflate(R.menu.menu_server, menu);
 		}
 		return true;

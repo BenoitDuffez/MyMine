@@ -1,9 +1,9 @@
 package net.bicou.redmine.app.wiki;
 
 import android.content.Context;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.ViewGroup;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.R;
@@ -27,7 +27,7 @@ public class WikiPageLoader {
 	WikiDbAdapter mDb;
 	Context mContext;
 
-	SherlockFragmentActivity mActivity;
+	ActionBarActivity mActivity;
 	ViewGroup mCroutonHolder;
 
 	/**
@@ -46,7 +46,7 @@ public class WikiPageLoader {
 	/**
 	 * Use this to enable Crouton based notifications on your activity/viewgroup
 	 */
-	public WikiPageLoader enableCroutonNotifications(SherlockFragmentActivity activity, ViewGroup croutonHolder) {
+	public WikiPageLoader enableCroutonNotifications(ActionBarActivity activity, ViewGroup croutonHolder) {
 		mActivity = activity;
 		mCroutonHolder = croutonHolder;
 		return this;

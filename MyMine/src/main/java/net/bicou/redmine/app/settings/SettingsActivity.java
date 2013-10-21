@@ -1,14 +1,5 @@
 package net.bicou.redmine.app.settings;
 
-import java.util.List;
-
-import com.google.analytics.tracking.android.EasyTracker;
-import net.bicou.redmine.Constants;
-import net.bicou.redmine.R;
-import net.bicou.redmine.sync.IssuesSyncAdapterService;
-import net.bicou.redmine.sync.ProjectsSyncAdapterService;
-import net.bicou.redmine.sync.SyncUtils;
-import net.bicou.redmine.sync.WikiSyncAdapterService;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
@@ -27,15 +18,22 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
+import net.bicou.redmine.Constants;
+import net.bicou.redmine.R;
+import net.bicou.redmine.sync.IssuesSyncAdapterService;
+import net.bicou.redmine.sync.ProjectsSyncAdapterService;
+import net.bicou.redmine.sync.SyncUtils;
+import net.bicou.redmine.sync.WikiSyncAdapterService;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
+import java.util.List;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On handset devices, settings are presented as a single list. On tablets,
  * settings are split by category, with category headers shown to the left of the list of settings.
  */
-public class SettingsActivity extends SherlockPreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
 	public static final String KEY_SYNC_FREQUENCY = "sync_frequency";
 	public static final String KEY_ISSUES_SYNC_PERIOD = "issues_sync_period";
 	public static final String KEY_NOTIFICATION_RINGTONE = "notifications_new_message_ringtone";
@@ -70,7 +68,7 @@ public class SettingsActivity extends SherlockPreferenceActivity {
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setupActionBar() {
 		// Show the Up button in the action bar.
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override

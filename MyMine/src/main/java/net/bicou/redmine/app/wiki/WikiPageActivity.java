@@ -3,14 +3,14 @@ package net.bicou.redmine.app.wiki;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.app.AsyncTaskFragment;
 
 /**
  * Created by bicou on 21/07/13.
  */
-public class WikiPageActivity extends SherlockFragmentActivity implements AsyncTaskFragment.TaskFragmentCallbacks {
+public class WikiPageActivity extends ActionBarActivity implements AsyncTaskFragment.TaskFragmentCallbacks {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

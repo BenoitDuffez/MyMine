@@ -1,11 +1,11 @@
 package net.bicou.redmine.app.ga;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import android.support.v4.app.Fragment;
 
 /**
  * Created by bicou on 07/10/13.
  */
-public class TrackedFragment extends SherlockFragment {
+public class TrackedFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();

@@ -3,8 +3,8 @@ package net.bicou.redmine.app.issues.edit;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Window;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Window;
 import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.data.json.Issue;
@@ -15,7 +15,7 @@ import java.util.Calendar;
 /**
  * Created by bicou on 02/08/13.
  */
-public class EditIssueActivity extends SherlockFragmentActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener,
+public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener,
 		DatePickerFragment.DateSelectionListener, DescriptionEditorFragment.DescriptionChangeListener {
 	public static final int ACTION_LOAD_ISSUE_DATA = 0;
 

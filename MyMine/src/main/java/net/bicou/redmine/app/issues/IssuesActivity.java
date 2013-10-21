@@ -11,13 +11,12 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-import com.actionbarsherlock.widget.SearchView;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.Window;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -291,7 +290,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		final MenuInflater inflater = getSupportMenuInflater();
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu_issues, menu);
 
 		final SearchView searchView = (SearchView) menu.findItem(R.id.menu_issues_search).getActionView();
@@ -303,7 +302,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	OnNavigationListener mNavigationCallbacks = new OnNavigationListener() {
+	ActionBar.OnNavigationListener mNavigationCallbacks = new ActionBar.OnNavigationListener() {
 		int lastPosition = -1;
 
 		@Override

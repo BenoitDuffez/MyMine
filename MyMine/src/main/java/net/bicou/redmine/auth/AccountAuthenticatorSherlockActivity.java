@@ -3,10 +3,9 @@ package net.bicou.redmine.auth;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
-public class AccountAuthenticatorSherlockActivity extends SherlockFragmentActivity {
+public class AccountAuthenticatorSherlockActivity extends ActionBarActivity {
 	private AccountAuthenticatorResponse mAccountAuthenticatorResponse = null;
 	private Bundle mResultBundle = null;
 

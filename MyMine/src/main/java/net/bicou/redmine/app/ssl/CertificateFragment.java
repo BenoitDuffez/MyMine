@@ -2,6 +2,7 @@ package net.bicou.redmine.app.ssl;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,7 @@ public class CertificateFragment extends TrackedFragment {
 
 		// Load the cert from disk or android keystore
 		final String alias = getArguments().getString(KEY_CERT_ALIAS);
-		AsyncTaskFragment.runTask(getSherlockActivity(), 0, alias);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), 0, alias);
 
 		return v;
 	}

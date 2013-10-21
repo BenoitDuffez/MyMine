@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,8 +61,8 @@ public class ProjectsListFragment extends TrackedListFragment implements LoaderC
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		getSherlockActivity().setSupportProgressBarIndeterminate(true);
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		((ActionBarActivity)getActivity()).setSupportProgressBarIndeterminate(true);
+		((ActionBarActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(true);
 		return new ProjectsListCursorLoader(getActivity(), getHelper(), args);
 	}
 
@@ -69,8 +70,8 @@ public class ProjectsListFragment extends TrackedListFragment implements LoaderC
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
 
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
+		if (getActivity() != null) {
+			((ActionBarActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(data == null);
 		}
 
 		try {

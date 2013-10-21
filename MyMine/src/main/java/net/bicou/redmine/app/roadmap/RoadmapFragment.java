@@ -8,9 +8,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -18,11 +21,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListCursorAdapter;
 import net.bicou.redmine.app.issues.IssuesListCursorLoader;
@@ -32,7 +34,6 @@ import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
-import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.util.Util;
 
 /**
@@ -108,7 +109,7 @@ public class RoadmapFragment extends TrackedListFragment implements LoaderManage
 
 				new FillViewsTask().execute();
 
-				getSherlockActivity().setSupportProgressBarVisibility(true);
+				((ActionBarActivity) getActivity()).setSupportProgressBarVisibility(true);
 				//	setHasOptionsMenu(true); TODO: disabled on purpose: maybe not that useful
 			}
 		} else {
@@ -186,7 +187,7 @@ public class RoadmapFragment extends TrackedListFragment implements LoaderManage
 
 			mIssuesCount.setText(getString(R.string.roadmap_issues_count, nbOpen + nbClosed, nbOpen));
 
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+			((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
 		}
 
 		@Override
@@ -266,15 +267,15 @@ public class RoadmapFragment extends TrackedListFragment implements LoaderManage
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		getSherlockActivity().setSupportProgressBarIndeterminate(true);
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminate(true);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
 		return new IssuesListCursorLoader(getActivity(), getHelper(), args);
 	}
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(data == null);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getListView().setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);

@@ -4,19 +4,20 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
-import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.splitactivity.SplitActivity;
 
 public class IssuesListFragment extends TrackedListFragment implements LoaderCallbacks<Cursor> {
@@ -136,16 +137,16 @@ public class IssuesListFragment extends TrackedListFragment implements LoaderCal
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		getSherlockActivity().setSupportProgressBarIndeterminate(true);
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminate(true);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
 		return new IssuesListCursorLoader(getActivity(), getHelper(), args);
 	}
 
 	@Override
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
 		mAdapter.swapCursor(data);
-		if (getSherlockActivity() != null) {
-			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(data == null);
+		if (getActivity() != null) {
+			((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(data == null);
 		}
 
 		final TextView empty = (TextView) mFragmentView.findViewById(android.R.id.empty);

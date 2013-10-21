@@ -1,8 +1,8 @@
 package net.bicou.redmine.app.issues;
 
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.json.ChangeSet;
@@ -39,7 +39,7 @@ import java.util.Locale;
 
 public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory> {
 	Issue mIssue;
-	SherlockFragmentActivity mActivity;
+	ActionBarActivity mActivity;
 	JournalsDownloadCallbacks mCallbacks;
 	File mCacheFolder;
 	JsonNetworkError mError;
@@ -98,7 +98,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		void onJournalsFailed(JsonNetworkError error);
 	}
 
-	public IssueHistoryDownloadTask(final SherlockFragmentActivity act, final JournalsDownloadCallbacks callbacks, final Issue issue) {
+	public IssueHistoryDownloadTask(final ActionBarActivity act, final JournalsDownloadCallbacks callbacks, final Issue issue) {
 		mActivity = act;
 		mCallbacks = callbacks;
 		mIssue = issue;

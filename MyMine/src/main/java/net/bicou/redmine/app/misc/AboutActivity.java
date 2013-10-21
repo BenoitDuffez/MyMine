@@ -2,15 +2,15 @@ package net.bicou.redmine.app.misc;
 
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.R;
 
 /**
  * Created by bicou on 17/06/13.
  */
-public class AboutActivity extends SherlockFragmentActivity {
+public class AboutActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -7,10 +7,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
@@ -177,7 +177,7 @@ public class IssueFragment extends TrackedFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		getSherlockActivity().supportInvalidateOptionsMenu();
+		getActivity().supportInvalidateOptionsMenu();
 	}
 
 	public Issue getIssue() {

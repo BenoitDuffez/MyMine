@@ -5,12 +5,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -26,7 +26,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-public class AddNewCertificateActivity extends SherlockFragmentActivity {
+public class AddNewCertificateActivity extends ActionBarActivity {
 	Uri mFileUri;
 	TextView mFileUriInfo;
 	ViewGroup mCroutonHolder;

@@ -10,9 +10,9 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Window;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -205,7 +205,7 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_main_activity, menu);
+		getMenuInflater().inflate(R.menu.menu_main_activity, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 

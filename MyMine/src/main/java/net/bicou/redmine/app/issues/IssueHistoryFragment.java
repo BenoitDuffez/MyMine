@@ -1,6 +1,7 @@
 package net.bicou.redmine.app.issues;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +73,7 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 			final SwingBottomInAnimationAdapter adapter = new SwingBottomInAnimationAdapter(journalAdapter);
 
 			try {
-				adapter.setListView(getListView());
+				adapter.setAbsListView(getListView());
 				setListAdapter(adapter);
 				getListView().invalidate();
 			} catch (IllegalStateException e) { // java.lang.IllegalStateException: Content view not yet created
@@ -85,26 +86,26 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 	@Override
 	public void onFragmentActivated() {
 		if ((mIssue == null || mIssue.journals == null) && mUpdateTask == null) {
-			mUpdateTask = new IssueHistoryDownloadTask(getSherlockActivity(), new JournalsDownloadCallbacks() {
+			mUpdateTask = new IssueHistoryDownloadTask((ActionBarActivity) getActivity(), new JournalsDownloadCallbacks() {
 				@Override
 				public void onPreExecute() {
-					getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+					((ActionBarActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(true);
 				}
 
 				@Override
 				public void onJournalsDownloaded(final IssueHistory history) {
 					setHistory(history);
-					if (getSherlockActivity() != null) {
-						getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+					if (getActivity() != null) {
+						((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
 					}
 				}
 
 				@Override
 				public void onJournalsFailed(final JsonNetworkError error) {
 					if (error == null) {
-						Crouton.makeText(getSherlockActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
+						Crouton.makeText(getActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
 					} else {
-						error.displayCrouton(getSherlockActivity(), mLayout);
+						error.displayCrouton(getActivity(), mLayout);
 					}
 				}
 			}, mIssue);

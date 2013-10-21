@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -16,8 +19,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.google.gson.Gson;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -163,9 +164,9 @@ public class EditIssueFragment extends TrackedFragment {
 			mIssue = new Issue(server, project);
 		}
 
-		AsyncTaskFragment.runTask(getSherlockActivity(), EditIssueActivity.ACTION_LOAD_ISSUE_DATA, mIssue);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), EditIssueActivity.ACTION_LOAD_ISSUE_DATA, mIssue);
 
-		DoneBarActivity.setupActionBar(getSherlockActivity(), new DoneBarActivity.OnSaveActionListener() {
+		DoneBarActivity.setupActionBar((ActionBarActivity) getActivity(), new DoneBarActivity.OnSaveActionListener() {
 			@Override
 			public void onSave() {
 				saveIssueChangesAndClose();
@@ -218,7 +219,7 @@ public class EditIssueFragment extends TrackedFragment {
 				throw new IllegalArgumentException("This message will never, ever be seen");
 			}
 		} catch (Exception e) {
-			Crouton.makeText(getSherlockActivity(), getString(R.string.issue_edit_estimated_hours_parse_error), Style.ALERT, mMainLayout).show();
+			Crouton.makeText(getActivity(), getString(R.string.issue_edit_estimated_hours_parse_error), Style.ALERT, mMainLayout).show();
 			return false;
 		}
 

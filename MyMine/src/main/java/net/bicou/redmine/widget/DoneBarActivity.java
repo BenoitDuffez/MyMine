@@ -17,23 +17,22 @@
 package net.bicou.redmine.widget;
 
 import android.content.Context;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.R;
 
 /**
- * A sample activity demonstrating the "done bar" alternative action bar presentation. For a more
- * detailed description see {@link R.string.done_bar_description}.
+ * A sample activity demonstrating the "done bar" alternative action bar presentation.
  */
 public class DoneBarActivity {
 	public interface OnSaveActionListener {
 		public void onSave();
 	}
 
-	public static void setupActionBar(final SherlockFragmentActivity activity, final OnSaveActionListener listener) {
+	public static void setupActionBar(final ActionBarActivity activity, final OnSaveActionListener listener) {
 		// BEGIN_INCLUDE (inflate_set_custom_view)
 		// Inflate a "Done/Cancel" custom action bar view.
 		final LayoutInflater inflater = (LayoutInflater) activity.getSupportActionBar().getThemedContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

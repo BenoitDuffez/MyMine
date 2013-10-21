@@ -18,17 +18,20 @@ dependencies {
     compile 'com.android.support:support-v4:18.0.+'
     compile 'com.android.support:appcompat-v7:18.0.0'
 
+    // Projects
     compile project(':SplitActivity')
     compile project(':dslv')
     compile project(':lva')
     compile project(':aFileChooser')
     compile project(':sgv')
 
-    compile files('libs/acra*')
-    compile files('libs/gson*')
-    compile files('libs/textile*')
-    compile files('libs/libGoogleAnalytics*')
+    // Jars
+    compile files('libs/acra-4.3.0.jar')
+    compile files('libs/gson-2.2.2.jar')
+    compile files('libs/textile-j-2.2.jar')
+    compile files('libs/libGoogleAnalyticsServices.jar')
 
+    // Libraries from maven
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
     compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
         exclude module: 'support-v4'

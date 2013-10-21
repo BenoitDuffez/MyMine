@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import com.origamilabs.library.views.StaggeredGridView;
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
@@ -30,7 +32,6 @@ import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
-import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 
 import java.text.DateFormat;
@@ -137,7 +138,7 @@ public class ProjectFragment extends TrackedFragment {
 			mProject = new Gson().fromJson(savedInstanceState.getString(KEY_PROJECT_JSON), Project.class);
 		}
 
-		AsyncTaskFragment.runTask(getSherlockActivity(), ProjectsActivity.ACTION_LOAD_PROJECT_CARDS, mProject);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), ProjectsActivity.ACTION_LOAD_PROJECT_CARDS, mProject);
 
 		return v;
 	}
@@ -205,7 +206,7 @@ public class ProjectFragment extends TrackedFragment {
 
 	private void refreshUI() {
 		if (getActivity() != null && mProject != null) {
-			getSherlockActivity().getSupportActionBar().setTitle(mProject.name);
+			getActivity().getActionBar().setTitle(mProject.name);
 			mTitle.setText(mProject.name);
 			mCreatedOn.setText(Html.fromHtml(getString(R.string.project_created_on, mLongDateFormat.format(mProject.created_on.getTime()))));
 			mUpdatedOn.setText(Html.fromHtml(getString(R.string.project_updated_on, mLongDateFormat.format(mProject.updated_on.getTime()))));

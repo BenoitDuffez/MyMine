@@ -1,6 +1,7 @@
 package net.bicou.redmine.app.issues.order;
 
 import android.content.Context;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -8,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.util.L;
@@ -152,7 +152,7 @@ public class IssuesOrderColumnsAdapter extends ArrayAdapter<OrderColumn> impleme
 				cols.remove(cols.get(col));
 			}
 		}
-		final SherlockFragmentActivity act = (SherlockFragmentActivity) getContext();
+		final ActionBarActivity act = (ActionBarActivity) getContext();
 		final IssuesOrderingPickColumnFragment pickColumn = IssuesOrderingPickColumnFragment.newInstance(cols);
 		pickColumn.setColumnPickSelectionListener(new IssuesOrderingPickColumnFragment.ColumnPickSelectionListener() {
 			@Override

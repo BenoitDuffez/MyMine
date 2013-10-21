@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/MyMine.iml" filepath="$PROJECT_DIR$/MyMine.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyMine/MyMine-MyMine.iml" filepath="$PROJECT_DIR$/MyMine/MyMine-MyMine.iml" />
       <module fileurl="file://$PROJECT_DIR$/vendor/SplitActivity/SplitActivity/SplitActivity.iml" filepath="$PROJECT_DIR$/vendor/SplitActivity/SplitActivity/SplitActivity.iml" />
-      <module fileurl="file://$PROJECT_DIR$/vendor/StaggeredGridView/StaggeredGridView.iml" filepath="$PROJECT_DIR$/vendor/StaggeredGridView/StaggeredGridView.iml" />
       <module fileurl="file://$PROJECT_DIR$/vendor/aFileChooser/aFileChooser/aFileChooser.iml" filepath="$PROJECT_DIR$/vendor/aFileChooser/aFileChooser/aFileChooser.iml" />
       <module fileurl="file://$PROJECT_DIR$/vendor/drag-sort-listview/library/dslv.iml" filepath="$PROJECT_DIR$/vendor/drag-sort-listview/library/dslv.iml" />
       <module fileurl="file://$PROJECT_DIR$/vendor/ListViewAnimations/library/lva.iml" filepath="$PROJECT_DIR$/vendor/ListViewAnimations/library/lva.iml" />
