@@ -117,7 +117,7 @@ public class AsyncTaskFragment extends Fragment {
 			((AsyncTaskFragment) f).mTasks.put(action, parameters);
 			((AsyncTaskFragment) f).run(action, parameters);
 		} else {
-			throw new IllegalStateException("Your activity must implement TaskFragmentCallbacks and call AsyncTaskFragment.attachAsyncTaskFragment() in its " +
+			throw new IllegalStateException("Your activity must implement TaskFragmentCallbacks and call AsyncTaskFragment.attachAsyncTaskFragment() in its " + 
 					"onCreate method.");
 		}
 	}
@@ -206,3 +206,4 @@ public class AsyncTaskFragment extends Fragment {
 		}.execute();
 	}
 }
+
