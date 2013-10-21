@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/vendor/ActionBarSherlock/actionbarsherlock" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/vendor/Android-Universal-Image-Loader/library" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/vendor/Crouton/library" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/vendor/ListViewAnimations/library" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/vendor/SplitActivity/SplitActivity" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/vendor/StaggeredGridView" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/vendor/aFileChooser/aFileChooser" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/vendor/drag-sort-listview/library" vcs="svn" />
+    <mapping directory="" vcs="Git" />
   </component>
 </project>
 
