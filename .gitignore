@@ -5,4 +5,5 @@ tools/.*
 gen
 .gradle
 MyMine/build
-vendor/*/*/build
+vendor/**/build
+local.properties
