@@ -22,6 +22,7 @@ dependencies {
     compile project(':dslv')
     compile project(':lva')
     compile project(':aFileChooser')
+    compile project(':sgv')
 
     compile files('libs/acra*')
     compile files('libs/gson*')
