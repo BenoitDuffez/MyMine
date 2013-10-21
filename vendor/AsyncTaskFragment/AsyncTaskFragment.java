@@ -6,8 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -100,7 +100,7 @@ public class AsyncTaskFragment extends Fragment {
 	private HashMap<Integer, Object> mTasks = new HashMap<Integer, Object>();
 	private Context mAppContext;
 
-	public static void attachAsyncTaskFragment(SherlockFragmentActivity activity) {
+	public static void attachAsyncTaskFragment(ActionBarActivity activity) {
 		FragmentManager fm = activity.getSupportFragmentManager();
 		AsyncTaskFragment task = new AsyncTaskFragment();
 		task.setArguments(new Bundle());
@@ -110,7 +110,7 @@ public class AsyncTaskFragment extends Fragment {
 	/**
 	 * Triggers the callbacks in the activity for a given action.<br /> The activity has to implement TaskFragmentCallbacks.
 	 */
-	public static void runTask(SherlockFragmentActivity activity, int action, Object parameters) {
+	public static void runTask(ActionBarActivity activity, int action, Object parameters) {
 		FragmentManager fm = activity.getSupportFragmentManager();
 		Fragment f = fm.findFragmentByTag(FRAGMENT_TAG);
 		if (f != null && f instanceof AsyncTaskFragment) {
