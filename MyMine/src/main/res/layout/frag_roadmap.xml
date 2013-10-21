@@ -34,7 +34,6 @@
             android:layout_below="@+id/roadmap_version"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/roadmap_percent_complete"
-            style="@style/Widget.Sherlock.ProgressBar.Horizontal"
             android:layout_alignBottom="@+id/roadmap_percent_complete"
             android:layout_above="@+id/roadmap_percent_complete"
             android:visibility="invisible"/>
