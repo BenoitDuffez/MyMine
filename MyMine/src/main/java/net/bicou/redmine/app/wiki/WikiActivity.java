@@ -46,9 +46,9 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
-		super.onCreate(savedInstanceState);
 		initProjectsSpinner(savedInstanceState);
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 	}

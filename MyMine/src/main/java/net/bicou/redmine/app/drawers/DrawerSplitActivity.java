@@ -57,10 +57,10 @@ public abstract class DrawerSplitActivity<MainFragment extends Fragment, Content
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
 
-		super.onCreate(savedInstanceState);
 		canSetContentView = true;
 		setContentView(0);
 

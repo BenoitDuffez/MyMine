@@ -22,9 +22,9 @@ public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFra
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
-		super.onCreate(savedInstanceState);
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 		if (savedInstanceState == null) {
 			Fragment content = EditIssueFragment.newInstance(getIntent().getExtras());

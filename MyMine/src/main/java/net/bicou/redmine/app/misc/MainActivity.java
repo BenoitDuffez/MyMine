@@ -47,10 +47,10 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
+
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
-
-		super.onCreate(savedInstanceState);
 
 		showAlphaVersionAlert();
 		final boolean isFirstLaunch = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).getBoolean(KEY_IS_FIRST_LAUNCH, true);

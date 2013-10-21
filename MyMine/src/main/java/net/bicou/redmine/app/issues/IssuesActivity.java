@@ -113,10 +113,10 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
 
-		super.onCreate(savedInstanceState);
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 
 		Bundle args = getIntent().getExtras();

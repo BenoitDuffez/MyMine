@@ -47,9 +47,9 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
-		super.onCreate(savedInstanceState);
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 
 		// Load a project if there is one in the intent extras
