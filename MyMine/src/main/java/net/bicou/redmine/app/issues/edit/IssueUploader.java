@@ -44,6 +44,11 @@ public class IssueUploader {
 	public static final String ISSUE_ACTION = "net.bicou.redmine.app.issues.IssueAction";
 
 	/**
+	 * Used as a key in a Bundle to indicate whether the activity should display a Crouton if its intent extras contains this as true
+	 */
+	public static final String KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON = "net.bicou.redmine.app.issues.IssueUploadSuccessful";
+
+	/**
 	 * Add or edit an issue
 	 *
 	 * @param applicationContext Required for network operations (SSL) and DB access
@@ -80,7 +85,7 @@ public class IssueUploader {
 			Crouton.makeText(resultHolder, errorMessage, Style.ALERT).show();
 		}
 		// Response error?
-		else if (TextUtils.isEmpty((CharSequence) result)) {
+		else if (!TextUtils.isEmpty((CharSequence) result)) {
 			String errorMessage = resultHolder.getString(R.string.issue_upload_failed, (String) result);
 			Crouton.makeText(resultHolder, errorMessage, Style.ALERT).show();
 			L.e("Unable to upload issue. Result=" + result + " params=" + params, null);
@@ -95,23 +100,31 @@ public class IssueUploader {
 
 				// Retrieve the issue as understood by the server
 				String json = (String) result;
+				Issue issue;
 
-				final int start = json.indexOf(":") + 1;
-				final int end = json.lastIndexOf("}");
-				json = json.substring(start, end);
+				try {
+					// Parse the server's response
+					final int start = json.indexOf(":") + 1;
+					final int end = json.lastIndexOf("}");
+					json = json.substring(start, end);
 
-				Object response = parseJson(json);
-				if (response == null || response instanceof JsonDownloadError) {
-					final String msg = response == null ? resultHolder.getString(R.string.err_empty_response) : ((JsonDownloadError) response).getMessage
-							(resultHolder);
-					final String errorMessage = resultHolder.getString(R.string.issue_upload_failed, msg);
-					Crouton.makeText(resultHolder, errorMessage, Style.ALERT).show();
-					L.e("Shouldn't happen! params=" + params + " result=" + result, null);
-					return;
+					Object response = parseJson(json);
+					if (response == null || response instanceof JsonDownloadError) {
+						final String msg = response == null ? resultHolder.getString(R.string.err_empty_response) : ((JsonDownloadError) response).getMessage
+								(resultHolder);
+						final String errorMessage = resultHolder.getString(R.string.issue_upload_failed, msg);
+						Crouton.makeText(resultHolder, errorMessage, Style.ALERT).show();
+						L.e("Shouldn't happen! params=" + params + " result=" + result, null);
+						return;
+					}
+
+					issue = (Issue) response;
+					issue.server = server;
+				} catch (Exception e) {
+					// In case of failure (likely to be an empty response), we'll consider our edit to be successful
+					issue = uploadedIssue;
+					L.e("The server's response wasn't expected!" + e);
 				}
-
-				Issue issue = (Issue) response;
-				issue.server = server;
 
 				// Handle add/edit of issue
 				if (params.containsKey(ISSUE_ACTION)) {
@@ -137,11 +150,13 @@ public class IssueUploader {
 				// If we're already on the issues activity, let it handle the new issue to display
 				if (resultHolder instanceof IssuesActivity) {
 					((IssuesActivity) resultHolder).selectContent(args);
+					Crouton.makeText(resultHolder, resultHolder.getString(R.string.issue_upload_successful), Style.CONFIRM).show();
 				}
 				// Otherwise, start it from scratch
 				else {
 					Intent intent = new Intent(resultHolder, IssuesActivity.class);
 					intent.putExtras(args);
+					intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON, true);
 					resultHolder.startActivity(intent);
 				}
 			}

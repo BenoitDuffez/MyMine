@@ -7,8 +7,11 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.Window;
 import com.google.analytics.tracking.android.EasyTracker;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.issues.edit.IssueUploader;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.app.welcome.OverviewCard;
 import net.bicou.redmine.data.json.Project;
@@ -65,6 +68,9 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 	protected void onStart() {
 		super.onStart();
 		EasyTracker.getInstance(this).activityStart(this);
+		if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(IssueUploader.KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON)) {
+			Crouton.makeText(this, getString(R.string.issue_upload_successful), Style.CONFIRM).show();
+		}
 	}
 
 	@Override
