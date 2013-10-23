@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:appcompat="http://schemas.android.com/apk/res-auto">
 
     <item
-            android:id="@+id/menu_issue_edit"
-            android:title="@string/issue_menu_edit"
-            android:icon="@android:drawable/ic_menu_edit"
-            android:showAsAction="always"/>
+        android:id="@+id/menu_issue_edit"
+        android:title="@string/issue_menu_edit"
+        android:icon="@android:drawable/ic_menu_edit"
+        appcompat:showAsAction="always" />
 
     <item
-            android:id="@+id/menu_issue_delete"
-            android:title="@string/menu_issue_delete"
-            android:icon="@android:drawable/ic_menu_delete"
-            android:showAsAction="ifRoom"/>
+        android:id="@+id/menu_issue_delete"
+        android:title="@string/menu_issue_delete"
+        android:icon="@android:drawable/ic_menu_delete"
+        appcompat:showAsAction="ifRoom" />
 
     <item
-            android:id="@+id/menu_issue_browser"
-            android:title="@string/issue_menu_open_browser"
-            android:showAsAction="never"/>
+        android:id="@+id/menu_issue_browser"
+        android:title="@string/issue_menu_open_browser"
+        appcompat:showAsAction="never" />
 
 </menu>
 
