@@ -2,9 +2,11 @@ package net.bicou.redmine.net;
 
 import android.content.Context;
 import android.text.TextUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.AbsObjectList;
@@ -13,6 +15,7 @@ import net.bicou.redmine.data.json.Version.VersionStatus;
 import net.bicou.redmine.data.json.VersionStatusDeserializer;
 import net.bicou.redmine.net.JsonDownloadError.ErrorType;
 import net.bicou.redmine.util.L;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -174,7 +177,16 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private T getHtml(String json) {
+		return (T) json;
+	}
+
 	private T parseJson(String json) {
+		if (mType.equals(String.class)) {
+			return getHtml(json);
+		}
+
 		if (TextUtils.isEmpty(json)) {
 			L.e("Received JSON for " + mType.toString() + " from " + mURI + " is empty");
 			mError = new JsonDownloadError(ErrorType.TYPE_RESPONSE);
