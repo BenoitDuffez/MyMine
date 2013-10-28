@@ -1,16 +1,36 @@
 package net.bicou.redmine.sync;
 
 import android.content.Context;
+import android.text.TextUtils;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.*;
+import net.bicou.redmine.data.json.IssueCategoriesList;
+import net.bicou.redmine.data.json.IssuePrioritiesList;
+import net.bicou.redmine.data.json.IssueStatusesList;
+import net.bicou.redmine.data.json.IssuesList;
+import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.data.json.ProjectsList;
+import net.bicou.redmine.data.json.TrackersList;
+import net.bicou.redmine.data.json.User;
+import net.bicou.redmine.data.json.UsersList;
+import net.bicou.redmine.data.json.VersionsList;
+import net.bicou.redmine.data.json.WikiPagesIndex;
 import net.bicou.redmine.data.sqlite.QueriesList;
 import net.bicou.redmine.net.JsonDownloader;
+import net.bicou.redmine.util.Util;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Provides utility methods for communicating with the server.
@@ -76,6 +96,62 @@ final public class NetworkUtilities {
 
 	public static UsersList syncUsers(final Context ctx, final Server server, final long serverSyncState) {
 		return new JsonDownloader<UsersList>(UsersList.class).fetchObject(ctx, server, "users.json");
+	}
+
+	public static UsersList syncUsersHack(Context ctx, Server server, Project project) {
+		// TODO: this fails because the page is not designed to work as a REST API so it ignores the key paramter
+		/*
+		Here's an example of the HTML code of /project/<id>/issues/new:
+
+		<p><label for="issue_assigned_to_id">Assignee</label><select id="issue_assigned_to_id" name="issue[assigned_to_id]"><option value=""></option>
+		<option value="3">&lt;&lt; me &gt;&gt;</option><option value="3">Benoit Duffez</option></select></p>
+
+		 */
+		String uri = "projects/" + project.id + "/issues/new";
+		String html = new JsonDownloader<String>(String.class).fetchObject(ctx, server, uri);
+		if (TextUtils.isEmpty(html)) {
+			return null;
+		}
+
+		int pos = html.indexOf("<select id=\"issue_assigned_to_id\"");
+		if (pos >= 0 && pos < html.length()) {
+			html = html.substring(pos);
+		} else {
+			return null;
+		}
+		pos = html.indexOf("</select>");
+		if (pos >= 0 && pos < html.length()) {
+			html = html.substring(pos);
+		} else {
+			return null;
+		}
+
+		UsersList usersList = new UsersList();
+		List<User> users = new ArrayList<User>();
+
+		Pattern pattern = Pattern.compile("<option value=\"([0-9]+)\">([^<]+)</option>");
+		Matcher matcher = pattern.matcher(html);
+		User user;
+		String[] name;
+		while (matcher.find()) {
+			user = new User();
+			user.id = Long.parseLong(matcher.group(1));
+			name = matcher.group(2).split(" ");
+			user.firstname = name[0];
+			name[0] = "";
+			user.lastname = Util.join(name, " ").trim();
+
+			// Ensure there's no duplicate. Assume the latest occurrence to be the correct one
+			for (User u : users) {
+				if (u.id == user.id) {
+					users.remove(u);
+				}
+			}
+			users.add(user);
+		}
+
+		usersList.addObjects(users);
+		return usersList;
 	}
 
 	public static TrackersList syncTrackers(Context ctx, Server server, long serverSyncState) {

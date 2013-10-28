@@ -11,12 +11,17 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.UsersList;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.platform.UsersManager;
 import net.bicou.redmine.util.L;
+
+import java.util.List;
 
 /**
  * Service to handle Account sync. This is invoked with an intent with action ACTION_AUTHENTICATOR_INTENT. It instantiates the syncadapter and returns its IBinder.
@@ -65,7 +70,7 @@ public class UsersSyncAdapterService extends Service {
 
 		@Override
 		public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider,
-								  final SyncResult syncResult) {
+		                          final SyncResult syncResult) {
 			L.d("account=" + account + " extras=" + extras + " auth=" + authority + " prov=" + provider + " result=" + syncResult);
 
 			final long lastSyncMarker = getServerSyncMarker(account);
@@ -73,7 +78,6 @@ public class UsersSyncAdapterService extends Service {
 			final ServersDbAdapter db = new ServersDbAdapter(mContext);
 			db.open();
 			Server server = db.getServer(account.name);
-			db.close();
 
 			if (server == null) {
 				L.e("Couldn't get the server for account: " + account, null);
@@ -85,13 +89,28 @@ public class UsersSyncAdapterService extends Service {
 
 			// Sync all users pages of all projects
 			long newSyncState = 0, tmp;
-			final UsersList users = NetworkUtilities.syncUsers(mContext, server, lastSyncMarker);
+			UsersList users = NetworkUtilities.syncUsers(mContext, server, lastSyncMarker);
 			if (users != null && users.users != null && users.users.size() > 0) {
 				tmp = UsersManager.updateUsers(mContext, server, users.users, lastSyncMarker);
 				if (tmp > newSyncState) {
 					newSyncState = tmp;
 				}
+			} else {
+				// try to get the users from the "new issue" page
+				ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
+				List<Project> projects = pdb.selectAll();
+
+				for (Project project : projects) {
+					users = NetworkUtilities.syncUsersHack(mContext, server, project);
+					if (users != null && users.users != null && users.users.size() > 0) {
+						tmp = UsersManager.updateUsers(mContext, server, users.users, lastSyncMarker);
+						if (tmp > newSyncState) {
+							newSyncState = tmp;
+						}
+					}
+				}
 			}
+			db.close();
 
 			if (newSyncState > 0) {
 				setServerSyncMarker(account, newSyncState);
@@ -102,7 +121,6 @@ public class UsersSyncAdapterService extends Service {
 		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
 		 *
 		 * @param account the account we're syncing
-		 *
 		 * @return the change high-water-mark
 		 */
 		private long getServerSyncMarker(final Account account) {
