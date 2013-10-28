@@ -36,9 +36,14 @@ public class KeyStoreManagerActivity extends SplitActivity<CertificatesListFragm
 		return CertificateFragment.newInstance(args);
 	}
 
+    @Override
+    protected void onPreCreate() {
+        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    }
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);

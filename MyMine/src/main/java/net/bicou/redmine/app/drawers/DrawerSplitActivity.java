@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.drawers.main.DrawerMenuFragment;
 import net.bicou.redmine.app.misc.MainActivity;
@@ -19,110 +20,112 @@ import net.bicou.splitactivity.SplitActivity;
  * Created by bicou on 12/06/13.
  */
 public abstract class DrawerSplitActivity<MainFragment extends Fragment, ContentFragment extends Fragment> extends SplitActivity<MainFragment, ContentFragment> {
-	DrawerLayout mDrawerLayout;
-	View mDrawerMenu;
-	private String mTitle, mTitleDrawer;
-	protected ActionBarDrawerToggle mDrawerToggle;
+    DrawerLayout mDrawerLayout;
+    View mDrawerMenu;
+    private String mTitle, mTitleDrawer;
+    protected ActionBarDrawerToggle mDrawerToggle;
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		L.d("newConfig: " + newConfig);
-		mDrawerToggle.onConfigurationChanged(newConfig);
-	}
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        L.d("newConfig: " + newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
 
-	/**
-	 * Can be overriden by subclasses
-	 */
-	protected Fragment getDrawerFragment() {
-		return new DrawerMenuFragment();
-	}
+    /**
+     * Can be overriden by subclasses
+     */
+    protected Fragment getDrawerFragment() {
+        return new DrawerMenuFragment();
+    }
 
-	boolean canSetContentView = false;
+    boolean canSetContentView = false;
 
-	@Override
-	public void setContentView(int layoutResId) {
-		L.d("");
-		if (canSetContentView) {
-			super.setContentView(R.layout.activity_drawer_split);
-			canSetContentView = false;
-		}
-	}
+    @Override
+    public void setContentView(int layoutResId) {
+        L.d("");
+        if (canSetContentView) {
+            super.setContentView(R.layout.activity_drawer_split);
+            canSetContentView = false;
+        }
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		super.onCreate(savedInstanceState);
-		setSupportProgressBarIndeterminate(true);
-		setSupportProgressBarIndeterminateVisibility(false);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-		canSetContentView = true;
-		setContentView(0);
+        canSetContentView = true;
+        setContentView(0);
 
-		mDrawerMenu = findViewById(R.id.navigation_drawer);
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        setSupportProgressBarIndeterminate(true);
+        setSupportProgressBarIndeterminateVisibility(false);
 
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction().add(R.id.navigation_drawer, getDrawerFragment()).commit();
-		}
+        mDrawerMenu = findViewById(R.id.navigation_drawer);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
 
-		if (mDrawerMenu == null || mDrawerLayout == null) {
-			throw new IllegalStateException("a DrawerActivity must have a drawer layout id=main_drawer_layout and a drawer list id=android.R.id.list");
-		}
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().add(R.id.navigation_drawer, getDrawerFragment()).commit();
+        }
 
-		mTitle = getString(R.string.app_name);
-		mTitleDrawer = getString(R.string.drawer_title);
-	}
+        if (mDrawerMenu == null || mDrawerLayout == null) {
+            throw new IllegalStateException("a DrawerActivity must have a drawer layout id=main_drawer_layout and a drawer list id=android.R.id.list");
+        }
 
-	public void closeDrawer() {
-		mDrawerLayout.closeDrawer(mDrawerMenu);
-	}
+        mTitle = getString(R.string.app_name);
+        mTitleDrawer = getString(R.string.drawer_title);
+    }
 
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawer(mDrawerMenu);
+    }
 
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
-			public void onDrawerClosed(View view) {
-				getSupportActionBar().setTitle(mTitle);
-				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-			}
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
 
-			public void onDrawerOpened(View drawerView) {
-				getSupportActionBar().setTitle(mTitleDrawer);
-				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-			}
-		};
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
 
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mTitleDrawer);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
 
-		ActionBar actionBar = getSupportActionBar();
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setDisplayShowHomeEnabled(!getClass().equals(MainActivity.class));
-		//actionBar.setDisplayUseLogoEnabled(!getClass().equals(MainActivity.class));
+        ActionBar actionBar = getSupportActionBar();
 
-		// Sync the toggle state after onRestoreInstanceState has occurred.
-		mDrawerToggle.syncState();
-	}
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(!getClass().equals(MainActivity.class));
+        //actionBar.setDisplayUseLogoEnabled(!getClass().equals(MainActivity.class));
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
-				mDrawerLayout.closeDrawer(mDrawerMenu);
-			} else {
-				mDrawerLayout.openDrawer(mDrawerMenu);
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(mDrawerMenu)) {
+                    mDrawerLayout.closeDrawer(mDrawerMenu);
+                } else {
+                    mDrawerLayout.openDrawer(mDrawerMenu);
+                }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

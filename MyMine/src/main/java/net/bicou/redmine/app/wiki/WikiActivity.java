@@ -43,9 +43,14 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 		return EmptyFragment.newInstance(R.drawable.empty_wiki);
 	}
 
+    @Override
+    protected void onPreCreate() {
+        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    }
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);

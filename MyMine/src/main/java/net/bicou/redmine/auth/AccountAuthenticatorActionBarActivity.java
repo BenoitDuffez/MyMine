@@ -5,7 +5,7 @@ import android.accounts.AccountManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-public class AccountAuthenticatorSherlockActivity extends ActionBarActivity {
+public class AccountAuthenticatorActionBarActivity extends ActionBarActivity {
 	private AccountAuthenticatorResponse mAccountAuthenticatorResponse = null;
 	private Bundle mResultBundle = null;
 

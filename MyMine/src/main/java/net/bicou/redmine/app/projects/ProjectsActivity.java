@@ -6,9 +6,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.Window;
+
 import com.google.analytics.tracking.android.EasyTracker;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.edit.IssueUploader;
@@ -18,6 +18,9 @@ import net.bicou.redmine.data.json.Project;
 import net.bicou.splitactivity.SplitActivity;
 
 import java.util.List;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class ProjectsActivity extends SplitActivity<ProjectsListFragment, ProjectFragment> implements AsyncTaskFragment.TaskFragmentCallbacks {
 	public static final int ACTION_LOAD_PROJECT_CARDS = 0;
@@ -47,9 +50,14 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 		return super.onOptionsItemSelected(item);
 	}
 
+    @Override
+    protected void onPreCreate() {
+        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    }
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);

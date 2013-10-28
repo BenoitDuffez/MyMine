@@ -34,19 +34,19 @@
 
         <!-- Native + AppCompat pairs -->
         <!--<item name="activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>-->
-        <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
+        <!--<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>-->
 
         <!--<item name="editTextBackground">@drawable/edit_text_holo_light</item>-->
-        <item name="android:editTextBackground">@drawable/edit_text_holo_light</item>
+        <!--<item name="android:editTextBackground">@drawable/edit_text_holo_light</item>-->
 
         <!--<item name="fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>-->
-        <item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>
+        <!--<item name="android:fastScrollThumbDrawable">@drawable/fastscroll_thumb_holo</item>-->
 
         <item name="listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
         <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
 
         <!--<item name="dropDownSpinnerStyle">@style/SpinnerMyMineTheme.DropDown</item>-->
-        <item name="android:dropDownSpinnerStyle">@style/SpinnerMyMineTheme.DropDown</item>
+        <!--<item name="android:dropDownSpinnerStyle">@style/SpinnerMyMineTheme.DropDown</item>-->
 
         <item name="actionDropDownStyle">@style/mymine_DropDownNav</item>
         <item name="android:actionDropDownStyle">@style/mymine_DropDownNav</item>

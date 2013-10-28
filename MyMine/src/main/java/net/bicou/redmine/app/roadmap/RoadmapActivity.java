@@ -53,9 +53,14 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 		return EmptyFragment.newInstance(R.drawable.roadmaps_empty_fragment);
 	}
 
+    @Override
+    protected void onPreCreate() {
+        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    }
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
