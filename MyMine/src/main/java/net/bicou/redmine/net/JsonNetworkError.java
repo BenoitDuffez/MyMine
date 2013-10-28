@@ -17,6 +17,7 @@ public abstract class JsonNetworkError {
 	public Exception exception;
 	public X509Certificate[] chain;
 	public int httpResponseCode;
+	public String json;
 
 	public abstract void displayCrouton(Activity activity, ViewGroup viewGroup);
 

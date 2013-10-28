@@ -30,6 +30,7 @@ public class JsonUploader extends JsonNetworkManager {
 
 		String json = downloadJson();
 		if (mError != null) {
+			mError.json = json;
 			return mError;
 		}
 

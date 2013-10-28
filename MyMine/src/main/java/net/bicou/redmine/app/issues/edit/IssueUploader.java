@@ -4,18 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssueFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.CalendarDeserializer;
+import net.bicou.redmine.data.json.ErrorsList;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.json.VersionStatusDeserializer;
@@ -26,8 +26,14 @@ import net.bicou.redmine.net.upload.IssueSerializer;
 import net.bicou.redmine.net.upload.JsonUploader;
 import net.bicou.redmine.net.upload.ObjectSerializer;
 import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.Util;
+
+import org.apache.http.HttpStatus;
 
 import java.util.Calendar;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 /**
  * Helper class to handle issue uploads
@@ -49,12 +55,16 @@ public class IssueUploader {
 	public static final String KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON = "net.bicou.redmine.app.issues.IssueUploadSuccessful";
 
 	/**
+	 * If set in a Bundle, the activity that receives it should display an error Crouton which message is contained in the bundle at that key
+	 */
+	public static final String KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON = "net.bicou.redmine.app.issues.IssueUploadSuccessful";
+
+	/**
 	 * Add or edit an issue
 	 *
 	 * @param applicationContext Required for network operations (SSL) and DB access
 	 * @param params             Bundle that contains the issue as a JSON string, the issue modification notes if it's an edit, and the issue action (see {@link
 	 *                           #ISSUE_ACTION}
-	 *
 	 * @return The server's response, or a {@link net.bicou.redmine.net.JsonNetworkError}
 	 */
 	public static Object uploadIssue(final Context applicationContext, final Bundle params) {
@@ -79,92 +89,134 @@ public class IssueUploader {
 	public static void handleAddEdit(Activity resultHolder, Bundle params, Object result) {
 		L.d("Upload issue json: " + result);
 
+		final Bundle args = doHandleAddEdit(resultHolder, params, result);
+		if (args.containsKey(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON)) {
+			// Re-open the edit issue activity
+			Intent intent = new Intent(resultHolder, EditIssueActivity.class);
+			intent.putExtra(IssueFragment.KEY_ISSUE_JSON, params.getString(IssueFragment.KEY_ISSUE_JSON));
+			intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, args.getString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON));
+			resultHolder.startActivity(intent);
+		} else if (resultHolder instanceof IssuesActivity) {
+			// If we're already on the issues activity, let it handle the new issue to display
+			((IssuesActivity) resultHolder).selectContent(args);
+			Crouton.makeText(resultHolder, resultHolder.getString(R.string.issue_upload_successful), Style.CONFIRM).show();
+		} else {
+			// Otherwise, start it from scratch
+			Intent intent = new Intent(resultHolder, IssuesActivity.class);
+			intent.putExtras(args);
+			intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON, true);
+			resultHolder.startActivity(intent);
+		}
+	}
+
+	/**
+	 * Handle the result and provide feedback
+	 *
+	 * @param resultHolder The activity that will receive the UI notification to the user
+	 * @param params       The task launching params
+	 * @param result       The server's response
+	 * @return A bundle used to update the UI after this operation
+	 */
+	private static Bundle doHandleAddEdit(Activity resultHolder, Bundle params, Object result) {
+		Bundle args = new Bundle();
+
 		// Network error?
 		if (result instanceof JsonNetworkError) {
-			final String errorMessage = String.format(resultHolder.getString(R.string.issue_upload_failed), ((JsonNetworkError) result).getMessage(resultHolder));
-			Crouton.makeText(resultHolder, errorMessage, Style.ALERT).show();
+			final JsonNetworkError networkError = (JsonNetworkError) result;
+			final String errorMessage;
+			if (networkError.httpResponseCode == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
+				// The server understood but returned an error
+				ErrorsList errorsList = new Gson().fromJson(networkError.json, ErrorsList.class);
+				if (errorsList != null && errorsList.errors != null && errorsList.errors.size() > 0) {
+					String[] errors = errorsList.errors.toArray(new String[errorsList.errors.size()]);
+					errorMessage = String.format(resultHolder.getString(R.string.issue_upload_failed), Util.join(errors, ", "));
+				} else {
+					final String msg = networkError.getMessage(resultHolder) + " (" + networkError.json + ")";
+					errorMessage = String.format(resultHolder.getString(R.string.issue_upload_failed), msg);
+				}
+			} else {
+				// The server didn't reply or we didn't understand each other
+				errorMessage = String.format(resultHolder.getString(R.string.issue_upload_failed), networkError.getMessage(resultHolder));
+			}
+			args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
+			return args;
 		}
-		// Response error?
-		else if (!TextUtils.isEmpty((CharSequence) result)) {
-			String errorMessage = resultHolder.getString(R.string.issue_upload_failed, (String) result);
-			Crouton.makeText(resultHolder, errorMessage, Style.ALERT).show();
-			L.e("Unable to upload issue. Result=" + result + " params=" + params, null);
-		}
-		// Success!
-		else {
-			// Params contains the data necessary to open the issues activity (notably, the server ID)
-			if (params != null) {
-				// Retrieve server (used to display the issue later on)
-				Issue uploadedIssue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
-				Server server = uploadedIssue.server;
+		// Params contains the data necessary to open the issues activity (notably, the server ID)
+		else if (params != null) {
+			// Retrieve server (used to display the issue later on)
+			Issue uploadedIssue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
+			Server server = uploadedIssue.server;
 
-				// Retrieve the issue as understood by the server
-				String json = (String) result;
-				Issue issue;
+			// Retrieve the issue as understood by the server
+			String json = (String) result;
+			Issue issue;
 
-				try {
-					// Parse the server's response
-					final int start = json.indexOf(":") + 1;
-					final int end = json.lastIndexOf("}");
-					json = json.substring(start, end);
+			try {
+				// Parse the server's response
+				final int start = json.indexOf(":") + 1;
+				final int end = json.lastIndexOf("}");
+				json = json.substring(start, end);
 
-					Object response = parseJson(json);
-					if (response == null || response instanceof JsonDownloadError) {
-						final String msg = response == null ? resultHolder.getString(R.string.err_empty_response) : ((JsonDownloadError) response).getMessage
-								(resultHolder);
-						final String errorMessage = resultHolder.getString(R.string.issue_upload_failed, msg);
-						Crouton.makeText(resultHolder, errorMessage, Style.ALERT).show();
-						L.e("Shouldn't happen! params=" + params + " result=" + result, null);
-						return;
-					}
-
-					issue = (Issue) response;
-					issue.server = server;
-				} catch (Exception e) {
-					// In case of failure (likely to be an empty response), we'll consider our edit to be successful
-					issue = uploadedIssue;
-					L.e("The server's response wasn't expected!" + e);
+				Object response = parseJson(json);
+				if (response == null || response instanceof JsonDownloadError) {
+					final String msg = response == null ? resultHolder.getString(R.string.err_empty_response) : ((JsonDownloadError) response).getMessage(resultHolder);
+					final String errorMessage = resultHolder.getString(R.string.issue_upload_failed, msg);
+			args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
+					L.e("Shouldn't happen! params=" + params + " result=" + result, null);
+					return args;
 				}
 
-				// Handle add/edit of issue
-				if (params.containsKey(ISSUE_ACTION)) {
-					IssuesDbAdapter db = new IssuesDbAdapter(resultHolder);
-					db.open();
-					switch (params.getInt(ISSUE_ACTION)) {
+				issue = (Issue) response;
+				issue.server = server;
+			} catch (Exception e) {
+				// In case of failure:
+				switch (params.getInt(ISSUE_ACTION)) {
+					// if it's a creation, it's likely to be an error message, so we'll display it
+					case CREATE_ISSUE:
+						String errorMessage = resultHolder.getString(R.string.issue_upload_failed, (String) result);
+			args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
+						L.e("Unable to upload issue. Result=" + result + " params=" + params, null);
+						return args;
+
+					// if it's an edit, it's likely to be an empty response, so we'll consider our edit to be successful
+					case EDIT_ISSUE:
+						issue = uploadedIssue;
+						L.e("The server's response wasn't expected!" + e);
+						break;
+
+					default:
+						throw new IllegalArgumentException("Unhandled case constant!");
+				}
+			}
+
+			// Handle add/edit of issue
+			if (params.containsKey(ISSUE_ACTION)) {
+				IssuesDbAdapter db = new IssuesDbAdapter(resultHolder);
+				db.open();
+				switch (params.getInt(ISSUE_ACTION)) {
 					case CREATE_ISSUE:
 						db.insert(issue);
 						break;
 					case EDIT_ISSUE:
 						db.update(issue);
 						break;
-					}
-					db.close();
 				}
-
-				// Prepare args to open issues activity showing that issue
-				Bundle args = new Bundle();
-				args.putLong(Constants.KEY_ISSUE_ID, issue.id);
-				args.putLong(Constants.KEY_SERVER_ID, issue.server.rowId);
-				args.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(issue, Issue.class));
-
-				// If we're already on the issues activity, let it handle the new issue to display
-				if (resultHolder instanceof IssuesActivity) {
-					((IssuesActivity) resultHolder).selectContent(args);
-					Crouton.makeText(resultHolder, resultHolder.getString(R.string.issue_upload_successful), Style.CONFIRM).show();
-				}
-				// Otherwise, start it from scratch
-				else {
-					Intent intent = new Intent(resultHolder, IssuesActivity.class);
-					intent.putExtras(args);
-					intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON, true);
-					resultHolder.startActivity(intent);
-				}
+				db.close();
 			}
-			// No params, but yet successful? Doesn't matter, display a nice crouton
-			else {
-				Crouton.makeText(resultHolder, resultHolder.getString(R.string.issue_upload_successful), Style.CONFIRM).show();
-				L.e("Shouldn't happen! params=" + params, null);
-			}
+
+			// Prepare args to open issues activity showing that issue
+			args.putLong(Constants.KEY_ISSUE_ID, issue.id);
+			args.putLong(Constants.KEY_SERVER_ID, issue.server.rowId);
+			args.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(issue, Issue.class));
+
+			return args;
+		}
+		// No params, but yet successful? Doesn't matter, display a nice crouton
+		else {
+			final String errorMessage = resultHolder.getString(R.string.issue_upload_successful);
+			args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
+			L.e("Shouldn't happen! params=" + params, null);
+			return args;
 		}
 	}
 
@@ -207,7 +259,6 @@ public class IssueUploader {
 	 *
 	 * @param applicationContext Required for network operations (SSL) and DB access
 	 * @param issue              The issue to be deleted
-	 *
 	 * @return The server's response, or a {@link net.bicou.redmine.net.JsonNetworkError}
 	 */
 	public static Object deleteIssue(final Context applicationContext, final Issue issue) {

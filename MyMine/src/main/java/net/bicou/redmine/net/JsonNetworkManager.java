@@ -195,7 +195,11 @@ public abstract class JsonNetworkManager {
 				mError = new JsonDownloadError(JsonDownloadError.ErrorType.TYPE_NETWORK);
 				mError.httpResponseCode = statusCode;
 				mError.setMessage(R.string.err_http, "HTTP " + statusCode + ": " + resp.getStatusLine().getReasonPhrase());
-				return null;
+
+				// Special case for HTTP 422: it contains a content
+				if (statusCode != HttpStatus.SC_UNPROCESSABLE_ENTITY) {
+					return null;
+				}
 			}
 
 			// Handle proper incoming encoding (GZIP?)

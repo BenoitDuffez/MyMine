@@ -19,9 +19,9 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -54,6 +54,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 /**
  * Created by bicou on 02/08/13.
@@ -180,13 +183,18 @@ public class EditIssueFragment extends TrackedFragment {
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		L.d("");
+		saveIssueChanges(true);
 		outState.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(mIssue, Issue.class));
 	}
 
 	/**
 	 * Updates the {@link #mIssue} object with the values from the form widgets
+	 *
+	 * @param isSilent If true, this method will not bug the user, otherwise it may display a Crouton if the form is not properly filled
+	 * @return true if the form could be validated, false if there is an input error
+	 * @throws java.lang.IllegalArgumentException when the form couldn't be parsed
 	 */
-	private boolean saveIssueChanges() {
+	private boolean saveIssueChanges(boolean isSilent) {
 		// Spinners, 'assigned to', description, target/start dates are automatically saved into #mIssue when the widgets are modified by the user
 		// So, let's get the remaining data from the form
 		mIssue.done_ratio = 10 * mPercentDone.getProgress();
@@ -212,14 +220,20 @@ public class EditIssueFragment extends TrackedFragment {
 					s = Integer.parseInt(matcher.group(3));
 				}
 				if (m > 60 || s > 60 || h < 0 || m < 0 || s < 0) {
-					throw new IllegalArgumentException("This message will never, ever be seen");
+					if (!isSilent) {
+						throw new IllegalArgumentException("This message will never, ever be seen");
+					}
 				}
 				mIssue.estimated_hours = h + ((double) m) / 60 + ((double) s) / 3600;
 			} else {
-				throw new IllegalArgumentException("This message will never, ever be seen");
+				if (!isSilent) {
+					throw new IllegalArgumentException("This message will never, ever be seen");
+				}
 			}
 		} catch (Exception e) {
-			Crouton.makeText(getActivity(), getString(R.string.issue_edit_estimated_hours_parse_error), Style.ALERT, mMainLayout).show();
+			if (!isSilent) {
+				Crouton.makeText(getActivity(), getString(R.string.issue_edit_estimated_hours_parse_error), Style.ALERT, mMainLayout).show();
+			}
 			return false;
 		}
 
@@ -230,7 +244,7 @@ public class EditIssueFragment extends TrackedFragment {
 	 * Triggered when the user chooses to commit the changes made to the form (create or edit issue)
 	 */
 	private void saveIssueChangesAndClose() {
-		if (!saveIssueChanges()) {
+		if (!saveIssueChanges(false)) {
 			return;
 		}
 
@@ -253,7 +267,6 @@ public class EditIssueFragment extends TrackedFragment {
 	 *
 	 * @param context Used to open the databases
 	 * @param issue   Used to calculate the positions in the arrays of versions, priorities, statuses and trackers
-	 *
 	 * @return An object containing all the information required to fill the spinners and correctly select the appropriate item
 	 */
 	@SuppressWarnings("unchecked")
@@ -351,7 +364,6 @@ public class EditIssueFragment extends TrackedFragment {
 	 * choose a value from a spinner (for example: no specific target version)
 	 *
 	 * @param sourceArray The remaining items
-	 *
 	 * @return The array with null + all the remaining items from the source array
 	 */
 	private static ArrayList<?> getArrayWithDummy(List<?> sourceArray) {
@@ -517,21 +529,21 @@ public class EditIssueFragment extends TrackedFragment {
 	}
 
 	public void showDatePickerDialog(final View v) {
-		saveIssueChanges();
+		saveIssueChanges(true);
 		Bundle args = new Bundle();
 		Calendar cal = new GregorianCalendar();
 		switch (v.getId()) {
-		case R.id.issue_edit_due_date:
-			if (!Util.isEpoch(mIssue.due_date)) {
-				cal.setTimeInMillis(mIssue.due_date.getTimeInMillis());
-			}
-			break;
+			case R.id.issue_edit_due_date:
+				if (!Util.isEpoch(mIssue.due_date)) {
+					cal.setTimeInMillis(mIssue.due_date.getTimeInMillis());
+				}
+				break;
 
-		case R.id.issue_edit_start_date:
-			if (!Util.isEpoch(mIssue.start_date)) {
-				cal.setTimeInMillis(mIssue.start_date.getTimeInMillis());
-			}
-			break;
+			case R.id.issue_edit_start_date:
+				if (!Util.isEpoch(mIssue.start_date)) {
+					cal.setTimeInMillis(mIssue.start_date.getTimeInMillis());
+				}
+				break;
 		}
 		args.putInt(DatePickerFragment.KEY_REQUEST_ID, v.getId());
 		args.putLong(DatePickerFragment.KEY_DEFAULT_DATE, cal.getTimeInMillis());
@@ -543,20 +555,20 @@ public class EditIssueFragment extends TrackedFragment {
 
 	public void onDatePicked(final int id, final Calendar calendar) {
 		switch (id) {
-		case R.id.issue_edit_due_date:
-			mIssue.due_date.setTimeInMillis(calendar.getTimeInMillis());
-			break;
+			case R.id.issue_edit_due_date:
+				mIssue.due_date.setTimeInMillis(calendar.getTimeInMillis());
+				break;
 
-		case R.id.issue_edit_start_date:
-			mIssue.start_date.setTimeInMillis(calendar.getTimeInMillis());
-			break;
+			case R.id.issue_edit_start_date:
+				mIssue.start_date.setTimeInMillis(calendar.getTimeInMillis());
+				break;
 		}
 
 		refreshUI();
 	}
 
 	private void showEditDescriptionDialog(final View view) {
-		saveIssueChanges();
+		saveIssueChanges(true);
 		Bundle args = new Bundle();
 		args.putString(KEY_ISSUE_DESCRIPTION, mIssue.description);
 		DialogFragment newFragment = DescriptionEditorFragment.newInstance(args);
@@ -569,7 +581,7 @@ public class EditIssueFragment extends TrackedFragment {
 	}
 
 	private void showUserPickerDialog() {
-		saveIssueChanges();
+		saveIssueChanges(true);
 		Bundle args = new Bundle();
 		String userJson = mIssue.assigned_to == null || mIssue.assigned_to.id <= 0 ? "" : new Gson().toJson(mIssue.assigned_to, User.class);
 		args.putString(UserPickerFragment.KEY_USER, userJson);
