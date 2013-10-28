@@ -3,6 +3,7 @@ package net.bicou.redmine.net;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
@@ -10,6 +11,7 @@ import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import net.bicou.redmine.net.ssl.MyMineSSLSocketFactory;
 import net.bicou.redmine.net.ssl.MyMineSSLTrustManager;
 import net.bicou.redmine.util.L;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,7 +34,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 
-import javax.net.ssl.KeyManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+
+import javax.net.ssl.KeyManager;
 
 public abstract class JsonNetworkManager {
 	protected URI mURI;
