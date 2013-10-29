@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style
-            name="mymine_solid_ActionBar"
-            parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="background">@drawable/ab_solid_mymine</item>
+
+    <!--AppCompat themes-->
+
+    <style name="mymine_solid_ActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="backgroundStacked">@drawable/ab_stacked_solid_mymine</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_mymine</item>
-        <item name="progressBarStyle">@style/mymine_ProgressBar</item>
 
+        <item name="android:actionButtonStyle">@style/ButtonMyMineTheme</item>
         <item name="android:background">@drawable/ab_solid_mymine</item>
         <item name="android:progressBarStyle">@style/mymine_ProgressBar</item>
     </style>
+
+    <style name="mymine_ActionBarTabStyle" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
+        <item name="background">@drawable/tab_indicator_ab_mymine</item>
+
+        <item name="android:background">@drawable/tab_indicator_ab_mymine</item>
+    </style>
+
+
+    <!--Native themes-->
 
     <style name="mymine_transparent_ActionBar">
         <item name="background">@drawable/ab_transparent_mymine</item>
@@ -21,29 +30,15 @@
         <item name="android:progressBarStyle">@style/mymine_ProgressBar</item>
     </style>
 
-    <style
-            name="mymine_PopupMenu"
-            parent="@style/Widget.AppCompat.Light.PopupMenu">
+    <style name="mymine_PopupMenu" parent="@android:style/Widget.Holo.Light.PopupMenu">
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_mymine</item>
     </style>
 
-    <style
-            name="mymine_DropDownListView"
-            parent="@style/Widget.AppCompat.Light.ListView.DropDown">
+    <style name="mymine_DropDownListView" parent="@android:style/Widget.Holo.Light.ListView.DropDown">
         <item name="android:listSelector">@drawable/selectable_background_mymine</item>
     </style>
 
-    <style
-            name="mymine_ActionBarTabStyle"
-            parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
-        <item name="background">@drawable/tab_indicator_ab_mymine</item>
-
-        <item name="android:background">@drawable/tab_indicator_ab_mymine</item>
-    </style>
-
-    <style
-            name="mymine_DropDownNav"
-            parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+    <style name="mymine_DropDownNav"><!-- parent="@android:style/Widget.Holo.Light.Spinner.DropDown.ActionBar"-->
         <item name="background">@drawable/spinner_background_ab_mymine</item>
 
         <item name="android:background">@drawable/spinner_background_ab_mymine</item>
@@ -51,16 +46,12 @@
         <item name="android:dropDownSelector">@drawable/selectable_background_mymine</item>
     </style>
 
-    <style
-            name="mymine_ProgressBar"
-            parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+    <style name="mymine_ProgressBar" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_mymine</item>
     </style>
 
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->
-    <style
-            name="Theme.mymine.widget"
-            parent="@style/Theme.AppCompat">
+    <style name="Theme.mymine.widget" parent="@style/Theme.AppCompat">
         <item name="popupMenuStyle">@style/mymine_PopupMenu</item>
         <item name="dropDownListViewStyle">@style/mymine_DropDownListView</item>
 
@@ -70,70 +61,55 @@
 
 
     <!-- Generated with http://android-holo-colors.com -->
-    <style
-            name="ButtonMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.ActionButton">
+    <style name="ButtonMyMineTheme" parent="@android:style/Widget.Holo.Light.ActionButton">
         <item name="android:background">@drawable/btn_default_holo_light</item>
     </style>
 
-    <style
-            name="ImageButtonMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.ImageButton">
+    <style name="ImageButtonMyMineTheme" parent="@android:style/Widget.Holo.Light.ImageButton">
         <item name="android:background">@drawable/btn_default_holo_light</item>
     </style>
 
-    <style
-            name="SpinnerMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.Spinner">
+    <style name="SpinnerMyMineTheme" parent="@android:style/Widget.Holo.Light.Spinner">
         <item name="android:background">@drawable/spinner_background_holo_light</item>
         <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
     </style>
 
-    <style
-            name="ProgressBarMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
+    <style name="ProgressBarMyMineTheme" parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_holo_light</item>
-        <item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_holo_light</item>
+        <item name="android:indeterminateDrawable">
+            @drawable/progress_indeterminate_horizontal_holo_light
+        </item>
     </style>
 
-    <style
-            name="SeekBarMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.SeekBar">
-        <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
-        <item name="android:indeterminateDrawable">@drawable/scrubber_progress_horizontal_holo_light</item>
+    <style name="SeekBarMyMineTheme" parent="@android:style/Widget.Holo.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_light
+        </item>
+        <item name="android:indeterminateDrawable">
+            @drawable/scrubber_progress_horizontal_holo_light
+        </item>
         <item name="android:thumb">@drawable/scrubber_control_selector_holo_light</item>
     </style>
 
-    <style
-            name="RatingBarMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.RatingBar">
+    <style name="RatingBarMyMineTheme" parent="@android:style/Widget.Holo.Light.RatingBar">
         <item name="android:progressDrawable">@drawable/ratingbar_full_holo_light</item>
         <item name="android:indeterminateDrawable">@drawable/ratingbar_full_holo_light</item>
     </style>
 
-    <style
-            name="RatingBarBigMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.RatingBar.Indicator">
+    <style name="RatingBarBigMyMineTheme" parent="@android:style/Widget.Holo.Light.RatingBar.Indicator">
         <item name="android:progressDrawable">@drawable/ratingbar_holo_light</item>
         <item name="android:indeterminateDrawable">@drawable/ratingbar_holo_light</item>
     </style>
 
-    <style
-            name="RatingBarSmallMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.RatingBar.Small">
+    <style name="RatingBarSmallMyMineTheme" parent="@android:style/Widget.Holo.Light.RatingBar.Small">
         <item name="android:progressDrawable">@drawable/ratingbar_small_holo_light</item>
         <item name="android:indeterminateDrawable">@drawable/ratingbar_small_holo_light</item>
     </style>
 
-    <style
-            name="ToggleMyMineTheme"
-            parent="@android:style/Widget.Holo.Light.Button.Toggle">
+    <style name="ToggleMyMineTheme" parent="@android:style/Widget.Holo.Light.Button.Toggle">
         <item name="android:background">@drawable/btn_toggle_holo_light</item>
     </style>
 
-    <style
-            name="MyMineTabPageIndicator.Text"
-            parent="@android:style/TextAppearance.Medium">
+    <style name="MyMineTabPageIndicator.Text" parent="@android:style/TextAppearance.Medium">
         <item name="android:typeface">monospace</item>
     </style>
 </resources>
