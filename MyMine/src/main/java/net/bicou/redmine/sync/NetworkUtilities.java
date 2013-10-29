@@ -101,53 +101,44 @@ final public class NetworkUtilities {
 	public static UsersList syncUsersHack(Context ctx, Server server, Project project) {
 		// TODO: this fails because the page is not designed to work as a REST API so it ignores the key paramter
 		/*
-		Here's an example of the HTML code of /project/<id>/issues/new:
+		Here's an example of the HTML code of /watchers/autocomplete_for_user:
 
-		<p><label for="issue_assigned_to_id">Assignee</label><select id="issue_assigned_to_id" name="issue[assigned_to_id]"><option value=""></option>
-		<option value="3">&lt;&lt; me &gt;&gt;</option><option value="3">Benoit Duffez</option></select></p>
-
+	<label><input id="watcher_user_ids_" name="watcher[user_ids][]" type="checkbox" value="3" /> Benoit Duffez</label>
+	<label><input id="watcher_user_ids_" name="watcher[user_ids][]" type="checkbox" value="8" /> test test</label>
 		 */
-		String uri = "projects/" + project.id + "/issues/new";
+
+		String uri = "watchers/autocomplete_for_user";
 		String html = new JsonDownloader<String>(String.class).fetchObject(ctx, server, uri);
 		if (TextUtils.isEmpty(html)) {
 			return null;
 		}
 
-		int pos = html.indexOf("<select id=\"issue_assigned_to_id\"");
-		if (pos >= 0 && pos < html.length()) {
-			html = html.substring(pos);
-		} else {
-			return null;
-		}
-		pos = html.indexOf("</select>");
-		if (pos >= 0 && pos < html.length()) {
-			html = html.substring(pos);
-		} else {
-			return null;
-		}
+		String[] lines = html.split("</label>");
+		Pattern userId = Pattern.compile("value=\"([0-9]+)\"");
+		Pattern userName = Pattern.compile("/>.+\\$");
 
 		UsersList usersList = new UsersList();
 		List<User> users = new ArrayList<User>();
 
-		Pattern pattern = Pattern.compile("<option value=\"([0-9]+)\">([^<]+)</option>");
-		Matcher matcher = pattern.matcher(html);
-		User user;
+		Matcher matcher;
 		String[] name;
-		while (matcher.find()) {
-			user = new User();
-			user.id = Long.parseLong(matcher.group(1));
-			name = matcher.group(2).split(" ");
-			user.firstname = name[0];
-			name[0] = "";
-			user.lastname = Util.join(name, " ").trim();
-
-			// Ensure there's no duplicate. Assume the latest occurrence to be the correct one
-			for (User u : users) {
-				if (u.id == user.id) {
-					users.remove(u);
+		User user;
+		long uid;
+		for (String line : lines) {
+			matcher = userId.matcher(line);
+			if (matcher.find()) {
+				uid = Long.parseLong(matcher.group(1));
+				matcher = userName.matcher(line);
+				if (matcher.find()) {
+					user = new User();
+					user.id = uid;
+					name = matcher.group(1).split(" ");
+					user.firstname = name[0].trim();
+					name[0] = "";
+					user.lastname = Util.join(name, " ").trim();
+					users.add(user);
 				}
 			}
-			users.add(user);
 		}
 
 		usersList.addObjects(users);
