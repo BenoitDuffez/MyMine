@@ -4,7 +4,7 @@
 <resources>
 
     <!-- Namespace declaration -->
-    <style name="MyMine"/>
+    <style name="MyMine" />
 
     <!-- Defaults for all android versions -->
     <style name="MyMine.Base" parent="Theme.SplitActivity.Light">
@@ -57,14 +57,14 @@
         <item name="actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
         <item name="android:actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
 
-        <item name="actionBarItemBackground">@drawable/selectable_background_mymine</item>
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_mymine</item>
+        <item name="actionBarItemBackground">@drawable/ab_background</item>
+        <item name="android:actionBarItemBackground">@drawable/ab_background</item>
 
         <item name="popupMenuStyle">@style/mymine_PopupMenu</item>
         <item name="android:popupMenuStyle">@style/mymine_PopupMenu</item>
 
-        <item name="selectableItemBackground">@drawable/ab_background</item>
-        <item name="android:selectableItemBackground">@drawable/ab_background</item>
+        <item name="selectableItemBackground">@drawable/selectable_background_mymine</item>
+        <item name="android:selectableItemBackground">@drawable/selectable_background_mymine</item>
 
         <!-- SplitActivity styles -->
         <item name="leftPaneStyle">@style/LeftPaneStyle</item>
@@ -81,6 +81,6 @@
     </style>
 
     <!-- Actual theme. Must be overriden by newer version to take advantage of new features -->
-    <style name="Theme.MyMine" parent="MyMine.Base"/>
+    <style name="Theme.MyMine" parent="MyMine.Base" />
 
 </resources>
