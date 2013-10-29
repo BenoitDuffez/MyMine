@@ -113,9 +113,9 @@ final public class NetworkUtilities {
 			return null;
 		}
 
-		String[] lines = html.split("</label>");
+		String[] lines = html.split("\n");
 		Pattern userId = Pattern.compile("value=\"([0-9]+)\"");
-		Pattern userName = Pattern.compile("/>.+\\$");
+		Pattern userName = Pattern.compile("/>([^<]+)");
 
 		UsersList usersList = new UsersList();
 		List<User> users = new ArrayList<User>();
@@ -132,7 +132,7 @@ final public class NetworkUtilities {
 				if (matcher.find()) {
 					user = new User();
 					user.id = uid;
-					name = matcher.group(1).split(" ");
+					name = matcher.group(1).trim().split(" ");
 					user.firstname = name[0].trim();
 					name[0] = "";
 					user.lastname = Util.join(name, " ").trim();

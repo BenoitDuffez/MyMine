@@ -1,9 +1,11 @@
 package net.bicou.redmine.platform;
 
 import android.content.Context;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
+import net.bicou.redmine.util.Util;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -38,7 +40,7 @@ public class UsersManager {
 				// New, add it
 				db.insert(server, user);
 			} else {
-				userCreationDate = user.created_on.getTimeInMillis();
+				userCreationDate = Util.isEpoch(user.created_on) ? 0 : user.created_on.getTimeInMillis();
 
 				// Save current sync marker
 				if (userCreationDate > currentSyncMarker) {
@@ -46,7 +48,7 @@ public class UsersManager {
 				}
 
 				// Check status
-				if (localUser.created_on.before(user.created_on)) {
+				if (localUser.created_on.getTimeInMillis() < userCreationDate) {
 					// Outdated, update it
 					db.update(server, user);
 				} else {
