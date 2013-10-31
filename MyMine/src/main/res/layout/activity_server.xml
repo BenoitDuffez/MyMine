@@ -79,7 +79,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:minWidth="100dp"
-                android:onClick="checkServer"
                 android:text="@string/setup_button"/>
 
         <View
