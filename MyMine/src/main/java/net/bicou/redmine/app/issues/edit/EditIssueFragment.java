@@ -165,6 +165,11 @@ public class EditIssueFragment extends TrackedFragment {
 			Server server = getArguments().getParcelable(Constants.KEY_SERVER);
 			Project project = getArguments().getParcelable(Constants.KEY_PROJECT);
 			mIssue = new Issue(server, project);
+
+			// Hide avatar
+			mAuthorAvatar.setVisibility(View.GONE);
+			mAuthorName.setVisibility(View.GONE);
+			mParentIssue.setVisibility(View.GONE);
 		}
 
 		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), EditIssueActivity.ACTION_LOAD_ISSUE_DATA, mIssue);
