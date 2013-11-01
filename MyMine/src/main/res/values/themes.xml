@@ -7,7 +7,8 @@
     <style name="MyMine" />
 
     <!-- Defaults for all android versions -->
-    <style name="MyMine.Base" parent="Theme.SplitActivity.Light">
+    <style name="MyMine.Base"
+        parent="Theme.SplitActivity.Light">
 
         <!-- Compatible from Gingerbread -->
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMyMineTheme</item>
@@ -51,11 +52,11 @@
         <item name="actionDropDownStyle">@style/mymine_DropDownNav</item>
         <item name="android:actionDropDownStyle">@style/mymine_DropDownNav</item>
 
-        <item name="actionBarStyle">@style/mymine_solid_ActionBar</item>
-        <item name="android:actionBarStyle">@style/mymine_solid_ActionBar</item>
+        <item name="actionBarStyle">@style/MyMine.ActionBarStyle</item>
+        <item name="android:actionBarStyle">@style/MyMine.ActionBarStyle</item>
 
-        <item name="actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
-        <item name="android:actionBarTabStyle">@style/mymine_ActionBarTabStyle</item>
+        <item name="actionBarTabStyle">@style/MyMine.ActionBarTabStyle</item>
+        <item name="android:actionBarTabStyle">@style/MyMine.ActionBarTabStyle</item>
 
         <item name="actionBarItemBackground">@drawable/ab_background</item>
         <item name="android:actionBarItemBackground">@drawable/ab_background</item>
@@ -81,6 +82,7 @@
     </style>
 
     <!-- Actual theme. Must be overriden by newer version to take advantage of new features -->
-    <style name="Theme.MyMine" parent="MyMine.Base" />
+    <style name="Theme.MyMine"
+        parent="MyMine.Base" />
 
 </resources>

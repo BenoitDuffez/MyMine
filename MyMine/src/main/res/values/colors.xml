@@ -25,6 +25,7 @@
     <color name="faded_text">#666666</color>
     <color name="actionbar_item_active">#88FFFFFF</color>
     <color name="text_light">#AAA</color>
+    <color name="actionbar_text">#FFFFFF</color>
 
     <color name="pager_indicator_background">#33c90000</color>
     <color name="issue_closed_background">#11000000</color>
