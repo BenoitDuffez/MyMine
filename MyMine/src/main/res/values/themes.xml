@@ -8,7 +8,7 @@
 
     <!-- Defaults for all android versions -->
     <style name="MyMine.Base"
-        parent="Theme.SplitActivity.Light">
+        parent="Theme.SplitActivity.Light.DarkActionBar">
 
         <!-- Compatible from Gingerbread -->
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMyMineTheme</item>
