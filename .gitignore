@@ -7,3 +7,4 @@ gen
 MyMine/build
 vendor/**/build
 local.properties
+MyMine/signing.properties
