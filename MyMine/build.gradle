@@ -15,8 +15,8 @@ dependencies {
     }
 
     // Support Libraries
-    compile 'com.android.support:support-v4:18.0.+'
-    compile 'com.android.support:appcompat-v7:18.0.+'
+    compile 'com.android.support:support-v4:19.0.+'
+    compile 'com.android.support:appcompat-v7:19.0.+'
 
     // Projects
     compile project(':SplitActivity')
@@ -40,21 +40,21 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.0.1"
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 18
+        targetSdkVersion 19
     }
 
     signingConfigs {
-        release 
+        release
     }
 
     buildTypes {
         release {
-             signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
     }
 
@@ -62,10 +62,10 @@ android {
 
 def Properties props = new Properties()
 def propFile = file('signing.properties')
-if (propFile.canRead()){
+if (propFile.canRead()) {
     props.load(new FileInputStream(propFile))
 
-    if (props!=null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
+    if (props != null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
             props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
 
         println 'RELEASE BUILD SIGNING'
