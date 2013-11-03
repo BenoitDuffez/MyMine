@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="issue_listitem_project_backgrounds">
+        <item>@drawable/issue_listitem_project_background_1</item>
+        <item>@drawable/issue_listitem_project_background_2</item>
+        <item>@drawable/issue_listitem_project_background_3</item>
+        <item>@drawable/issue_listitem_project_background_4</item>
+        <item>@drawable/issue_listitem_project_background_5</item>
+        <item>@drawable/issue_listitem_project_background_6</item>
+        <item>@drawable/issue_listitem_project_background_7</item>
+        <item>@drawable/issue_listitem_project_background_8</item>
+        <item>@drawable/issue_listitem_project_background_9</item>
+        <item>@drawable/issue_listitem_project_background_a</item>
+        <item>@drawable/issue_listitem_project_background_b</item>
+        <item>@drawable/issue_listitem_project_background_c</item>
+    </string-array>
+    <integer-array name="issue_listitem_project_textcolors">
+        <item>@color/issue_listitem_project_textcolor_1</item>
+        <item>@color/issue_listitem_project_textcolor_2</item>
+        <item>@color/issue_listitem_project_textcolor_3</item>
+        <item>@color/issue_listitem_project_textcolor_4</item>
+        <item>@color/issue_listitem_project_textcolor_5</item>
+        <item>@color/issue_listitem_project_textcolor_6</item>
+        <item>@color/issue_listitem_project_textcolor_7</item>
+        <item>@color/issue_listitem_project_textcolor_8</item>
+        <item>@color/issue_listitem_project_textcolor_9</item>
+        <item>@color/issue_listitem_project_textcolor_a</item>
+        <item>@color/issue_listitem_project_textcolor_b</item>
+        <item>@color/issue_listitem_project_textcolor_c</item>
+    </integer-array>
+</resources>
