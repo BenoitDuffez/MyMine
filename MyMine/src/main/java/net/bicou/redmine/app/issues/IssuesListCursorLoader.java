@@ -3,15 +3,22 @@ package net.bicou.redmine.app.issues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssuesList;
 import net.bicou.redmine.data.json.Query;
-import net.bicou.redmine.data.sqlite.*;
+import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
+import net.bicou.redmine.data.sqlite.SimpleCursorLoader;
 import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.platform.IssuesManager;
 import net.bicou.redmine.util.L;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -32,6 +39,7 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 			IssuesDbAdapter.KEY_STATUS,
 			IssuesDbAdapter.KEY_SERVER_ID,
 			IssuesDbAdapter.KEY_PROJECT,
+			IssuesDbAdapter.KEY_PROJECT_ID,
 			IssueStatusesDbAdapter.KEY_IS_CLOSED,
 	};
 	private final IssuesDbAdapter mHelper;

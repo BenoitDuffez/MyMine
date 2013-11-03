@@ -35,4 +35,6 @@
 
     <dimen name="main_pane_margin">0dp</dimen>
 
+    <dimen name="issue_listitem_project_background_radius">5dp</dimen>
+
 </resources>

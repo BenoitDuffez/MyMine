@@ -1,6 +1,8 @@
 package net.bicou.redmine.app.issues;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.support.v4.widget.CursorAdapter;
@@ -9,20 +11,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.util.L;
 import net.bicou.redmine.widget.IssuesListRelativeLayout;
 
 /**
  * CursorAdapter that will map Cursor data to a layout
  *
  * @author bicou
- *
  */
 public final class IssuesListCursorAdapter extends CursorAdapter {
 	private final Context mContext;
+	int[] backgrounds;
+	int[] textColors;
+	int numColors;
 
 	public class ViewHolder {
 		IssuesListRelativeLayout layout;
@@ -37,6 +43,17 @@ public final class IssuesListCursorAdapter extends CursorAdapter {
 	public IssuesListCursorAdapter(final Context context, final Cursor c, final boolean autoRequery) {
 		super(context, c, autoRequery);
 		mContext = context;
+		Resources res = context.getResources();
+		textColors = res.getIntArray(R.array.issue_listitem_project_textcolors);
+		TypedArray backgroundsIds = res.obtainTypedArray(R.array.issue_listitem_project_backgrounds);
+		numColors = res.getInteger(R.integer.issue_listitem_project_num_colors);
+		backgrounds = new int[numColors];
+		for (int i = 0; i < numColors && backgroundsIds != null; i++) {
+			backgrounds[i] = backgroundsIds.getResourceId(i, -1);
+		}
+		if (backgroundsIds != null) {
+			backgroundsIds.recycle();
+		}
 	}
 
 	@Override
@@ -83,6 +100,13 @@ public final class IssuesListCursorAdapter extends CursorAdapter {
 		viewHolder.targetVersion.setText(version);
 		viewHolder.status.setText(TextUtils.isEmpty(status) ? mContext.getString(R.string.issue_status_na) : status);
 		viewHolder.project.setText(cursor.getString(cursor.getColumnIndex(IssuesDbAdapter.KEY_PROJECT)));
+
+		// Customize project colors
+		Resources res = mContext.getResources();
+		int projectId = cursor.getInt(cursor.getColumnIndex(IssuesDbAdapter.KEY_PROJECT_ID));
+		L.d("project ID=" + projectId + " numColors=" + numColors + " backgroundId=" + backgrounds[projectId % numColors]);
+		viewHolder.project.setBackgroundResource(backgrounds[projectId % numColors]);
+		viewHolder.project.setTextColor(textColors[projectId % numColors]);
 
 		final boolean isClosed = "1".equals(cursor.getString(cursor.getColumnIndex(IssueStatusesDbAdapter.KEY_IS_CLOSED)));
 		viewHolder.layout.setIsClosed(isClosed);
