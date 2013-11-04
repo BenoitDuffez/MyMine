@@ -209,7 +209,13 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		Fragment content = getContentFragment();
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
+			if (isSplitScreen()) {
+				NavUtils.navigateUpFromSameTask(this);
+			} else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+				getSupportFragmentManager().popBackStack();
+			} else {
+				NavUtils.navigateUpFromSameTask(this);
+			}
 			return true;
 
 		case R.id.menu_issues_search:
@@ -465,6 +471,12 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 		case ACTION_UPLOAD_ISSUE:
 			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
+			break;
+
+		case ACTION_ISSUE_TOGGLE_FAVORITE:
+			if (isSplitScreen()) {
+				getMainFragment().refreshList();
+			}
 			break;
 		}
 	}
