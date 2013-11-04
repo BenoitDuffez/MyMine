@@ -34,29 +34,29 @@
     <color name="drawer_vertical_border">#FFF</color>
     <color name="drawer_background">#111</color>
 
-    <color name="issue_listitem_project_background_1">#F00</color>
+    <color name="issue_listitem_project_background_1">#CF00</color>
     <color name="issue_listitem_project_textcolor_1">#000</color>
-    <color name="issue_listitem_project_background_2">#00F</color>
+    <color name="issue_listitem_project_background_2">#C00F</color>
     <color name="issue_listitem_project_textcolor_2">#FFF</color>
-    <color name="issue_listitem_project_background_3">#088</color>
+    <color name="issue_listitem_project_background_3">#C088</color>
     <color name="issue_listitem_project_textcolor_3">#FFF</color>
-    <color name="issue_listitem_project_background_4">#888</color>
+    <color name="issue_listitem_project_background_4">#C888</color>
     <color name="issue_listitem_project_textcolor_4">#000</color>
-    <color name="issue_listitem_project_background_5">#880</color>
+    <color name="issue_listitem_project_background_5">#C880</color>
     <color name="issue_listitem_project_textcolor_5">#000</color>
-    <color name="issue_listitem_project_background_6">#880</color>
+    <color name="issue_listitem_project_background_6">#C880</color>
     <color name="issue_listitem_project_textcolor_6">#000</color>
-    <color name="issue_listitem_project_background_7">#808</color>
+    <color name="issue_listitem_project_background_7">#C808</color>
     <color name="issue_listitem_project_textcolor_7">#FFF</color>
-    <color name="issue_listitem_project_background_8">#004</color>
+    <color name="issue_listitem_project_background_8">#C004</color>
     <color name="issue_listitem_project_textcolor_8">#FFF</color>
-    <color name="issue_listitem_project_background_9">#222</color>
+    <color name="issue_listitem_project_background_9">#C222</color>
     <color name="issue_listitem_project_textcolor_9">#FFF</color>
-    <color name="issue_listitem_project_background_a">#C0C</color>
+    <color name="issue_listitem_project_background_a">#CC0C</color>
     <color name="issue_listitem_project_textcolor_a">#000</color>
-    <color name="issue_listitem_project_background_b">#0CC</color>
+    <color name="issue_listitem_project_background_b">#C0CC</color>
     <color name="issue_listitem_project_textcolor_b">#000</color>
-    <color name="issue_listitem_project_background_c">#CC0</color>
+    <color name="issue_listitem_project_background_c">#CCC0</color>
     <color name="issue_listitem_project_textcolor_c">#000</color>
 
 </resources>
