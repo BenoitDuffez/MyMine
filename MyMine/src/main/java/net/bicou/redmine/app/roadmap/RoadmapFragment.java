@@ -21,9 +21,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListCursorAdapter;
@@ -90,7 +93,16 @@ public class RoadmapFragment extends TrackedListFragment implements LoaderManage
 					mDescription.setText(mVersion.description);
 				}
 
-				mAdapter = new IssuesListCursorAdapter(getActivity(), null, true);
+				mAdapter = new IssuesListCursorAdapter(getActivity(), null, true, new IssuesListCursorAdapter.IssueFavoriteToggleListener() {
+					@Override
+					public void onIssueFavoriteChanged(long serverId, long issueId, boolean isFavorite) {
+						Bundle args = new Bundle();
+						args.putLong(Constants.KEY_SERVER_ID, serverId);
+						args.putLong(Constants.KEY_ISSUE_ID, issueId);
+						args.putBoolean(IssuesDbAdapter.KEY_IS_FAVORITE, isFavorite);
+						AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), RoadmapActivity.ACTION_ISSUE_TOGGLE_FAVORITE, args);
+					}
+				});
 				setListAdapter(mAdapter);
 
 				// Versions Wiki page is not implemented in Redmine
@@ -134,15 +146,9 @@ public class RoadmapFragment extends TrackedListFragment implements LoaderManage
 		}
 
 		private String buildSql() {
-			String[] cols = {
-					IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + IssueStatusesDbAdapter.KEY_IS_CLOSED,
-					IssuesDbAdapter.TABLE_ISSUES + "." + IssuesDbAdapter.KEY_DONE_RATIO,
-					IssuesDbAdapter.TABLE_ISSUES + "." + IssuesDbAdapter.KEY_ID,
-			};
+			String[] cols = { IssueStatusesDbAdapter.TABLE_ISSUE_STATUSES + "." + IssueStatusesDbAdapter.KEY_IS_CLOSED, IssuesDbAdapter.TABLE_ISSUES + "." + IssuesDbAdapter.KEY_DONE_RATIO, IssuesDbAdapter.TABLE_ISSUES + "." + IssuesDbAdapter.KEY_ID, };
 
-			String[] tables = {
-					IssuesDbAdapter.TABLE_ISSUES,
-			};
+			String[] tables = { IssuesDbAdapter.TABLE_ISSUES, };
 
 			String sql = "SELECT " + Util.join(cols, ", ");
 			sql += " FROM " + Util.join(tables, ", ");

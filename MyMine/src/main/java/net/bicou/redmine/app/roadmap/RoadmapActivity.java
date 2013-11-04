@@ -9,8 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -19,16 +21,21 @@ import net.bicou.redmine.app.RefreshProjectsTask;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
 import net.bicou.redmine.app.misc.EmptyFragment;
+import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.util.L;
 import net.bicou.splitactivity.SplitActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, RoadmapFragment> implements RoadmapsListFragment.RoadmapSelectionListener,
-		ActionBar.OnNavigationListener, RoadmapsListFragment.CurrentProjectInfo, AsyncTaskFragment.TaskFragmentCallbacks {
+public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, RoadmapFragment> implements RoadmapsListFragment.RoadmapSelectionListener, ActionBar.OnNavigationListener, RoadmapsListFragment.CurrentProjectInfo, AsyncTaskFragment.TaskFragmentCallbacks {
+	public static final int ACTION_LOAD_ROADMAP = 0;
+	public static final int ACTION_ISSUE_TOGGLE_FAVORITE = 1;
+
 	@Override
 	public void onRoadmapSelected(Version version) {
 		L.d("");
@@ -53,11 +60,11 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 		return EmptyFragment.newInstance(R.drawable.roadmaps_empty_fragment);
 	}
 
-    @Override
-    protected void onPreCreate() {
-        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    }
+	@Override
+	protected void onPreCreate() {
+		supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -230,10 +237,27 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 	}
 
 	@Override
-	public Object doInBackGround(Context context, final int action, final Object parameters) {
-		Project project = getCurrentProject();
-		if (project != null) {
-			return RoadmapsListFragment.getRoadmap(this, getCurrentProject().server, getCurrentProject());
+	public Object doInBackGround(Context applicationContext, final int action, final Object parameters) {
+		switch (action) {
+		case ACTION_LOAD_ROADMAP:
+			Project project = getCurrentProject();
+			if (project != null) {
+				return RoadmapsListFragment.getRoadmap(this, getCurrentProject().server, getCurrentProject());
+			}
+			break;
+
+		case ACTION_ISSUE_TOGGLE_FAVORITE:
+			IssuesDbAdapter idb = new IssuesDbAdapter(applicationContext);
+			idb.open();
+			ServersDbAdapter sdb = new ServersDbAdapter(idb);
+			Bundle args = (Bundle) parameters;
+			final long serverId = args.getLong(Constants.KEY_SERVER_ID);
+			final long issueId = args.getLong(Constants.KEY_ISSUE_ID);
+			Issue issue = idb.select(sdb.getServer(serverId), issueId, null);
+			issue.is_favorite = args.getBoolean(IssuesDbAdapter.KEY_IS_FAVORITE);
+			idb.update(issue);
+			idb.close();
+			break;
 		}
 		return null;
 	}
@@ -241,9 +265,13 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 	@Override
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		setSupportProgressBarIndeterminateVisibility(false);
-		RoadmapsListFragment list = getMainFragment();
-		if (list != null) {
-			list.onRoadmapLoaded((List<Version>) result);
+		switch (action) {
+		case ACTION_LOAD_ROADMAP:
+			RoadmapsListFragment list = getMainFragment();
+			if (list != null) {
+				list.onRoadmapLoaded((List<Version>) result);
+			}
+			break;
 		}
 	}
 }

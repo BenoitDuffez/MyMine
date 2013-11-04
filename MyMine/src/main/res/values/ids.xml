@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="main_drawer_layout"/>
+    <item type="id"
+          name="main_drawer_layout"/>
 
-    <item type="id" name="card_tag_menu"/>
-    <item type="id" name="card_tag_action"/>
-    <item type="id" name="card_tag_view_holder"/>
-    <item type="id" name="card_tag_card"/>
+    <item type="id"
+          name="card_tag_menu"/>
+    <item type="id"
+          name="card_tag_action"/>
+    <item type="id"
+          name="card_tag_view_holder"/>
+    <item type="id"
+          name="card_tag_card"/>
+
+    <item type="id"
+          name="issues_listitem_tag_server_id"/>
+    <item type="id"
+          name="issues_listitem_tag_issue_id"/>
 </resources>

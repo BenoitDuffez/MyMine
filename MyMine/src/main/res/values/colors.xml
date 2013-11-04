@@ -35,7 +35,7 @@
     <color name="drawer_background">#111</color>
 
     <color name="issue_listitem_project_background_1">#F00</color>
-    <color name="issue_listitem_project_textcolor_1">#FFF</color>
+    <color name="issue_listitem_project_textcolor_1">#000</color>
     <color name="issue_listitem_project_background_2">#00F</color>
     <color name="issue_listitem_project_textcolor_2">#FFF</color>
     <color name="issue_listitem_project_background_3">#088</color>
@@ -47,7 +47,7 @@
     <color name="issue_listitem_project_background_6">#880</color>
     <color name="issue_listitem_project_textcolor_6">#000</color>
     <color name="issue_listitem_project_background_7">#808</color>
-    <color name="issue_listitem_project_textcolor_7">#000</color>
+    <color name="issue_listitem_project_textcolor_7">#FFF</color>
     <color name="issue_listitem_project_background_8">#004</color>
     <color name="issue_listitem_project_textcolor_8">#FFF</color>
     <color name="issue_listitem_project_background_9">#222</color>

@@ -35,11 +35,14 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 			IssuesDbAdapter.KEY_ID + " AS " + DbAdapter.KEY_ROWID,
 			IssuesDbAdapter.KEY_SUBJECT,
 			IssuesDbAdapter.KEY_FIXED_VERSION,
+			IssuesDbAdapter.KEY_FIXED_VERSION_ID,
 			IssuesDbAdapter.KEY_DESCRIPTION,
 			IssuesDbAdapter.KEY_STATUS,
+			IssuesDbAdapter.KEY_STATUS_ID,
 			IssuesDbAdapter.KEY_SERVER_ID,
 			IssuesDbAdapter.KEY_PROJECT,
 			IssuesDbAdapter.KEY_PROJECT_ID,
+			IssuesDbAdapter.KEY_IS_FAVORITE,
 			IssueStatusesDbAdapter.KEY_IS_CLOSED,
 	};
 	private final IssuesDbAdapter mHelper;

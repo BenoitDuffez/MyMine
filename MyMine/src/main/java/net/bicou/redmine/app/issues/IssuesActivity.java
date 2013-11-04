@@ -36,6 +36,7 @@ import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
@@ -48,8 +49,7 @@ import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
-public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks,
-		ServerProjectPickerFragment.ServerProjectSelectionListener {
+public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks, ServerProjectPickerFragment.ServerProjectSelectionListener {
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
 
@@ -60,6 +60,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_ISSUE_LOAD_ATTACHMENTS = 3;
 	public static final int ACTION_DELETE_ISSUE = 4;
 	public static final int ACTION_UPLOAD_ISSUE = 5;
+	public static final int ACTION_ISSUE_TOGGLE_FAVORITE = 6;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -207,100 +208,100 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		Fragment content = getContentFragment();
 		switch (item.getItemId()) {
-			case android.R.id.home:
-				NavUtils.navigateUpFromSameTask(this);
-				return true;
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
 
-			case R.id.menu_issues_search:
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-					// For gingerbread compatibility, after it's with the action bar search view
-					onSearchRequested();
+		case R.id.menu_issues_search:
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+				// For gingerbread compatibility, after it's with the action bar search view
+				onSearchRequested();
+			}
+			return true;
+
+		case R.id.menu_issues_add:
+			showServerProjectPickerDialog();
+			return true;
+
+		case R.id.menu_issue_edit:
+			if (content != null && content instanceof IssueFragment) {
+				Issue issue = ((IssueFragment) content).getIssue();
+				if (issue != null) {
+					String json = new Gson().toJson(issue, Issue.class);
+					Intent intent = new Intent(this, EditIssueActivity.class);
+					intent.putExtra(IssueFragment.KEY_ISSUE_JSON, json);
+					startActivityForResult(intent, IssueUploader.EDIT_ISSUE);
 				}
-				return true;
+			}
+			return true;
 
-			case R.id.menu_issues_add:
-				showServerProjectPickerDialog();
-				return true;
-
-			case R.id.menu_issue_edit:
-				if (content != null && content instanceof IssueFragment) {
-					Issue issue = ((IssueFragment) content).getIssue();
-					if (issue != null) {
-						String json = new Gson().toJson(issue, Issue.class);
-						Intent intent = new Intent(this, EditIssueActivity.class);
-						intent.putExtra(IssueFragment.KEY_ISSUE_JSON, json);
-						startActivityForResult(intent, IssueUploader.EDIT_ISSUE);
-					}
-				}
-				return true;
-
-			case R.id.menu_issue_delete:
-				if (content != null && content instanceof IssueFragment) {
-					final Issue issue = ((IssueFragment) content).getIssue();
-					if (issue != null && issue.server != null && issue.id > 0) {
-						new AlertDialog.Builder(this).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(final DialogInterface dialog, final int which) {
-								AsyncTaskFragment.runTask(IssuesActivity.this, ACTION_DELETE_ISSUE, issue);
-								dialog.dismiss();
-							}
-						}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(final DialogInterface dialog, final int which) {
-								dialog.dismiss();
-							}
-						}).setMessage(getString(R.string.issue_delete_confirm_dialog)).show();
-					}
-				}
-				return true;
-
-			case R.id.menu_issue_browser:
-				if (content != null && content instanceof IssueFragment) {
-					Issue issue = ((IssueFragment) content).getIssue();
-					if (issue != null) {
-						String url = issue.server.serverUrl;
-						if (!url.endsWith("/")) {
-							url += "/";
+		case R.id.menu_issue_delete:
+			if (content != null && content instanceof IssueFragment) {
+				final Issue issue = ((IssueFragment) content).getIssue();
+				if (issue != null && issue.server != null && issue.id > 0) {
+					new AlertDialog.Builder(this).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(final DialogInterface dialog, final int which) {
+							AsyncTaskFragment.runTask(IssuesActivity.this, ACTION_DELETE_ISSUE, issue);
+							dialog.dismiss();
 						}
-						url += "issues/" + issue.id;
-
-						final Intent i = new Intent(Intent.ACTION_VIEW);
-						i.setData(Uri.parse(url));
-						startActivity(i);
-					}
-				} else {
-					supportInvalidateOptionsMenu();
-				}
-				return true;
-
-			case R.id.menu_issues_sort:
-				final IssuesOrderingFragment issuesOrder = IssuesOrderingFragment.newInstance(mCurrentOrder);
-				issuesOrder.setOrderSelectionListener(new IssuesOrderSelectionListener() {
-					@Override
-					public void onOrderColumnsSelected(final IssuesOrder orderColumns) {
-						saveNewColumnsOrder(orderColumns);
-
-						IssuesListFragment list = getMainFragment();
-						if (list != null) {
-							list.updateColumnsOrder(orderColumns);
-						} else {
-							Bundle args = getMainFragmentArgs(null);
-							if (orderColumns != null) {
-								orderColumns.saveTo(args);
-							}
-							showMainFragment(args);
+					}).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(final DialogInterface dialog, final int which) {
+							dialog.dismiss();
 						}
+					}).setMessage(getString(R.string.issue_delete_confirm_dialog)).show();
+				}
+			}
+			return true;
+
+		case R.id.menu_issue_browser:
+			if (content != null && content instanceof IssueFragment) {
+				Issue issue = ((IssueFragment) content).getIssue();
+				if (issue != null) {
+					String url = issue.server.serverUrl;
+					if (!url.endsWith("/")) {
+						url += "/";
 					}
-				});
-				issuesOrder.show(getSupportFragmentManager(), "issues_order");
-				return true;
+					url += "issues/" + issue.id;
 
-			case R.id.menu_issues_refresh:
-				AsyncTaskFragment.runTask(this, ACTION_REFRESH_ISSUES, null);
-				return true;
+					final Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse(url));
+					startActivity(i);
+				}
+			} else {
+				supportInvalidateOptionsMenu();
+			}
+			return true;
 
-			default:
-				return super.onOptionsItemSelected(item);
+		case R.id.menu_issues_sort:
+			final IssuesOrderingFragment issuesOrder = IssuesOrderingFragment.newInstance(mCurrentOrder);
+			issuesOrder.setOrderSelectionListener(new IssuesOrderSelectionListener() {
+				@Override
+				public void onOrderColumnsSelected(final IssuesOrder orderColumns) {
+					saveNewColumnsOrder(orderColumns);
+
+					IssuesListFragment list = getMainFragment();
+					if (list != null) {
+						list.updateColumnsOrder(orderColumns);
+					} else {
+						Bundle args = getMainFragmentArgs(null);
+						if (orderColumns != null) {
+							orderColumns.saveTo(args);
+						}
+						showMainFragment(args);
+					}
+				}
+			});
+			issuesOrder.show(getSupportFragmentManager(), "issues_order");
+			return true;
+
+		case R.id.menu_issues_refresh:
+			AsyncTaskFragment.runTask(this, ACTION_REFRESH_ISSUES, null);
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -360,30 +361,43 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	@Override
 	public Object doInBackGround(Context applicationContext, final int action, final Object parameters) {
 		switch (action) {
-			case ACTION_REFRESH_ISSUES:
-				IssuesSyncAdapterService.Synchronizer synchronizer = new IssuesSyncAdapterService.Synchronizer(applicationContext);
-				ServersDbAdapter db = new ServersDbAdapter(applicationContext);
-				db.open();
-				for (Server server : db.selectAll()) {
-					synchronizer.synchronizeIssues(server, null, 0);
-				}
-				db.close();
-				break;
+		case ACTION_REFRESH_ISSUES:
+			IssuesSyncAdapterService.Synchronizer synchronizer = new IssuesSyncAdapterService.Synchronizer(applicationContext);
+			ServersDbAdapter db = new ServersDbAdapter(applicationContext);
+			db.open();
+			for (Server server : db.selectAll()) {
+				synchronizer.synchronizeIssues(server, null, 0);
+			}
+			db.close();
+			break;
 
-			case ACTION_ISSUE_LOAD_ISSUE:
-				return IssueOverviewFragment.loadIssue(applicationContext, (Bundle) parameters);
+		case ACTION_ISSUE_LOAD_ISSUE:
+			return IssueOverviewFragment.loadIssue(applicationContext, (Bundle) parameters);
 
-			case ACTION_ISSUE_LOAD_OVERVIEW:
-				return IssueOverviewFragment.loadIssueOverview(applicationContext, (Issue) parameters);
+		case ACTION_ISSUE_LOAD_OVERVIEW:
+			return IssueOverviewFragment.loadIssueOverview(applicationContext, (Issue) parameters);
 
-			case ACTION_ISSUE_LOAD_ATTACHMENTS:
-				return IssueOverviewFragment.loadIssueAttachments(applicationContext, (Issue) parameters);
+		case ACTION_ISSUE_LOAD_ATTACHMENTS:
+			return IssueOverviewFragment.loadIssueAttachments(applicationContext, (Issue) parameters);
 
-			case ACTION_DELETE_ISSUE:
-				return IssueUploader.deleteIssue(this, (Issue) parameters);
+		case ACTION_DELETE_ISSUE:
+			return IssueUploader.deleteIssue(this, (Issue) parameters);
 
-			case ACTION_UPLOAD_ISSUE:
-				return IssueUploader.uploadIssue(applicationContext, (Bundle) parameters);
+		case ACTION_UPLOAD_ISSUE:
+			return IssueUploader.uploadIssue(applicationContext, (Bundle) parameters);
+
+		case ACTION_ISSUE_TOGGLE_FAVORITE:
+			IssuesDbAdapter idb = new IssuesDbAdapter(applicationContext);
+			idb.open();
+			ServersDbAdapter sdb = new ServersDbAdapter(idb);
+			Bundle args = (Bundle) parameters;
+			final long serverId = args.getLong(Constants.KEY_SERVER_ID);
+			final long issueId = args.getLong(Constants.KEY_ISSUE_ID);
+			Issue issue = idb.select(sdb.getServer(serverId), issueId, null);
+			issue.is_favorite = args.getBoolean(IssuesDbAdapter.KEY_IS_FAVORITE);
+			idb.update(issue);
+			idb.close();
+			break;
 		}
 
 		return null;
@@ -399,59 +413,59 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		setSupportProgressBarIndeterminateVisibility(false);
 		switch (action) {
-			case ACTION_REFRESH_ISSUES:
+		case ACTION_REFRESH_ISSUES:
+			if (getMainFragment() != null) {
+				getMainFragment().refreshList();
+			}
+			break;
+
+		case ACTION_ISSUE_LOAD_ISSUE:
+		case ACTION_ISSUE_LOAD_OVERVIEW:
+		case ACTION_ISSUE_LOAD_ATTACHMENTS:
+			IssueFragment content = getContentFragment();
+			if (content != null) {
+				Fragment frag = content.getFragmentFromViewPager(0);
+				if (frag != null && frag instanceof IssueOverviewFragment) {
+					final IssueOverviewFragment issueOverviewFragment = (IssueOverviewFragment) frag;
+					switch (action) {
+					case ACTION_ISSUE_LOAD_ISSUE:
+						issueOverviewFragment.onIssueLoaded((Issue) result);
+						break;
+
+					case ACTION_ISSUE_LOAD_ATTACHMENTS:
+						if (result instanceof JsonNetworkError) {
+							issueOverviewFragment.onNetworkError((JsonNetworkError) result);
+						} else {
+							issueOverviewFragment.onIssueOverviewLoaded((String) result);
+						}
+						break;
+
+					case ACTION_ISSUE_LOAD_OVERVIEW:
+						issueOverviewFragment.onIssueOverviewLoaded((String) result);
+						break;
+					}
+				}
+			}
+			break;
+
+		case ACTION_DELETE_ISSUE:
+			IssueUploader.handleDelete(this, (Issue) parameters, result);
+			if (isSplitScreen()) {
+				selectEmptyFragment(new Bundle());
 				if (getMainFragment() != null) {
 					getMainFragment().refreshList();
 				}
-				break;
-
-			case ACTION_ISSUE_LOAD_ISSUE:
-			case ACTION_ISSUE_LOAD_OVERVIEW:
-			case ACTION_ISSUE_LOAD_ATTACHMENTS:
-				IssueFragment content = getContentFragment();
-				if (content != null) {
-					Fragment frag = content.getFragmentFromViewPager(0);
-					if (frag != null && frag instanceof IssueOverviewFragment) {
-						final IssueOverviewFragment issueOverviewFragment = (IssueOverviewFragment) frag;
-						switch (action) {
-							case ACTION_ISSUE_LOAD_ISSUE:
-								issueOverviewFragment.onIssueLoaded((Issue) result);
-								break;
-
-							case ACTION_ISSUE_LOAD_ATTACHMENTS:
-								if (result instanceof JsonNetworkError) {
-									issueOverviewFragment.onNetworkError((JsonNetworkError) result);
-								} else {
-									issueOverviewFragment.onIssueOverviewLoaded((String) result);
-								}
-								break;
-
-							case ACTION_ISSUE_LOAD_OVERVIEW:
-								issueOverviewFragment.onIssueOverviewLoaded((String) result);
-								break;
-						}
-					}
-				}
-				break;
-
-			case ACTION_DELETE_ISSUE:
-				IssueUploader.handleDelete(this, (Issue) parameters, result);
-				if (isSplitScreen()) {
-					selectEmptyFragment(new Bundle());
-					if (getMainFragment() != null) {
-						getMainFragment().refreshList();
-					}
-				} else if (getActiveContent() == ActiveContent.CONTENT) {
-					showMainFragment(getMainFragmentArgs(null));
-				} else if (getMainFragment() != null) {
-					getMainFragment().refreshList();
-				}
-				break;
+			} else if (getActiveContent() == ActiveContent.CONTENT) {
+				showMainFragment(getMainFragmentArgs(null));
+			} else if (getMainFragment() != null) {
+				getMainFragment().refreshList();
+			}
+			break;
 
 
-			case ACTION_UPLOAD_ISSUE:
-				IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
-				break;
+		case ACTION_UPLOAD_ISSUE:
+			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
+			break;
 		}
 	}
 

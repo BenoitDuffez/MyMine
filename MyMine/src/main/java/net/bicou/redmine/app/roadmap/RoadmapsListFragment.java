@@ -10,13 +10,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
-import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.widget.IssuesListRelativeLayout;
 
 import java.text.DateFormat;
@@ -81,7 +82,7 @@ public class RoadmapsListFragment extends TrackedListFragment {
 	}
 
 	public void updateRoadmap() {
-		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), 0, null);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), RoadmapActivity.ACTION_LOAD_ROADMAP, null);
 	}
 
 	public static List<Version> getRoadmap(Context ctx, Server server, Project project) {

@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.data.sqlite.DbAdapter;
@@ -67,7 +69,16 @@ public class IssuesListFragment extends TrackedListFragment implements LoaderCal
 			}
 		}
 
-		mAdapter = new IssuesListCursorAdapter(getActivity(), null, true);
+		mAdapter = new IssuesListCursorAdapter(getActivity(), null, true, new IssuesListCursorAdapter.IssueFavoriteToggleListener() {
+			@Override
+			public void onIssueFavoriteChanged(long serverId, long issueId, boolean isFavorite) {
+				Bundle args = new Bundle();
+				args.putLong(Constants.KEY_SERVER_ID, serverId);
+				args.putLong(Constants.KEY_ISSUE_ID, issueId);
+				args.putBoolean(IssuesDbAdapter.KEY_IS_FAVORITE, isFavorite);
+				AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_ISSUE_TOGGLE_FAVORITE, args);
+			}
+		});
 		setListAdapter(mAdapter);
 
 		setHasOptionsMenu(true);
