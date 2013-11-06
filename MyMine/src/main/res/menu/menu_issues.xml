@@ -4,11 +4,10 @@
 
     <item
         android:id="@+id/menu_issues_search"
-        appcompat:actionViewClass="com.actionbarsherlock.widget.SearchView"
+        appcompat:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@android:drawable/ic_menu_search"
         appcompat:showAsAction="ifRoom|collapseActionView"
         android:title="@string/issues_menu_search" />
-
 
     <item
         android:id="@+id/menu_issues_add"
