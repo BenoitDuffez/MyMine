@@ -297,5 +297,9 @@
     <string name="issue_upload_failed">Unable to upload issue: %1$s</string>
     <string name="issue_upload_successful">Issue uploaded</string>
     <string name="issue_deleted_from_server">This issue was deleted on the server</string>
+    <string name="issue_add_notes_title">Add notes</string>
+    <string name="issue_save_notes_button">Save notes</string>
+    <string name="issue_edit_notes_hint">Type your notes about this issue here</string>
+    <string name="issue_edit_description_hint">Enter the issue description here</string>
 
 </resources>
