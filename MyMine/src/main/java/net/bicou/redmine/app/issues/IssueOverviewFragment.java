@@ -16,10 +16,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -38,6 +38,7 @@ import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -49,6 +50,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class IssueOverviewFragment extends TrackedFragment {
 	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mAuthor, mParent;
@@ -115,8 +119,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 	@Override
 	public void onViewStateRestored(final Bundle savedInstanceState) {
 		super.onViewStateRestored(savedInstanceState);
-		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ISSUE, savedInstanceState == null ? getArguments() :
-				savedInstanceState);
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_ISSUE_LOAD_ISSUE, savedInstanceState == null ? getArguments() : savedInstanceState);
 	}
 
 	@Override
@@ -179,8 +182,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		mDueDate.setText(Util.isEpoch(mIssue.due_date) ? "" : format.format(mIssue.due_date.getTime()));
 		mPercentDone.setText(String.format("%d%%", mIssue.done_ratio));
 		mSpentTime.setText(getString(R.string.issue_spent_time_format, mIssue.spent_hours));
-		mIssue.author = displayNameAndAvatar(getActivity(), mIssue, mAuthor, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format),
-				mIssue.created_on);
+		mIssue.author = displayNameAndAvatar(getActivity(), mIssue, mAuthor, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
 		mIssue.assigned_to = displayNameAndAvatar(getActivity(), mIssue, mAssignee, mAssignedAvatar, mIssue.assigned_to, "%1$s", null); // TODO
 		mParent.setText(mIssue.parent != null && mIssue.parent.id > 0 ? Long.toString(mIssue.parent.id) : "");
 		mFavorite.setChecked(mIssue.is_favorite);
@@ -275,9 +277,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		IssuesDbAdapter db = new IssuesDbAdapter(context);
 		db.open();
 		String url = "issues/" + issue.id + ".json";
-		NameValuePair[] args = {
-				new BasicNameValuePair("include", "attachments"),
-		};
+		NameValuePair[] args = { new BasicNameValuePair("include", "attachments"), };
 
 		String textile = issue.description;
 
@@ -320,10 +320,15 @@ public class IssueOverviewFragment extends TrackedFragment {
 			}
 		}
 
-		getActivity().getSupportFragmentManager().popBackStack();
-		IssuesListFragment fragment = ((IssuesActivity) getActivity()).getMainFragment();
-		if (fragment != null) {
-			fragment.refreshList();
+		try {
+			getActivity().getSupportFragmentManager().popBackStack();
+			IssuesListFragment fragment = ((IssuesActivity) getActivity()).getMainFragment();
+			if (fragment != null) {
+				fragment.refreshList();
+			}
+		} catch (IllegalStateException e) {
+			// May happen if this is called after the activity has called #onSaveInstanceState
+			// NO-OP
 		}
 	}
 
