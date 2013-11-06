@@ -22,6 +22,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import net.bicou.redmine.R;
 
 /**
@@ -35,7 +36,8 @@ public class DoneBarActivity {
 	public static void setupActionBar(final ActionBarActivity activity, final OnSaveActionListener listener) {
 		// BEGIN_INCLUDE (inflate_set_custom_view)
 		// Inflate a "Done/Cancel" custom action bar view.
-		final LayoutInflater inflater = (LayoutInflater) activity.getSupportActionBar().getThemedContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater inflater = (LayoutInflater) activity./*getSupportActionBar().getThemedContext().*/getSystemService(Context
+				.LAYOUT_INFLATER_SERVICE);
 		final View customActionBarView = inflater.inflate(R.layout.actionbar_custom_view_done_cancel, null);
 		customActionBarView.findViewById(R.id.actionbar_done).setOnClickListener(new View.OnClickListener() {
 			@Override
