@@ -34,10 +34,8 @@ public class DoneBarActivity {
 	}
 
 	public static void setupActionBar(final ActionBarActivity activity, final OnSaveActionListener listener) {
-		// BEGIN_INCLUDE (inflate_set_custom_view)
 		// Inflate a "Done/Cancel" custom action bar view.
-		final LayoutInflater inflater = (LayoutInflater) activity./*getSupportActionBar().getThemedContext().*/getSystemService(Context
-				.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View customActionBarView = inflater.inflate(R.layout.actionbar_custom_view_done_cancel, null);
 		customActionBarView.findViewById(R.id.actionbar_done).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -61,8 +59,5 @@ public class DoneBarActivity {
 		final ActionBar actionBar = activity.getSupportActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 		actionBar.setCustomView(customActionBarView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-		// END_INCLUDE (inflate_set_custom_view)
-
-		//		activity.	setContentView(R.layout.activity_done_bar);
 	}
 }
