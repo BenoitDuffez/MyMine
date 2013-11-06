@@ -2,9 +2,11 @@ package net.bicou.redmine.net;
 
 import android.app.Activity;
 import android.view.ViewGroup;
+
+import net.bicou.redmine.R;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-import net.bicou.redmine.R;
 
 /**
  * Container for an useful explanation on the failure. Can be JSON parsing-related, network-related, unexpected response, invalid Android behavior or unknown. If
@@ -35,6 +37,10 @@ public class JsonDownloadError extends JsonNetworkError {
 
 	@Override
 	public void displayCrouton(Activity activity, ViewGroup viewGroup) {
+		if (activity == null) {
+			return;
+		}
+
 		final String message;
 		switch (errorType) {
 		case TYPE_NETWORK:
