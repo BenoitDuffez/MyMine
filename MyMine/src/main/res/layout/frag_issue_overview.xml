@@ -38,7 +38,7 @@
 
         <ImageView
             android:id="@+id/issue_author_avatar"
-            android:src="@drawable/favorite"
+            android:src="@drawable/no_avatar"
             android:layout_margin="8dp"
             android:layout_toLeftOf="@+id/issue_author"
             android:layout_below="@+id/issue_parent"
