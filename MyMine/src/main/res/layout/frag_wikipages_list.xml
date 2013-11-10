@@ -18,7 +18,7 @@
         android:gravity="center_vertical"
         android:text="@string/loading"
         android:textColor="@color/faded_text"
-        android:drawableLeft="@drawable/empty_wiki"
+        android:drawableLeft="@drawable/empty_listview_wiki"
         android:textAppearance="@android:style/TextAppearance.Large"
         android:textStyle="bold|italic"/>
 

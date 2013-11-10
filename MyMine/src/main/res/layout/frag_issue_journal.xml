@@ -15,7 +15,7 @@
 
     <TextView
         android:id="@android:id/empty"
-        android:drawableLeft="@drawable/empty_listview"
+        android:drawableLeft="@drawable/empty_listview_issue_journal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
