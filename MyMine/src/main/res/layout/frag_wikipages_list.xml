@@ -6,18 +6,20 @@
               android:orientation="vertical">
 
     <ListView
-            android:id="@android:id/list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            tools:listitem="@layout/wikipage_listitem"/>
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        tools:listitem="@layout/wikipage_listitem"/>
 
     <TextView
-            android:id="@android:id/empty"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/loading"
-            android:textAppearance="@android:style/TextAppearance.Large"
-            android:textStyle="bold|italic"/>
+        android:id="@android:id/empty"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/loading"
+        android:textColor="@color/faded_text"
+        android:drawableLeft="@drawable/empty_wiki"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textStyle="bold|italic"/>
 
 </LinearLayout>
