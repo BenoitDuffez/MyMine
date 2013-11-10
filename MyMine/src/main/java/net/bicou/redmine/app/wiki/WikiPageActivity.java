@@ -4,8 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+
 import com.google.analytics.tracking.android.EasyTracker;
+
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.util.Util;
 
 /**
  * Created by bicou on 21/07/13.
@@ -16,7 +19,7 @@ public class WikiPageActivity extends ActionBarActivity implements AsyncTaskFrag
 		super.onCreate(savedInstanceState);
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 		WikiPageFragment frag = WikiPageFragment.newInstance(getIntent().getExtras());
-		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, frag).commit();
+		getSupportFragmentManager().beginTransaction().replace(Util.getContentViewCompat(), frag).commit();
 	}
 
 	@Override
@@ -48,7 +51,7 @@ public class WikiPageActivity extends ActionBarActivity implements AsyncTaskFrag
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		setSupportProgressBarIndeterminateVisibility(false);
 		if (action == WikiPageFragment.ACTION_LOAD_WIKI_PAGE) {
-			Fragment frag = getSupportFragmentManager().findFragmentById(android.R.id.content);
+			Fragment frag = getSupportFragmentManager().findFragmentById(Util.getContentViewCompat());
 			if (frag != null && frag instanceof WikiPageFragment) {
 				((WikiPageFragment) frag).refreshUI((WikiPageFragment.WikiPageLoadParameters) parameters);
 			}

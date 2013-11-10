@@ -43,8 +43,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 /**
  * Activity which displays login screen to the user.
  */
-public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity implements DialogInterface.OnClickListener, DialogInterface.OnCancelListener,
-		ServerSettingsListener, AsyncTaskFragment.TaskFragmentCallbacks {
+public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity implements DialogInterface.OnClickListener, DialogInterface.OnCancelListener, ServerSettingsListener, AsyncTaskFragment.TaskFragmentCallbacks {
 	public static final String PARAM_SERVER_URL = "serverUrl";
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
 
@@ -249,30 +248,30 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 			final String errorMessage;
 
 			switch (error.errorType) {
-				case TYPE_NETWORK:
-					final String details;
-					if (error.chain != null) {
-						mUntrustedCertChain = error.chain;
-						showSSLCertDialog();
-						errorMessage = null;//don't show any crouton
+			case TYPE_NETWORK:
+				final String details;
+				if (error.chain != null) {
+					mUntrustedCertChain = error.chain;
+					showSSLCertDialog();
+					errorMessage = null;//don't show any crouton
+				} else {
+					if (error.exception == null) {
+						details = error.getMessage(this);
 					} else {
-						if (error.exception == null) {
-							details = error.getMessage(this);
-						} else {
-							details = error.exception.getClass().getSimpleName() + (error.exception.getMessage() == null ? //
-									error.exception.getCause().toString() : error.exception.getMessage());
-						}
-						errorMessage = getString(error.errorType == ErrorType.TYPE_JSON ? R.string.auth_error_json : R.string.auth_error_network, details);
+						details = error.exception.getClass().getSimpleName() + (error.exception.getMessage() == null ? //
+								error.exception.getCause().toString() : error.exception.getMessage());
 					}
-					break;
-				default:
-				case TYPE_RESPONSE:
-				case TYPE_UNKNOWN:
-					errorMessage = getString(R.string.auth_error_response);
-					break;
-				case TYPE_JSON:
-					errorMessage = getString(R.string.auth_error_json);
-					break;
+					errorMessage = getString(error.errorType == ErrorType.TYPE_JSON ? R.string.auth_error_json : R.string.auth_error_network, details);
+				}
+				break;
+			default:
+			case TYPE_RESPONSE:
+			case TYPE_UNKNOWN:
+				errorMessage = getString(R.string.auth_error_response);
+				break;
+			case TYPE_JSON:
+				errorMessage = getString(R.string.auth_error_json);
+				break;
 			}
 
 			if (errorMessage != null) {
@@ -310,15 +309,15 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 	public void onClick(final DialogInterface dialog, final int btnId) {
 		dialog.dismiss();
 		switch (btnId) {
-			case DialogInterface.BUTTON_POSITIVE:
-				// Save cert
-				mKeyStoreDisk.storeCert(mUntrustedCertChain);
-				checkServer(null);
-				break;
+		case DialogInterface.BUTTON_POSITIVE:
+			// Save cert
+			mKeyStoreDisk.storeCert(mUntrustedCertChain);
+			checkServer(null);
+			break;
 
-			case DialogInterface.BUTTON_NEUTRAL:
-				break;
-			default:
+		case DialogInterface.BUTTON_NEUTRAL:
+			break;
+		default:
 		}
 	}
 
@@ -338,12 +337,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menu_server_settings:
-				showAdvancedSettingsDialog();
-				return true;
+		case R.id.menu_server_settings:
+			showAdvancedSettingsDialog();
+			return true;
 
-			default:
-				return super.onOptionsItemSelected(item);
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -357,7 +356,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 			f.show(fm, "serversettings");
 		} else {
 			final FragmentTransaction ft = fm.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-			ft.add(android.R.id.content, f);
+			ft.add(Util.getContentViewCompat(), f);
 			ft.addToBackStack(null).commit();
 		}
 	}

@@ -12,6 +12,7 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.User;
+import net.bicou.redmine.util.Util;
 
 import java.util.Calendar;
 
@@ -21,8 +22,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 /**
  * Created by bicou on 02/08/13.
  */
-public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener,
-		DatePickerFragment.DateSelectionListener, DescriptionEditorFragment.DescriptionChangeListener {
+public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener, DatePickerFragment.DateSelectionListener, DescriptionEditorFragment.DescriptionChangeListener {
 	public static final int ACTION_LOAD_ISSUE_DATA = 0;
 
 	@Override
@@ -34,7 +34,7 @@ public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFra
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 		if (savedInstanceState == null) {
 			Fragment content = EditIssueFragment.newInstance(getIntent().getExtras());
-			getSupportFragmentManager().beginTransaction().add(android.R.id.content, content).commit();
+			getSupportFragmentManager().beginTransaction().add(Util.getContentViewCompat(), content).commit();
 		}
 
 		setSupportProgressBarIndeterminate(true);
@@ -70,7 +70,7 @@ public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFra
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		setSupportProgressBarIndeterminateVisibility(false);
 		if (action == ACTION_LOAD_ISSUE_DATA) {
-			EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+			EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(Util.getContentViewCompat());
 			frag.setupSpinners((EditIssueFragment.IssueEditInformation) result);
 
 			if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(IssueUploader.KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON)) {
@@ -81,19 +81,19 @@ public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFra
 
 	@Override
 	public void onUserSelected(final User user) {
-		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(Util.getContentViewCompat());
 		frag.onAssigneeChosen(user);
 	}
 
 	@Override
 	public void onDateSelected(final int id, final Calendar calendar) {
-		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(Util.getContentViewCompat());
 		frag.onDatePicked(id, calendar);
 	}
 
 	@Override
 	public void onDescriptionChanged(final String newDescription) {
-		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(android.R.id.content);
+		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(Util.getContentViewCompat());
 		frag.onDescriptionChanged(newDescription);
 	}
 }

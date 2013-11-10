@@ -10,6 +10,11 @@ import android.view.WindowManager;
 import java.util.Calendar;
 
 public class Util {
+	// http://code.google.com/p/android/issues/detail?id=58108
+	public static int getContentViewCompat() {
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.id.content : android.support.v7.appcompat.R.id.action_bar_activity_content;
+	}
+
 	public static boolean isEpoch(Calendar cal) {
 		return cal == null || cal.getTimeInMillis() < 24 * 3600 * 1000;
 	}

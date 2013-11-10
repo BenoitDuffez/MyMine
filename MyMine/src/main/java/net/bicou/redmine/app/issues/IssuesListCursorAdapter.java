@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.AbsListView;
 import android.widget.TextView;
 
 import net.bicou.redmine.R;
@@ -141,13 +141,13 @@ public final class IssuesListCursorAdapter extends CursorAdapter {
 		viewHolder.targetVersion.setTextColor(textColors[versionId % numColors]);
 
 		// Limit height
-		final LinearLayout.LayoutParams lp;
+		final AbsListView.LayoutParams lp;
 		viewHolder.description.setVisibility(TextUtils.isEmpty(desc) ? View.GONE : View.VISIBLE);
 		if (TextUtils.isEmpty(desc) || desc.length() < 50) {
-			lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+			lp = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		} else {
 			Resources res = mContext.getResources();
-			lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) res.getDimension(R.dimen.issue_listitem_height));
+			lp = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) res.getDimension(R.dimen.issue_listitem_height));
 		}
 		viewHolder.layout.setLayoutParams(lp);
 
