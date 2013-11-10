@@ -1,11 +1,17 @@
 package net.bicou.redmine.net.upload;
 
 import android.content.Context;
+
 import net.bicou.redmine.util.L;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by bicou on 07/08/13.
@@ -26,6 +32,7 @@ public abstract class ObjectSerializer<T> {
 	}
 
 	public enum RemoteOperation {
+		UNSET,
 		ADD,
 		EDIT,
 		DELETE,
@@ -36,7 +43,7 @@ public abstract class ObjectSerializer<T> {
 	private String mObjectName;
 	protected T mNewObject;
 	protected T mOldObject;
-	private RemoteOperation mRemoteOperation;
+	private RemoteOperation mRemoteOperation = RemoteOperation.UNSET;
 	private HashMap<String, Object> mFields;
 
 	public ObjectSerializer(final Context context, String objectName, T newObject) {
@@ -44,15 +51,19 @@ public abstract class ObjectSerializer<T> {
 		mContext = context;
 		mNewObject = newObject;
 		mOldObject = getOldObject();
+	}
 
+	public void build() {
 		mFields = getDeltas();
 
-		if (mOldObject == null) {
-			mRemoteOperation = RemoteOperation.ADD;
-		} else if (mFields.size() > 0) {
-			mRemoteOperation = RemoteOperation.EDIT;
-		} else {
-			mRemoteOperation = RemoteOperation.NO_OP;
+		if (mRemoteOperation == RemoteOperation.UNSET) {
+			if (mOldObject == null) {
+				mRemoteOperation = RemoteOperation.ADD;
+			} else if (mFields.size() > 0) {
+				mRemoteOperation = RemoteOperation.EDIT;
+			} else {
+				mRemoteOperation = RemoteOperation.NO_OP;
+			}
 		}
 	}
 

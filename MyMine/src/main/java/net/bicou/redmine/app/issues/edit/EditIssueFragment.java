@@ -254,7 +254,7 @@ public class EditIssueFragment extends TrackedFragment {
 		}
 
 		// Notes are not part of the issue but only logged with an edit
-		String notes = mNotes == null || mNotes.getText() == null ? "" : mNotes.getText().toString();
+		String notes = (mNotes == null || TextUtils.isEmpty(mNotes.getText())) ? "" : mNotes.getText().toString();
 
 		Bundle taskParams = new Bundle();
 		taskParams.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(mIssue, Issue.class));
@@ -488,16 +488,14 @@ public class EditIssueFragment extends TrackedFragment {
 	 */
 	private void refreshUI() {
 		if (mIssue.author != null && mIssue.author.id > 0) {
-			mIssue.author = IssueOverviewFragment.displayNameAndAvatar(getActivity(), mIssue, mAuthorName, mAuthorAvatar, mIssue.author,
-					getString(R.string.issue_author_name_format), mIssue.created_on);
+			mIssue.author = IssueOverviewFragment.displayNameAndAvatar(getActivity(), mIssue, mAuthorName, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
 		} else {
 			mAuthorName.setText("");
 			mAuthorAvatar.setVisibility(View.INVISIBLE);
 		}
 
 		if (mIssue.assigned_to != null && mIssue.assigned_to.id > 0) {
-			mIssue.assigned_to = IssueOverviewFragment.displayNameAndAvatar(getActivity(), mIssue, mAssigneeName, mAssigneeAvatar, mIssue.assigned_to,
-					mIssue.assigned_to.getName(), null);
+			mIssue.assigned_to = IssueOverviewFragment.displayNameAndAvatar(getActivity(), mIssue, mAssigneeName, mAssigneeAvatar, mIssue.assigned_to, mIssue.assigned_to.getName(), null);
 		} else {
 			mAssigneeAvatar.setVisibility(View.INVISIBLE);
 			mAssigneeName.setText(getString(R.string.issue_edit_field_unset));
@@ -538,17 +536,17 @@ public class EditIssueFragment extends TrackedFragment {
 		Bundle args = new Bundle();
 		Calendar cal = new GregorianCalendar();
 		switch (v.getId()) {
-			case R.id.issue_edit_due_date:
-				if (!Util.isEpoch(mIssue.due_date)) {
-					cal.setTimeInMillis(mIssue.due_date.getTimeInMillis());
-				}
-				break;
+		case R.id.issue_edit_due_date:
+			if (!Util.isEpoch(mIssue.due_date)) {
+				cal.setTimeInMillis(mIssue.due_date.getTimeInMillis());
+			}
+			break;
 
-			case R.id.issue_edit_start_date:
-				if (!Util.isEpoch(mIssue.start_date)) {
-					cal.setTimeInMillis(mIssue.start_date.getTimeInMillis());
-				}
-				break;
+		case R.id.issue_edit_start_date:
+			if (!Util.isEpoch(mIssue.start_date)) {
+				cal.setTimeInMillis(mIssue.start_date.getTimeInMillis());
+			}
+			break;
 		}
 		args.putInt(DatePickerFragment.KEY_REQUEST_ID, v.getId());
 		args.putLong(DatePickerFragment.KEY_DEFAULT_DATE, cal.getTimeInMillis());
@@ -560,13 +558,13 @@ public class EditIssueFragment extends TrackedFragment {
 
 	public void onDatePicked(final int id, final Calendar calendar) {
 		switch (id) {
-			case R.id.issue_edit_due_date:
-				mIssue.due_date.setTimeInMillis(calendar.getTimeInMillis());
-				break;
+		case R.id.issue_edit_due_date:
+			mIssue.due_date.setTimeInMillis(calendar.getTimeInMillis());
+			break;
 
-			case R.id.issue_edit_start_date:
-				mIssue.start_date.setTimeInMillis(calendar.getTimeInMillis());
-				break;
+		case R.id.issue_edit_start_date:
+			mIssue.start_date.setTimeInMillis(calendar.getTimeInMillis());
+			break;
 		}
 
 		refreshUI();

@@ -70,7 +70,9 @@ public class IssueUploader {
 	public static Object uploadIssue(final Context applicationContext, final Bundle params) {
 		String uri;
 		Issue issue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
-		IssueSerializer issueSerializer = new IssueSerializer(applicationContext, issue, params.getString(EditIssueFragment.KEY_ISSUE_NOTES));
+		final String notes = params.getString(EditIssueFragment.KEY_ISSUE_NOTES);
+		IssueSerializer issueSerializer = new IssueSerializer(applicationContext, issue, notes);
+		issueSerializer.build();
 		if (issue.id <= 0 || issueSerializer.getRemoteOperation() == ObjectSerializer.RemoteOperation.ADD) {
 			uri = "issues.json";
 		} else {
@@ -161,7 +163,7 @@ public class IssueUploader {
 				if (response == null || response instanceof JsonDownloadError) {
 					final String msg = response == null ? resultHolder.getString(R.string.err_empty_response) : ((JsonDownloadError) response).getMessage(resultHolder);
 					final String errorMessage = resultHolder.getString(R.string.issue_upload_failed, msg);
-			args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
+					args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
 					L.e("Shouldn't happen! params=" + params + " result=" + result, null);
 					return args;
 				}
@@ -171,21 +173,21 @@ public class IssueUploader {
 			} catch (Exception e) {
 				// In case of failure:
 				switch (params.getInt(ISSUE_ACTION)) {
-					// if it's a creation, it's likely to be an error message, so we'll display it
-					case CREATE_ISSUE:
-						String errorMessage = resultHolder.getString(R.string.issue_upload_failed, (String) result);
-			args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
-						L.e("Unable to upload issue. Result=" + result + " params=" + params, null);
-						return args;
+				// if it's a creation, it's likely to be an error message, so we'll display it
+				case CREATE_ISSUE:
+					String errorMessage = resultHolder.getString(R.string.issue_upload_failed, (String) result);
+					args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
+					L.e("Unable to upload issue. Result=" + result + " params=" + params, null);
+					return args;
 
-					// if it's an edit, it's likely to be an empty response, so we'll consider our edit to be successful
-					case EDIT_ISSUE:
-						issue = uploadedIssue;
-						L.e("The server's response wasn't expected!" + e);
-						break;
+				// if it's an edit, it's likely to be an empty response, so we'll consider our edit to be successful
+				case EDIT_ISSUE:
+					issue = uploadedIssue;
+					L.e("The server's response wasn't expected!" + e);
+					break;
 
-					default:
-						throw new IllegalArgumentException("Unhandled case constant!");
+				default:
+					throw new IllegalArgumentException("Unhandled case constant!");
 				}
 			}
 
@@ -194,12 +196,12 @@ public class IssueUploader {
 				IssuesDbAdapter db = new IssuesDbAdapter(resultHolder);
 				db.open();
 				switch (params.getInt(ISSUE_ACTION)) {
-					case CREATE_ISSUE:
-						db.insert(issue);
-						break;
-					case EDIT_ISSUE:
-						db.update(issue);
-						break;
+				case CREATE_ISSUE:
+					db.insert(issue);
+					break;
+				case EDIT_ISSUE:
+					db.update(issue);
+					break;
 				}
 				db.close();
 			}
@@ -263,6 +265,7 @@ public class IssueUploader {
 	 */
 	public static Object deleteIssue(final Context applicationContext, final Issue issue) {
 		IssueSerializer serializer = new IssueSerializer(applicationContext, issue, null, true);
+		serializer.build();
 		String uri = "issues/" + issue.id + ".json";
 		return new JsonUploader().uploadObject(applicationContext, issue.server, uri, serializer);
 	}
