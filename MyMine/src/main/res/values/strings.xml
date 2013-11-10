@@ -117,7 +117,7 @@
     <string name="issue_status_na">N/A</string>
     <string name="issue_estimated_hours">Estimated hours</string>
     <string name="issue_parent">Parent</string>
-    <string name="issue_parent_format">Parent issue: #%1$d</string>
+    <string name="issue_parent_format"><![CDATA[Parent issue: <a href="#">#%1$d</a>]]></string>
     <string name="issue_is_private">Private</string>
     <string name="issue_tracker_id_format">%1$s #%2$d</string>
     <string name="issue_spent_time_format">%1$.2f hrs</string>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -90,6 +91,16 @@ public class IssueOverviewFragment extends TrackedFragment {
 		//		mAssignedAvatar=v.findViewById(R.id.issue_assign)
 		mParent = (TextView) v.findViewById(R.id.issue_parent);
 		mFavorite = (CheckBox) v.findViewById(R.id.issue_is_favorite);
+
+		mParent.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Object tag = v == null ? null : v.getTag();
+				if (tag != null && tag instanceof Bundle) {
+					((IssuesActivity) getActivity()).selectContent((Bundle) tag);
+				}
+			}
+		});
 
 		mFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
@@ -184,10 +195,15 @@ public class IssueOverviewFragment extends TrackedFragment {
 		// Parrent issue
 		if (mIssue.parent != null && mIssue.parent.id > 0) {
 			mParent.setVisibility(View.VISIBLE);
-			mParent.setText(getString(R.string.issue_parent_format, mIssue.parent.id));
+			mParent.setText(Html.fromHtml(getString(R.string.issue_parent_format, mIssue.parent.id)));
+			Bundle args = new Bundle();
+			args.putLong(Constants.KEY_ISSUE_ID, mIssue.parent.id);
+			args.putLong(Constants.KEY_SERVER_ID, mIssue.server.rowId);
+			mParent.setTag(args);
 		} else {
 			mParent.setVisibility(View.GONE);
 			mParent.setText("");
+			mParent.setTag(null);
 		}
 
 		UsersDbAdapter db = new UsersDbAdapter(getActivity());
