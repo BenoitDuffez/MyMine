@@ -70,7 +70,6 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 		mHistory = history;
 		if (mHistory == null || mHistory.journals == null || mHistory.journals.size() <= 0) {
 			mEmptyView.setText(R.string.issue_history_none);
-			mEmptyView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.empty_listview, 0, 0, 0);
 		} else {
 			final IssueHistoryItemsAdapter journalAdapter = new IssueHistoryItemsAdapter(getActivity(), mIssue, mHistory);
 			final SwingBottomInAnimationAdapter adapter = new SwingBottomInAnimationAdapter(journalAdapter);
