@@ -2,7 +2,7 @@
 <resources>
 
     <style name="MyMine.ActionBarStyle"
-        parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
+           parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
         <item name="android:background">@drawable/ab_solid_mymine</item>
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_mymine</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_mymine</item>
@@ -11,12 +11,12 @@
     </style>
 
     <style name="MyMine.ActionBarTabStyle"
-        parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
+           parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_mymine</item>
     </style>
 
     <style name="MyMine.ActionBarStyle.TitleTextStyle"
-        parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+           parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textColor">@color/actionbar_text</item>
     </style>
 

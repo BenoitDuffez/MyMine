@@ -58,6 +58,9 @@
         <item name="actionBarTabStyle">@style/MyMine.ActionBarTabStyle</item>
         <item name="android:actionBarTabStyle">@style/MyMine.ActionBarTabStyle</item>
 
+        <item name="actionBarTabTextStyle">@style/MyMine.ActionBarTabTextStyle</item>
+        <item name="android:actionBarTabTextStyle">@style/MyMine.ActionBarTabTextStyle</item>
+
         <item name="actionBarItemBackground">@drawable/ab_background</item>
         <item name="android:actionBarItemBackground">@drawable/ab_background</item>
 

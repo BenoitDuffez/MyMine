@@ -13,6 +13,18 @@
         <item name="android:progressBarStyle">@style/mymine_ProgressBar</item>
     </style>
 
+    <style name="MyMine.ActionBarTabStyle"
+           parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
+        <item name="background">@drawable/tab_indicator_ab_mymine</item>
+
+        <item name="android:background">@drawable/tab_indicator_ab_mymine</item>
+    </style>
+
+    <style name="MyMine.ActionBarTabTextStyle"
+           parent="@style/Widget.AppCompat.Base.ActionBar.TabText">
+        <item name="android:textColor">#FFF</item>
+    </style>
+
     <style name="MyMine.ActionBarStyle.TitleTextStyle"
            parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/actionbar_text</item>
