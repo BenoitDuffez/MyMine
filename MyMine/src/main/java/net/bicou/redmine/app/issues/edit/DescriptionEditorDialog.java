@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
 import android.widget.EditText;
+
 import net.bicou.redmine.R;
 
 /**
@@ -19,6 +20,7 @@ class DescriptionEditorDialog extends AlertDialog implements DialogInterface.OnC
 		super(context);
 		mDescription = description;
 
+		setCanceledOnTouchOutside(false);
 		setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
 		setIcon(0);
 		setTitle(context.getString(R.string.issue_edit_description_dialog_title));
