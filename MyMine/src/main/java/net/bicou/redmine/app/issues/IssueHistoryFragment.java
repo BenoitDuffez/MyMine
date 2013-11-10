@@ -6,11 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
@@ -21,6 +21,9 @@ import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
 
 import java.lang.reflect.Type;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class IssueHistoryFragment extends TrackedListFragment implements FragmentActivationListener {
 	private IssueHistoryDownloadTask mUpdateTask;
@@ -46,8 +49,7 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 
 		if (savedInstanceState != null) {
 			try {
-				Type type = new TypeToken<IssueHistory>() {
-				}.getType();
+				Type type = new TypeToken<IssueHistory>() {}.getType();
 				mHistory = new Gson().fromJson(savedInstanceState.getString(HISTORY_DATA), type);
 			} catch (Exception e) {
 				L.e("Unable to deserialize saved issue history", e);
@@ -68,6 +70,7 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 		mHistory = history;
 		if (mHistory == null || mHistory.journals == null || mHistory.journals.size() <= 0) {
 			mEmptyView.setText(R.string.issue_history_none);
+			mEmptyView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.empty_listview, 0, 0, 0);
 		} else {
 			final IssueHistoryItemsAdapter journalAdapter = new IssueHistoryItemsAdapter(getActivity(), mIssue, mHistory);
 			final SwingBottomInAnimationAdapter adapter = new SwingBottomInAnimationAdapter(journalAdapter);
@@ -89,7 +92,7 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 			mUpdateTask = new IssueHistoryDownloadTask((ActionBarActivity) getActivity(), new JournalsDownloadCallbacks() {
 				@Override
 				public void onPreExecute() {
-					((ActionBarActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(true);
+					((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
 				}
 
 				@Override
