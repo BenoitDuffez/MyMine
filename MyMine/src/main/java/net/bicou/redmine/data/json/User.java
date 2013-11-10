@@ -3,6 +3,7 @@ package net.bicou.redmine.data.json;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.text.TextUtils;
+
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
@@ -29,6 +30,10 @@ public class User {
 
 	public boolean createGravatarUrl() {
 		gravatarUrl = "";
+
+		if (mail == null) {
+			mail = "";
+		}
 
 		MessageDigest md;
 		byte[] digest = null;
@@ -106,7 +111,6 @@ public class User {
 	@Override
 	public String toString() {
 		return super.toString() + " " + getClass().getSimpleName() + " { #" + id + ", login: " + login + ", name: " + getName() + ", mail:" + mail + ", " +
-				"avatar: " + gravatarUrl + ", " + "created/last login: " + (Util.isEpoch(created_on) ? "epoch" : created_on.getTime()) + "/" + (Util.isEpoch
-				(last_login_on) ? "epoch" : last_login_on.getTime()) + " }";
+				"avatar: " + gravatarUrl + ", " + "created/last login: " + (Util.isEpoch(created_on) ? "epoch" : created_on.getTime()) + "/" + (Util.isEpoch(last_login_on) ? "epoch" : last_login_on.getTime()) + " }";
 	}
 }
