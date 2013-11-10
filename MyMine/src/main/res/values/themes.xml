@@ -4,33 +4,33 @@
 <resources>
 
     <!-- Namespace declaration -->
-    <style name="MyMine" />
+    <style name="MyMine"/>
 
     <!-- Defaults for all android versions -->
     <style name="MyMine.Base"
-        parent="Theme.SplitActivity.Light.DarkActionBar">
+           parent="Theme.SplitActivity.Light.DarkActionBar">
 
         <!-- Compatible from Gingerbread -->
-        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewMyMineTheme</item>
-        <item name="android:buttonStyle">@style/ButtonMyMineTheme</item>
-        <item name="android:buttonStyleToggle">@style/ToggleMyMineTheme</item>
-        <item name="android:checkboxStyle">@style/CheckBoxMyMineTheme</item>
-        <item name="android:dropDownListViewStyle">@style/mymine_DropDownListView</item>
-        <item name="android:editTextStyle">@style/EditTextMyMineTheme</item>
-        <item name="android:imageButtonStyle">@style/ImageButtonMyMineTheme</item>
+        <item name="android:autoCompleteTextViewStyle">@style/Theme.MyMine.AutoCompleteTextView</item>
+        <item name="android:buttonStyle">@style/Theme.MyMine.Button</item>
+        <item name="android:buttonStyleToggle">@style/Theme.MyMine.Toggle</item>
+        <item name="android:checkboxStyle">@style/Theme.MyMine.CheckBox</item>
+        <item name="android:dropDownListViewStyle">@style/Theme.MyMine.DropDownListView</item>
+        <item name="android:editTextStyle">@style/Theme.MyMine.EditText</item>
+        <item name="android:imageButtonStyle">@style/Theme.MyMine.ImageButton</item>
         <item name="android:listChoiceIndicatorSingle">@drawable/btn_radio_holo_light</item>
-        <item name="android:listViewStyle">@style/ListViewMyMineTheme</item>
-        <item name="android:listViewWhiteStyle">@style/ListViewMyMineTheme.White</item>
+        <item name="android:listViewStyle">@style/Theme.MyMine.ListView</item>
+        <item name="android:listViewWhiteStyle">@style/Theme.MyMine.ListView.White</item>
         <item name="android:panelBackground">@drawable/menu_hardkey_panel_mymine</item>
-        <item name="android:progressBarStyleHorizontal">@style/ProgressBarMyMineTheme</item>
-        <item name="android:radioButtonStyle">@style/RadioButtonMyMineTheme</item>
-        <item name="android:ratingBarStyle">@style/RatingBarMyMineTheme</item>
-        <item name="android:ratingBarStyleIndicator">@style/RatingBarBigMyMineTheme</item>
-        <item name="android:ratingBarStyleSmall">@style/RatingBarSmallMyMineTheme</item>
-        <item name="android:seekBarStyle">@style/SeekBarMyMineTheme</item>
-        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemMyMineTheme</item>
-        <item name="android:spinnerItemStyle">@style/SpinnerItemMyMineTheme</item>
-        <item name="android:spinnerStyle">@style/SpinnerMyMineTheme</item>
+        <item name="android:progressBarStyleHorizontal">@style/Theme.MyMine.ProgressBar</item>
+        <item name="android:radioButtonStyle">@style/Theme.MyMine.RadioButton</item>
+        <item name="android:ratingBarStyle">@style/Theme.MyMine.RatingBar</item>
+        <item name="android:ratingBarStyleIndicator">@style/Theme.MyMine.RatingBarBig</item>
+        <item name="android:ratingBarStyleSmall">@style/Theme.MyMine.RatingBarSmall</item>
+        <item name="android:seekBarStyle">@style/Theme.MyMine.SeekBar</item>
+        <item name="android:spinnerDropDownItemStyle">@style/Theme.MyMine.SpinnerDropDownItem</item>
+        <item name="android:spinnerItemStyle">@style/Theme.MyMine.SpinnerItem</item>
+        <item name="android:spinnerStyle">@style/Theme.MyMine.Spinner</item>
         <item name="android:windowBackground">@drawable/grey_background_pattern</item>
 
         <!-- Native + AppCompat pairs -->
@@ -46,26 +46,26 @@
         <item name="listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
         <item name="android:listChoiceBackgroundIndicator">@drawable/list_selector_holo_light</item>
 
-        <!--<item name="dropDownSpinnerStyle">@style/SpinnerMyMineTheme.DropDown</item>-->
-        <!--<item name="android:dropDownSpinnerStyle">@style/SpinnerMyMineTheme.DropDown</item>-->
+        <!--<item name="dropDownSpinnerStyle">@style/Theme.MyMine.Spinner.DropDown</item>-->
+        <!--<item name="android:dropDownSpinnerStyle">@style/Theme.MyMine.Spinner.DropDown</item>-->
 
-        <item name="actionDropDownStyle">@style/mymine_DropDownNav</item>
-        <item name="android:actionDropDownStyle">@style/mymine_DropDownNav</item>
+        <item name="actionDropDownStyle">@style/Theme.MyMine.DropDownNav</item>
+        <item name="android:actionDropDownStyle">@style/Theme.MyMine.DropDownNav</item>
 
-        <item name="actionBarStyle">@style/MyMine.ActionBarStyle</item>
-        <item name="android:actionBarStyle">@style/MyMine.ActionBarStyle</item>
+        <item name="actionBarStyle">@style/Theme.MyMine.ActionBarStyle</item>
+        <item name="android:actionBarStyle">@style/Theme.MyMine.ActionBarStyle</item>
 
-        <item name="actionBarTabStyle">@style/MyMine.ActionBarTabStyle</item>
-        <item name="android:actionBarTabStyle">@style/MyMine.ActionBarTabStyle</item>
+        <item name="actionBarTabStyle">@style/Theme.MyMine.ActionBarTabStyle</item>
+        <item name="android:actionBarTabStyle">@style/Theme.MyMine.ActionBarTabStyle</item>
 
-        <item name="actionBarTabTextStyle">@style/MyMine.ActionBarTabTextStyle</item>
-        <item name="android:actionBarTabTextStyle">@style/MyMine.ActionBarTabTextStyle</item>
+        <item name="actionBarTabTextStyle">@style/Theme.MyMine.ActionBarTabTextStyle</item>
+        <item name="android:actionBarTabTextStyle">@style/Theme.MyMine.ActionBarTabTextStyle</item>
 
         <item name="actionBarItemBackground">@drawable/ab_background</item>
         <item name="android:actionBarItemBackground">@drawable/ab_background</item>
 
-        <item name="popupMenuStyle">@style/mymine_PopupMenu</item>
-        <item name="android:popupMenuStyle">@style/mymine_PopupMenu</item>
+        <item name="popupMenuStyle">@style/Theme.MyMine.PopupMenu</item>
+        <item name="android:popupMenuStyle">@style/Theme.MyMine.PopupMenu</item>
 
         <item name="selectableItemBackground">@drawable/selectable_background_mymine</item>
         <item name="android:selectableItemBackground">@drawable/selectable_background_mymine</item>
@@ -76,16 +76,15 @@
         <item name="containerStyle">@style/ContainerStyle</item>
         <item name="separatorStyle">@style/SeparatorStyle</item>
 
-        <!-- Is this ABS?
-        <item name="searchAutoCompleteTextView">@style/AutoCompleteTextViewMyMineTheme</item>
-        <item name="searchViewTextField">@drawable/issues_search_background</item>
-        <item name="searchViewSearchIcon">@drawable/ab_ic_search</item>
--->
+        <!-- Is this ABS? -->
+        <!--<item name="searchAutoCompleteTextView">@style/Theme.MyMine.AutoCompleteTextView</item>-->
+        <!--<item name="searchViewTextField">@drawable/issues_search_background</item>-->
+        <!--<item name="searchViewSearchIcon">@drawable/ab_ic_search</item>-->
 
     </style>
 
     <!-- Actual theme. Must be overriden by newer version to take advantage of new features -->
     <style name="Theme.MyMine"
-        parent="MyMine.Base" />
+           parent="MyMine.Base"/>
 
 </resources>
