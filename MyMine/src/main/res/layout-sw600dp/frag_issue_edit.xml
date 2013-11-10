@@ -23,6 +23,8 @@
                 android:layout_toLeftOf="@+id/issue_edit_author"
                 android:layout_toRightOf="@+id/issue_edit_tracker"
                 android:layout_alignBottom="@+id/issue_edit_tracker"
+                android:layout_alignTop="@+id/issue_edit_tracker"
+                android:gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="32sp"/>
