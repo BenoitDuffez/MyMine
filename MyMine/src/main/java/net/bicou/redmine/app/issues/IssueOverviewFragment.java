@@ -184,7 +184,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		// Parrent issue
 		if (mIssue.parent != null && mIssue.parent.id > 0) {
 			mParent.setVisibility(View.VISIBLE);
-			mParent.setText(Long.toString(mIssue.parent.id));
+			mParent.setText(getString(R.string.issue_parent_format, mIssue.parent.id));
 		} else {
 			mParent.setVisibility(View.GONE);
 			mParent.setText("");
