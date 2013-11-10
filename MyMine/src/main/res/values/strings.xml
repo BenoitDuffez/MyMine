@@ -75,7 +75,8 @@
     <string name="overview_card_issues_count_myself">assigned to you</string>
     <string name="overview_card_issues_count_all">on all combined servers</string>
     <string name="overview_card_issues_title">Issues</string>
-    <string name="overview_card_issues_subtitle" formatted="false">{0,choice,0#There is no issue %s|1#There is only one issue %s|1&lt;There are {0} issues %s}
+    <string name="overview_card_issues_subtitle"
+            formatted="false">{0,choice,0#There is no issue %s|1#There is only one issue %s|1&lt;There are {0} issues %s}
     </string>
 
     <string name="overview_card_projects_title">Projects</string>
@@ -120,6 +121,9 @@
     <string name="issue_tracker_id_format">%1$s #%2$d</string>
     <string name="issue_spent_time_format">%1$.2f hrs</string>
     <string name="issue_author_name_format">%1$s added %2$s</string>
+    <string name="issue_author_name_updated_format">%1$s added %2$s;\nupdated %3$s</string>
+    <string name="issue_author_name_toast_format">added %1$s</string>
+    <string name="issue_author_name_updated_toast_format">added %1$s;\nupdated %2$s</string>
 
     <string name="issue_filter_all">ALL</string>
     <string name="issue_filter_queries">Queries</string>

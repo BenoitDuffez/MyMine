@@ -7,12 +7,40 @@ import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
 
+import net.bicou.redmine.R;
+
+import java.text.MessageFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class Util {
 	// http://code.google.com/p/android/issues/detail?id=58108
 	public static int getContentViewCompat() {
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.id.content : android.support.v7.appcompat.R.id.action_bar_activity_content;
+	}
+
+	public static String getDeltaDateText(Context context, Calendar date) {
+		final String formattedDate;
+		if (date != null && date.getTimeInMillis() > 10000) {
+			long delta = (new GregorianCalendar().getTimeInMillis() - date.getTimeInMillis()) / 1000;
+			if (delta < 60) {
+				formattedDate = context.getString(R.string.time_delay_moments);
+			} else if (delta < 3600) {
+				formattedDate = MessageFormat.format(context.getString(R.string.time_delay_minutes), (int) (delta / 60));
+			} else if (delta < 3600 * 24) {
+				formattedDate = MessageFormat.format(context.getString(R.string.time_delay_hours), (int) (delta / 3600));
+			} else if (delta < 3600 * 24 * 30) {
+				formattedDate = MessageFormat.format(context.getString(R.string.time_delay_days), (int) (delta / (3600 * 24)));
+			} else if (delta < 3600 * 24 * 365) {
+				formattedDate = MessageFormat.format(context.getString(R.string.time_delay_months), (int) (delta / (3600 * 24 * 30)));
+			} else {
+				formattedDate = MessageFormat.format(context.getString(R.string.time_delay_years), (int) (delta / (3600 * 24 * 365)));
+			}
+		} else {
+			formattedDate = "";
+		}
+
+		return formattedDate;
 	}
 
 	public static boolean isEpoch(Calendar cal) {

@@ -13,23 +13,22 @@
             android:id="@+id/issue_is_favorite"
             android:button="@drawable/favorite"
             android:padding="4dp"
-            android:layout_alignTop="@+id/issue_tracker_id"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@+id/issue_tracker_id"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/issue_tracker_id"/>
+            android:layout_height="wrap_content"/>
 
         <net.bicou.redmine.widget.RobotoThinTextView
             android:id="@+id/issue_tracker_id"
-            android:text="Tracker #12345"
-            android:layout_toRightOf="@+id/issue_is_favorite"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/issue_is_favorite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="32sp"/>
 
         <net.bicou.redmine.widget.RobotoCondensedLightTextView
             android:id="@+id/issue_subject"
-            android:text="@+id/issue_subject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="24sp"
@@ -40,19 +39,19 @@
             android:id="@+id/issue_author_avatar"
             android:src="@drawable/no_avatar"
             android:layout_margin="8dp"
-            android:layout_toLeftOf="@+id/issue_author"
+            android:layout_alignParentLeft="true"
             android:layout_below="@+id/issue_parent"
             android:layout_width="42dp"
             android:layout_height="42dp"/>
 
         <TextView
             android:id="@+id/issue_author"
-            android:text="User Added X days ago"
             android:gravity="center_vertical"
-            android:layout_alignParentRight="true"
             android:textColor="@color/text_light"
             android:layout_alignTop="@+id/issue_author_avatar"
-            android:layout_width="wrap_content"
+            android:layout_toRightOf="@+id/issue_author_avatar"
+            android:padding="4dp"
+            android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_alignBottom="@+id/issue_author_avatar"/>
 
@@ -63,7 +62,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/issue_subject"
-            android:text="@+id/issue_parent"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <TableLayout
@@ -77,13 +75,11 @@
 
                 <net.bicou.redmine.widget.RobotoTextView
                     style="@style/IssueLabel"
-                    android:layout_weight="1"
                     android:text="@string/issue_status"/>
 
                 <net.bicou.redmine.widget.RobotoTextView
                     android:id="@+id/issue_status"
-                    android:text="@+id/issue_status"
-                    android:layout_weight="1"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -92,13 +88,11 @@
 
                 <net.bicou.redmine.widget.RobotoTextView
                     style="@style/IssueLabel"
-                    android:layout_weight="1"
                     android:text="@string/issue_priority"/>
 
                 <net.bicou.redmine.widget.RobotoTextView
-                    android:layout_weight="1"
                     android:id="@+id/issue_priority"
-                    android:text="@+id/issue_priority"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -106,14 +100,12 @@
             <TableRow style="@style/IssueTableRow">
 
                 <net.bicou.redmine.widget.RobotoTextView
-                    android:layout_weight="1"
                     style="@style/IssueLabel"
                     android:text="@string/issue_assignee"/>
 
                 <net.bicou.redmine.widget.RobotoTextView
                     android:id="@+id/issue_assignee"
-                    android:text="@+id/issue_assignee"
-                    android:layout_weight="1"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -121,14 +113,12 @@
             <TableRow style="@style/IssueTableRow">
 
                 <net.bicou.redmine.widget.RobotoTextView
-                    android:layout_weight="1"
                     style="@style/IssueLabel"
                     android:text="@string/issue_category"/>
 
                 <net.bicou.redmine.widget.RobotoTextView
-                    android:layout_weight="1"
                     android:id="@+id/issue_category"
-                    android:text="@+id/issue_category"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -137,13 +127,11 @@
 
                 <TextView
                     style="@style/IssueLabel"
-                    android:layout_weight="1"
                     android:text="@string/issue_target_version"/>
 
                 <TextView
                     android:id="@+id/issue_target_version"
-                    android:text="@+id/issue_target_version"
-                    android:layout_weight="1"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -153,13 +141,11 @@
 
                 <TextView
                     style="@style/IssueLabel"
-                    android:layout_weight="1"
                     android:text="@string/issue_start_date"/>
 
                 <TextView
                     android:id="@+id/issue_start_date"
-                    android:text="@+id/issue_start_date"
-                    android:layout_weight="1"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -168,13 +154,11 @@
 
                 <TextView
                     style="@style/IssueLabel"
-                    android:layout_weight="1"
                     android:text="@string/issue_due_date"/>
 
                 <TextView
                     android:id="@+id/issue_due_date"
-                    android:text="@+id/issue_due_date"
-                    android:layout_weight="1"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -183,13 +167,11 @@
 
                 <TextView
                     style="@style/IssueLabel"
-                    android:layout_weight="1"
                     android:text="@string/issue_percent_done"/>
 
                 <TextView
                     android:id="@+id/issue_percent_done"
-                    android:text="@+id/issue_percent_done"
-                    android:layout_weight="1"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -198,13 +180,24 @@
 
                 <TextView
                     style="@style/IssueLabel"
-                    android:layout_weight="1"
                     android:text="@string/issue_spent_time"/>
 
                 <TextView
                     android:id="@+id/issue_spent_time"
-                    android:text="@+id/issue_spent_time"
-                    android:layout_weight="1"
+                    style="@style/IssueValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </TableRow>
+
+            <TableRow style="@style/IssueTableRow">
+
+                <TextView
+                    style="@style/IssueLabel"
+                    android:text="@string/issue_estimated_hours"/>
+
+                <TextView
+                    android:id="@+id/issue_estimated_hours"
+                    style="@style/IssueValue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </TableRow>
@@ -232,15 +225,14 @@
 
             <TableRow
                 style="@style/IssueTableRow"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="4dp">
 
                 <View
                     android:background="#CC0000"
-                    android:layout_marginBottom="12dp"
                     android:layout_weight="1"
                     android:layout_span="2"
                     android:layout_width="match_parent"
-                    android:layout_height="4dp"/>
+                    android:layout_height="2dp"/>
             </TableRow>
 
             <TableRow style="@style/IssueTableRow">

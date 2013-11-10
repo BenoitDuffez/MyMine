@@ -29,7 +29,6 @@ import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Attachment;
 import net.bicou.redmine.data.json.Issue;
-import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
@@ -42,11 +41,7 @@ import net.bicou.redmine.util.Util;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,8 +50,8 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class IssueOverviewFragment extends TrackedFragment {
-	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mAuthor, mParent;
-	ImageView mAuthorAvatar, mAssignedAvatar;
+	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mEstimatedHours, mAuthor, mParent;
+	ImageView mAuthorAvatar;
 	CheckBox mFavorite;
 	WebView mDescription;
 	Issue mIssue;
@@ -88,6 +83,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		mDueDate = (TextView) v.findViewById(R.id.issue_due_date);
 		mPercentDone = (TextView) v.findViewById(R.id.issue_percent_done);
 		mSpentTime = (TextView) v.findViewById(R.id.issue_spent_time);
+		mEstimatedHours = (TextView) v.findViewById(R.id.issue_estimated_hours);
 		mAuthor = (TextView) v.findViewById(R.id.issue_author);
 		mAuthorAvatar = (ImageView) v.findViewById(R.id.issue_author_avatar);
 		mAssignee = (TextView) v.findViewById(R.id.issue_assignee);
@@ -182,74 +178,63 @@ public class IssueOverviewFragment extends TrackedFragment {
 		mDueDate.setText(Util.isEpoch(mIssue.due_date) ? "" : format.format(mIssue.due_date.getTime()));
 		mPercentDone.setText(String.format("%d%%", mIssue.done_ratio));
 		mSpentTime.setText(getString(R.string.issue_spent_time_format, mIssue.spent_hours));
-		mIssue.author = displayNameAndAvatar(getActivity(), mIssue, mAuthor, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
-		mIssue.assigned_to = displayNameAndAvatar(getActivity(), mIssue, mAssignee, mAssignedAvatar, mIssue.assigned_to, "%1$s", null); // TODO
-		mParent.setText(mIssue.parent != null && mIssue.parent.id > 0 ? Long.toString(mIssue.parent.id) : "");
+		mEstimatedHours.setText(getString(R.string.issue_spent_time_format, mIssue.estimated_hours));
 		mFavorite.setChecked(mIssue.is_favorite);
-	}
 
-	public static User displayNameAndAvatar(Context context, Issue issue, TextView name, ImageView avatar, User user, String textResId, Calendar date) {
-		if (user == null || user.id <= 0) {
-			if (name != null) {
-				name.setText("");
-			}
-			if (avatar != null) {
-				avatar.setVisibility(View.INVISIBLE);
-			}
-			return null;
+		// Parrent issue
+		if (mIssue.parent != null && mIssue.parent.id > 0) {
+			mParent.setVisibility(View.VISIBLE);
+			mParent.setText(Long.toString(mIssue.parent.id));
+		} else {
+			mParent.setVisibility(View.GONE);
+			mParent.setText("");
 		}
 
-		UsersDbAdapter db = new UsersDbAdapter(context);
+		UsersDbAdapter db = new UsersDbAdapter(getActivity());
 		db.open();
-		User u = db.select(issue.server, user.id);
-		db.close();
+		mIssue.author = db.select(mIssue.server, mIssue.author == null ? 0 : mIssue.author.id);
+		mIssue.assigned_to = db.select(mIssue.server, mIssue.assigned_to == null ? 0 : mIssue.assigned_to.id);
 
-		if (u != null) {
-			if (u.createGravatarUrl() && avatar != null) {
-				ImageLoader.getInstance().displayImage(u.gravatarUrl, avatar);
-				avatar.setVisibility(View.VISIBLE);
-			} else if (avatar != null) {
-				avatar.setVisibility(View.INVISIBLE);
+		// Set up author
+		if (mIssue.author != null) {
+			if (mIssue.author.createGravatarUrl() && mAuthorAvatar != null) {
+				ImageLoader.getInstance().displayImage(mIssue.author.gravatarUrl, mAuthorAvatar);
+				mAuthorAvatar.setVisibility(View.VISIBLE);
+			} else if (mAuthorAvatar != null) {
+				mAuthorAvatar.setVisibility(View.INVISIBLE);
 			}
 
-			if (name != null) {
-				String formattedDate;
-				if (date != null && date.getTimeInMillis() > 10000) {
-					long delta = (new GregorianCalendar().getTimeInMillis() - date.getTimeInMillis()) / 1000;
-					if (delta < 60) {
-						formattedDate = context.getString(R.string.time_delay_moments);
-					} else if (delta < 3600) {
-						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_minutes), (int) (delta / 60));
-					} else if (delta < 3600 * 24) {
-						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_hours), (int) (delta / 3600));
-					} else if (delta < 3600 * 24 * 30) {
-						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_days), (int) (delta / (3600 * 24)));
-					} else if (delta < 3600 * 24 * 365) {
-						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_months), (int) (delta / (3600 * 24 * 30)));
-					} else {
-						formattedDate = MessageFormat.format(context.getString(R.string.time_delay_years), (int) (delta / (3600 * 24 * 365)));
-					}
+			if (mAuthor != null) {
+				final String deltaCreation = Util.getDeltaDateText(getActivity(), mIssue.created_on);
+				if (!Util.isEpoch(mIssue.updated_on) && mIssue.updated_on.compareTo(mIssue.created_on) != 0) {
+					// Name, creation and update date
+					final String deltaUpdate = Util.getDeltaDateText(getActivity(), mIssue.updated_on);
+					mAuthor.setText(getString(R.string.issue_author_name_updated_format, mIssue.author.getName(), deltaCreation, deltaUpdate));
+					String fullDateCreated, fullDateUpdated;
+					fullDateCreated = mLongDateFormat.format(mIssue.created_on.getTime()) + " " + mTimeFormat.format(mIssue.created_on.getTime());
+					fullDateUpdated = mLongDateFormat.format(mIssue.updated_on.getTime()) + " " + mTimeFormat.format(mIssue.updated_on.getTime());
+					mAuthor.setTag(getString(R.string.issue_author_name_updated_toast_format, fullDateCreated, fullDateUpdated));
 				} else {
-					formattedDate = "";
+					// Name and creation only
+					mAuthor.setText(getString(R.string.issue_author_name_format, mIssue.author.getName(), deltaCreation));
+					String fullDate = mLongDateFormat.format(mIssue.created_on.getTime()) + " " + mTimeFormat.format(mIssue.created_on.getTime());
+					mAuthor.setTag(getString(R.string.issue_author_name_toast_format, fullDate));
 				}
-
-				name.setText(String.format(textResId, u.getName(), formattedDate));
-				name.setOnClickListener(mDatePopupClickListener);
-				name.setTag(date);
+				mAuthor.setOnClickListener(mDatePopupClickListener);
 			}
 		}
 
-		return u;
+		// Set up assigned to
+		mAssignee.setText(mIssue.assigned_to == null ? "" : mIssue.assigned_to.getName());
+		db.close();
 	}
 
 	private static View.OnClickListener mDatePopupClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(final View view) {
 			Object tag = view.getTag();
-			if (tag != null && tag instanceof Calendar) {
-				Date date = ((Calendar) tag).getTime();
-				String fullDate = mLongDateFormat.format(date) + " " + mTimeFormat.format(date);
-				Toast.makeText(view.getContext(), fullDate, Toast.LENGTH_LONG).show();
+			if (tag != null && view != null && view.getContext() != null && tag instanceof String) {
+				Toast.makeText(view.getContext(), (String) tag, Toast.LENGTH_LONG).show();
 			}
 		}
 	};

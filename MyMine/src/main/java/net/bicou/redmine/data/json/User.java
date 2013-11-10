@@ -65,6 +65,15 @@ public class User {
 	}
 
 	public String getName() {
+		if (firstname == null) {
+			firstname = "";
+		}
+		if (lastname == null) {
+			lastname = "";
+		}
+		if (TextUtils.isEmpty(firstname) && TextUtils.isEmpty(lastname)) {
+			return "";
+		}
 		return String.format(Locale.ENGLISH, "%s %s", firstname, lastname);
 	}
 

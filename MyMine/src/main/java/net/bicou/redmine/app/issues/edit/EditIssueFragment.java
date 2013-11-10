@@ -19,15 +19,16 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.app.issues.IssueFragment;
-import net.bicou.redmine.app.issues.IssueOverviewFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueCategory;
@@ -41,6 +42,7 @@ import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
+import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.util.BasicSpinnerAdapter;
 import net.bicou.redmine.util.L;
@@ -49,6 +51,7 @@ import net.bicou.redmine.widget.DoneBarActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -74,6 +77,8 @@ public class EditIssueFragment extends TrackedFragment {
 	SeekBar mPercentDone;
 	View mNotesLabel, mNotesLine, mNotesContainer;
 	private boolean mIsCreationMode;
+	private static java.text.DateFormat mLongDateFormat;
+	private static java.text.DateFormat mTimeFormat;
 
 	public static class IssueEditInformation {
 		public ArrayList<IssueStatus> statuses;
@@ -182,6 +187,13 @@ public class EditIssueFragment extends TrackedFragment {
 		});
 
 		return v;
+	}
+
+	@Override
+	public void onAttach(final Activity activity) {
+		super.onAttach(activity);
+		mLongDateFormat = DateFormat.getLongDateFormat(activity);
+		mTimeFormat = DateFormat.getTimeFormat(activity);
 	}
 
 	@Override
@@ -488,14 +500,14 @@ public class EditIssueFragment extends TrackedFragment {
 	 */
 	private void refreshUI() {
 		if (mIssue.author != null && mIssue.author.id > 0) {
-			mIssue.author = IssueOverviewFragment.displayNameAndAvatar(getActivity(), mIssue, mAuthorName, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
+			mIssue.author = displayNameAndAvatar(getActivity(), mIssue, mAuthorName, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
 		} else {
 			mAuthorName.setText("");
 			mAuthorAvatar.setVisibility(View.INVISIBLE);
 		}
 
 		if (mIssue.assigned_to != null && mIssue.assigned_to.id > 0) {
-			mIssue.assigned_to = IssueOverviewFragment.displayNameAndAvatar(getActivity(), mIssue, mAssigneeName, mAssigneeAvatar, mIssue.assigned_to, mIssue.assigned_to.getName(), null);
+			mIssue.assigned_to = displayNameAndAvatar(getActivity(), mIssue, mAssigneeName, mAssigneeAvatar, mIssue.assigned_to, mIssue.assigned_to.getName(), null);
 		} else {
 			mAssigneeAvatar.setVisibility(View.INVISIBLE);
 			mAssigneeName.setText(getString(R.string.issue_edit_field_unset));
@@ -529,6 +541,52 @@ public class EditIssueFragment extends TrackedFragment {
 		mNotesLabel.setVisibility(mIsCreationMode ? View.GONE : View.VISIBLE);
 		mNotesLine.setVisibility(mIsCreationMode ? View.GONE : View.VISIBLE);
 		mNotesContainer.setVisibility(mIsCreationMode ? View.GONE : View.VISIBLE);
+	}
+
+	private static View.OnClickListener mDatePopupClickListener = new View.OnClickListener() {
+		@Override
+		public void onClick(final View view) {
+			Object tag = view.getTag();
+			if (tag != null && tag instanceof Calendar) {
+				Date date = ((Calendar) tag).getTime();
+				String fullDate = mLongDateFormat.format(date) + " " + mTimeFormat.format(date);
+				Toast.makeText(view.getContext(), fullDate, Toast.LENGTH_LONG).show();
+			}
+		}
+	};
+
+	public static User displayNameAndAvatar(Context context, Issue issue, TextView name, ImageView avatar, User user, String textResId, Calendar date) {
+		if (user == null || user.id <= 0) {
+			if (name != null) {
+				name.setText("");
+			}
+			if (avatar != null) {
+				avatar.setVisibility(View.INVISIBLE);
+			}
+			return null;
+		}
+
+		UsersDbAdapter db = new UsersDbAdapter(context);
+		db.open();
+		User u = db.select(issue.server, user.id);
+		db.close();
+
+		if (u != null) {
+			if (u.createGravatarUrl() && avatar != null) {
+				ImageLoader.getInstance().displayImage(u.gravatarUrl, avatar);
+				avatar.setVisibility(View.VISIBLE);
+			} else if (avatar != null) {
+				avatar.setVisibility(View.INVISIBLE);
+			}
+
+			if (name != null) {
+				name.setText(String.format(textResId, u.getName(), Util.getDeltaDateText(context, date)));
+				name.setOnClickListener(mDatePopupClickListener);
+				name.setTag(date);
+			}
+		}
+
+		return u;
 	}
 
 	public void showDatePickerDialog(final View v) {
