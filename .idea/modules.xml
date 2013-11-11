@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/MyMine.iml" filepath="$PROJECT_DIR$/MyMine.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyMine/MyMine-MyMine.iml" filepath="$PROJECT_DIR$/MyMine/MyMine-MyMine.iml" />
       <module fileurl="file://$PROJECT_DIR$/vendor/SplitActivity/SplitActivity/SplitActivity.iml" filepath="$PROJECT_DIR$/vendor/SplitActivity/SplitActivity/SplitActivity.iml" />
       <module fileurl="file://$PROJECT_DIR$/vendor/aFileChooser/aFileChooser/aFileChooser.iml" filepath="$PROJECT_DIR$/vendor/aFileChooser/aFileChooser/aFileChooser.iml" />

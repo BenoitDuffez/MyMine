@@ -9,7 +9,8 @@
         <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleTest" />
         <option name="SOURCE_GEN_TASK_NAME" value="generateDebugSources" />
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
-        <option name="RES_FOLDERS_RELATIVE_PATH" value="" />
+        <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/res" />
+        <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
         <option name="LIBRARY_PROJECT" value="true" />
       </configuration>
     </facet>
@@ -41,7 +42,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/debug/res" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/resources" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/aidl" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/assets" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/jni" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/rs" isTestSource="false" generated="true" />
@@ -53,6 +53,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/instrumentTest/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/instrumentTest/res" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/instrumentTest/resources" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/assets" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/build/apk" />
       <excludeFolder url="file://$MODULE_DIR$/build/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/bundles" />
@@ -64,8 +66,9 @@
       <excludeFolder url="file://$MODULE_DIR$/build/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android 4.3 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="support-v4-19.0.0" level="project" />
   </component>
 </module>
 
