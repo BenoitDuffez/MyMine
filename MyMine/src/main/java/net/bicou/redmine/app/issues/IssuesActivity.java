@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -61,6 +60,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_DELETE_ISSUE = 4;
 	public static final int ACTION_UPLOAD_ISSUE = 5;
 	public static final int ACTION_ISSUE_TOGGLE_FAVORITE = 6;
+	public static final int ACTION_GET_NAVIGATION_SPINNER_DATA = 7;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -154,21 +154,11 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		}
 	}
 
-	GetNavigationSpinnerDataTask.NavigationModeAdapterCallback mNavigationModeAdapterCallback = new GetNavigationSpinnerDataTask.NavigationModeAdapterCallback() {
-		@Override
-		public void onNavigationModeAdapterReady(final IssuesMainFilterAdapter adapter) {
-			mSpinnerAdapter = adapter;
-			final ActionBar ab = getSupportActionBar();
-			ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-			ab.setListNavigationCallbacks(mSpinnerAdapter, mNavigationCallbacks);
-		}
-	};
-
 	@Override
 	public void onResume() {
 		super.onResume();
 		if (mNavMode == ActionBar.NAVIGATION_MODE_LIST) {
-			new GetNavigationSpinnerDataTask(this, mNavigationModeAdapterCallback).execute();
+			AsyncTaskFragment.runTask(this, ACTION_GET_NAVIGATION_SPINNER_DATA, null);
 		}
 	}
 
@@ -404,6 +394,16 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			idb.update(issue);
 			idb.close();
 			break;
+
+		case ACTION_GET_NAVIGATION_SPINNER_DATA:
+			final QueriesDbAdapter qdb = new QueriesDbAdapter(applicationContext);
+			qdb.open();
+			final List<Query> queries = qdb.selectAll(null);
+			final ProjectsDbAdapter pdb = new ProjectsDbAdapter(qdb);
+			final List<Project> projects = pdb.selectAll();
+			pdb.close();
+
+			return new IssuesMainFilterAdapter(applicationContext, queries, projects);
 		}
 
 		return null;
@@ -478,42 +478,14 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 				getMainFragment().refreshList();
 			}
 			break;
-		}
-	}
 
-	public static class GetNavigationSpinnerDataTask extends AsyncTask<Void, Void, IssuesMainFilterAdapter> {
-		Context mContext;
-		NavigationModeAdapterCallback mCallback;
-
-		public interface NavigationModeAdapterCallback {
-			public void onNavigationModeAdapterReady(IssuesMainFilterAdapter adapter);
-		}
-
-		GetNavigationSpinnerDataTask(final Context ctx, final NavigationModeAdapterCallback cb) {
-			mContext = ctx;
-			mCallback = cb;
-		}
-
-		@Override
-		protected IssuesMainFilterAdapter doInBackground(final Void... params) {
-			final QueriesDbAdapter qdb = new QueriesDbAdapter(mContext);
-			qdb.open();
-			final List<Query> queries = qdb.selectAll(null);
-			qdb.close();
-
-			final ProjectsDbAdapter pdb = new ProjectsDbAdapter(mContext);
-			pdb.open();
-			final List<Project> projects = pdb.selectAll();
-			pdb.close();
-
-			return new IssuesMainFilterAdapter(mContext, queries, projects);
-		}
-
-		@Override
-		protected void onPostExecute(final IssuesMainFilterAdapter result) {
-			if (mCallback != null) {
-				mCallback.onNavigationModeAdapterReady(result);
-			}
+		case ACTION_GET_NAVIGATION_SPINNER_DATA:
+			mSpinnerAdapter = (IssuesMainFilterAdapter) result;
+			final ActionBar ab = getSupportActionBar();
+			ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+			ab.setListNavigationCallbacks(mSpinnerAdapter, mNavigationCallbacks);
+			L.d("setlistnavigationcallbacks: " + mSpinnerAdapter + ", " + mNavigationCallbacks);
+			break;
 		}
 	}
 }
