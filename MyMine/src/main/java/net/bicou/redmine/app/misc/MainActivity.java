@@ -22,6 +22,7 @@ import net.bicou.redmine.app.issues.edit.EditIssueActivity;
 import net.bicou.redmine.app.issues.edit.IssueUploader;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.settings.SettingsActivity;
+import net.bicou.redmine.app.welcome.OverviewCard;
 import net.bicou.redmine.app.welcome.WelcomeFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
@@ -42,6 +43,7 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 
 	private static final int ACTION_LOAD_ACTIVITY = 0;
 	private static final int ACTION_UPLOAD_ISSUE = 1;
+	public static final int ACTION_REFRESH_MAIN_SCREEN = 2;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -230,10 +232,14 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 
 		case ACTION_LOAD_ACTIVITY:
 			return getWhichFragmentToDisplay();
+
+		case ACTION_REFRESH_MAIN_SCREEN:
+			return WelcomeFragment.buildCards(applicationContext);
 		}
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		setSupportProgressBarIndeterminateVisibility(false);
@@ -272,6 +278,13 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 				// FATAL EXCEPTION: main
 				// java.lang.RuntimeException: Unable to resume activity {net.bicou.redmine/net.bicou.redmine.app.MainActivity}:
 				// java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
+			}
+			break;
+
+		case ACTION_REFRESH_MAIN_SCREEN:
+			Fragment frag = getSupportFragmentManager().findFragmentById(R.id.drawer_content);
+			if (frag != null && frag instanceof WelcomeFragment) {
+				((WelcomeFragment) frag).onCardsBuilt((List<OverviewCard>) result);
 			}
 			break;
 		}

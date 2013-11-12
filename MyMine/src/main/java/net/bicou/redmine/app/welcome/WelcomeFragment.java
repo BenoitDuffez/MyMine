@@ -1,18 +1,25 @@
 package net.bicou.redmine.app.welcome;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.origamilabs.library.views.StaggeredGridView;
+
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.misc.HelpSetupFragment;
+import net.bicou.redmine.app.misc.MainActivity;
 import net.bicou.redmine.app.projects.ProjectsActivity;
 import net.bicou.redmine.app.roadmap.RoadmapActivity;
 import net.bicou.redmine.app.wiki.WikiActivity;
@@ -20,7 +27,6 @@ import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
-import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.sync.SyncUtils;
 import net.bicou.redmine.util.L;
 
@@ -67,8 +73,7 @@ public class WelcomeFragment extends TrackedFragment {
 			}
 		});
 
-		//		((MainActivity) getActivity()).prepareWelcomeScreenContents();
-		onCardsBuilt(buildCards());
+		AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), MainActivity.ACTION_REFRESH_MAIN_SCREEN, null);
 		return v;
 	}
 
@@ -106,12 +111,12 @@ public class WelcomeFragment extends TrackedFragment {
 	/**
 	 * Called from a background thread
 	 */
-	public List<OverviewCard> buildCards() {
+	public static List<OverviewCard> buildCards(Context ctx) {
 		String issuesDescription, projectsDescription, serversDescription;
 		List<OverviewCard> cards = new ArrayList<OverviewCard>();
 
-		final Resources res = getResources();
-		final ServersDbAdapter sdb = new ServersDbAdapter(getActivity());
+		final Resources res = ctx.getResources();
+		final ServersDbAdapter sdb = new ServersDbAdapter(ctx);
 		sdb.open();
 
 		// Load issues
@@ -128,9 +133,9 @@ public class WelcomeFragment extends TrackedFragment {
 
 		// Build description strings
 		String issuesSubTitle = res.getString(R.string.overview_card_issues_subtitle).replace("'", "‘");
-		issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssuesTotal), getString(R.string.overview_card_issues_count_all));
+		issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssuesTotal), ctx.getString(R.string.overview_card_issues_count_all));
 		if (numIssuesMyself > 0) {
-			issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssuesMyself), getString(R.string.overview_card_issues_count_all));
+			issuesDescription = String.format(MessageFormat.format(issuesSubTitle, numIssuesMyself), ctx.getString(R.string.overview_card_issues_count_all));
 		}
 
 		// Load projects
@@ -146,12 +151,12 @@ public class WelcomeFragment extends TrackedFragment {
 		serversDescription = MessageFormat.format(serversSubTitle, numServers);
 
 		// Issues
-		cards.add(new OverviewCard(new Intent(getActivity(), IssuesActivity.class)) //
+		cards.add(new OverviewCard(new Intent(ctx, IssuesActivity.class)) //
 				.setContent(R.string.overview_card_issues_title, issuesDescription, R.drawable.card_issues, R.drawable.icon_issues) //
 				.addAction(WelcomeCardAction.ADD_ISSUE, R.string.menu_issues_add));
 
 		// Projects
-		cards.add(new OverviewCard(new Intent(getActivity(), ProjectsActivity.class)) //
+		cards.add(new OverviewCard(new Intent(ctx, ProjectsActivity.class)) //
 				.setContent(R.string.overview_card_projects_title, projectsDescription, R.drawable.card_project, R.drawable.icon_projects) //
 						//				.addAction(ID_PROJECTS, R.string.overview_card_projects_action) //
 				.addAction(WelcomeCardAction.ROADMAPS, R.string.overview_card_projects_see_roadmaps) //
