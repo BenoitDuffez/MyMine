@@ -22,7 +22,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 /**
  * Created by bicou on 02/08/13.
  */
-public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener, DatePickerFragment.DateSelectionListener, DescriptionEditorFragment.DescriptionChangeListener {
+public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener,
+		DatePickerFragment.DateSelectionListener, DescriptionEditorFragment.DescriptionChangeListener , ProjectSwitcherFragment.ProjectChangeListener{
 	public static final int ACTION_LOAD_ISSUE_DATA = 0;
 
 	@Override
@@ -95,5 +96,11 @@ public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFra
 	public void onDescriptionChanged(final String newDescription) {
 		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(Util.getContentViewCompat());
 		frag.onDescriptionChanged(newDescription);
+	}
+
+	@Override
+	public void onProjectChanged(long newProjectId) {
+		EditIssueFragment frag = (EditIssueFragment) getSupportFragmentManager().findFragmentById(Util.getContentViewCompat());
+		frag.onProjectChanged(newProjectId);
 	}
 }

@@ -306,5 +306,7 @@
     <string name="issue_save_notes_button">Save notes</string>
     <string name="issue_edit_notes_hint">Type your notes about this issue here</string>
     <string name="issue_edit_description_hint">Enter the issue description here</string>
+    <string name="menu_issue_edit_project">Change project</string>
+    <string name="issue_edit_project_instructions">Please select the target project</string>
 
 </resources>

@@ -11,6 +11,7 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -67,6 +68,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class EditIssueFragment extends TrackedFragment {
 	public static final String KEY_ISSUE_DESCRIPTION = "net.bicou.redmine.app.issues.edit.Description";
 	public static final String KEY_ISSUE_NOTES = "net.bicou.redmine.app.issues.edit.Notes";
+	public static final String KEY_ISSUE_PROJECT_ID = "net.bicou.redmine.app.issues.edit.Project";
 
 	ViewGroup mMainLayout;
 	Issue mIssue;
@@ -185,6 +187,8 @@ public class EditIssueFragment extends TrackedFragment {
 				saveIssueChangesAndClose();
 			}
 		});
+
+		setHasOptionsMenu(true);
 
 		return v;
 	}
@@ -636,9 +640,22 @@ public class EditIssueFragment extends TrackedFragment {
 		newFragment.show(getActivity().getSupportFragmentManager(), "descriptionEditor");
 	}
 
+	private void showEditProjectDialog() {
+		saveIssueChanges(true);
+		Bundle args = new Bundle();
+		args.putLong(KEY_ISSUE_PROJECT_ID, mIssue.project == null ? 0 : mIssue.project.id);
+		DialogFragment newFragment = ProjectSwitcherFragment.newInstance(args);
+		newFragment.show(getActivity().getSupportFragmentManager(), "projectSwitcher");
+	}
+
 	public void onDescriptionChanged(final String newDescription) {
 		mIssue.description = newDescription;
 		refreshUI();
+	}
+
+	public void onProjectChanged(long newProjectId) {
+		mIssue.project = new Project();
+		mIssue.project.id = newProjectId;
 	}
 
 	private void showUserPickerDialog() {
@@ -660,5 +677,17 @@ public class EditIssueFragment extends TrackedFragment {
 	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_issue_edit, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_issue_edit_change_project:
+			showEditProjectDialog();
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }

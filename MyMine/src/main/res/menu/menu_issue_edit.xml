@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:appcompat="http://schemas.android.com/apk/res-auto">
+      xmlns:appcompat="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_issue_edit_ok"
-        appcompat:showAsAction="always"
-        android:title="@android:string/ok"
-        android:icon="@android:drawable/ic_menu_save" />
-    <item
-        android:id="@+id/menu_issue_edit_cancel"
-        appcompat:showAsAction="always"
-        android:title="@android:string/cancel"
-        android:icon="@android:drawable/ic_menu_close_clear_cancel" />
+        android:id="@+id/menu_issue_edit_change_project"
+        appcompat:showAsAction="never"
+        android:title="@string/menu_issue_edit_project"/>
 
 </menu>
