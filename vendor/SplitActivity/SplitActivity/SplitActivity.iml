@@ -72,7 +72,7 @@
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="support-v4-19.0.0" level="project" />
-    <orderEntry type="library" exported="" name="ComAndroidSupportAppcompatV71900.aar" level="project" />
+    <orderEntry type="library" exported="" name="SplitActivity-build-exploded-bundles-ComAndroidSupportAppcompatV71900.aar-res-ComAndroidSupportAppcompatV71900.aar" level="project" />
   </component>
 </module>
 
