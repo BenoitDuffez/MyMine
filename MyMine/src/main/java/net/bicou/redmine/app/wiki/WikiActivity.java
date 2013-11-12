@@ -8,8 +8,10 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
@@ -24,8 +26,7 @@ import net.bicou.splitactivity.SplitActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageFragment> implements ActionBar.OnNavigationListener,
-		AsyncTaskFragment.TaskFragmentCallbacks {
+public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageFragment> implements ActionBar.OnNavigationListener, AsyncTaskFragment.TaskFragmentCallbacks {
 	private WikiPage mDesiredWikiPage;
 
 	@Override
@@ -43,11 +44,11 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 		return EmptyFragment.newInstance(R.drawable.empty_wiki);
 	}
 
-    @Override
-    protected void onPreCreate() {
-        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    }
+	@Override
+	protected void onPreCreate() {
+		supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
