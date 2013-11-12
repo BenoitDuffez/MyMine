@@ -468,7 +468,6 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			break;
 
-
 		case ACTION_UPLOAD_ISSUE:
 			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
 			break;
