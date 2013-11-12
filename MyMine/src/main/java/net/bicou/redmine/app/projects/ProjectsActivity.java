@@ -1,6 +1,7 @@
 package net.bicou.redmine.app.projects;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -15,6 +16,7 @@ import net.bicou.redmine.app.issues.edit.IssueUploader;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.app.welcome.OverviewCard;
 import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.util.L;
 import net.bicou.splitactivity.SplitActivity;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class ProjectsActivity extends SplitActivity<ProjectsListFragment, ProjectFragment> implements AsyncTaskFragment.TaskFragmentCallbacks {
 	public static final int ACTION_LOAD_PROJECT_CARDS = 0;
+	public static final int ACTION_UPLOAD_ISSUE = 1;
 
 	@Override
 	protected ProjectsListFragment createMainFragment(Bundle args) {
@@ -50,11 +53,11 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 		return super.onOptionsItemSelected(item);
 	}
 
-    @Override
-    protected void onPreCreate() {
-        supportRequestWindowFeature(Window.FEATURE_PROGRESS);
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-    }
+	@Override
+	protected void onPreCreate() {
+		supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -69,6 +72,16 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 			if (args != null && args.keySet().contains(ProjectFragment.KEY_PROJECT_JSON)) {
 				selectContent(args);
 			}
+		}
+	}
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		L.d("requestCode=" + requestCode + ", resultCode=" + resultCode + ", data=" + data);
+		if (resultCode == RESULT_OK) {
+			final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
+			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
+			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
 		}
 	}
 
@@ -98,6 +111,9 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 		case ACTION_LOAD_PROJECT_CARDS:
 			Project project = (Project) parameters;
 			return ProjectFragment.getProjectCards(applicationContext, project.server, project);
+
+		case ACTION_UPLOAD_ISSUE:
+			return IssueUploader.uploadIssue(applicationContext, (Bundle) parameters);
 		}
 		return null;
 	}
@@ -105,9 +121,17 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 	@Override
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
 		setSupportProgressBarIndeterminateVisibility(false);
-		ProjectFragment projectFragment = getContentFragment();
-		if (projectFragment != null) {
-			projectFragment.onCardsBuilt((List<OverviewCard>) result);
+		switch (action) {
+		case ACTION_LOAD_PROJECT_CARDS:
+			ProjectFragment projectFragment = getContentFragment();
+			if (projectFragment != null) {
+				projectFragment.onCardsBuilt((List<OverviewCard>) result);
+			}
+			break;
+
+		case ACTION_UPLOAD_ISSUE:
+			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
+			break;
 		}
 	}
 }

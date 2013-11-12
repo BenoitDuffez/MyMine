@@ -28,6 +28,7 @@ import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
+import net.bicou.redmine.app.issues.edit.IssueUploader;
 import net.bicou.redmine.app.welcome.CardsAdapter;
 import net.bicou.redmine.app.welcome.OverviewCard;
 import net.bicou.redmine.app.wiki.WikiUtils;
@@ -83,21 +84,20 @@ public class ProjectFragment extends TrackedFragment {
 		mIsFavorite = (CheckBox) v.findViewById(R.id.project_overview_is_favorite);
 
 		//Add onPreDrawListener
-		mFullDescription.getViewTreeObserver().addOnPreDrawListener(
-				new ViewTreeObserver.OnPreDrawListener() {
-					@Override
-					public boolean onPreDraw() {
-						mFullDescription.getViewTreeObserver().removeOnPreDrawListener(this);
-						mFullDescription.setVisibility(View.GONE);
+		mFullDescription.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+			@Override
+			public boolean onPreDraw() {
+				mFullDescription.getViewTreeObserver().removeOnPreDrawListener(this);
+				mFullDescription.setVisibility(View.GONE);
 
-						final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-						final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-						mFullDescription.measure(widthSpec, heightSpec);
+				final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+				final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+				mFullDescription.measure(widthSpec, heightSpec);
 
-						mAnimator = slideAnimator(0, mFullDescription.getMeasuredHeight());
-						return true;
-					}
-				});
+				mAnimator = slideAnimator(0, mFullDescription.getMeasuredHeight());
+				return true;
+			}
+		});
 
 		mTitle.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -130,7 +130,7 @@ public class ProjectFragment extends TrackedFragment {
 					Intent intent = new Intent(getActivity(), EditIssueActivity.class);
 					intent.putExtra(Constants.KEY_PROJECT, mProject);
 					intent.putExtra(Constants.KEY_SERVER, mProject.server);
-					startActivity(intent);
+					startActivityForResult(intent, IssueUploader.CREATE_ISSUE);
 				}
 			}
 		});
