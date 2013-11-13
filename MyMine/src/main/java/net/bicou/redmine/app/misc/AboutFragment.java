@@ -28,11 +28,13 @@ public class AboutFragment extends TrackedFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.frag_about, container, false);
 
-		final TextView version = (TextView) v.findViewById(R.id.about_version);
-		setupVersion(version);
+		if (v != null) {
+			final TextView version = (TextView) v.findViewById(R.id.about_version);
+			setupVersion(version);
 
-		String aboutLicenses = readTextFromResource(R.raw.about_licenses);
-		((WebView) v.findViewById(R.id.about_licenses)).loadData(aboutLicenses, "text/html; charset=UTF-8", "UTF-8");
+			String aboutLicenses = readTextFromResource(R.raw.about_licenses);
+			((WebView) v.findViewById(R.id.about_licenses)).loadData(aboutLicenses, "text/html; charset=UTF-8", "UTF-8");
+		}
 
 		return v;
 	}
@@ -58,19 +60,24 @@ public class AboutFragment extends TrackedFragment {
 		PackageManager pm = getActivity().getPackageManager();
 		String packageName = getActivity().getPackageName();
 
+		if (pm == null) {
+			L.e("Unable to load PM", null);
+			return;
+		}
+
 		// Get the build date
 		long time = new Date().getTime();
 		try {
 			final ApplicationInfo ai = pm.getApplicationInfo(packageName, 0);
 			final ZipFile zf = new ZipFile(ai.sourceDir);
 			final ZipEntry ze = zf.getEntry("classes.dex");
-			time = ze.getTime();
+			if (ze != null) {
+				time = ze.getTime();
+			}
 		} catch (final NameNotFoundException nnfe) {
-			L.d("Unable to get last build date: " + nnfe);
+			L.e("Unable to get last build date: ", nnfe);
 		} catch (final IOException ioe) {
-			L.d("Unable to get last build date: " + ioe);
-		} catch (NullPointerException npe) {
-			L.d("Unable to get last build date: " + npe);
+			L.e("Unable to get last build date: ", ioe);
 		}
 		final String buildDate = DateFormat.getInstance().format(new Date(time));
 
