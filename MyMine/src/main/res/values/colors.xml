@@ -16,6 +16,7 @@
 -->
 
 <resources>
+    <color name="red_mymine">#c90000</color>
     <color name="pressed_mymine">#CCc90000</color>
     <color name="grey_window_background">#E7E7E7</color>
     <color name="white_layout_background">#FFFFFF</color>

@@ -22,6 +22,8 @@ import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.splitactivity.SplitActivity;
 
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
+
 public class IssuesListFragment extends TrackedListFragment implements LoaderCallbacks<Cursor> {
 	View mFragmentView;
 
@@ -87,6 +89,13 @@ public class IssuesListFragment extends TrackedListFragment implements LoaderCal
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mFragmentView = inflater.inflate(R.layout.frag_issues_list, container, false);
+		View listView = mFragmentView.findViewById(android.R.id.list);
+		((IssuesActivity) getActivity()).getPullToRefreshAttacher().addRefreshableView(listView, new PullToRefreshAttacher.OnRefreshListener() {
+			@Override
+			public void onRefreshStarted(View view) {
+				AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_REFRESH_ISSUES, null);
+			}
+		});
 		return mFragmentView;
 	}
 

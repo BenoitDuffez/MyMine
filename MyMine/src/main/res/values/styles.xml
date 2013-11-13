@@ -28,6 +28,13 @@
         <item name="android:textColor">@color/actionbar_text</item>
     </style>
 
+    <style name="Theme.MyMine.Widget.PtrHeader"
+           parent="android:Widget">
+        <!-- The background of the header view -->
+        <!--<item name="ptrHeaderBackground"></item>-->
+        <item name="ptrProgressBarColor">@color/red_mymine</item>
+    </style>
+
     <!-- Generated with http://android-holo-colors.com -->
     <style name="Theme.MyMine.EditText"
            parent="android:Widget.EditText">

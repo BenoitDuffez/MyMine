@@ -81,6 +81,9 @@
         <!--<item name="searchViewTextField">@drawable/issues_search_background</item>-->
         <!--<item name="searchViewSearchIcon">@drawable/ab_ic_search</item>-->
 
+        <!--Pull to refresh-->
+        <item name="ptrHeaderStyle">@style/Theme.MyMine.Widget.PtrHeader</item>
+
     </style>
 
     <!-- Actual theme. Must be overriden by newer version to take advantage of new features -->

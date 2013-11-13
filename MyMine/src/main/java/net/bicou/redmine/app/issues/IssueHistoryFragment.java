@@ -19,11 +19,13 @@ import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueHistory;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.PullRefreshable;
 
 import java.lang.reflect.Type;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
 public class IssueHistoryFragment extends TrackedListFragment implements FragmentActivationListener {
 	private IssueHistoryDownloadTask mUpdateTask;
@@ -46,6 +48,14 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 
 		mLayout = (ViewGroup) inflater.inflate(R.layout.frag_issue_journal, container, false);
 		mEmptyView = (TextView) mLayout.findViewById(android.R.id.empty);
+
+		View listView = mLayout.findViewById(android.R.id.list);
+		((PullRefreshable) getActivity()).getPullToRefreshAttacher().addRefreshableView(listView, new PullToRefreshAttacher.OnRefreshListener() {
+			@Override
+			public void onRefreshStarted(View view) {
+				refreshIssueHistory();
+			}
+		});
 
 		if (savedInstanceState != null) {
 			try {
@@ -88,31 +98,38 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 	@Override
 	public void onFragmentActivated() {
 		if ((mIssue == null || mIssue.journals == null) && mUpdateTask == null) {
-			mUpdateTask = new IssueHistoryDownloadTask((ActionBarActivity) getActivity(), new JournalsDownloadCallbacks() {
-				@Override
-				public void onPreExecute() {
-					((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
-				}
-
-				@Override
-				public void onJournalsDownloaded(final IssueHistory history) {
-					setHistory(history);
-					if (getActivity() != null) {
-						((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
-					}
-				}
-
-				@Override
-				public void onJournalsFailed(final JsonNetworkError error) {
-					if (error == null) {
-						Crouton.makeText(getActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
-					} else {
-						error.displayCrouton(getActivity(), mLayout);
-					}
-				}
-			}, mIssue);
-			mUpdateTask.execute();
+			refreshIssueHistory();
 		}
+	}
+
+	private void refreshIssueHistory() {
+		mUpdateTask = new IssueHistoryDownloadTask((ActionBarActivity) getActivity(), new JournalsDownloadCallbacks() {
+			@Override
+			public void onPreExecute() {
+				((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
+				mEmptyView.setText(R.string.loading);
+			}
+
+			@Override
+			public void onJournalsDownloaded(final IssueHistory history) {
+				setHistory(history);
+				((PullRefreshable) getActivity()).getPullToRefreshAttacher().setRefreshComplete();
+				if (getActivity() != null) {
+					((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
+				}
+			}
+
+			@Override
+			public void onJournalsFailed(final JsonNetworkError error) {
+				((PullRefreshable) getActivity()).getPullToRefreshAttacher().setRefreshComplete();
+				if (error == null) {
+					Crouton.makeText(getActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
+				} else {
+					error.displayCrouton(getActivity(), mLayout);
+				}
+			}
+		}, mIssue);
+		mUpdateTask.execute();
 	}
 
 	@Override
