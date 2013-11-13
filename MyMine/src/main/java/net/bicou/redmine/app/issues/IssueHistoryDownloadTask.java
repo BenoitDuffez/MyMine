@@ -2,7 +2,9 @@ package net.bicou.redmine.app.issues;
 
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
 import android.text.TextUtils;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.json.ChangeSet;
@@ -28,6 +30,8 @@ import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.DiffMatchPatch;
 import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.StrikeTagHandler;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -385,15 +389,19 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 			setAvatarUrl(journal, db);
 
 			// Details
-			journal.formatted_details = getFormattedDetails(journal, db);
+			final StringBuilder details = new StringBuilder();
+			for (final String detail : getFormattedDetails(journal, db)) {
+				details.append("&nbsp; • ").append(detail).append("<br />\n");
+			}
+			journal.formatted_details = Html.fromHtml(details.toString(), null, new StrikeTagHandler());
 
 			// Notes
 			if (!TextUtils.isEmpty(journal.notes)) {
-				String html = WikiUtils.htmlFromTextile(journal.notes);
-				html = html.replace("<pre>", "<tt>").replace("</pre>", "</tt>");
+				String notes = WikiUtils.htmlFromTextile(journal.notes);
+				notes = notes.replace("<pre>", "<tt>").replace("</pre>", "</tt>");
 				// Fake lists
-				html = html.replace("<li>", " &nbsp; &nbsp; • ").replace("</li>", "<br />");
-				journal.formatted_notes = html;
+				notes= notes.replace("<li>", " &nbsp; &nbsp; • ").replace("</li>", "<br />");
+				journal.formatted_notes = Html.fromHtml(notes);
 			}
 		}
 	}
@@ -405,7 +413,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 
 		UsersDbAdapter udb = new UsersDbAdapter(db);
 		for (ChangeSet changeSet : changeSets) {
-			changeSet.commentsHtml = changeSet.comments.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br />");
+			changeSet.commentsHtml = Html.fromHtml(changeSet.comments.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br />"));
 			// TODO: cache users?
 			if (changeSet.user != null) {
 				changeSet.user = udb.select(mIssue.server, changeSet.user.id);

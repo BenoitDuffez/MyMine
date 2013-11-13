@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/card_background_shadow"
-    android:padding="8dp" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/card_background_shadow"
+                android:padding="8dp">
 
     <ImageView
         android:id="@+id/issue_journal_item_avatar"
@@ -13,16 +13,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@+id/issue_journal_item_user"
         android:layout_centerVertical="true"
-        android:src="@drawable/ab_bottom_solid_mymine" />
+        android:src="@drawable/ab_bottom_solid_mymine"/>
 
     <net.bicou.redmine.widget.RobotoThinTextView
         android:id="@+id/issue_journal_item_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
         android:layout_toLeftOf="@+id/issue_journal_item_date"
         android:layout_toRightOf="@+id/issue_journal_item_avatar"
         android:text="string/issue_journal_item_user"
-        android:textAppearance="@android:style/TextAppearance.Large" />
+        android:textAppearance="@android:style/TextAppearance.Large"/>
 
     <TextView
         android:id="@+id/issue_journal_item_date"
@@ -34,7 +35,7 @@
         android:gravity="center_vertical|right"
         android:text="issue_journal_item_date"
         android:textColor="@color/faded_text"
-        android:textStyle="italic" />
+        android:textStyle="italic"/>
 
     <TextView
         android:id="@+id/issue_journal_item_details"
@@ -42,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/issue_journal_item_avatar"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/issue_journal_item_user" />
+        android:layout_below="@+id/issue_journal_item_user"/>
 
     <TextView
         android:id="@+id/issue_journal_item_notes"
@@ -54,6 +55,6 @@
         android:padding="8dp"
         android:paddingLeft="12dp"
         android:text="issue_journal_item_notes"
-        android:textIsSelectable="true" />
+        android:textIsSelectable="true"/>
 
 </RelativeLayout>

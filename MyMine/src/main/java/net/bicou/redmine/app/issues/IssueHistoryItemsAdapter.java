@@ -1,7 +1,6 @@
 package net.bicou.redmine.app.issues;
 
 import android.content.Context;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
@@ -12,13 +11,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.json.ChangeSet;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueHistory;
 import net.bicou.redmine.data.json.Journal;
-import net.bicou.redmine.util.StrikeTagHandler;
 
 import java.util.Date;
 import java.util.Locale;
@@ -109,11 +109,7 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 				holder.date.setText(String.format("%s — %s", mDateFormat.format(d), mTimeFormat.format(d)));
 
 				// Show details
-				final StringBuilder html = new StringBuilder();
-				for (final String detail : journal.formatted_details) {
-					html.append("&nbsp; • ").append(detail).append("<br />\n");
-				}
-				holder.details.setText(Html.fromHtml(html.toString(), null, new StrikeTagHandler()));
+				holder.details.setText(journal.formatted_details);
 				holder.details.setMovementMethod(LinkMovementMethod.getInstance());
 
 				// Show notes
@@ -121,7 +117,7 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 					holder.notes.setVisibility(View.GONE);
 				} else {
 					holder.notes.setVisibility(View.VISIBLE);
-					holder.notes.setText(trim(Html.fromHtml(journal.formatted_notes)));
+					holder.notes.setText(trim(journal.formatted_notes));
 					Linkify.addLinks(holder.notes, Linkify.ALL & ~Linkify.PHONE_NUMBERS);
 				}
 
@@ -137,7 +133,7 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 				Date d = changeSet.committed_on.getTime();
 				holder.date.setText(String.format(Locale.ENGLISH, "%s — %s", mDateFormat.format(d), mTimeFormat.format(d)));
 				holder.details.setText(mContext.getString(R.string.issue_changeset_revision, changeSet.revision));// TODO create link to revision
-				holder.notes.setText(Html.fromHtml(changeSet.commentsHtml));
+				holder.notes.setText(changeSet.commentsHtml);
 
 				if (changeSet.user == null || TextUtils.isEmpty(changeSet.user.gravatarUrl)) {
 					holder.avatar.setVisibility(View.INVISIBLE);

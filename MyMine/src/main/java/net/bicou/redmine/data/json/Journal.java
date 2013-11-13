@@ -1,5 +1,7 @@
 package net.bicou.redmine.data.json;
 
+import android.text.Spanned;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -11,6 +13,6 @@ public class Journal {
 	public List<JournalDetail> details;
 
 	// These are not from the JSON/Redmine server
-	public List<String> formatted_details;
-	public String formatted_notes;
+	public Spanned formatted_details;
+	public Spanned formatted_notes;
 }
