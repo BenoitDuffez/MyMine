@@ -10,11 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.util.L;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.zip.ZipEntry;
@@ -28,9 +31,27 @@ public class AboutFragment extends TrackedFragment {
 		final TextView version = (TextView) v.findViewById(R.id.about_version);
 		setupVersion(version);
 
-		((WebView) v.findViewById(R.id.about_licenses)).loadUrl("file:///android_asset/about_licenses.html");
+		String aboutLicenses = readTextFromResource(R.raw.about_licenses);
+		((WebView) v.findViewById(R.id.about_licenses)).loadData(aboutLicenses, "text/html; charset=UTF-8", "UTF-8");
 
 		return v;
+	}
+
+	private String readTextFromResource(int resourceID) {
+		InputStream raw = getResources().openRawResource(resourceID);
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		int i;
+		try {
+			i = raw.read();
+			while (i != -1) {
+				stream.write(i);
+				i = raw.read();
+			}
+			raw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return stream.toString();
 	}
 
 	private void setupVersion(TextView version) {
