@@ -157,8 +157,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putString(KEY_SERVER_URL, mServerUrlEdit.getText().toString());
-		outState.putString(KEY_SERVER_API_KEY, mApiKeyEdit.getText().toString());
+		outState.putString(KEY_SERVER_URL, mServerUrlEdit == null ? "" : (TextUtils.isEmpty(mServerUrlEdit.getText()) ? "" : mServerUrlEdit.getText().toString().trim()));
+		outState.putString(KEY_SERVER_API_KEY, mApiKeyEdit == null ? "" : (TextUtils.isEmpty(mApiKeyEdit.getText()) ? "" : mApiKeyEdit.getText().toString().trim()));
 		outState.putString(KEY_AUTH_USERNAME, mAuthUsername);
 		outState.putString(KEY_AUTH_PASSWORD, mAuthPassword);
 	}
@@ -175,7 +175,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 		} else {
 			serverUrl = "";
 		}
-		String apiKey = mApiKeyEdit.getText() == null ? null : mApiKeyEdit.getText().toString();
+		String apiKey = mApiKeyEdit.getText() == null ? null : mApiKeyEdit.getText().toString().trim();
 
 		UserLoginTask.UserLoginParameters params = new UserLoginTask.UserLoginParameters(serverUrl, apiKey, mAuthUsername, mAuthPassword);
 		AsyncTaskFragment.runTask(this, 0, params);
@@ -327,7 +327,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		if (mIsAuthSettingsFragmentShown == false) {
+		if (!mIsAuthSettingsFragmentShown) {
 			final MenuInflater i = getMenuInflater();
 			i.inflate(R.menu.menu_server, menu);
 		}

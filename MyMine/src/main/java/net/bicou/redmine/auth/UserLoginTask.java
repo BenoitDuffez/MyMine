@@ -3,6 +3,7 @@ package net.bicou.redmine.auth;
 import android.content.Context;
 import android.text.TextUtils;
 import android.widget.Toast;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.ProjectsList;
@@ -13,6 +14,7 @@ import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.sync.NetworkUtilities;
 import net.bicou.redmine.util.L;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -40,11 +42,11 @@ public class UserLoginTask {
 		public String authUsername;
 		public String authPassword;
 
-		public UserLoginParameters(final String mServerUrl, final String mApiKey, final String mAuthUsername, final String mAuthPassword) {
-			serverUrl = mServerUrl;
-			apiKey = mApiKey;
-			authUsername = mAuthUsername;
-			authPassword = mAuthPassword;
+		public UserLoginParameters(final String serverUrl, final String apiKey, final String authUsername, final String authPassword) {
+			this.serverUrl = serverUrl;
+			this.apiKey = TextUtils.isEmpty(apiKey) ? "" : apiKey.trim();
+			this.authUsername = authUsername;
+			this.authPassword = authPassword;
 		}
 	}
 
@@ -71,9 +73,7 @@ public class UserLoginTask {
 
 		// Try to log in: download 1st project
 		final String url = "projects.json";
-		final NameValuePair[] args = new BasicNameValuePair[] {
-				new BasicNameValuePair("limit", "1")
-		};
+		final NameValuePair[] args = new BasicNameValuePair[] { new BasicNameValuePair("limit", "1") };
 		result.authResult = false;
 
 		try {
