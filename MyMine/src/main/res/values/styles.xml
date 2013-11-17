@@ -73,15 +73,17 @@
         <item name="android:background">@drawable/btn_default_holo_light</item>
     </style>
 
-    <style name="Theme.MyMine.Spinner"
-           parent="android:Widget.Spinner">
-        <item name="android:background">@drawable/spinner_background_holo_light</item>
-        <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
+    <style name="Theme.MyMine.DropDownNav"
+           parent="Widget.AppCompat.Light.Base.Spinner">
+        <item name="android:background">@drawable/spinner_background_ab_mymine</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_mymine</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_mymine</item>
     </style>
 
-    <style name="Theme.MyMine.Spinner.DropDown"
-           parent="Theme.MyMine.Spinner">
-        <item name="android:spinnerMode">dropdown</item>
+    <style name="Theme.MyMine.Spinner"
+           parent="Widget.AppCompat.Base.Spinner">
+        <item name="android:background">@drawable/spinner_background_holo_light</item>
+        <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
     </style>
 
     <style name="Theme.MyMine.SpinnerDropDownItem"

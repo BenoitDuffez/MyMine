@@ -32,7 +32,8 @@
         <item name="android:listSelector">@drawable/selectable_background_mymine</item>
     </style>
 
-    <style name="Theme.MyMine.DropDownNav">
+    <style name="Theme.MyMine.DropDownNav"
+           parent="android:Widget.Holo.Light.Spinner">
         <item name="background">@drawable/spinner_background_ab_mymine</item>
 
         <item name="android:background">@drawable/spinner_background_ab_mymine</item>
