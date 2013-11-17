@@ -22,7 +22,9 @@ import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.splitactivity.SplitActivity;
 
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
+import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class IssuesListFragment extends TrackedListFragment implements LoaderCallbacks<Cursor> {
 	View mFragmentView;
@@ -34,6 +36,7 @@ public class IssuesListFragment extends TrackedListFragment implements LoaderCal
 
 	IssuesListFilter mFilter;
 	IssuesOrder mIssuesOrder;
+	private PullToRefreshLayout mPullToRefreshLayout;
 
 	public static IssuesListFragment newInstance(final Bundle args) {
 		final IssuesListFragment frag = new IssuesListFragment();
@@ -89,14 +92,30 @@ public class IssuesListFragment extends TrackedListFragment implements LoaderCal
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mFragmentView = inflater.inflate(R.layout.frag_issues_list, container, false);
-		View listView = mFragmentView.findViewById(android.R.id.list);
-		((IssuesActivity) getActivity()).getPullToRefreshAttacher().addRefreshableView(listView, new PullToRefreshAttacher.OnRefreshListener() {
-			@Override
-			public void onRefreshStarted(View view) {
-				AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_REFRESH_ISSUES, null);
-			}
-		});
 		return mFragmentView;
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		// This is the View which is created by ListFragment
+		ViewGroup viewGroup = (ViewGroup) view;
+
+		// We need to create a PullToRefreshLayout manually
+		mPullToRefreshLayout = new PullToRefreshLayout(viewGroup.getContext());
+
+		// Now setup the PullToRefreshLayout
+		ActionBarPullToRefresh.from(getActivity()) //
+				.insertLayoutInto(viewGroup).theseChildrenArePullable(android.R.id.list, android.R.id.empty) //
+				// Set the OnRefreshListener
+				.listener(new OnRefreshListener() {
+					@Override
+					public void onRefreshStarted(View view) {
+						AsyncTaskFragment.runTask((ActionBarActivity) getActivity(), IssuesActivity.ACTION_REFRESH_ISSUES, null);
+					}
+				})
+						// Finally commit the setup to our PullToRefreshLayout
+				.setup(mPullToRefreshLayout);
 	}
 
 	@Override
@@ -167,6 +186,7 @@ public class IssuesListFragment extends TrackedListFragment implements LoaderCal
 		mAdapter.swapCursor(data);
 		if (getActivity() != null) {
 			((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(data == null);
+			mPullToRefreshLayout.setRefreshComplete();
 		}
 
 		final TextView empty = (TextView) mFragmentView.findViewById(android.R.id.empty);

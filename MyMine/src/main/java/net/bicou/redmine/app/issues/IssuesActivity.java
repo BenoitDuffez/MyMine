@@ -42,15 +42,13 @@ import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
-import net.bicou.redmine.util.PullRefreshable;
 import net.bicou.splitactivity.SplitActivity;
 
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
 
-public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks, ServerProjectPickerFragment.ServerProjectSelectionListener, PullRefreshable {
+public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks, ServerProjectPickerFragment.ServerProjectSelectionListener {
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
 
@@ -63,8 +61,6 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_UPLOAD_ISSUE = 5;
 	public static final int ACTION_ISSUE_TOGGLE_FAVORITE = 6;
 	public static final int ACTION_GET_NAVIGATION_SPINNER_DATA = 7;
-
-	private PullToRefreshAttacher mPullToRefreshAttacher;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -132,7 +128,6 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		setSupportProgressBarIndeterminateVisibility(false);
 
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
-		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
 
 		Bundle args = getIntent().getExtras();
 		if (args != null && args.containsKey(Constants.KEY_ISSUE_ID)) {
@@ -356,7 +351,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public void onPreExecute(final int action, final Object parameters) {
-		setSupportProgressBarIndeterminateVisibility(true);
+		if (action != ACTION_REFRESH_ISSUES) {
+			setSupportProgressBarIndeterminateVisibility(true);
+		}
 	}
 
 	@Override
@@ -422,13 +419,14 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public void onPostExecute(final int action, final Object parameters, final Object result) {
-		setSupportProgressBarIndeterminateVisibility(false);
+		if (action != ACTION_REFRESH_ISSUES) {
+			setSupportProgressBarIndeterminateVisibility(false);
+		}
 		switch (action) {
 		case ACTION_REFRESH_ISSUES:
 			if (getMainFragment() != null) {
 				getMainFragment().refreshList();
 			}
-			mPullToRefreshAttacher.setRefreshComplete();
 			break;
 
 		case ACTION_ISSUE_LOAD_ISSUE:
@@ -492,10 +490,5 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			L.d("setlistnavigationcallbacks: " + mSpinnerAdapter + ", " + mNavigationCallbacks);
 			break;
 		}
-	}
-
-	@Override
-	public PullToRefreshAttacher getPullToRefreshAttacher() {
-		return mPullToRefreshAttacher;
 	}
 }

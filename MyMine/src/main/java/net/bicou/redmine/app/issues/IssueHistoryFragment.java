@@ -19,13 +19,14 @@ import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueHistory;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
-import net.bicou.redmine.util.PullRefreshable;
 
 import java.lang.reflect.Type;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher;
+import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class IssueHistoryFragment extends TrackedListFragment implements FragmentActivationListener {
 	private IssueHistoryDownloadTask mUpdateTask;
@@ -35,6 +36,7 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 
 	private IssueHistory mHistory;
 	private static final String HISTORY_DATA = "net.bicou.redmine.app.issues.History";
+	private PullToRefreshLayout mPullToRefreshLayout;
 
 	public static IssueHistoryFragment newInstance(final Bundle args) {
 		final IssueHistoryFragment f = new IssueHistoryFragment();
@@ -49,14 +51,6 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 		mLayout = (ViewGroup) inflater.inflate(R.layout.frag_issue_journal, container, false);
 		mEmptyView = (TextView) mLayout.findViewById(android.R.id.empty);
 
-		View listView = mLayout.findViewById(android.R.id.list);
-		((PullRefreshable) getActivity()).getPullToRefreshAttacher().addRefreshableView(listView, new PullToRefreshAttacher.OnRefreshListener() {
-			@Override
-			public void onRefreshStarted(View view) {
-				refreshIssueHistory();
-			}
-		});
-
 		if (savedInstanceState != null) {
 			try {
 				Type type = new TypeToken<IssueHistory>() {}.getType();
@@ -67,6 +61,30 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 		}
 
 		return mLayout;
+	}
+
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		// This is the View which is created by ListFragment
+		ViewGroup viewGroup = (ViewGroup) view;
+
+		// We need to create a PullToRefreshLayout manually
+		mPullToRefreshLayout = new PullToRefreshLayout(viewGroup.getContext());
+
+		// Now setup the PullToRefreshLayout
+		ActionBarPullToRefresh.from(getActivity()) //
+				.insertLayoutInto(viewGroup).theseChildrenArePullable(android.R.id.list, android.R.id.empty) //
+				// Set the OnRefreshListener
+				.listener(new OnRefreshListener() {
+					@Override
+					public void onRefreshStarted(View view) {
+						refreshIssueHistory();
+					}
+				})
+						// Finally commit the setup to our PullToRefreshLayout
+				.setup(mPullToRefreshLayout);
 	}
 
 	@Override
@@ -106,22 +124,18 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 		mUpdateTask = new IssueHistoryDownloadTask((ActionBarActivity) getActivity(), new JournalsDownloadCallbacks() {
 			@Override
 			public void onPreExecute() {
-				((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
 				mEmptyView.setText(R.string.loading);
 			}
 
 			@Override
 			public void onJournalsDownloaded(final IssueHistory history) {
+				mPullToRefreshLayout.setRefreshComplete();
 				setHistory(history);
-				((PullRefreshable) getActivity()).getPullToRefreshAttacher().setRefreshComplete();
-				if (getActivity() != null) {
-					((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(false);
-				}
 			}
 
 			@Override
 			public void onJournalsFailed(final JsonNetworkError error) {
-				((PullRefreshable) getActivity()).getPullToRefreshAttacher().setRefreshComplete();
+				mPullToRefreshLayout.setRefreshComplete();
 				if (error == null) {
 					Crouton.makeText(getActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
 				} else {
