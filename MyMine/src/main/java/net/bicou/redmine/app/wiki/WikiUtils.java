@@ -2,9 +2,11 @@ package net.bicou.redmine.app.wiki;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.data.json.Project;
@@ -63,6 +65,7 @@ public class WikiUtils {
 					try {
 						issueId = Long.parseLong(match.group(2));
 					} catch (NumberFormatException e) {
+						issueId = 0;
 					}
 					if (issueId > 0) {
 						Bundle args = new Bundle();
@@ -80,6 +83,12 @@ public class WikiUtils {
 					L.e("Unhandled wiki link: " + url);
 					return super.shouldOverrideUrlLoading(view, url);
 				}
+
+				return true;
+			} else if (view != null && view.getContext() != null) {
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(url));
+				view.getContext().startActivity(i);
 
 				return true;
 			}
@@ -220,7 +229,13 @@ public class WikiUtils {
 			}
 		}
 
-		return b.toString();
+		// http://daringfireball.net/2010/07/improved_regex_for_matching_urls
+		String output = b.toString();
+		output = output.replaceAll("(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2," +
+				"4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".," +
+				"<>?«»“”‘’]))", "<a href=\"$1\">$1</a>");
+
+		return output;
 	}
 
 	public static String titleFromUri(String uri) {
