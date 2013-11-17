@@ -37,5 +37,6 @@
 
     <dimen name="issue_listitem_project_background_radius">5dp</dimen>
     <dimen name="issue_listitem_height">140dp</dimen>
+    <dimen name="issues_filter_spinner_height">38dp</dimen>
 
 </resources>

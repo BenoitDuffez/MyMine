@@ -36,6 +36,7 @@
            parent="android:Widget.Holo.Light.Spinner">
         <item name="background">@drawable/spinner_background_ab_mymine</item>
 
+        <item name="android:textColor">#000</item>
         <item name="android:background">@drawable/spinner_background_ab_mymine</item>
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_mymine</item>
         <item name="android:dropDownSelector">@drawable/selectable_background_mymine</item>

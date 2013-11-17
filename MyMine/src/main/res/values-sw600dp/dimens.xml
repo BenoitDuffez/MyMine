@@ -6,5 +6,6 @@
     -->
 
     <dimen name="main_content_padding">12dp</dimen>
+    <dimen name="issues_filter_spinner_height">48dp</dimen>
 
 </resources>

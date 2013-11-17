@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.json.Project;
 
@@ -15,12 +16,10 @@ import java.util.ArrayList;
  * Created by bicou on 17/06/13.
  */
 public class ProjectsSpinnerAdapter extends ArrayAdapter<Project> {
-	ArrayList<Project> data;
 	LayoutInflater inflater;
 
-	public ProjectsSpinnerAdapter(final Context ctx, final int textViewResourceId, final ArrayList<Project> data) {
-		super(ctx, textViewResourceId, data);
-		this.data = data;
+	public ProjectsSpinnerAdapter(final Context ctx, final ArrayList<Project> data) {
+		super(ctx, R.layout.main_nav_item, 0, data);
 		inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
@@ -31,9 +30,10 @@ public class ProjectsSpinnerAdapter extends ArrayAdapter<Project> {
 		}
 
 		final TextView text = (TextView) convertView.findViewById(R.id.main_nav_ab_item_text);
+		Project project = getItem(position);
 
-		if (text != null && data != null && position < data.size()) {
-			text.setText(data.get(position).name);
+		if (text != null && project != null) {
+			text.setText(project.name);
 		}
 
 		return convertView;
@@ -46,28 +46,18 @@ public class ProjectsSpinnerAdapter extends ArrayAdapter<Project> {
 		}
 
 		final TextView text = (TextView) convertView.findViewById(R.id.main_nav_item_text);
-		final View image = convertView.findViewById(R.id.main_nav_item_icon);
+		Project project = getItem(position);
 
-		if (text != null && image != null) {
-			text.setText(data.get(position).name);
-			image.setVisibility(View.INVISIBLE);
+		if (text != null && project != null) {
+			text.setText(project.name);
 		}
 
 		return convertView;
 	}
 
 	@Override
-	public int getCount() {
-		return data == null ? 0 : data.size();
-	}
-
-	@Override
-	public Project getItem(final int position) {
-		return null;
-	}
-
-	@Override
 	public long getItemId(final int position) {
-		return 0;
+		Project item = getItem(position);
+		return item == null ? 0 : item.id;
 	}
 }

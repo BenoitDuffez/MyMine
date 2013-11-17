@@ -100,7 +100,7 @@ public class WikiActivity extends SplitActivity<WikiPagesListFragment, WikiPageF
 		mCurrentProjectPosition = -1;
 		if (savedInstanceState == null) {
 			mProjects = new ArrayList<Project>();
-			mAdapter = new ProjectsSpinnerAdapter(this, R.layout.main_nav_item, mProjects);
+			mAdapter = new ProjectsSpinnerAdapter(this, mProjects);
 		}
 
 		// Specific project/server?

@@ -156,7 +156,7 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 		mCurrentProjectPosition = -1;
 		if (savedInstanceState == null) {
 			mProjects = new ArrayList<Project>();
-			mAdapter = new ProjectsSpinnerAdapter(this, R.layout.main_nav_item, mProjects);
+			mAdapter = new ProjectsSpinnerAdapter(this, mProjects);
 			mCurrentProjectPosition = -1;
 		}
 
@@ -172,7 +172,7 @@ public class RoadmapActivity extends SplitActivity<RoadmapsListFragment, Roadmap
 		super.onRestoreInstanceState(savedInstanceState);
 
 		mProjects = savedInstanceState.getParcelableArrayList(KEY_REDMINE_PROJECTS_LIST);
-		mAdapter = new ProjectsSpinnerAdapter(this, R.layout.main_nav_item, mProjects);
+		mAdapter = new ProjectsSpinnerAdapter(this, mProjects);
 		mCurrentProjectPosition = savedInstanceState.getInt(Constants.KEY_PROJECT_POSITION);
 
 		enableListNavigationMode();

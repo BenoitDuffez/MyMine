@@ -8,7 +8,7 @@
         android:id="@+id/issues_filter_spinner_text"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:background="#666666"
+        android:background="@color/actionbar_spinner_separator_background"
         android:gravity="center_vertical"
         android:paddingLeft="4dp"
         android:text="Large Text"
