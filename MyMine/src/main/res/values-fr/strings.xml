@@ -1,293 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="auth_accept_cert">Accepter le certificat d\'origine non fiable?</string>
-    <string name="auth_error_network">Impossible de s\'authentifier : erreur réseau (%1$s)</string>
-    <string name="auth_error_json">Impossible de s\'authentifier : erreur de syntaxe JSON (le serveur n\'a pas fourni la réponse attendue)</string>
-    <string name="auth_error_response">Impossible de s\'authentifier : réponse vide du serveur</string>
-
-    <string name="app_name">MyMine</string>
-    <string name="about_version">MyMine version %1$s, compilée le %2$s</string>
-
-    <string name="alert_alpha">L\'appli est en stade ALPHA de développement. Cela signifie que l\'appli n\'est pas censée être utilisée en production. Cela veut
-        également dire qu\'elle est plus lente qu\'elle ne sera à terme. Vous ne devez pas vous attendre à ce que tout fonctionne convenablement. Vous ne pouvez pas
-        lui en vouloir si elle plante, car elle VA planter.\n\nCeci dit, tout sera corrigé. Tous les bugs vont être retirés. Tout ce que vous devez faire, c\'est
-        attendre la prochaine mise à jour pour voir votre bug corrigé.\n\nVous n\'avez pas besoin de noter cette appli 1 étoile ;)\nL\'équipe de développement
-        surveille tous les rapports de crash, et une grande attention est portée afin que TOUS les bugs soient résolus.\n\nBonne évaluation, et envoyez un email si
-        vous voulez une nouvelle fonctionnalité ! :-)
-    </string>
-    <string name="alert_alpha_title">Avertissement version alpha</string>
-    <string name="alpha_ok">OK, ça me va !</string>
-    <string name="alpha_ko">Bah.</string>
-    <string name="alert_010_upgrade_title">Oups !  Synchro à refaire</string>
-    <string name="alert_010_upgrade">Héhé... désolé. Il y a eu une modification non prévue dans le fonctionnement de l\'appli, et nous avons dû supprimer les pages Wiki de la mémoire du téléphone. Vous devrez donc attendre la prochaine synchro ou en déclencher une manuelle avant de pouvoir utiliser le Wiki.\n\nMais ne vous inquiétez pas, votre Wiki est INTACT ! C\'est juste la copie locale stockée sur ce téléphone qui a été corrompue.</string>
-    <string name="upgrade_010_ok">Merci pour l\'info</string>
-
-    <string name="loading">Chargement&#8230;</string>
-    <string name="loading_normal">Veuillez attendre un tout petit peu le temps qu\'on charge tout !</string>
-    <string name="loading_sync">Votre serveur a correctement été configuré, nous attendons maintenant que la synchro démarre. Cela peut prendre un peu de temps s\'il
-        y a beaucoup d\'activité sur votre serveur. Vous pouvez surveiller l\'avancement de la synchro dans les Paramètres Android (vérifiez la section Comptes et
-        Synchronisation).\n\nCa ne devrait pas être trop long, habituellement la première synchro prend une minute ou deux. C\'est le bon moment pour un café !
-        ;)
-    </string>
-    <string name="loading_sync_check_button">Vérifier les paramètres de synchro</string>
-    <string name="loading_sync_title">Pause café !</string>
-
-    <string name="no_projects">La liste des projets est vide.</string>
-
-    <string name="help_text">Afin d\'utiliser cette appli, vous devez configurer la connexion à votre serveur. Pour cela, ajoutez simplement un compte
-        <b>Serveur Redmine</b>
-        dans les paramètres de votre téléphone !\n\nEt oui, c\'est AUSSI simple. Toute la synchro va être gérée directement par votre téléphone, et vous pourrez
-        contrôler exactement ce que vous voulez synchroniser depuis le serveur.
-    </string>
-
-    <string name="title_projects">Projets</string>
-    <string name="title_wiki_pages">Pages Wiki</string>
-    <string name="title_issues">Tickets</string>
-
-    <string name="sync_account_type">Serveur Redmine</string>
-    <string name="sync_issues">Tickets (et leur statuts, priorités, etc.)</string>
-    <string name="sync_projects">Projets (et leurs versions, etc.)</string>
-    <string name="sync_wiki">Pages Wiki</string>
-    <string name="sync_users">Utilisateurs</string>
-    <string name="sync_settings_title">Paramètres du compte</string>
-    <string name="sync_settings_summary">Fréquence de synchro, notifications, etc.</string>
-
-    <string name="menu_projects">Projets</string>
-    <string name="menu_issues">Tickets</string>
-    <string name="menu_wiki">Wiki</string>
-    <string name="menu_about">À propos</string>
-    <string name="menu_settings">Paramètres</string>
-
-    <string name="no_wiki_pages">Ce projet n\'a aucune page wiki.</string>
-
-    <string name="not_applicable">N/A</string>
-
-    <!-- Overview -->
-    <string name="overview_card_issues_count_myself">dont vous êtes le responsable</string>
-    <string name="overview_card_issues_count_all">sur tous les serveurs combinés</string>
-    <string name="overview_card_issues_title">Tickets</string>
-    <string name="overview_card_issues_subtitle" formatted="false">{0,choice,0#Il n\'y a pas de ticket %s|1#Il n\'y a qu\'un ticket %s|1&lt;Il y a {0}
-        tickets %s}
-    </string>
-
-    <string name="overview_card_projects_title">Projets</string>
-    <string name="overview_card_projects_subtitle">{0,choice,0#Il n\'y a pas encore de projet synchronisé. Avez-vous configuré un projet ?|1#Vous suivez un
-        seul projet|1&lt;Vous suivez {0} projets}
-    </string>
-    <string name="overview_card_projects_action">Voir les projets</string>
-    <string name="overview_card_projects_see_roadmaps">Voir les feuilles de route</string>
-    <string name="overview_card_projects_see_wiki">Voir les pages Wiki</string>
-
-    <string name="overview_card_servers_title">Serveurs Redmine</string>
-    <string name="overview_card_servers_subtitle">{0,choice,0#Il n\'y a pas encore de serveur synchronisé. Avez-vous configuré un compte ?|1#Un seul serveur est
-        synchronisé avec l\'appli|1&lt;{0} serveurs sont synchronisé dans l\'appli}
-    </string>
-    <string name="overview_card_servers_sync">Gérer les serveurs et la synchro</string>
-    <string name="overview_card_servers_add">Ajouter un nouveau serveur</string>
-
-    <!-- Issue-related -->
-    <string name="issue_listview_target_version">Ver: %1$s</string>
-    <string name="issue_id">ID</string>
-    <string name="issue_project">Projet</string>
-    <string name="issue_tracker">Type</string>
-    <string name="issue_author">Auteur</string>
-    <string name="issue_subject">Sujet</string>
-    <string name="issue_status">Etat</string>
-    <string name="issue_creation_date">Date de création</string>
-    <string name="issue_update_date">Date de mise à jour</string>
-    <string name="issue_priority">Priorité</string>
-    <string name="issue_assignee">Responsable</string>
-    <string name="issue_category">Catégorie</string>
-    <string name="issue_target_version">Version cible</string>
-    <string name="issue_start_date">Date de début</string>
-    <string name="issue_due_date">Date d\'échéance</string>
-    <string name="issue_percent_done">% Fait</string>
-    <string name="issue_spent_time">Temps passé</string>
-    <string name="issue_description">Description</string>
-    <string name="issue_version_na">Ver: aucune</string>
-    <string name="issue_status_na">N/A</string>
-    <string name="issue_estimated_hours">Heures estimées</string>
-    <string name="issue_parent">Parent</string>
-    <string name="issue_is_private">Privé</string>
-    <string name="issue_tracker_id_format">%1$s #%2$d</string>
-    <string name="issue_spent_time_format">%1$.2f h</string>
-    <string name="issue_author_name_format">%1$s a ajouté %2$s</string>
-
-    <string name="issue_filter_all">TOUT</string>
-    <string name="issue_filter_queries">Requêtes</string>
-    <string name="issue_filter_projects">Projets</string>
-
-    <string name="issue_overview_title">Aperçu</string>
-    <string name="issue_journal_title">Historique</string>
-    <string name="issue_history_none">Aucun</string>
-
-    <string name="issue_journal_cant_download">Impossible de télécharger, vérifiez votre connexion Internet</string>
-    <string name="issue_journal_unknown_property">Propriété \'%1$s\'</string>
-    <string name="issue_journal_property_changed_to"><![CDATA[<b>%1$s</b> changé en <i>%2$s</i>]]></string>
-    <string name="issue_journal_property_changed_fromto"><![CDATA[<b>%1$s</b> changé de <s><i>%2$s</i></s> en <i>%3$s</i>]]></string>
-    <string name="issue_journal_property_deleted"><![CDATA[<b>%1$s</b> supprimé (était <i>%2$s</i>)]]></string>
-    <string name="issue_journal_attachment_added"><![CDATA[Pièce jointe <a href="%1$s">%2$s</a> ajoutée]]></string>
-    <string name="issue_journal_value_na">N/A</string>
-    <string name="issue_journal_user_anonymous">Anonyme</string>
-
-    <string name="issue_changeset_revision">Révision r%1$s</string>
-
-    <string name="issue_menu_open_browser">Ouvrir dans le navigateur</string>
-    <string name="issues_menu_search">Rechercher un ticket&#8230;</string>
-    <string name="issues_menu_refresh">Rafraîchir les tickets</string>
-    <string name="issues_search_hint">Rechercher dans les tickets Redmine&#8230;</string>
-
-    <string name="issues_ordering">Trier la liste des tickets par :</string>
-    <string name="issues_menu_ordering">Tri des tickets&#8230;</string>
-    <string name="issues_ordering_asc">ASC</string>
-    <string name="issues_ordering_desc">DESC</string>
-    <string name="issues_ordering_then">puis&#8230;</string>
-    <string name="issues_list_empty">La liste des tickets est vide.</string>
-    <string name="issues_list_empty_search">La recherche n\'a retourné aucun résultat</string>
-
-    <!-- Issue edit -->
-    <string name="issue_add_server_project_picker_dialog_title">Veuillez sélectionner le serveur et projet</string>
-    <string name="issue_edit_field_unset">Touchez pr changer</string>
-    <string name="issue_edit_edit_description_button">Changer la description</string>
-    <string name="issue_edit_notes">Notes</string>
-    <string name="issue_edit_description_dialog_title">Changer la description du ticket</string>
-    <string name="issue_edit_subject_hint">Saisissez le sujet du ticket</string>
-    <string name="issue_edit_select_assignee_button">Choisir</string>
-    <string name="issue_edit_spinner_no_change"><![CDATA[<rien>]]></string>
-    <string name="issue_edit_estimated_hours_parse_error">Impossible de décoder le nombre d\'heures, veuillez taper le temps comme HH, HH:MM ou HH:MM:SS</string>
-    <string name="issue_delete_confirm_dialog">Êtes-vous sûr(e) de vouloir supprimer ce ticket ? Cette action ne peut être annulée.</string>
-    <string name="issue_delete_confirmed">Ce ticket a été supprimé</string>
-
-    <string name="menu_issues_add">Ajouter un ticket</string>
-    <string name="issue_menu_edit">Éditer le ticket</string>
-    <string name="menu_issue_delete">Supprimer le ticket</string>
-
-    <!-- Project -->
-    <string name="project_created_on">
-        <b>Créé le</b>
-        : %1$s
-    </string>
-    <string name="project_updated_on">
-        <b>Mis à jour le</b>
-        : %1$s
-    </string>
-    <string name="project_server">
-        <b>Serveur Redmine</b>
-        : %1$s
-    </string>
-    <string name="project_parent">
-        <b>Projet parent</b>
-        : %1$s
-    </string>
-    <string name="project_list_item_updated_on">MÀJ : %1$s</string>
-    <string name="project_overview_issues_card_tracker">• %1$s : %2$d ouverts / %3$d fermés</string>
-
-    <!-- Setup -->
-    <string name="setup_title">Gestion du Serveur Redmine</string>
-    <string name="setup_welcome">Bienvenue !</string>
-    <string name="setup_server">Quelle est l\'URL de votre serveur ?</string>
-    <string name="setup_apikey">Quelle est votre clé API ?</string>
-    <string name="setup_apikey_help">Où puis-je trouver ma clé API ?</string>
-    <string name="setup_button">C\'est parti !</string>
-    <string name="setup_button_tryagain">Réessayez !</string>
-    <string name="setup_apikey_help_toast">Allez sur votre serveur, cliquez \'Mon Compte\', vous verrez votre clé API sur la droite, normalement</string>
-    <string name="setup_notice">Note : vous ne pouvez utiliser cette appli qu\'avec un serveur Redmine pour lequel l\'API REST a été activée. Nous n\'allons pas vous
-        demander votre nom d\'utilisateur ou votre mot de passe.
-    </string>
-    <string name="setup_check_failed">Argh ! Pourriez-vous revérifier, je n\'ai pas pu entrer&amp;#8230 :(</string>
-    <string name="setup_success">Bienvenue à bord, %s !</string>
-    <string name="setup_anonymous">Ca a marché ! Vous êtes anonyme sur ce serveur</string>
-    <string name="setup_sync_help">Je n\'ai pas pu vous montrer les paramètres de l\'appareil. Il faut juste ajouter un compte depuis l\'appli Paramètres de votre
-        appareil.
-    </string>
-
-    <!-- About -->
-    <string name="about_title">À propos - Licences</string>
-
-    <!-- Server Auth -->
-    <string name="menu_server_auth">Authentification avancée</string>
-    <string name="server_auth_settings_username">identifiant</string>
-    <string name="server_auth_settings_password">mot de passe</string>
-    <string name="server_auth_settings_hint">Si votre serveur nécessite une identification supplémentaire, veuillez l\'entrer ici.
-        \nVeuillez noter que cette identification correspond soit à une identification HTTP Basic, ou Active Directory (AD).
-    </string>
-
-    <!-- Errors -->
-    <string name="err_empty_response">Réponse vide</string>
-    <string name="err_unable_to_instantiate_object">Impossible de créer l\'objet (%1$s)</string>
-    <string name="err_parse_error">Réponse invalide (syntaxe JSON)</string>
-    <string name="err_unknown">Erreur inconnue (%1$s)</string>
-    <string name="err_http">Erreur réseau (%1$s)</string>
-
-    <!-- Wiki -->
-    <string name="wiki_empty_page">Cette page est vierge.</string>
-    <string name="wiki_page_not_found">Cette page n\'existe pas.</string>
-    <string name="wiki_list_item_updated_on">MÀJ : %1$s</string>
-    <string name="menu_wiki_fullscreen">Afficher la page wiki en plein-écran</string>
-
-    <!-- Certs -->
-    <string name="server_auth_settings_title">Authentification</string>
-    <string name="server_auth_settings_cert_hint">Sélectionnez le certificat requis par le serveur :</string>
-    <string name="server_auth_settings_select_cert">Sélection du certificat&#8230;</string>
-    <string name="server_auth_settings_select_cert_activity">Sélectionner le certificat</string>
-    <string name="server_auth_view_keystore">Ouvrir le gestionnaire de trousseau de clé</string>
-    <string name="server_auth_settings_no_cert">Aucun certificat sélectionné</string>
-    <string name="server_auth_cert_cert_exception">Impossible de charger ce certificat. Veuillez vérifier !</string>
-    <string name="server_auth_cert_file_exception">Impossible d\'ouvrir ce fichier. Veuillez vérifier !</string>
-    <string name="server_auth_cert_check_ok">Le certificat a l\'air OK !</string>
-    <string name="server_auth_cert_save_ok">Le certificat a été ajouté au trousseau de clé de l\'appli</string>
-    <string name="cert_issuer">Fournisseur</string>
-    <string name="cert_subject">Objet</string>
-    <string name="cert_key">Clé</string>
-    <string name="cert_algo">Algorithme de signature</string>
-    <string name="cert_start_date">Date de début</string>
-    <string name="cert_end_date">Date de fin</string>
-    <string name="cert_save">Enregistrer ce certificat</string>
-
-    <string name="menu_cert_add">Ajouter un nouveau certificat</string>
-    <string name="menu_cert_import">Autoriser l\'accès à un certificat système</string>
-    <string name="certs_list_title">Certificats de confiance</string>
-    <string name="certs_list_empty">Aucun certificat de confiance. Veuillez établir une connexion à un serveur dont la connexion n\'est pas fiable, pour vous voir
-        demander d\'enregistrer le certificat. Ou bien, vous pouvez utiliser le menu pour en ajouter un à la main.
-    </string>
-
-    <!-- Roadmap -->
-    <string name="roadmap_version">Version</string>
-    <string name="roadmap_show_wiki">Voir la page wiki</string>
-    <string name="roadmap_related_issues">Tickets liés</string>
-    <string name="roadmap_no_roadmaps">Aucune feuille de route définie.</string>
-    <string name="roadmap_list_title">Feuille de route</string>
-    <string name="roadmap_list_item_due_date">Date d\'échéance : %1$s</string>
-    <string name="roadmap_issues_count">Tickets : %1$d (dont %2$d ouverts)</string>
-    <string name="roadmap_due_date">Date d\'échéance : %1$s</string>
-
-    <!-- Drawer -->
-    <string name="drawer_open">Ouvrir le panneau de navigation</string>
-    <string name="drawer_close">Fermer le panneau de navigation</string>
-    <string name="drawer_title">@string/app_name</string>
-    <string name="drawer_menu_customize">Personnaliser ce menu&#8230;</string>
-    <string name="drawer_wiki_all_pages">Toutes les pages</string>
-
-    <!-- Used to make strings with dates in the past -->
-    <string name="time_delay_moments">il y a qq instants</string>
-    <string name="time_delay_minutes"><![CDATA[il y a {0} {0,choice,0#minutes|1#minute|1<minutes}]]></string>
-    <string name="time_delay_hours"><![CDATA[il y a {0} {0,choice,0#heures|1#heure|1<heures}]]></string>
-    <string name="time_delay_days"><![CDATA[il y a {0} {0,choice,0#jours|1#jour|1<jours}]]></string>
-    <string name="time_delay_months"><![CDATA[il y a {0} {0,choice,0#mois|1#mois|1<mois}]]></string>
-    <string name="time_delay_years"><![CDATA[il y a {0} {0,choice,0#ans|1#an|1<ans}]]></string>
-
-    <!-- Unsorted strings... -->
-    <string name="yes">Oui</string>
-    <string name="no">Non</string>
-    <string name="save">Enregistrer</string>
-    <string name="users_list_empty">
-        "<![CDATA[La liste des utilisateurs est vide. Cela peut arriver lorsque vous n\'êtes pas administrateur, nous travaillons afin
-        que cela puisse quand même fonctionner. En cas de besoin, envoyez un email à redmine@bicou.net]]>"
-    </string>
-    <string name="users_picker_dialog_title">Sélectionner l\'utilisateur</string>
-    <string name="drawer_main_no_favorite">Il n\'y a aucun favori</string>
-    <string name="issue_upload_failed">Impossible d\'uploader le ticket : %1$s</string>
-    <string name="issue_upload_successful">Ticket uploadé</string>
+	<string name="about_title">À propos - Licences</string>
+	<string name="about_version">MyMine version %1$s, compilée le %2$s</string>
+	<string name="alert_010_upgrade">Héhé... désolé. Il y a eu une modification non prévue dans le fonctionnement de l\'appli, et nous avons dû supprimer les pages Wiki de la mémoire du téléphone. Vous devrez donc attendre la prochaine synchro ou en déclencher une manuelle avant de pouvoir utiliser le Wiki.\n\nMais ne vous inquiétez pas, votre Wiki est INTACT ! C\'est juste la copie locale stockée sur ce téléphone qui a été corrompue.</string>
+	<string name="alert_010_upgrade_title">Oups ! Synchro à refaire</string>
+	<string name="alert_alpha">L\'appli est en stade ALPHA de développement. Cela signifie que l\'appli n\'est pas censée être utilisée en production. Cela veut également dire qu\'elle est plus lente qu\'elle ne sera à terme. Vous ne devez pas vous attendre à ce que tout fonctionne convenablement. Vous ne pouvez pas lui en vouloir si elle plante, car elle VA planter.\n\nCeci dit, tout sera corrigé. Tous les bugs vont être retirés. Tout ce que vous devez faire, c\'est attendre la prochaine mise à jour pour voir votre bug corrigé.\n\nVous n\'avez pas besoin de noter cette appli 1 étoile ;)\nL\'équipe de développement surveille tous les rapports de crash, et une grande attention est portée afin que TOUS les bugs soient résolus.\n\nBonne évaluation, et envoyez un email si vous voulez une nouvelle fonctionnalité ! :-) </string>
+	<string name="alert_alpha_title">Avertissement version alpha</string>
+	<string name="alpha_ko">Bah.</string>
+	<string name="alpha_ok">OK, ça me va !</string>
+	<string name="app_name">MyMine</string>
+	<string name="auth_accept_cert">Accepter le certificat d\'origine non fiable?</string>
+	<string name="auth_error_json">Impossible de s\'authentifier : erreur de syntaxe JSON (le serveur n\'a pas fourni la réponse attendue)</string>
+	<string name="auth_error_network">Impossible de s\'authentifier : erreur réseau (%1$s)</string>
+	<string name="auth_error_response">Impossible de s\'authentifier : réponse vide du serveur</string>
+	<string name="cert_algo">Algorithme de signature</string>
+	<string name="cert_end_date">Date de fin</string>
+	<string name="cert_issuer">Fournisseur</string>
+	<string name="cert_key">Clé</string>
+	<string name="cert_save">Enregistrer ce certificat</string>
+	<string name="certs_list_empty">Aucun certificat de confiance. Veuillez établir une connexion à un serveur dont la connexion n\'est pas fiable, pour vous voir demander d\'enregistrer le certificat. Ou bien, vous pouvez utiliser le menu pour en ajouter un à la main.</string>
+	<string name="certs_list_title">Certificats de confiance</string>
+	<string name="cert_start_date">Date de début</string>
+	<string name="cert_subject">Objet</string>
+	<string name="drawer_close">Fermer le panneau de navigation</string>
+	<string name="drawer_main_no_favorite">Il n\'y a aucun favori</string>
+	<string name="drawer_menu_customize">Personnaliser ce menu&#8230;</string>
+	<string name="drawer_open">Ouvrir le panneau de navigation</string>
+	<string name="drawer_title">@string/app_name</string>
+	<string name="drawer_wiki_all_pages">Toutes les pages</string>
+	<string name="err_empty_response">Réponse vide</string>
+	<string name="err_http">Erreur réseau (%1$s)</string>
+	<string name="err_parse_error">Réponse invalide (syntaxe JSON)</string>
+	<string name="err_unable_to_instantiate_object">Impossible de créer l\'objet (%1$s)</string>
+	<string name="err_unknown">Erreur inconnue (%1$s)</string>
+	<string name="help_text">Afin d\'utiliser cette appli, vous devez configurer la connexion à votre serveur. Pour cela, ajoutez simplement un compte <b>Serveur Redmine</b> dans les paramètres de votre téléphone !\n\nEt oui, c\'est AUSSI simple. Toute la synchro va être gérée directement par votre téléphone, et vous pourrez contrôler exactement ce que vous voulez synchroniser depuis le serveur. </string>
+	<string name="issue_add_server_project_picker_dialog_title">Veuillez sélectionner le serveur et projet</string>
+	<string name="issue_assignee">Responsable</string>
+	<string name="issue_author">Auteur</string>
+	<string name="issue_author_name_format">%1$s a ajouté %2$s</string>
+	<string name="issue_category">Catégorie</string>
+	<string name="issue_changeset_revision">Révision r%1$s</string>
+	<string name="issue_creation_date">Date de création</string>
+	<string name="issue_delete_confirm_dialog">Êtes-vous sûr(e) de vouloir supprimer ce ticket ? Cette action ne peut être annulée.</string>
+	<string name="issue_delete_confirmed">Ce ticket a été supprimé</string>
+	<string name="issue_description">Description</string>
+	<string name="issue_due_date">Date d\'échéance</string>
+	<string name="issue_edit_description_dialog_title">Changer la description du ticket</string>
+	<string name="issue_edit_edit_description_button">Changer la description</string>
+	<string name="issue_edit_estimated_hours_parse_error">Impossible de décoder le nombre d\'heures, veuillez taper le temps comme HH, HH:MM ou HH:MM:SS</string>
+	<string name="issue_edit_field_unset">Touchez pr changer</string>
+	<string name="issue_edit_notes">Notes</string>
+	<string name="issue_edit_select_assignee_button">Choisir</string>
+	<string name="issue_edit_spinner_no_change"><![CDATA[<rien>]]></string>
+	<string name="issue_edit_subject_hint">Saisissez le sujet du ticket</string>
+	<string name="issue_estimated_hours">Heures estimées</string>
+	<string name="issue_filter_all">TOUT</string>
+	<string name="issue_filter_projects">Projets</string>
+	<string name="issue_filter_queries">Requêtes</string>
+	<string name="issue_history_none">Aucun</string>
+	<string name="issue_id">ID</string>
+	<string name="issue_is_private">Privé</string>
+	<string name="issue_journal_attachment_added"><![CDATA[Pièce jointe <a href="%1$s">%2$s</a> ajoutée]]></string>
+	<string name="issue_journal_cant_download">Impossible de télécharger, vérifiez votre connexion Internet</string>
+	<string name="issue_journal_property_changed_fromto"><![CDATA[<b>%1$s</b> changé de <s><i>%2$s</i></s> en <i>%3$s</i>]]></string>
+	<string name="issue_journal_property_changed_to"><![CDATA[<b>%1$s</b> changé en <i>%2$s</i>]]></string>
+	<string name="issue_journal_property_deleted"><![CDATA[<b>%1$s</b> supprimé (était <i>%2$s</i>)]]></string>
+	<string name="issue_journal_title">Historique</string>
+	<string name="issue_journal_unknown_property">Propriété \'%1$s\'</string>
+	<string name="issue_journal_user_anonymous">Anonyme</string>
+	<string name="issue_journal_value_na">N/A</string>
+	<string name="issue_listview_target_version">Ver: %1$s</string>
+	<string name="issue_menu_edit">Éditer le ticket</string>
+	<string name="issue_menu_open_browser">Ouvrir dans le navigateur</string>
+	<string name="issue_overview_title">Aperçu</string>
+	<string name="issue_parent">Parent</string>
+	<string name="issue_percent_done">% Fait</string>
+	<string name="issue_priority">Priorité</string>
+	<string name="issue_project">Projet</string>
+	<string name="issues_list_empty">La liste des tickets est vide.</string>
+	<string name="issues_list_empty_search">La recherche n\'a retourné aucun résultat</string>
+	<string name="issues_menu_ordering">Tri des tickets&#8230;</string>
+	<string name="issues_menu_refresh">Rafraîchir les tickets</string>
+	<string name="issues_menu_search">Rechercher un ticket&#8230;</string>
+	<string name="issues_ordering_asc">ASC</string>
+	<string name="issues_ordering_desc">DESC</string>
+	<string name="issues_ordering_then">puis&#8230;</string>
+	<string name="issues_ordering">Trier la liste des tickets par :</string>
+	<string name="issue_spent_time_format">%1$.2f h</string>
+	<string name="issue_spent_time">Temps passé</string>
+	<string name="issues_search_hint">Rechercher dans les tickets Redmine&#8230;</string>
+	<string name="issue_start_date">Date de début</string>
+	<string name="issue_status">Etat</string>
+	<string name="issue_status_na">N/A</string>
+	<string name="issue_subject">Sujet</string>
+	<string name="issue_target_version">Version cible</string>
+	<string name="issue_tracker_id_format">%1$s #%2$d</string>
+	<string name="issue_tracker">Type</string>
+	<string name="issue_update_date">Date de mise à jour</string>
+	<string name="issue_upload_failed">Impossible d\'uploader le ticket : %1$s</string>
+	<string name="issue_upload_successful">Ticket uploadé</string>
+	<string name="issue_version_na">Ver: aucune</string>
+	<string name="loading">Chargement&#8230;</string>
+	<string name="loading_normal">Veuillez attendre un tout petit peu le temps qu\'on charge tout !</string>
+	<string name="loading_sync_check_button">Vérifier les paramètres de synchro</string>
+	<string name="loading_sync_title">Pause café !</string>
+	<string name="loading_sync">Votre serveur a correctement été configuré, nous attendons maintenant que la synchro démarre. Cela peut prendre un peu de temps s\'il y a beaucoup d\'activité sur votre serveur. Vous pouvez surveiller l\'avancement de la synchro dans les Paramètres Android (vérifiez la section Comptes et Synchronisation).\n\nCa ne devrait pas être trop long, habituellement la première synchro prend une minute ou deux. C\'est le bon moment pour un café ! ;) </string>
+	<string name="menu_about">À propos</string>
+	<string name="menu_cert_add">Ajouter un nouveau certificat</string>
+	<string name="menu_cert_import">Autoriser l\'accès à un certificat système</string>
+	<string name="menu_issue_delete">Supprimer le ticket</string>
+	<string name="menu_issues_add">Ajouter un ticket</string>
+	<string name="menu_issues">Tickets</string>
+	<string name="menu_projects">Projets</string>
+	<string name="menu_server_auth">Authentification avancée</string>
+	<string name="menu_settings">Paramètres</string>
+	<string name="menu_wiki_fullscreen">Afficher la page wiki en plein-écran</string>
+	<string name="menu_wiki">Wiki</string>
+	<string name="no">Non</string>
+	<string name="no_projects">La liste des projets est vide.</string>
+	<string name="not_applicable">N/A</string>
+	<string name="no_wiki_pages">Ce projet n\'a aucune page wiki.</string>
+	<string name="overview_card_issues_count_all">sur tous les serveurs combinés</string>
+	<string name="overview_card_issues_count_myself">dont vous êtes le responsable</string>
+ <string name="overview_card_issues_subtitle"
+		 formatted="false">{0,choice,0#Il n\'y a pas de ticket %s|1#Il n\'y a qu\'un ticket %s|1&lt;Il y a {0} tickets %s} </string>
+	<string name="overview_card_issues_title">Tickets</string>
+	<string name="overview_card_projects_action">Voir les projets</string>
+	<string name="overview_card_projects_see_roadmaps">Voir les feuilles de route</string>
+	<string name="overview_card_projects_see_wiki">Voir les pages Wiki</string>
+	<string name="overview_card_projects_subtitle">{0,choice,0#Il n\'y a pas encore de projet synchronisé. Avez-vous configuré un projet ?|1#Vous suivez un seul projet|1&lt;Vous suivez {0} projets} </string>
+	<string name="overview_card_projects_title">Projets</string>
+	<string name="overview_card_servers_add">Ajouter un nouveau serveur</string>
+	<string name="overview_card_servers_subtitle">{0,choice,0#Il n\'y a pas encore de serveur synchronisé. Avez-vous configuré un compte ?|1#Un seul serveur est synchronisé avec l\'appli|1&lt;{0} serveurs sont synchronisé dans l\'appli} </string>
+	<string name="overview_card_servers_sync">Gérer les serveurs et la synchro</string>
+	<string name="overview_card_servers_title">Serveurs Redmine</string>
+	<string name="project_created_on"> <b>Créé le</b> : %1$s </string>
+	<string name="project_list_item_updated_on">MÀJ : %1$s</string>
+	<string name="project_overview_issues_card_tracker">• %1$s : %2$d ouverts / %3$d fermés</string>
+	<string name="project_parent"><b>Projet parent</b> : %1$s</string>
+	<string name="project_server"><b>Serveur Redmine</b> : %1$s </string>
+	<string name="project_updated_on"> <b>Mis à jour le</b> : %1$s </string>
+	<string name="roadmap_due_date">Date d\'échéance : %1$s</string>
+	<string name="roadmap_issues_count">Tickets : %1$d (dont %2$d ouverts)</string>
+	<string name="roadmap_list_item_due_date">Date d\'échéance : %1$s</string>
+	<string name="roadmap_list_title">Feuille de route</string>
+	<string name="roadmap_no_roadmaps">Aucune feuille de route définie.</string>
+	<string name="roadmap_related_issues">Tickets liés</string>
+	<string name="roadmap_show_wiki">Voir la page wiki</string>
+	<string name="roadmap_version">Version</string>
+	<string name="save">Enregistrer</string>
+	<string name="server_auth_cert_cert_exception">Impossible de charger ce certificat. Veuillez vérifier !</string>
+	<string name="server_auth_cert_check_ok">Le certificat a l\'air OK !</string>
+	<string name="server_auth_cert_file_exception">Impossible d\'ouvrir ce fichier. Veuillez vérifier !</string>
+	<string name="server_auth_cert_save_ok">Le certificat a été ajouté au trousseau de clé de l\'appli</string>
+	<string name="server_auth_settings_cert_hint">Sélectionnez le certificat requis par le serveur :</string>
+	<string name="server_auth_settings_hint">Si votre serveur nécessite une identification supplémentaire, veuillez l\'entrer ici.\nVeuillez noter que cette identification correspond soit à une identification HTTP Basic, ou Active Directory (AD).</string>
+	<string name="server_auth_settings_no_cert">Aucun certificat sélectionné</string>
+	<string name="server_auth_settings_password">mot de passe</string>
+	<string name="server_auth_settings_select_cert_activity">Sélectionner le certificat</string>
+	<string name="server_auth_settings_select_cert">Sélection du certificat&#8230;</string>
+	<string name="server_auth_settings_title">Authentification</string>
+	<string name="server_auth_settings_username">identifiant</string>
+	<string name="server_auth_view_keystore">Ouvrir le gestionnaire de trousseau de clé</string>
+	<string name="setup_anonymous">Ca a marché ! Vous êtes anonyme sur ce serveur</string>
+	<string name="setup_apikey_help">Où puis-je trouver ma clé API ?</string>
+	<string name="setup_apikey_help_toast">Allez sur votre serveur, cliquez \'Mon Compte\', vous verrez votre clé API sur la droite, normalement</string>
+	<string name="setup_apikey">Quelle est votre clé API ?</string>
+	<string name="setup_button">C\'est parti !</string>
+	<string name="setup_button_tryagain">Réessayez !</string>
+	<string name="setup_check_failed">Argh ! Pourriez-vous revérifier, je n\'ai pas pu entrer&amp;#8230 :(</string>
+	<string name="setup_notice">Note : vous ne pouvez utiliser cette appli qu\'avec un serveur Redmine pour lequel l\'API REST a été activée. Nous n\'allons pas vous demander votre nom d\'utilisateur ou votre mot de passe.</string>
+	<string name="setup_server">Quelle est l\'URL de votre serveur ?</string>
+	<string name="setup_success">Bienvenue à bord, %s !</string>
+	<string name="setup_sync_help">Je n\'ai pas pu vous montrer les paramètres de l\'appareil. Il faut juste ajouter un compte depuis l\'appli Paramètres de votre appareil.</string>
+	<string name="setup_title">Gestion du Serveur Redmine</string>
+	<string name="setup_welcome">Bienvenue !</string>
+	<string name="sync_account_type">Serveur Redmine</string>
+	<string name="sync_issues">Tickets (et leur statuts, priorités, etc.)</string>
+	<string name="sync_projects">Projets (et leurs versions, etc.)</string>
+	<string name="sync_settings_summary">Fréquence de synchro, notifications, etc.</string>
+	<string name="sync_settings_title">Paramètres du compte</string>
+	<string name="sync_users">Utilisateurs</string>
+	<string name="sync_wiki">Pages Wiki</string>
+	<string name="time_delay_days"><![CDATA[il y a {0} {0,choice,0#jours|1#jour|1<jours}]]></string>
+	<string name="time_delay_hours"><![CDATA[il y a {0} {0,choice,0#heures|1#heure|1<heures}]]></string>
+	<string name="time_delay_minutes"><![CDATA[il y a {0} {0,choice,0#minutes|1#minute|1<minutes}]]></string>
+	<string name="time_delay_moments">il y a qq instants</string>
+	<string name="time_delay_months"><![CDATA[il y a {0} {0,choice,0#mois|1#mois|1<mois}]]></string>
+	<string name="time_delay_years"><![CDATA[il y a {0} {0,choice,0#ans|1#an|1<ans}]]></string>
+	<string name="title_issues">Tickets</string>
+	<string name="title_projects">Projets</string>
+	<string name="title_wiki_pages">Pages Wiki</string>
+	<string name="upgrade_010_ok">Merci pour l\'info</string>
+	<string name="users_list_empty">"<![CDATA[La liste des utilisateurs est vide. Cela peut arriver lorsque vous n\'êtes pas administrateur, nous travaillons afin que cela puisse quand même fonctionner. En cas de besoin, envoyez un email à redmine@bicou.net]]>"</string>
+	<string name="users_picker_dialog_title">Sélectionner l\'utilisateur</string>
+	<string name="wiki_empty_page">Cette page est vierge.</string>
+	<string name="wiki_list_item_updated_on">MÀJ : %1$s</string>
+	<string name="wiki_page_not_found">Cette page n\'existe pas.</string>
+	<string name="yes">Oui</string>
 
 </resources>
