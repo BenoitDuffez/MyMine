@@ -191,6 +191,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
 			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
 			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
+		} else {
+			EditIssueActivity.handleRevertCrouton(this, isSplitScreen() ? R.id.sa__right_pane : R.id.sa__left_pane, requestCode, data.getExtras());
 		}
 	}
 

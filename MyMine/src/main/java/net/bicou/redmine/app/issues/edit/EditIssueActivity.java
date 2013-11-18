@@ -1,10 +1,15 @@
 package net.bicou.redmine.app.issues.edit;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -16,14 +21,14 @@ import net.bicou.redmine.util.Util;
 
 import java.util.Calendar;
 
+import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 /**
  * Created by bicou on 02/08/13.
  */
-public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener,
-		DatePickerFragment.DateSelectionListener, DescriptionEditorFragment.DescriptionChangeListener , ProjectSwitcherFragment.ProjectChangeListener{
+public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFragment.TaskFragmentCallbacks, UserPickerDialog.OnUserSelectedListener, DatePickerFragment.DateSelectionListener, DescriptionEditorFragment.DescriptionChangeListener, ProjectSwitcherFragment.ProjectChangeListener {
 	public static final int ACTION_LOAD_ISSUE_DATA = 0;
 
 	@Override
@@ -52,6 +57,34 @@ public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFra
 	public void onStop() {
 		super.onStop();
 		EasyTracker.getInstance(this).activityStop(this);
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+			EditIssueFragment eif = (EditIssueFragment) getSupportFragmentManager().findFragmentById(Util.getContentViewCompat());
+			eif.saveIssueChangesAndClose(Activity.RESULT_CANCELED);
+		}
+		super.onBackPressed();
+	}
+
+	public static void handleRevertCrouton(final Activity activity, int croutonHolder, final int requestCode, final Bundle params) {
+		View croutonView = LayoutInflater.from(activity).inflate(R.layout.crouton_revert, null);
+		TextView msg = (TextView) croutonView.findViewById(R.id.crouton_message);
+		msg.setText(R.string.issue_edit_revert_crouton);
+
+		Crouton crouton = Crouton.make(activity, croutonView, croutonHolder);
+		crouton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(activity, EditIssueActivity.class);
+				intent.putExtras(params);
+				activity.startActivityForResult(intent, requestCode);
+			}
+		});
+		Configuration config = new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build();
+		crouton.setConfiguration(config);
+		crouton.show();
 	}
 
 	@Override

@@ -176,6 +176,7 @@
     <string name="issue_deleted_from_server">This issue was deleted on the server</string>
     <string name="issue_upload_failed">Unable to upload issue: %1$s</string>
     <string name="issue_upload_successful">Issue uploaded</string>
+    <string name="issue_update_successful">Issue updated</string>
     <string name="issue_add_notes_title">Add notes</string>
     <string name="issue_save_notes_button">Save notes</string>
 
@@ -366,5 +367,7 @@
     </string>
     <string name="users_picker_dialog_title">Pick the desired user</string>
     <string name="drawer_main_no_favorite">There is no favorite</string>
+	<string name="crouton_undo">undo</string>
+	<string name="issue_edit_revert_crouton">Modifications discarded</string>
 
 </resources>

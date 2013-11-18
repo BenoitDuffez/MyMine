@@ -91,23 +91,28 @@ public class IssueUploader {
 	public static void handleAddEdit(Activity resultHolder, Bundle params, Object result) {
 		L.d("Upload issue json: " + result);
 
+		int action = params.getInt(ISSUE_ACTION);
 		final Bundle args = doHandleAddEdit(resultHolder, params, result);
+
+		// Re-open the edit issue activity
 		if (args.containsKey(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON)) {
-			// Re-open the edit issue activity
 			Intent intent = new Intent(resultHolder, EditIssueActivity.class);
 			intent.putExtra(IssueFragment.KEY_ISSUE_JSON, params.getString(IssueFragment.KEY_ISSUE_JSON));
 			intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, args.getString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON));
-			resultHolder.startActivity(intent);
-		} else if (resultHolder instanceof IssuesActivity) {
-			// If we're already on the issues activity, let it handle the new issue to display
+			resultHolder.startActivityForResult(intent, action);
+		}
+		// If we're already on the issues activity, let it handle the new issue to display
+		else if (resultHolder instanceof IssuesActivity) {
 			((IssuesActivity) resultHolder).selectContent(args);
-			Crouton.makeText(resultHolder, resultHolder.getString(R.string.issue_upload_successful), Style.CONFIRM).show();
-		} else {
-			// Otherwise, start it from scratch
+			final String croutonText = resultHolder.getString(action == CREATE_ISSUE ? R.string.issue_upload_successful : R.string.issue_update_successful);
+			Crouton.makeText(resultHolder, croutonText, Style.CONFIRM).show();
+		}
+		// Otherwise, start it from scratch
+		else {
 			Intent intent = new Intent(resultHolder, IssuesActivity.class);
 			intent.putExtras(args);
 			intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON, true);
-			resultHolder.startActivity(intent);
+			resultHolder.startActivityForResult(intent, action);
 		}
 	}
 

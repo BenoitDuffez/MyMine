@@ -216,6 +216,8 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 			final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
 			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
 			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
+		} else {
+			EditIssueActivity.handleRevertCrouton(this, R.id.drawer_content, requestCode, data.getExtras());
 		}
 	}
 

@@ -30,6 +30,8 @@ import net.bicou.redmine.R;
  */
 public class DoneBarActivity {
 	public interface OnSaveActionListener {
+		public void onCancel();
+
 		public void onSave();
 	}
 
@@ -51,6 +53,9 @@ public class DoneBarActivity {
 			@Override
 			public void onClick(View v) {
 				// "Cancel"
+				if (listener != null) {
+					listener.onCancel();
+				}
 				activity.finish();
 			}
 		});

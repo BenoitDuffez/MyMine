@@ -183,8 +183,13 @@ public class EditIssueFragment extends TrackedFragment {
 
 		DoneBarActivity.setupActionBar((ActionBarActivity) getActivity(), new DoneBarActivity.OnSaveActionListener() {
 			@Override
+			public void onCancel() {
+				saveIssueChangesAndClose(Activity.RESULT_CANCELED);
+			}
+
+			@Override
 			public void onSave() {
-				saveIssueChangesAndClose();
+				saveIssueChangesAndClose(Activity.RESULT_OK);
 			}
 		});
 
@@ -264,7 +269,7 @@ public class EditIssueFragment extends TrackedFragment {
 	/**
 	 * Triggered when the user chooses to commit the changes made to the form (create or edit issue)
 	 */
-	private void saveIssueChangesAndClose() {
+	public void saveIssueChangesAndClose(int resultMode) {
 		if (!saveIssueChanges(false)) {
 			return;
 		}
@@ -279,7 +284,7 @@ public class EditIssueFragment extends TrackedFragment {
 		result.putExtras(taskParams);
 
 		// If this line is reached, it means the form has been validated and we can try to upload this to the server
-		getActivity().setResult(Activity.RESULT_OK, result);
+		getActivity().setResult(resultMode, result);
 	}
 
 	/**

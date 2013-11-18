@@ -12,6 +12,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.app.issues.edit.EditIssueActivity;
 import net.bicou.redmine.app.issues.edit.IssueUploader;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.app.welcome.OverviewCard;
@@ -82,6 +83,8 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 			final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
 			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
 			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
+		} else {
+			EditIssueActivity.handleRevertCrouton(this, isSplitScreen() ? R.id.sa__right_pane : R.id.sa__left_pane, requestCode, data.getExtras());
 		}
 	}
 

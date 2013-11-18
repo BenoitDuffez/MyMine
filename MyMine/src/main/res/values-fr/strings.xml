@@ -323,6 +323,7 @@
 	<string name="drawer_main_no_favorite">Il n\'y a aucun favori</string>
 	<string name="issue_upload_failed">Impossible d\'uploader le ticket : %1$s</string>
 	<string name="issue_upload_successful">Ticket uploadé</string>
+	<string name="issue_update_successful">Ticket mis à jour</string>
 	<string name="title_activity_settings">Paramètres</string>
 
 </resources>
