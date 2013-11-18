@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
+ * Generic class used to transform an object to a JSON string that the Redmine server has to understand
  * Created by bicou on 07/08/13.
  */
 public abstract class ObjectSerializer<T> {
@@ -89,7 +90,7 @@ public abstract class ObjectSerializer<T> {
 	/**
 	 * Builds a HashMap of the differences between the two objects
 	 */
-	private final HashMap<String, Object> getDeltas() {
+	private HashMap<String, Object> getDeltas() {
 		HashMap<String, Object> fields = new HashMap<String, Object>();
 		saveAdditionalParameters(fields);
 		String[] fieldNames = getDefaultFields();
@@ -220,8 +221,10 @@ public abstract class ObjectSerializer<T> {
 		case ID_ADDED:
 		case ID_CHANGED:
 			try {
-				Field id = newOne.getClass().getField("id");
-				fields.put(fieldName + "_id", id.get(newOne));
+				if (newOne != null) {
+					Field id = newOne.getClass().getField("id");
+					fields.put(fieldName + "_id", id.get(newOne));
+				}
 			} catch (NoSuchFieldException e) {
 				L.e("Shouldn't happen.", e);
 			} catch (IllegalAccessException e) {
