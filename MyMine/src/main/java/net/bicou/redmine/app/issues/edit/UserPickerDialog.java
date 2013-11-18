@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
@@ -13,8 +14,8 @@ import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import java.util.List;
 
 /**
-* Created by bicou on 06/08/13.
-*/
+ * Created by bicou on 06/08/13.
+ */
 class UserPickerDialog extends AlertDialog {
 	User mUser;
 	OnUserSelectedListener mListener;
@@ -23,7 +24,7 @@ class UserPickerDialog extends AlertDialog {
 		public void onUserSelected(User user);
 	}
 
-	UserPickerDialog(final Context context, User user, OnUserSelectedListener listener) {
+	UserPickerDialog(final Context context, User user, final long serverId, OnUserSelectedListener listener) {
 		super(context);
 		mUser = user;
 		mListener = listener;
@@ -50,7 +51,7 @@ class UserPickerDialog extends AlertDialog {
 			protected List<User> doInBackground(final Void... params) {
 				UsersDbAdapter db = new UsersDbAdapter(getContext());
 				db.open();
-				List<User> users = db.selectAll(null);
+				List<User> users = db.selectAll(serverId);
 				db.close();
 				return users;
 			}

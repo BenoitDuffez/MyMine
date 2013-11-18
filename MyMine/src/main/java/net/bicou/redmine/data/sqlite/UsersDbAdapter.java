@@ -3,6 +3,7 @@ package net.bicou.redmine.data.sqlite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.util.Util;
@@ -22,24 +23,15 @@ public class UsersDbAdapter extends DbAdapter {
 
 	public static final String KEY_SERVER_ID = "server_id";
 
-	public static final String[] USER_FIELDS = new String[] {
-			KEY_ID,
-			KEY_FIRSTNAME,
-			KEY_LASTNAME,
-			KEY_MAIL,
-			KEY_CREATED_ON,
-			KEY_LAST_LOGIN_ON,
+	public static final String[] USER_FIELDS = new String[] { KEY_ID, KEY_FIRSTNAME, KEY_LASTNAME, KEY_MAIL, KEY_CREATED_ON, KEY_LAST_LOGIN_ON,
 
-			KEY_SERVER_ID,
-	};
+			KEY_SERVER_ID, };
 
 	/**
 	 * Table creation statements
 	 */
 	public static final String[] getCreateTablesStatements() {
-		return new String[] {
-				"CREATE TABLE " + TABLE_USERS + "(" + Util.join(USER_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
-		};
+		return new String[] { "CREATE TABLE " + TABLE_USERS + "(" + Util.join(USER_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))", };
 	}
 
 	public UsersDbAdapter(final Context ctx) {
@@ -94,7 +86,11 @@ public class UsersDbAdapter extends DbAdapter {
 	}
 
 	public List<User> selectAll(final Server server) {
-		final String selection = server != null && server.rowId > 0 ? KEY_SERVER_ID + " = " + server.rowId : null;
+		return selectAll(server == null ? 0 : server.rowId);
+	}
+
+	public List<User> selectAll(final long serverId) {
+		final String selection = serverId > 0 ? KEY_SERVER_ID + " = " + serverId : null;
 		final Cursor c = mDb.query(TABLE_USERS, USER_FIELDS, selection, null, null, null, null);
 		final List<User> list = new ArrayList<User>();
 

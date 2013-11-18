@@ -663,6 +663,7 @@ public class EditIssueFragment extends TrackedFragment {
 		Bundle args = new Bundle();
 		String userJson = mIssue.assigned_to == null || mIssue.assigned_to.id <= 0 ? "" : new Gson().toJson(mIssue.assigned_to, User.class);
 		args.putString(UserPickerFragment.KEY_USER, userJson);
+		args.putLong(Constants.KEY_SERVER_ID, mIssue.server == null ? 0 : mIssue.server.rowId);
 
 		DialogFragment newFragment = UserPickerFragment.newInstance(args);
 		newFragment.show(getActivity().getSupportFragmentManager(), "userPicker");
