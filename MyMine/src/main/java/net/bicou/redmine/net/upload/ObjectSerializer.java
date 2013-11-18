@@ -140,7 +140,7 @@ public abstract class ObjectSerializer<T> {
 			} else if (item instanceof Float || item instanceof Double) {
 				json += String.format(Locale.ENGLISH, "%.2f", ((Number) item).doubleValue());
 			} else if (item instanceof String) {
-				json += String.format(Locale.ENGLISH, "\"%s\"", ((String) item).replace("\"", "\\\""));
+				json += String.format(Locale.ENGLISH, "\"%s\"", ((String) item).replace("\"", "\\\"").replace("\n", "\\n"));
 			} else if (item instanceof Calendar) {
 				json += String.format(Locale.ENGLISH, "\"%s\"", sdf.format(((Calendar) item).getTime()));
 			} else if (item instanceof Boolean) {
