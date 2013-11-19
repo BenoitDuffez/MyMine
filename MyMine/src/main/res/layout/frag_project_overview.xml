@@ -1,100 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:staggered="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/main_vertical_margin"
-    android:layout_marginBottom="@dimen/main_vertical_margin"
-    android:layout_marginLeft="@dimen/dialog_like_horizontal_margin"
-    android:layout_marginRight="@dimen/dialog_like_horizontal_margin">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				xmlns:staggered="http://schemas.android.com/apk/res-auto"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+	<CheckBox
+		android:id="@+id/project_overview_is_favorite"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignBottom="@+id/project_overview_title"
+		android:layout_alignParentLeft="true"
+		android:button="@drawable/favorite"/>
 
-        <CheckBox
-            android:id="@+id/project_overview_is_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignBottom="@+id/project_overview_title"
-            android:layout_alignParentLeft="true"
-            android:button="@drawable/favorite" />
+	<net.bicou.redmine.widget.RobotoThinTextView
+		android:id="@+id/project_overview_title"
+		android:text="@string/issue_project"
+		android:textSize="@dimen/title_font_size"
+		android:gravity="center_horizontal"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentLeft="true"
+		android:drawableEnd="@android:drawable/arrow_down_float"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
 
-        <net.bicou.redmine.widget.RobotoThinTextView
-            android:id="@+id/project_overview_title"
-            android:text="@string/issue_project"
-            android:textSize="@dimen/title_font_size"
-            android:gravity="center_horizontal"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentLeft="true"
-            android:drawableEnd="@android:drawable/arrow_down_float"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+	<RelativeLayout
+		android:id="@+id/project_overview_full_description"
+		android:layout_below="@id/project_overview_title"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone">
 
-    </RelativeLayout>
+		<TextView
+			android:id="@+id/project_overview_description"
+			android:gravity="center_vertical"
+			android:textSize="18sp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textIsSelectable="true"/>
 
-    <RelativeLayout
-        android:id="@+id/project_overview_full_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
+		<TextView
+			android:id="@+id/project_overview_server"
+			android:text="@string/project_server"
+			android:gravity="center_vertical"
+			android:textColor="@color/faded_text"
+			android:layout_below="@+id/project_overview_description"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/project_overview_description"
-            android:gravity="center_vertical"
-            android:textSize="18sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textIsSelectable="true" />
+		<TextView
+			android:id="@+id/project_overview_parent"
+			android:text="@string/project_parent"
+			android:gravity="center_vertical"
+			android:textColor="@color/faded_text"
+			android:layout_below="@id/project_overview_server"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/project_overview_server"
-            android:text="@string/project_server"
-            android:gravity="center_vertical"
-            android:textColor="@color/faded_text"
-            android:layout_below="@+id/project_overview_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/project_overview_created_on"
+			android:text="@string/project_created_on"
+			android:gravity="center_vertical"
+			android:textColor="@color/faded_text"
+			android:layout_below="@id/project_overview_parent"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/project_overview_parent"
-            android:text="@string/project_parent"
-            android:gravity="center_vertical"
-            android:textColor="@color/faded_text"
-            android:layout_below="@id/project_overview_server"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/project_overview_updated_on"
+			android:text="@string/project_updated_on"
+			android:gravity="center_vertical"
+			android:textColor="@color/faded_text"
+			android:layout_below="@id/project_overview_created_on"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
 
-        <TextView
-            android:id="@+id/project_overview_created_on"
-            android:text="@string/project_created_on"
-            android:gravity="center_vertical"
-            android:textColor="@color/faded_text"
-            android:layout_below="@id/project_overview_parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+	</RelativeLayout>
 
-        <TextView
-            android:id="@+id/project_overview_updated_on"
-            android:text="@string/project_updated_on"
-            android:gravity="center_vertical"
-            android:textColor="@color/faded_text"
-            android:layout_below="@id/project_overview_created_on"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+	<com.origamilabs.library.views.StaggeredGridView
+		android:id="@+id/project_overview_container"
+		staggered:numColumns="@integer/project_overview_num_columns"
+		staggered:drawSelectorOnTop="true"
+		staggered:itemMargin="20dp"
+		android:layout_below="@id/project_overview_full_description"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
 
-    </RelativeLayout>
-
-    <com.origamilabs.library.views.StaggeredGridView
-        android:id="@+id/project_overview_container"
-        staggered:numColumns="@integer/project_overview_num_columns"
-        staggered:drawSelectorOnTop="true"
-        staggered:itemMargin="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</LinearLayout>
+</RelativeLayout>
