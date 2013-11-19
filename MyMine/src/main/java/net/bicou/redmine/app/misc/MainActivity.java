@@ -2,11 +2,8 @@ package net.bicou.redmine.app.misc;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -35,12 +32,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends DrawerActivity implements ServerProjectPickerFragment.ServerProjectSelectionListener, AsyncTaskFragment.TaskFragmentCallbacks {
-	private static final String ALPHA_SHARED_PREFERENCES_FILE = "alpha";
-	private static final String KEY_ALPHA_VERSION_DISCLAIMER = "IS_DISCLAIMER_ACCEPTED";
-
-	public static final String MYMINE_PREFERENCES_FILE = "mymine";
-	public static final String KEY_IS_FIRST_LAUNCH = "IS_FIRST_LAUNCH";
-
 	private static final int ACTION_LOAD_ACTIVITY = 0;
 	private static final int ACTION_UPLOAD_ISSUE = 1;
 	public static final int ACTION_REFRESH_MAIN_SCREEN = 2;
@@ -48,16 +39,6 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		showAlphaVersionAlert();
-		final boolean isFirstLaunch = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).getBoolean(KEY_IS_FIRST_LAUNCH, true);
-
-		if (savedInstanceState == null && isFirstLaunch) {
-			// No longer the first launch
-			final Editor editor = getSharedPreferences(MYMINE_PREFERENCES_FILE, 0).edit();
-			editor.putBoolean(KEY_IS_FIRST_LAUNCH, false);
-			editor.commit();
-		}
 
 		getSupportFragmentManager().beginTransaction().replace(R.id.drawer_content, LoadingFragment.newInstance()).commit();
 		getSupportFragmentManager().beginTransaction().replace(R.id.navigation_drawer, new DrawerMenuFragment()).commit();
@@ -145,35 +126,6 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 			} else {
 				return FragmentToDisplay.DEFAULT;
 			}
-		}
-	}
-
-	private void showAlphaVersionAlert() {
-		final boolean isAccepted = getSharedPreferences(ALPHA_SHARED_PREFERENCES_FILE, 0).getBoolean(KEY_ALPHA_VERSION_DISCLAIMER, false);
-
-		if (!isAccepted) {
-			// 1. Instantiate an AlertDialog.Builder with its constructor
-			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-			// 2. Chain together various setter methods to set the dialog characteristics
-			builder.setMessage(R.string.alert_alpha).setTitle(R.string.alert_alpha_title);
-			builder.setPositiveButton(R.string.alpha_ok, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-					final Editor editor = getSharedPreferences(ALPHA_SHARED_PREFERENCES_FILE, 0).edit();
-					editor.putBoolean(KEY_ALPHA_VERSION_DISCLAIMER, true);
-					editor.commit();
-				}
-			});
-			builder.setNegativeButton(R.string.alpha_ko, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-				}
-			});
-
-			// 3. Get the AlertDialog from create()
-			final AlertDialog dialog = builder.create();
-			dialog.show();
 		}
 	}
 
