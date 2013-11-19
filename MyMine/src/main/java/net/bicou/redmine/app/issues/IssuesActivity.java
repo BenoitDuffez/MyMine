@@ -197,6 +197,14 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	}
 
 	@Override
+	public void selectContent(Bundle args) {
+		super.selectContent(args);
+		// Prevent crouton from showing if we display another view (likely to hide the "modifications discarded" crouton back from
+		// EditIssueActivity)
+		Crouton.cancelAllCroutons();
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		Fragment content = getContentFragment();
 		switch (item.getItemId()) {

@@ -73,15 +73,19 @@ public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFra
 		TextView msg = (TextView) croutonView.findViewById(R.id.crouton_message);
 		msg.setText(R.string.issue_edit_revert_crouton);
 
-		Crouton crouton = Crouton.make(activity, croutonView, croutonHolder);
-		crouton.setOnClickListener(new View.OnClickListener() {
+		final View.OnClickListener revert = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(activity, EditIssueActivity.class);
+				final Intent intent = new Intent(activity, EditIssueActivity.class);
 				intent.putExtras(params);
 				activity.startActivityForResult(intent, requestCode);
 			}
-		});
+		};
+
+		Crouton crouton = Crouton.make(activity, croutonView, croutonHolder);
+		croutonView.findViewById(R.id.crouton_layout).setOnClickListener(revert);
+		crouton.setOnClickListener(revert);
+
 		Configuration config = new Configuration.Builder().setDuration(Configuration.DURATION_LONG).build();
 		crouton.setConfiguration(config);
 		crouton.show();

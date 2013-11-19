@@ -4,9 +4,10 @@
 				android:padding="12dp"
 				android:layout_gravity="bottom"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content">
+				android:layout_height="match_parent">
 
 	<LinearLayout
+		android:id="@+id/crouton_layout"
 		android:orientation="horizontal"
 		android:background="@drawable/crouton_background"
 		android:layout_width="match_parent"

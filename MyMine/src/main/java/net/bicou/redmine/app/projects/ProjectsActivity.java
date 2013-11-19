@@ -89,6 +89,15 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 	}
 
 	@Override
+	public void selectContent(Bundle args) {
+		super.selectContent(args);
+
+		// Prevent crouton from showing if we display another view (likely to hide the "modifications discarded" crouton back from
+		// EditIssueActivity)
+		Crouton.cancelAllCroutons();
+	}
+
+	@Override
 	protected void onStart() {
 		super.onStart();
 		EasyTracker.getInstance(this).activityStart(this);

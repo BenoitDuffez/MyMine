@@ -34,6 +34,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+
 public class WelcomeFragment extends TrackedFragment {
 	public static WelcomeFragment newInstance(final Bundle args) {
 		final WelcomeFragment f = new WelcomeFragment();
@@ -105,6 +107,10 @@ public class WelcomeFragment extends TrackedFragment {
 				startActivity(new Intent(getActivity(), WikiActivity.class));
 				break;
 			}
+
+			// Prevent crouton from showing if we display another view (likely to hide the "modifications discarded" crouton back from
+			// EditIssueActivity)
+			Crouton.cancelAllCroutons();
 		}
 	};
 
