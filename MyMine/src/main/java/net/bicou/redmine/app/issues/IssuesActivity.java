@@ -157,7 +157,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (mNavMode == ActionBar.NAVIGATION_MODE_LIST) {
+		if (mNavMode == ActionBar.NAVIGATION_MODE_LIST && getSupportActionBar().getNavigationMode() != mNavMode) {
 			AsyncTaskFragment.runTask(this, ACTION_GET_NAVIGATION_SPINNER_DATA, null);
 		}
 	}
