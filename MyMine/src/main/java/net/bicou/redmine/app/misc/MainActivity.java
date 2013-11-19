@@ -4,11 +4,16 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.MapBuilder;
 
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
@@ -30,11 +35,14 @@ import net.bicou.redmine.util.L;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends DrawerActivity implements ServerProjectPickerFragment.ServerProjectSelectionListener, AsyncTaskFragment.TaskFragmentCallbacks {
 	private static final int ACTION_LOAD_ACTIVITY = 0;
 	private static final int ACTION_UPLOAD_ISSUE = 1;
 	public static final int ACTION_REFRESH_MAIN_SCREEN = 2;
+
+	private static final String CAMPAIGN_SOURCE_PARAM = "utm_source";
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -44,6 +52,57 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 		getSupportFragmentManager().beginTransaction().replace(R.id.navigation_drawer, new DrawerMenuFragment()).commit();
 
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
+
+		EasyTracker.getInstance(this);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+
+		// Get the intent that started this Activity.
+		Intent intent = this.getIntent();
+		Uri uri = intent.getData();
+
+		// Send a screenview using any available campaign or referrer data.
+		MapBuilder.createAppView().setAll(getReferrerMapFromUri(uri));
+	}
+
+	/**
+	 * Given a URI, returns a map of campaign data that can be sent with
+	 * any GA hit.
+	 *
+	 * @param uri A hierarchical URI that may or may not have campaign data
+	 *            stored in query parameters.
+	 * @return A map that may contain campaign or referrer
+	 * that may be sent with any Google Analytics hit.
+	 */
+	Map<String, String> getReferrerMapFromUri(Uri uri) {
+		MapBuilder paramMap = new MapBuilder();
+
+		// If no URI, return an empty Map.
+		if (uri == null) { return paramMap.build(); }
+
+		// Source is the only required campaign field. No need to continue if not present.
+		if (uri.getQueryParameter(CAMPAIGN_SOURCE_PARAM) != null) {
+			// MapBuilder.setCampaignParamsFromUrl parses Google Analytics campaign ("UTM") parameters from a string URL into a Map that can be set on
+			// the Tracker.
+			paramMap.setCampaignParamsFromUrl(uri.toString());
+		}
+		// If no source parameter, set authority to source and medium to "referral".
+		else if (uri.getAuthority() != null) {
+			paramMap.set(Fields.CAMPAIGN_MEDIUM, "referral");
+			paramMap.set(Fields.CAMPAIGN_SOURCE, uri.getAuthority());
+		}
+
+		return paramMap.build();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override
