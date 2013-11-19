@@ -238,6 +238,15 @@
                 android:label="@string/setup_title"
                 android:theme="@style/Theme.MyMine">
         </activity>
+
+		<!-- Used for install referral measurement-->
+		<service android:name="com.google.analytics.tracking.android.CampaignTrackingService"/>
+		<receiver android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver" android:exported="true">
+			<intent-filter>
+				<action android:name="com.android.vending.INSTALL_REFERRER" />
+			</intent-filter>
+		</receiver>
+
     </application>
 
 </manifest>
