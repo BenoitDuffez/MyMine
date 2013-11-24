@@ -69,6 +69,10 @@ public class EditIssueActivity extends ActionBarActivity implements AsyncTaskFra
 	}
 
 	public static void handleRevertCrouton(final Activity activity, int croutonHolder, final int requestCode, final Bundle params) {
+		if (params == null) {
+			return;
+		}
+
 		View croutonView = LayoutInflater.from(activity).inflate(R.layout.crouton_revert, null);
 		TextView msg = (TextView) croutonView.findViewById(R.id.crouton_message);
 		msg.setText(R.string.issue_edit_revert_crouton);
