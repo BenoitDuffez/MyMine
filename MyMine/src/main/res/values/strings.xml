@@ -370,5 +370,6 @@
 	<string name="crouton_undo">undo</string>
 	<string name="issue_edit_revert_crouton">Modifications discarded</string>
 	<string name="auth_cert_fingerprint">Certificate fingerprint: %1$s</string>
+	<string name="menu_changelog">Changelog</string>
 
 </resources>

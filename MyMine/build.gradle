@@ -19,6 +19,7 @@ dependencies {
     compile files('libs/libGoogleAnalyticsServices.jar')
 
     // Libraries from maven
+    compile 'com.github.gabrielemariotti.changeloglib:library:1.4.0'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:0.9'
     compile 'net.java:textile-j:2.2'
     compile 'ch.acra:acra:4.5.0'

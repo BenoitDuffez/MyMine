@@ -205,6 +205,10 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 
+		case R.id.menu_main_changelog:
+			startActivity(new Intent(this, ChangelogActivity.class));
+			return true;
+
 		default:
 			return super.onOptionsItemSelected(item);
 		}

@@ -97,6 +97,13 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="net.bicou.redmine.app.misc.MainActivity"/>
         </activity>
+		<activity
+			android:name="net.bicou.redmine.app.misc.ChangelogActivity"
+			android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="net.bicou.redmine.app.misc.MainActivity"/>
+		</activity>
         <activity
                 android:name="net.bicou.redmine.app.ssl.AddNewCertificateActivity"
                 android:parentActivityName="net.bicou.redmine.app.misc.MainActivity">
