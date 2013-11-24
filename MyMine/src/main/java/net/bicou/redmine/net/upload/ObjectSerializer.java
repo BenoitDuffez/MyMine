@@ -311,7 +311,7 @@ public abstract class ObjectSerializer<T> {
 
 		if (newOne instanceof Boolean) {
 			Boolean o = (Boolean) oldOne, n = (Boolean) newOne;
-			if ((o == Boolean.FALSE && n == Boolean.TRUE) || (o == Boolean.TRUE && n == Boolean.FALSE)) {
+			if (o != n) {
 				return FieldChange.CHANGED;
 			} else {
 				return FieldChange.NO_CHANGE;

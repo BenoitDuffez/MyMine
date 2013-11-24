@@ -683,6 +683,10 @@ public class EditIssueFragment extends TrackedFragment {
 	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_issue_edit, menu);
+		MenuItem isPrivate = menu.findItem(R.id.menu_issue_edit_private);
+		if (isPrivate != null) {
+			isPrivate.setChecked(mIssue != null && mIssue.is_private);
+		}
 	}
 
 	@Override
@@ -690,6 +694,13 @@ public class EditIssueFragment extends TrackedFragment {
 		switch (item.getItemId()) {
 		case R.id.menu_issue_edit_change_project:
 			showEditProjectDialog();
+			return true;
+
+		case R.id.menu_issue_edit_private:
+			if (mIssue != null) {
+				mIssue.is_private = !item.isChecked();
+			}
+			item.setChecked(mIssue.is_private);
 			return true;
 
 		default:
