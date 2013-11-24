@@ -290,14 +290,25 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 		}
 	}
 
-	// TODO: better UI
+	public static String hexify(byte bytes[]) {
+		char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+		StringBuilder buf = new StringBuilder(bytes.length * 2);
+
+		for (byte b : bytes) {
+			buf.append(hexDigits[(b & 0xf0) >> 4]);
+			buf.append(hexDigits[b & 0x0f]);
+		}
+
+		return buf.toString();
+	}
+
 	private void showSSLCertDialog() {
 		if (mUntrustedCertChain == null || mUntrustedCertChain.length == 0) {
 			return;
 		}
 
 		new AlertDialog.Builder(this).setTitle(R.string.auth_accept_cert) //
-				.setMessage(mUntrustedCertChain[0].toString()) //
+				.setMessage(getString(R.string.auth_cert_fingerprint, hexify(mUntrustedCertChain[0].getSignature()))) //
 				.setPositiveButton(android.R.string.yes, this) //
 						// .setNeutralButton(R.string.mtm_decision_once, this) //
 				.setNegativeButton(android.R.string.no, this) //
