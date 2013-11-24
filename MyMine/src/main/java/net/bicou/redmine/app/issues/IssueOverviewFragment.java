@@ -52,6 +52,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class IssueOverviewFragment extends TrackedFragment {
 	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mEstimatedHours, mAuthor, mParent;
+	View mIsPrivate;
 	ImageView mAuthorAvatar;
 	CheckBox mFavorite;
 	WebView mDescription;
@@ -91,6 +92,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		//		mAssignedAvatar=v.findViewById(R.id.issue_assign)
 		mParent = (TextView) v.findViewById(R.id.issue_parent);
 		mFavorite = (CheckBox) v.findViewById(R.id.issue_is_favorite);
+		mIsPrivate = v.findViewById(R.id.issue_is_private);
 
 		mParent.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -191,6 +193,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		mSpentTime.setText(getString(R.string.issue_spent_time_format, mIssue.spent_hours));
 		mEstimatedHours.setText(getString(R.string.issue_spent_time_format, mIssue.estimated_hours));
 		mFavorite.setChecked(mIssue.is_favorite);
+		mIsPrivate.setVisibility(mIssue.is_private ? View.VISIBLE : View.GONE);
 
 		// Parrent issue
 		if (mIssue.parent != null && mIssue.parent.id > 0) {
