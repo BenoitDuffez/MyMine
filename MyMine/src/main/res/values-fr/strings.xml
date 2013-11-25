@@ -314,7 +314,7 @@
 	<!-- Unsorted strings... -->
 	<string name="yes">Oui</string>
 	<string name="no">Non</string>
-	<string name="save">Enregistrer</string>
+	<string name="save">Sauver</string>
     <string name="users_list_empty">
         "<![CDATA[La liste des utilisateurs est vide. Cela peut arriver lorsque vous n\'êtes pas administrateur, nous travaillons afin
         que cela puisse quand même fonctionner. En cas de besoin, envoyez un email à redmine@bicou.net]]>"
