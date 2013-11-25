@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:appcompat="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_issues_sort"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        appcompat:showAsAction="ifRoom"
+        android:title="@string/issues_menu_ordering" />
+
+    <item
+        android:id="@+id/menu_issues_refresh"
+        android:icon="@drawable/ic_menu_refresh"
+        appcompat:showAsAction="never"
+        android:title="@string/issues_menu_refresh" />
+</menu>

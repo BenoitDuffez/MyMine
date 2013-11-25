@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="main_pane_margin">12dp</dimen>
+    <dimen name="content_pane_margin">24dp</dimen>
+    <dimen name="issues_filter_spinner_height">48dp</dimen>
+    <integer name="overview_num_columns">2</integer>
+    <integer name="project_overview_num_columns">2</integer>
+</resources>
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	  xmlns:appcompat="http://schemas.android.com/apk/res-auto">
+
+	<item
+		android:id="@+id/menu_issue_edit_change_project"
+		appcompat:showAsAction="never"
+		android:title="@string/menu_issue_edit_project"/>
+
+	<item
+		android:id="@+id/menu_issue_edit_private"
+		appcompat:showAsAction="never"
+		android:checkable="true"
+		android:title="@string/issue_is_private"/>
+
+</menu>

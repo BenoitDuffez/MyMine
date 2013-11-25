@@ -1,0 +1,79 @@
+apply plugin: 'android'
+
+dependencies {
+    repositories {
+        mavenCentral()
+    }
+
+    // Support Libraries
+    compile 'com.android.support:support-v4:19.0.+'
+    compile 'com.android.support:appcompat-v7:19.0.+'
+
+    // Projects
+    compile project(':SplitActivity')
+    compile project(':lva')
+    compile project(':aFileChooser')
+    compile project(':sgv')
+
+    // Jars
+    compile files('libs/libGoogleAnalyticsServices.jar')
+
+    // Libraries from maven
+    compile 'com.github.gabrielemariotti.changeloglib:library:1.4.0'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:0.9'
+    compile 'net.java:textile-j:2.2'
+    compile 'ch.acra:acra:4.5.0'
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'asia.ivity.android:drag-sort-listview:1.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
+    compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
+        exclude module: 'support-v4'
+        compile 'com.android.support:support-v4:19.0.+'
+    }
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+    }
+
+    signingConfigs {
+        release
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
+}
+
+def Properties props = new Properties()
+def propFile = file('signing.properties')
+if (propFile.canRead()) {
+    props.load(new FileInputStream(propFile))
+
+    if (props != null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
+            props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
+
+        println 'RELEASE BUILD SIGNING'
+
+        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+    } else {
+        println 'RELEASE BUILD NOT FOUND SIGNING PROPERTIES'
+
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+    println 'RELEASE BUILD NOT FOUND SIGNING FILE'
+    android.buildTypes.release.signingConfig = null
+}
+

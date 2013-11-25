@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:padding="@dimen/main_content_padding">
+
+	<RelativeLayout
+		android:id="@+id/issue_main_layout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<CheckBox
+			android:id="@+id/issue_is_favorite"
+			android:button="@drawable/favorite"
+			android:padding="4dp"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignBottom="@+id/issue_tracker_id"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+
+		<net.bicou.redmine.widget.RobotoThinTextView
+			android:id="@+id/issue_tracker_id"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/issue_is_private"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textSize="32sp"/>
+
+		<TextView
+			android:id="@+id/issue_is_private"
+			android:layout_toLeftOf="@+id/issue_is_favorite"
+			android:layout_alignBottom="@+id/issue_tracker_id"
+			android:layout_marginBottom="6dp"
+			android:text="@string/issue_is_private"
+			android:padding="4dp"
+			android:gravity="center"
+			android:visibility="gone"
+			android:background="@drawable/issue_listitem_project_background_1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+
+		<net.bicou.redmine.widget.RobotoCondensedLightTextView
+			android:id="@+id/issue_subject"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textSize="24sp"
+			android:layout_below="@+id/issue_is_favorite"
+			android:layout_alignParentLeft="true"/>
+
+		<ImageView
+			android:id="@+id/issue_author_avatar"
+			android:src="@drawable/no_avatar"
+			android:layout_margin="8dp"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/issue_parent"
+			android:layout_width="42dp"
+			android:layout_height="42dp"/>
+
+		<TextView
+			android:id="@+id/issue_author"
+			android:gravity="center_vertical"
+			android:textColor="@color/text_light"
+			android:layout_alignTop="@+id/issue_author_avatar"
+			android:layout_toRightOf="@+id/issue_author_avatar"
+			android:padding="4dp"
+			android:layout_width="match_parent"
+			android:layout_height="42dp"
+			android:layout_alignBottom="@+id/issue_author_avatar"/>
+
+		<!--TODO the height of author shouldn't be hardcoded but if it's not the text is not centered vertically-->
+
+		<net.bicou.redmine.widget.RobotoTextView
+			android:id="@+id/issue_parent"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/issue_subject"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+		<include layout="@layout/inc_issue_overview_fields"/>
+
+	</RelativeLayout>
+
+</ScrollView>

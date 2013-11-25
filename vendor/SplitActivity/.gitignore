@@ -4,3 +4,7 @@ gen
 .idea
 out
 *.iml
+.gradle
+gradle
+*/build/
+local.properties

@@ -15,20 +15,27 @@
  */
 package com.haarman.listviewanimations.itemmanipulationexamples;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.haarman.listviewanimations.R;
-import com.haarman.listviewanimations.itemmanipulationexamples.contextualundo.ContextualUndoActivity;
 
-public class ItemManipulationsExamplesActivity extends Activity {
+public class ItemManipulationsExamplesActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_examples_itemmanipulations);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+
+	public void onDragAndDropClicked(View view) {
+		Intent intent = new Intent(this, DragAndDropActivity.class);
+		startActivity(intent);
 	}
 
 	public void onSwipeDismissClicked(View view) {
@@ -41,8 +48,19 @@ public class ItemManipulationsExamplesActivity extends Activity {
 		startActivity(intent);
 	}
 
-	public void onContextualUndoClicked(View view) {
-		Intent intent = new Intent(this, ContextualUndoActivity.class);
+	public void onExpandListItemAdapterClicked(View view) {
+		Intent intent = new Intent(this, ExpandableListItemActivity.class);
 		startActivity(intent);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }

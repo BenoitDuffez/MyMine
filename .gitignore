@@ -3,3 +3,8 @@
 out/*
 tools/.*
 gen
+.gradle
+MyMine/build
+vendor/**/build
+local.properties
+MyMine/signing.properties

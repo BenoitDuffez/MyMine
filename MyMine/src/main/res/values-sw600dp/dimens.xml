@@ -1,0 +1,11 @@
+<resources>
+
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw600dp devices (e.g. 7" tablets) here.
+    -->
+
+    <dimen name="main_content_padding">12dp</dimen>
+    <dimen name="issues_filter_spinner_height">48dp</dimen>
+
+</resources>

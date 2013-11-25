@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?><!-- File created by the Android Action Bar Style Generator
+
+     Copyright (C) 2012 readyState Software Ltd
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+    <color name="red_mymine">#c90000</color>
+    <color name="pressed_mymine">#CCc90000</color>
+    <color name="grey_window_background">#E7E7E7</color>
+    <color name="white_layout_background">#FFFFFF</color>
+    <color name="dark_background">#333333</color>
+    <color name="light_text">#EEEEEE</color>
+    <color name="light_faded_text">#CCC</color>
+    <color name="faded_text">#666666</color>
+    <color name="actionbar_item_active">#88FFFFFF</color>
+    <color name="text_light">#AAA</color>
+    <color name="actionbar_text">#FFFFFF</color>
+
+    <color name="actionbar_spinner_separator_background">#aac90000</color>
+    <color name="pager_indicator_background">#33c90000</color>
+    <color name="issue_closed_background">#11000000</color>
+
+    <color name="drawer_separator_underline">#FFF</color>
+    <color name="drawer_vertical_border">#FFF</color>
+    <color name="drawer_background">#111</color>
+
+    <color name="issue_listitem_project_background_1">#CF00</color>
+    <color name="issue_listitem_project_textcolor_1">#000</color>
+    <color name="issue_listitem_project_background_2">#C00F</color>
+    <color name="issue_listitem_project_textcolor_2">#FFF</color>
+    <color name="issue_listitem_project_background_3">#C088</color>
+    <color name="issue_listitem_project_textcolor_3">#FFF</color>
+    <color name="issue_listitem_project_background_4">#C888</color>
+    <color name="issue_listitem_project_textcolor_4">#000</color>
+    <color name="issue_listitem_project_background_5">#C880</color>
+    <color name="issue_listitem_project_textcolor_5">#000</color>
+    <color name="issue_listitem_project_background_6">#C880</color>
+    <color name="issue_listitem_project_textcolor_6">#000</color>
+    <color name="issue_listitem_project_background_7">#C808</color>
+    <color name="issue_listitem_project_textcolor_7">#FFF</color>
+    <color name="issue_listitem_project_background_8">#C004</color>
+    <color name="issue_listitem_project_textcolor_8">#FFF</color>
+    <color name="issue_listitem_project_background_9">#C222</color>
+    <color name="issue_listitem_project_textcolor_9">#FFF</color>
+    <color name="issue_listitem_project_background_a">#CC0C</color>
+    <color name="issue_listitem_project_textcolor_a">#000</color>
+    <color name="issue_listitem_project_background_b">#C0CC</color>
+    <color name="issue_listitem_project_textcolor_b">#000</color>
+    <color name="issue_listitem_project_background_c">#CCC0</color>
+    <color name="issue_listitem_project_textcolor_c">#000</color>
+
+</resources>

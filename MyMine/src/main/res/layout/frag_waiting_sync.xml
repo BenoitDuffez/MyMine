@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginTop="@dimen/main_vertical_margin"
+    android:layout_marginBottom="@dimen/main_vertical_margin"
+    android:layout_marginLeft="@dimen/dialog_like_horizontal_margin"
+    android:layout_marginRight="@dimen/dialog_like_horizontal_margin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="@dimen/main_content_padding">
+
+        <ProgressBar
+            android:id="@+id/load_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:padding="8dp"/>
+
+        <net.bicou.redmine.widget.RobotoThinTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/load_progress"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/load_progress"
+            android:gravity="center_vertical"
+            android:text="@string/loading_sync_title"
+            android:textSize="36sp"/>
+
+        <TextView
+            android:id="@+id/loading_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/load_progress"
+            android:text="@string/loading_sync"/>
+
+        <Button
+            android:id="@+id/loading_check_sync_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="18dp"
+            android:layout_below="@+id/loading_details"
+            android:layout_centerHorizontal="true"
+            android:text="@string/loading_sync_check_button"/>
+
+    </RelativeLayout>
+
+</ScrollView>

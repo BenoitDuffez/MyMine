@@ -1,1 +1,0 @@
-../../../../../vendor/AsyncTaskFragment/AsyncTaskFragment.java

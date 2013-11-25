@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:orientation="horizontal"
+			  android:layout_width="match_parent"
+			  android:layout_height="@dimen/users_list_item_height">
+
+	<ImageView
+		android:id="@+id/users_list_item_avatar"
+		android:padding="8dp"
+		android:layout_width="@dimen/users_list_item_height"
+		android:layout_height="@dimen/users_list_item_height"/>
+
+	<TextView
+		android:id="@+id/users_list_item_name"
+		android:gravity="center_vertical"
+		android:padding="8dp"
+		android:textSize="18sp"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+
+</LinearLayout>

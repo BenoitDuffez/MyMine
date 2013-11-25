@@ -1,0 +1,16 @@
+apply plugin: 'android'
+
+dependencies {
+    compile project(':SplitActivity')
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0"
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 19
+    }
+}
+

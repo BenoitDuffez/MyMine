@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:layout_width="match_parent"
+			 android:layout_height="wrap_content"
+			 android:layout_below="@+id/issue_author_avatar"
+			 android:padding="8dp"
+			 android:background="#FFFFFF">
+
+	<TableRow style="@style/IssueTableRow">
+
+		<net.bicou.redmine.widget.RobotoTextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_status"/>
+
+		<net.bicou.redmine.widget.RobotoTextView
+			android:id="@+id/issue_status"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_start_date"/>
+
+		<TextView
+			android:id="@+id/issue_start_date"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+	</TableRow>
+
+	<TableRow style="@style/IssueTableRow">
+
+		<net.bicou.redmine.widget.RobotoTextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_priority"/>
+
+		<net.bicou.redmine.widget.RobotoTextView
+			android:id="@+id/issue_priority"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_due_date"/>
+
+		<TextView
+			android:id="@+id/issue_due_date"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+	</TableRow>
+
+	<TableRow style="@style/IssueTableRow">
+
+		<net.bicou.redmine.widget.RobotoTextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_assignee"/>
+
+		<net.bicou.redmine.widget.RobotoTextView
+			android:id="@+id/issue_assignee"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_percent_done"/>
+
+		<TextView
+			android:id="@+id/issue_percent_done"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+	</TableRow>
+
+	<TableRow style="@style/IssueTableRow">
+
+		<net.bicou.redmine.widget.RobotoTextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_category"/>
+
+		<net.bicou.redmine.widget.RobotoTextView
+			android:id="@+id/issue_category"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_spent_time"/>
+
+		<TextView
+			android:id="@+id/issue_spent_time"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+	</TableRow>
+
+	<TableRow style="@style/IssueTableRow">
+
+		<TextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_target_version"/>
+
+		<TextView
+			android:id="@+id/issue_target_version"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			style="@style/IssueLabel"
+			android:text="@string/issue_estimated_hours"/>
+
+		<TextView
+			android:id="@+id/issue_estimated_hours"
+			style="@style/IssueValue"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+	</TableRow>
+
+	<TableRow style="@style/IssueTableRow">
+
+		<View
+			android:layout_weight="1"
+			android:layout_span="4"
+			android:layout_width="match_parent"
+			android:layout_height="12dp"/>
+
+	</TableRow>
+
+	<TableRow style="@style/IssueTableRow">
+
+		<net.bicou.redmine.widget.RobotoTextView
+			style="@style/IssueLabel"
+			android:layout_weight="1"
+			android:text="@string/issue_description"
+			android:layout_span="4"/>
+
+	</TableRow>
+
+	<TableRow
+		style="@style/IssueTableRow"
+		android:layout_marginTop="4dp">
+
+		<View
+			android:background="#CC0000"
+			android:layout_weight="1"
+			android:layout_span="4"
+			android:layout_width="match_parent"
+			android:layout_height="2dp"/>
+	</TableRow>
+
+	<TableRow style="@style/IssueTableRow">
+
+		<WebView
+			android:id="@+id/issue_description"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:layout_span="4"/>
+	</TableRow>
+
+</TableLayout>
+

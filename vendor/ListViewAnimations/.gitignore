@@ -71,6 +71,6 @@ example/.classpath
 example/.project
 example/proguard-project.txt
 */.classpath
-*.project
 *proguard-project.txt
-library/build.gradle
+
+.gradle/

@@ -15,10 +15,13 @@
  */
 package com.haarman.listviewanimations.swinginadapters;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 
 import com.haarman.listviewanimations.BaseAdapterDecorator;
 import com.nineoldandroids.animation.Animator;
@@ -34,14 +37,14 @@ public abstract class AnimationAdapter extends BaseAdapterDecorator {
 
 	protected static final long DEFAULTANIMATIONDELAYMILLIS = 100;
 	protected static final long DEFAULTANIMATIONDURATIONMILLIS = 300;
-
 	private static final long INITIALDELAYMILLIS = 150;
 
 	private SparseArray<AnimationInfo> mAnimators;
 	private long mAnimationStartMillis;
+	private int mFirstAnimatedPosition;
 	private int mLastAnimatedPosition;
-
 	private boolean mHasParentAnimationAdapter;
+	private boolean mShouldAnimate = true;
 
 	public AnimationAdapter(BaseAdapter baseAdapter) {
 		super(baseAdapter);
@@ -58,38 +61,64 @@ public abstract class AnimationAdapter extends BaseAdapterDecorator {
 	/**
 	 * Call this method to reset animation status on all views. The next time
 	 * notifyDataSetChanged() is called on the base adapter, all views will
-	 * animate again.
+	 * animate again. Will also call setShouldAnimate(true).
 	 */
 	public void reset() {
 		mAnimators.clear();
+		mFirstAnimatedPosition = 0;
 		mLastAnimatedPosition = -1;
 		mAnimationStartMillis = -1;
+		mShouldAnimate = true;
 
 		if (getDecoratedBaseAdapter() instanceof AnimationAdapter) {
 			((AnimationAdapter) getDecoratedBaseAdapter()).reset();
 		}
 	}
 
+	/**
+	 * Set whether to animate the {@link View}s or not.
+	 * @param shouldAnimate true if the Views should be animated.
+	 */
+	public void setShouldAnimate(boolean shouldAnimate) {
+		mShouldAnimate = shouldAnimate;
+	}
+
+	/**
+	 * Set the starting position for which items should animate. Given position will animate as well.
+	 * Will also call setShouldAnimate(true).
+	 * @param position the position.
+	 */
+	public void setShouldAnimateFromPosition(int position) {
+		mShouldAnimate = true;
+		mFirstAnimatedPosition = position - 1;
+		mLastAnimatedPosition = position - 1;
+	}
+
+	/**
+	 * Set the starting position for which items should animate as the first position which isn't currently visible on screen.
+	 * This call is also valid when the {@link View}s haven't been drawn yet.
+	 * Will also call setShouldAnimate(true).
+	 */
+	public void setShouldAnimateNotVisible() {
+		if (getAbsListView() == null) {
+			throw new IllegalStateException("Call setListView() on this AnimationAdapter before setShouldAnimateNotVisible()!");
+		}
+
+		mShouldAnimate = true;
+		mFirstAnimatedPosition = getAbsListView().getLastVisiblePosition();
+		mLastAnimatedPosition = getAbsListView().getLastVisiblePosition();
+	}
+
 	@Override
 	public final View getView(int position, View convertView, ViewGroup parent) {
 		boolean alreadyStarted = false;
-
 		if (!mHasParentAnimationAdapter) {
-			if(getListView() == null) {
+			if (getAbsListView() == null) {
 				throw new IllegalStateException("Call setListView() on this AnimationAdapter before setAdapter()!");
 			}
 
 			if (convertView != null) {
-				int hashCode = convertView.hashCode();
-				AnimationInfo animationInfo = mAnimators.get(hashCode);
-				if (animationInfo != null) {
-					if (animationInfo.position != position) {
-						animationInfo.animator.end();
-						mAnimators.remove(hashCode);
-					} else {
-						alreadyStarted = true;
-					}
-				}
+				alreadyStarted = cancelExistingAnimation(position, convertView);
 			}
 		}
 
@@ -101,14 +130,31 @@ public abstract class AnimationAdapter extends BaseAdapterDecorator {
 		return itemView;
 	}
 
+	private boolean cancelExistingAnimation(int position, View convertView) {
+		boolean alreadyStarted = false;
+
+		int hashCode = convertView.hashCode();
+		AnimationInfo animationInfo = mAnimators.get(hashCode);
+		if (animationInfo != null) {
+			if (animationInfo.position != position) {
+				animationInfo.animator.end();
+				mAnimators.remove(hashCode);
+			} else {
+				alreadyStarted = true;
+			}
+		}
+
+		return alreadyStarted;
+	}
+
 	private void animateViewIfNecessary(int position, View view, ViewGroup parent) {
-		if (position > mLastAnimatedPosition && !mHasParentAnimationAdapter) {
-			animateView(position, parent, view);
+		if (position > mLastAnimatedPosition && mShouldAnimate) {
+			animateView(position, parent, view, false);
 			mLastAnimatedPosition = position;
 		}
 	}
 
-	private void animateView(int position, ViewGroup parent, View view) {
+	private void animateView(int position, ViewGroup parent, View view, boolean isHeader) {
 		if (mAnimationStartMillis == -1) {
 			mAnimationStartMillis = System.currentTimeMillis();
 		}
@@ -126,7 +172,7 @@ public abstract class AnimationAdapter extends BaseAdapterDecorator {
 
 		AnimatorSet set = new AnimatorSet();
 		set.playTogether(concatAnimators(childAnimators, animators, alphaAnimator));
-		set.setStartDelay(calculateAnimationDelay());
+		set.setStartDelay(calculateAnimationDelay(isHeader));
 		set.setDuration(getAnimationDurationMillis());
 		set.start();
 
@@ -141,8 +187,7 @@ public abstract class AnimationAdapter extends BaseAdapterDecorator {
 		set.start();
 	}
 
-	private Animator[] concatAnimators(Animator[] childAnimators, Animator[] animators,
-			Animator alphaAnimator) {
+	private Animator[] concatAnimators(Animator[] childAnimators, Animator[] animators, Animator alphaAnimator) {
 		Animator[] allAnimators = new Animator[childAnimators.length + animators.length + 1];
 		int i;
 
@@ -159,17 +204,23 @@ public abstract class AnimationAdapter extends BaseAdapterDecorator {
 		return allAnimators;
 	}
 
-	private long calculateAnimationDelay() {
+	@SuppressLint("NewApi")
+	private long calculateAnimationDelay(boolean isHeader) {
 		long delay;
-		int numberOfItems = getListView().getLastVisiblePosition()
-				- getListView().getFirstVisiblePosition();
+		int numberOfItems = getAbsListView().getLastVisiblePosition() - getAbsListView().getFirstVisiblePosition();
 		if (numberOfItems + 1 < mLastAnimatedPosition) {
 			delay = getAnimationDelayMillis();
+
+			if (getAbsListView() instanceof GridView && Build.VERSION.SDK_INT >= 11) {
+				delay += getAnimationDelayMillis() * ((mLastAnimatedPosition + 1) % ((GridView) getAbsListView()).getNumColumns());
+			}
 		} else {
-			long delaySinceStart = (mLastAnimatedPosition + 1) * getAnimationDelayMillis();
-			delay = mAnimationStartMillis + INITIALDELAYMILLIS + delaySinceStart
-					- System.currentTimeMillis();
+			long delaySinceStart = (mLastAnimatedPosition - mFirstAnimatedPosition + 1) * getAnimationDelayMillis();
+			delay = mAnimationStartMillis + getInitialDelayMillis() + delaySinceStart - System.currentTimeMillis();
+			delay -= isHeader && mLastAnimatedPosition > 0 ? getAnimationDelayMillis() : 0;
 		}
+		// System.out.println(isHeader + ": " + delay);
+
 		return Math.max(0, delay);
 	}
 
@@ -181,6 +232,13 @@ public abstract class AnimationAdapter extends BaseAdapterDecorator {
 	 */
 	public void setHasParentAnimationAdapter(boolean hasParentAnimationAdapter) {
 		mHasParentAnimationAdapter = hasParentAnimationAdapter;
+	}
+
+	/**
+	 * Get the delay in milliseconds before the first animation should start. Defaults to {@value #INITIALDELAYMILLIS}.
+	 */
+	protected long getInitialDelayMillis() {
+		return INITIALDELAYMILLIS;
 	}
 
 	/**
