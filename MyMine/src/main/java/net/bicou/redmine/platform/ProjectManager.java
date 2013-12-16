@@ -2,6 +2,7 @@ package net.bicou.redmine.platform;
 
 import android.accounts.Account;
 import android.content.Context;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.IssueCategory;
 import net.bicou.redmine.data.json.Project;
@@ -10,6 +11,7 @@ import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.Util;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -50,7 +52,7 @@ public class ProjectManager {
 				db.insert(project);
 			} else {
 				// Save this as the most recent server update
-				projectUpdateDate = project.updated_on.getTimeInMillis();
+				projectUpdateDate = Util.isEpoch(project.updated_on) ? 0 : project.updated_on.getTimeInMillis();
 				if (projectUpdateDate > currentSyncMarker) {
 					currentSyncMarker = projectUpdateDate;
 				}
