@@ -18,6 +18,8 @@ import java.util.Map;
  * Created by bicou on 07/08/13.
  */
 public abstract class ObjectSerializer<T> {
+	private static final String DATE_TEMPLATE = "EEE MMM dd HH:mm:ss Z yyyy";
+
 	private enum FieldChange {
 		NO_CHANGE,
 
@@ -117,7 +119,7 @@ public abstract class ObjectSerializer<T> {
 	 * Converts the HashMap of fields into a json representation
 	 */
 	private String buildJson(final HashMap<String, Object> fields) {
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_TEMPLATE, Locale.ENGLISH);
 		Iterator<String> iterator = fields.keySet().iterator();
 		Object item;
 		String key;
