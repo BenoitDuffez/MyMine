@@ -92,12 +92,12 @@ public abstract class DrawerActivity extends ActionBarActivity {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 getSupportActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
                 getSupportActionBar().setTitle(mTitleDrawer);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
                 Fragment frag = getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
                 if (frag instanceof DrawerMenuFragment) {
                     ((DrawerMenuFragment) frag).refreshMenu();
