@@ -2,7 +2,7 @@
   <library name="ComGithubGabrielemariottiChangeloglibLibrary140.aar">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/MyMine/build/exploded-bundles/ComGithubGabrielemariottiChangeloglibLibrary140.aar/classes.jar!/" />
-      <root url="jar://$PROJECT_DIR$/MyMine/build/exploded-bundles/ComGithubGabrielemariottiChangeloglibLibrary140.aar/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/MyMine/build/exploded-bundles/ComGithubGabrielemariottiChangeloglibLibrary140.aar/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
