@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by bicou on 07/08/13.
  */
 public abstract class ObjectSerializer<T> {
-	private static final String DATE_TEMPLATE = "EEE MMM dd HH:mm:ss Z yyyy";
+	private static final String DATE_TEMPLATE = "yyyy-MM-dd";//'T'HH:mm:ssZ";
 
 	private enum FieldChange {
 		NO_CHANGE,
