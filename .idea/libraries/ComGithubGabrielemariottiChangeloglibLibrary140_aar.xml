@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="ComGithubGabrielemariottiChangeloglibLibrary140.aar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/MyMine/build/exploded-bundles/ComGithubGabrielemariottiChangeloglibLibrary140.aar/classes.jar!/" />
       <root url="file://$PROJECT_DIR$/MyMine/build/exploded-bundles/ComGithubGabrielemariottiChangeloglibLibrary140.aar/res" />
+      <root url="jar://$PROJECT_DIR$/MyMine/build/exploded-bundles/ComGithubGabrielemariottiChangeloglibLibrary140.aar/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
