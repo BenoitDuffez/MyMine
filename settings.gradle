@@ -1,9 +1,6 @@
 include 'MyMine'
 project(':MyMine').projectDir = new File('MyMine')
 
-include 'lva'
-project(':lva').projectDir = new File('vendor/ListViewAnimations/library')
-
 include 'aFileChooser'
 project(':aFileChooser').projectDir = new File('vendor/aFileChooser/aFileChooser')
 

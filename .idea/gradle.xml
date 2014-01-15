@@ -5,6 +5,15 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/MyMine" />
+            <option value="$PROJECT_DIR$/vendor/SplitActivity/SplitActivity" />
+            <option value="$PROJECT_DIR$/vendor/StaggeredGridView" />
+            <option value="$PROJECT_DIR$/vendor/aFileChooser/aFileChooser" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>

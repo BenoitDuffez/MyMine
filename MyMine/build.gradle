@@ -6,12 +6,11 @@ dependencies {
     }
 
     // Support Libraries
-    compile 'com.android.support:support-v4:19.0.+'
-    compile 'com.android.support:appcompat-v7:19.0.+'
+    compile SupportLib
+    compile AppCompatLib
 
     // Projects
     compile project(':SplitActivity')
-    compile project(':lva')
     compile project(':aFileChooser')
     compile project(':sgv')
 
@@ -19,6 +18,7 @@ dependencies {
     compile files('libs/libGoogleAnalyticsServices.jar')
 
     // Libraries from maven
+    compile 'com.nhaarman.listviewanimations:library:2.5.2'
     compile 'com.github.gabrielemariotti.changeloglib:library:1.4.0'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:0.9'
     compile 'net.java:textile-j:2.2'
@@ -28,17 +28,17 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
     compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
         exclude module: 'support-v4'
-        compile 'com.android.support:support-v4:19.0.+'
+        compile SupportLib
     }
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    compileSdkVersion CompileSdkVersion
+    buildToolsVersion BuildToolsVersion
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 19
+        minSdkVersion MinSdkVersion
+        targetSdkVersion TargetSdkVersion
     }
 
     signingConfigs {
