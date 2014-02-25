@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: libGoogleAnalyticsServices">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/MyMine/libs/libGoogleAnalyticsServices.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
