@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="auth_accept_cert">Accepter le certificat d\'origine non fiable?</string>
+	<string name="auth_accept_cert">Accepter le certificat d\'origine non fiable ?</string>
 	<string name="auth_error_network">Impossible de s\'authentifier : erreur réseau (%1$s)</string>
 	<string name="auth_error_json">Impossible de s\'authentifier : erreur de syntaxe JSON (le serveur n\'a pas fourni la réponse attendue)</string>
 	<string name="auth_error_response">Impossible de s\'authentifier : réponse vide du serveur</string>
@@ -18,7 +18,8 @@
 	<string name="alpha_ok">OK, ça me va !</string>
 	<string name="alpha_ko">Bah.</string>
 	<string name="alert_010_upgrade_title">Oups !  Synchro à refaire</string>
-	<string name="alert_010_upgrade">Héhé... désolé. Il y a eu une modification non prévue dans le fonctionnement de l\'appli, et nous avons dû supprimer les pages Wiki de la mémoire du téléphone. Vous devrez donc attendre la prochaine synchro ou en déclencher une manuelle avant de pouvoir utiliser le Wiki.\n\nMais ne vous inquiétez pas, votre Wiki est INTACT ! C\'est juste la copie locale stockée sur ce téléphone qui a été corrompue.</string>
+	<string name="alert_010_upgrade">Héhé&#8230; désolé. Il y a eu une modification non prévue dans le fonctionnement de l\'appli, et nous avons dû
+		supprimer les pages Wiki de la mémoire du téléphone. Vous devrez donc attendre la prochaine synchro ou en déclencher une manuelle avant de pouvoir utiliser le Wiki.\n\nMais ne vous inquiétez pas, votre Wiki est INTACT ! C\'est juste la copie locale stockée sur ce téléphone qui a été corrompue.</string>
 	<string name="upgrade_010_ok">Merci pour l\'info</string>
 	<string name="loading">Chargement&#8230;</string>
 	<string name="loading_normal">Veuillez attendre un tout petit peu le temps qu\'on charge tout !</string>
@@ -98,10 +99,14 @@
 	<string name="issue_status_na">N/A</string>
 	<string name="issue_estimated_hours">Heures estimées</string>
 	<string name="issue_parent">Parent</string>
+	<string name="issue_parent_format"><![CDATA[Ticket parent: <a href="#">#%1$d</a>]]></string>
 	<string name="issue_is_private">Privé</string>
 	<string name="issue_tracker_id_format">%1$s #%2$d</string>
 	<string name="issue_spent_time_format">%1$.2f h</string>
 	<string name="issue_author_name_format">%1$s a ajouté %2$s</string>
+	<string name="issue_author_name_updated_format">%1$s a ajouté %2$s;\nmis à jour %3$s</string>
+	<string name="issue_author_name_toast_format">ajouté %1$s</string>
+	<string name="issue_author_name_updated_toast_format">ajouté %2$s;\nmis à jour %3$s</string>
 	<string name="issue_filter_all">TOUT</string>
 	<string name="issue_filter_queries">Requêtes</string>
 	<string name="issue_filter_projects">Projets</string>
@@ -139,11 +144,21 @@
 	<string name="issue_edit_select_assignee_button">Choisir</string>
 	<string name="issue_edit_spinner_no_change"><![CDATA[<rien>]]></string>
 	<string name="issue_edit_estimated_hours_parse_error">Impossible de décoder le nombre d\'heures, veuillez taper le temps comme HH, HH:MM ou HH:MM:SS</string>
+	<string name="issue_edit_notes_hint">Saisissez des notes à propos de ce ticket ici</string>
+	<string name="issue_edit_description_hint">Entrez la description du ticket ici</string>
+	<string name="issue_edit_project_instructions">Veuillez sélectionner le projet destination</string>
 	<string name="issue_delete_confirm_dialog">Êtes-vous sûr(e) de vouloir supprimer ce ticket ? Cette action ne peut être annulée.</string>
 	<string name="issue_delete_confirmed">Ce ticket a été supprimé</string>
+	<string name="issue_deleted_from_server">Ce ticket a été supprimé sur le serveur</string>
+	<string name="issue_upload_failed">Impossible d\'uploader le ticket : %1$s</string>
+	<string name="issue_upload_successful">Ticket uploadé</string>
+	<string name="issue_update_successful">Ticket mis à jour</string>
+	<string name="issue_add_notes_title">Ajouter des notes</string>
+	<string name="issue_save_notes_button">Sauvegarder</string>
 	<string name="menu_issues_add">Ajouter un ticket</string>
 	<string name="issue_menu_edit">Éditer le ticket</string>
 	<string name="menu_issue_delete">Supprimer le ticket</string>
+	<string name="menu_issue_edit_project">Changer de projet</string>
 
 	<!-- Project -->
     <string name="project_created_on">
@@ -259,6 +274,7 @@
 	<string name="time_delay_years"><![CDATA[il y a {0} {0,choice,0#ans|1#an|1<ans}]]></string>
 
 	<!-- Example General settings -->
+	<string name="title_activity_settings">Paramètres</string>
 	<string name="pref_header_general">Général</string>
 	<string name="pref_certificates">Gérer les certificats SSL</string>
 
@@ -321,9 +337,8 @@
     </string>
 	<string name="users_picker_dialog_title">Sélectionner l\'utilisateur</string>
 	<string name="drawer_main_no_favorite">Il n\'y a aucun favori</string>
-	<string name="issue_upload_failed">Impossible d\'uploader le ticket : %1$s</string>
-	<string name="issue_upload_successful">Ticket uploadé</string>
-	<string name="issue_update_successful">Ticket mis à jour</string>
-	<string name="title_activity_settings">Paramètres</string>
-
+	<string name="crouton_undo">annuler</string>
+	<string name="issue_edit_revert_crouton">Modifications annulées</string>
+	<string name="auth_cert_fingerprint">Empreinte du certificat : %1$s</string>
+	<string name="menu_changelog">Changements</string>
 </resources>
