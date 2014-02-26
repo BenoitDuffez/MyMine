@@ -130,7 +130,7 @@ public class ProjectFragment extends TrackedFragment {
 					Intent intent = new Intent(getActivity(), EditIssueActivity.class);
 					intent.putExtra(Constants.KEY_PROJECT, mProject);
 					intent.putExtra(Constants.KEY_SERVER, mProject.server);
-					startActivityForResult(intent, IssueUploader.CREATE_ISSUE);
+					getActivity().startActivityForResult(intent, IssueUploader.CREATE_ISSUE);
 				}
 			}
 		});
