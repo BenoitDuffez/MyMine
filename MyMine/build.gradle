@@ -42,12 +42,14 @@ android {
     }
 
     signingConfigs {
-        release
+        releasePlayStore
     }
 
     buildTypes {
-        release {
-            signingConfig signingConfigs.release
+        releasePlayStore {
+            debuggable false
+            jniDebugBuild false
+            signingConfig signingConfigs.releasePlayStore
         }
     }
 
@@ -63,17 +65,17 @@ if (propFile.canRead()) {
 
         println 'RELEASE BUILD SIGNING'
 
-        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
-        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
-        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
-        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+        android.signingConfigs.releasePlayStore.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.releasePlayStore.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.releasePlayStore.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.releasePlayStore.keyPassword = props['KEY_PASSWORD']
     } else {
         println 'RELEASE BUILD NOT FOUND SIGNING PROPERTIES'
 
-        android.buildTypes.release.signingConfig = null
+        android.buildTypes.releasePlayStore.signingConfig = null
     }
 } else {
     println 'RELEASE BUILD NOT FOUND SIGNING FILE'
-    android.buildTypes.release.signingConfig = null
+    android.buildTypes.releasePlayStore.signingConfig = null
 }
 
