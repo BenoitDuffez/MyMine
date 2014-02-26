@@ -83,7 +83,7 @@ public class ProjectsActivity extends SplitActivity<ProjectsListFragment, Projec
 			final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
 			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
 			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
-		} else {
+		} else if (data != null) {
 			EditIssueActivity.handleRevertCrouton(this, isSplitScreen() ? R.id.sa__right_pane : R.id.sa__left_pane, requestCode, data.getExtras());
 		}
 	}
