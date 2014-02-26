@@ -101,7 +101,9 @@ public class RoadmapsListFragment extends TrackedListFragment {
 				mList.add(v);
 			}
 		}
-		mAdapter.notifyDataSetChanged();
+		if (mAdapter != null) {
+			mAdapter.notifyDataSetChanged();
+		}
 	}
 
 	private static class RoadmapListItemViewsHolder {
