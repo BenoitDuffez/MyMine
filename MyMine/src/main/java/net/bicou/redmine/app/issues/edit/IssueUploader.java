@@ -31,6 +31,8 @@ import net.bicou.redmine.util.Util;
 import org.apache.http.HttpStatus;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -174,6 +176,11 @@ public class IssueUploader {
 				}
 
 				issue = (Issue) response;
+				final TimeZone timeZone = new GregorianCalendar().getTimeZone();
+				issue.created_on.setTimeZone(timeZone);
+				issue.updated_on.setTimeZone(timeZone);
+				issue.due_date.setTimeZone(timeZone);
+				issue.start_date.setTimeZone(timeZone);
 				issue.server = server;
 			} catch (Exception e) {
 				// In case of failure:
