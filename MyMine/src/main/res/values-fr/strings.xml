@@ -106,7 +106,7 @@
 	<string name="issue_author_name_format">%1$s a ajouté %2$s</string>
 	<string name="issue_author_name_updated_format">%1$s a ajouté %2$s;\nmis à jour %3$s</string>
 	<string name="issue_author_name_toast_format">ajouté %1$s</string>
-	<string name="issue_author_name_updated_toast_format">ajouté %2$s;\nmis à jour %3$s</string>
+	<string name="issue_author_name_updated_toast_format">ajouté %1$s;\nmis à jour %2$s</string>
 	<string name="issue_filter_all">TOUT</string>
 	<string name="issue_filter_queries">Requêtes</string>
 	<string name="issue_filter_projects">Projets</string>
