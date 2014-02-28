@@ -1,10 +1,16 @@
 package net.bicou.redmine.net.upload;
 
 import android.content.Context;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.net.JsonNetworkManager;
 import net.bicou.redmine.util.L;
-import org.apache.http.client.methods.*;
+
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 
 import java.io.UnsupportedEncodingException;
@@ -59,12 +65,15 @@ public class JsonUploader extends JsonNetworkManager {
 		if (op != ObjectSerializer.RemoteOperation.DELETE) {
 			StringEntity entity;
 			try {
-				entity = new StringEntity(mObjectSerializer.convertToJson(), "UTF-8");
+				String rawJson = mObjectSerializer.convertToJson();
+				rawJson = rawJson.replace("\r", "");
+				entity = new StringEntity(rawJson, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				L.e("Couldn't send the JSON string as UTF-8!", e);
 				throw new IllegalStateException(e);
 			}
 			entity.setContentEncoding("UTF-8");
+			//noinspection ConstantConditions
 			((HttpEntityEnclosingRequestBase) request).setEntity(entity);
 		}
 		return request;
