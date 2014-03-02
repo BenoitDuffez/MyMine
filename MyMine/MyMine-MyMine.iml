@@ -88,6 +88,15 @@
     <orderEntry type="module" module-name="sgv" exported="" />
     <orderEntry type="module" module-name="SplitActivity" exported="" />
     <orderEntry type="module" module-name="aFileChooser" exported="" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/lib/annotations.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

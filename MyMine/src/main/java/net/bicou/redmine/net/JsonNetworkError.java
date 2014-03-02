@@ -5,9 +5,13 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.security.cert.X509Certificate;
 
 /**
+ * Base class describing an error related to JSON download/parse.
+ * Contains useful items for describing the error to the user
  * Created by bicou on 08/08/13.
  */
 public abstract class JsonNetworkError {
@@ -22,7 +26,6 @@ public abstract class JsonNetworkError {
 	public abstract void displayCrouton(Activity activity, ViewGroup viewGroup);
 
 	public JsonNetworkError() {
-
 	}
 
 	public JsonNetworkError(Exception e) {
@@ -42,7 +45,15 @@ public abstract class JsonNetworkError {
 		errorMessageResId = resId;
 	}
 
-	public String getMessage(final Context ctx) {
+	/**
+	 * This method will provide details regarding the error that happened
+	 *
+	 * @param ctx Used to get strings from resources
+	 * @return Error details, if possible
+	 */
+	public
+	@Nullable
+	String getMessage(final Context ctx) {
 		if (errorMessageResId > 0) {
 			if (TextUtils.isEmpty(mErrorMessage)) {
 				return ctx.getString(errorMessageResId);
