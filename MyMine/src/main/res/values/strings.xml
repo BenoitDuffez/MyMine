@@ -241,6 +241,7 @@
     <string name="err_parse_error">Invalid response (JSON parse error)</string>
     <string name="err_unknown">Unknown error (%1$s)</string>
     <string name="err_http">Network error (%1$s)</string>
+    <string name="err_http_nodetails">Network error</string>
 
     <!-- Wiki -->
     <string name="wiki_empty_page">This page is empty.</string>

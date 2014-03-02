@@ -323,17 +323,6 @@ public class IssueOverviewFragment extends TrackedFragment {
 				error.displayCrouton(getActivity(), null);
 			}
 		}
-
-		try {
-			getActivity().getSupportFragmentManager().popBackStack();
-			IssuesListFragment fragment = ((IssuesActivity) getActivity()).getMainFragment();
-			if (fragment != null) {
-				fragment.refreshList();
-			}
-		} catch (IllegalStateException e) {
-			// May happen if this is called after the activity has called #onSaveInstanceState
-			// NO-OP
-		}
 	}
 
 	private static String refactorImageUrls(IssuesDbAdapter db, Server server, String textile) {

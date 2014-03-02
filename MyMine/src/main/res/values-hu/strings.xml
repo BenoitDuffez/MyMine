@@ -205,6 +205,7 @@
 	<string name="err_parse_error">Hibás válasz (JSON parse error)</string>
 	<string name="err_unknown">Ismeretlen hiba (%1$s)</string>
 	<string name="err_http">Hálózati hiba (%1$s)</string>
+	<string name="err_http_nodetails">Hálózati hiba</string>
 	<string name="wiki_empty_page">Ez itt üres.</string>
 	<string name="wiki_page_not_found">Az oldal nem létezik.</string>
 	<string name="wiki_list_item_updated_on">Mód: %1$s</string>

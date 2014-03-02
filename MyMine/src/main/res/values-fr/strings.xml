@@ -216,6 +216,7 @@
 	<string name="err_parse_error">Réponse invalide (syntaxe JSON)</string>
 	<string name="err_unknown">Erreur inconnue (%1$s)</string>
 	<string name="err_http">Erreur réseau (%1$s)</string>
+	<string name="err_http_nodetails">Erreur réseau</string>
 
 	<!-- Wiki -->
 	<string name="wiki_empty_page">Cette page est vierge.</string>

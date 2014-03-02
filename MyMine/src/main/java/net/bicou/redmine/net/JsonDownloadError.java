@@ -1,6 +1,7 @@
 package net.bicou.redmine.net;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.view.ViewGroup;
 
 import net.bicou.redmine.R;
@@ -44,7 +45,12 @@ public class JsonDownloadError extends JsonNetworkError {
 		final String message;
 		switch (errorType) {
 		case TYPE_NETWORK:
-			message = activity.getString(R.string.err_http, getMessage(activity));
+			final String details = getMessage(activity);
+			if (TextUtils.isEmpty(details)) {
+				message = activity.getString(R.string.err_http_nodetails);
+			} else {
+				message = activity.getString(R.string.err_http, details);
+			}
 			break;
 
 		case TYPE_ANDROID:
