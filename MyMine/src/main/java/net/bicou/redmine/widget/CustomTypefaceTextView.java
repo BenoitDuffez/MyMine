@@ -37,7 +37,12 @@ public abstract class CustomTypefaceTextView extends TextView {
 		}
 		try {
 			final Typeface font = Typeface.createFromAsset(mContext.getAssets(), typeface);
-			setTypeface(font);
+			Typeface currentFont = getTypeface();
+			if (currentFont != null) {
+				setTypeface(font, currentFont.getStyle());
+			} else {
+				setTypeface(font);
+			}
 		} catch (final Exception e) {
 		}
 	}
