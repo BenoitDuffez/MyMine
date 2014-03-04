@@ -261,14 +261,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 						details = error.exception.getClass().getSimpleName() + (error.exception.getMessage() == null ? //
 								error.exception.getCause().toString() : error.exception.getMessage());
 					}
-					errorMessage = getString(error.errorType == ErrorType.TYPE_JSON ? R.string.auth_error_json : R.string.auth_error_network, details);
+
+					final int resId;
+					if (error.errorType == ErrorType.TYPE_JSON) {
+						resId = R.string.auth_error_json;
+					} else {
+						resId = !TextUtils.isEmpty(details) ? R.string.auth_error_network : R.string.auth_error_network_nodetails;
+					}
+					errorMessage = getString(resId, details);
 				}
 				break;
+
 			default:
 			case TYPE_RESPONSE:
 			case TYPE_UNKNOWN:
 				errorMessage = getString(R.string.auth_error_response);
 				break;
+
 			case TYPE_JSON:
 				errorMessage = getString(R.string.auth_error_json);
 				break;
@@ -278,7 +287,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActionBarActivity
 				Crouton.makeText(this, errorMessage + "\n" + getString(R.string.setup_button_tryagain), Style.ALERT, mCroutonHolder).show();
 			}
 		} else {
-			Crouton.makeText(this, error.getMessage(this) + getString(R.string.setup_check_failed), Style.ALERT, mCroutonHolder).show();
+			String text = error.getMessage(this);
+			if (TextUtils.isEmpty(text)) {
+				text = getString(R.string.setup_check_failed);
+			} else {
+				text += getString(R.string.setup_check_failed);
+			}
+			Crouton.makeText(this, text, Style.ALERT, mCroutonHolder).show();
 		}
 	}
 

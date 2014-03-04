@@ -3,6 +3,7 @@
 
 	<string name="auth_accept_cert">Elfogadod a nem megbízható tanúsítványt?</string>
 	<string name="auth_error_network">Nem hitelesíthető: hálózati hiba (%1$s)</string>
+	<string name="auth_error_network_nodetails">Nem hitelesíthető: hálózati hiba</string>
 	<string name="auth_error_json">Nem hitelesíthető: JSON szintaktikai hiba (a kiszolgáló rossz választ ad)</string>
 	<string name="auth_error_response">Nem hitelesíthető: üres válasz érkezett a kiszolgálótól</string>
 	<string name="app_name">MyMine</string>
@@ -151,6 +152,7 @@
 	<string name="issue_delete_confirmed">Feladat törölve.</string>
 	<string name="issue_deleted_from_server">Feladat törlve lett a kiszolgálón is</string>
 	<string name="issue_upload_failed">Nem lehet feltölteni a feladatot: %1$s</string>
+	<string name="issue_upload_failed_nodetails">Nem lehet feltölteni a feladatot</string>
 	<string name="issue_upload_successful">Feladat feltöltve</string>
 	<string name="issue_update_successful">Feladat módosítva</string>
 	<string name="issue_add_notes_title">Megjegyzés hozzáadása</string>

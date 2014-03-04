@@ -3,6 +3,7 @@
 
     <string name="auth_accept_cert">Accept untrusted certificate?</string>
     <string name="auth_error_network">Unable to authenticate: network error (%1$s)</string>
+    <string name="auth_error_network_nodetails">Unable to authenticate: network error</string>
     <string name="auth_error_json">Unable to authenticate: JSON parse error (server did not reply with expected response)</string>
     <string name="auth_error_response">Unable to authenticate: empty response from server</string>
 
@@ -175,6 +176,7 @@
     <string name="issue_delete_confirmed">The issue was deleted.</string>
     <string name="issue_deleted_from_server">This issue was deleted on the server</string>
     <string name="issue_upload_failed">Unable to upload issue: %1$s</string>
+    <string name="issue_upload_failed_nodetails">Unable to upload issue</string>
     <string name="issue_upload_successful">Issue uploaded</string>
     <string name="issue_update_successful">Issue updated</string>
     <string name="issue_add_notes_title">Add notes</string>

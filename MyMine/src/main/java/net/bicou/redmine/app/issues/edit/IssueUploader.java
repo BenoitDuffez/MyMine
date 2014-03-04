@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -133,20 +134,32 @@ public class IssueUploader {
 		if (result instanceof JsonNetworkError) {
 			final JsonNetworkError networkError = (JsonNetworkError) result;
 			final String errorMessage;
+
+			// Prepare error message
+			String msg = networkError.getMessage(resultHolder);
+
+			// The server understood but returned an error
 			if (networkError.httpResponseCode == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
-				// The server understood but returned an error
 				ErrorsList errorsList = new Gson().fromJson(networkError.json, ErrorsList.class);
 				if (errorsList != null && errorsList.errors != null && errorsList.errors.size() > 0) {
 					String[] errors = errorsList.errors.toArray(new String[errorsList.errors.size()]);
 					errorMessage = String.format(resultHolder.getString(R.string.issue_upload_failed), Util.join(errors, ", "));
 				} else {
-					final String msg = networkError.getMessage(resultHolder) + " (" + networkError.json + ")";
-					errorMessage = String.format(resultHolder.getString(R.string.issue_upload_failed), msg);
+					if (TextUtils.isEmpty(msg)) {
+						msg = networkError.json;
+					} else {
+						msg += " (" + networkError.json + ")";
+					}
+					final int resId = msg == null ? R.string.issue_upload_failed_nodetails : R.string.issue_upload_failed;
+					errorMessage = String.format(resultHolder.getString(resId), msg);
 				}
-			} else {
-				// The server didn't reply or we didn't understand each other
-				errorMessage = String.format(resultHolder.getString(R.string.issue_upload_failed), networkError.getMessage(resultHolder));
 			}
+			// The server didn't reply or we didn't understand each other
+			else {
+				final int resId = TextUtils.isEmpty(msg) ? R.string.issue_upload_failed_nodetails : R.string.issue_upload_failed;
+				errorMessage = String.format(resultHolder.getString(resId), networkError.getMessage(resultHolder));
+			}
+
 			args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
 			return args;
 		}
@@ -169,7 +182,8 @@ public class IssueUploader {
 				Object response = parseJson(json);
 				if (response == null || response instanceof JsonDownloadError) {
 					final String msg = response == null ? resultHolder.getString(R.string.err_empty_response) : ((JsonDownloadError) response).getMessage(resultHolder);
-					final String errorMessage = resultHolder.getString(R.string.issue_upload_failed, msg);
+					final int resId = TextUtils.isEmpty(msg) ? R.string.issue_upload_failed_nodetails : R.string.issue_upload_failed;
+					final String errorMessage = resultHolder.getString(resId, msg);
 					args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
 					L.e("Shouldn't happen! params=" + params + " result=" + result, null);
 					return args;

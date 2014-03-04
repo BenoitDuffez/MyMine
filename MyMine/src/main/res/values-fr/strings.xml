@@ -3,6 +3,7 @@
 
 	<string name="auth_accept_cert">Accepter le certificat d\'origine non fiable ?</string>
 	<string name="auth_error_network">Impossible de s\'authentifier : erreur réseau (%1$s)</string>
+	<string name="auth_error_network_nodetails">Impossible de s\'authentifier : erreur réseau</string>
 	<string name="auth_error_json">Impossible de s\'authentifier : erreur de syntaxe JSON (le serveur n\'a pas fourni la réponse attendue)</string>
 	<string name="auth_error_response">Impossible de s\'authentifier : réponse vide du serveur</string>
 	<string name="app_name">MyMine</string>
@@ -151,6 +152,7 @@
 	<string name="issue_delete_confirmed">Ce ticket a été supprimé</string>
 	<string name="issue_deleted_from_server">Ce ticket a été supprimé sur le serveur</string>
 	<string name="issue_upload_failed">Impossible d\'uploader le ticket : %1$s</string>
+	<string name="issue_upload_failed_nodetails">Impossible d\'uploader le ticket</string>
 	<string name="issue_upload_successful">Ticket uploadé</string>
 	<string name="issue_update_successful">Ticket mis à jour</string>
 	<string name="issue_add_notes_title">Ajouter des notes</string>
