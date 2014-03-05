@@ -22,6 +22,7 @@ public class Project implements Parcelable {
 
 	public Server server;
 	public boolean is_favorite;
+	public boolean is_sync_blocked;
 
 	protected Project(final Parcel in) {
 		id = in.readLong();
@@ -115,6 +116,8 @@ public class Project implements Parcelable {
 					parent.name = null;
 				} else if (col.equals(ProjectsDbAdapter.KEY_IS_FAVORITE)) {
 					is_favorite = c.getInt(columnIndex) > 0;
+				} else if (col.equals(ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED)) {
+					is_sync_blocked = c.getInt(columnIndex) > 0;
 				} else {
 					L.e("Unhandled column: " + col, null);
 				}

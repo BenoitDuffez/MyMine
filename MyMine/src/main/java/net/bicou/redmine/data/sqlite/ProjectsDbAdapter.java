@@ -22,6 +22,7 @@ public class ProjectsDbAdapter extends DbAdapter {
 	public static final String KEY_IDENTIFIER = "identifier";
 	public static final String KEY_PARENT_ID = "parent";
 	public static final String KEY_IS_FAVORITE = "is_favorite";
+	public static final String KEY_IS_SYNC_BLOCKED = "is_sync_blocked";
 
 	public static final String KEY_SERVER_ID = "server_id";
 
@@ -35,12 +36,13 @@ public class ProjectsDbAdapter extends DbAdapter {
 			KEY_UPDATED_ON,
 			KEY_SERVER_ID,
 			KEY_IS_FAVORITE,
+			KEY_IS_SYNC_BLOCKED,
 	};
 
 	/**
 	 * Table creation statements
 	 */
-	public static final String[] getCreateTablesStatements() {
+	public static String[] getCreateTablesStatements() {
 		return new String[] {
 				"CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
 		};
@@ -63,6 +65,7 @@ public class ProjectsDbAdapter extends DbAdapter {
 		values.put(KEY_UPDATED_ON, project.updated_on == null ? 0 : project.updated_on.getTimeInMillis());
 		values.put(KEY_SERVER_ID, project.server.rowId);
 		values.put(KEY_IS_FAVORITE, project.is_favorite ? 1 : 0);
+		values.put(KEY_IS_SYNC_BLOCKED, project.is_sync_blocked ? 1 : 0);
 	}
 
 	public long insert(final Project project) {

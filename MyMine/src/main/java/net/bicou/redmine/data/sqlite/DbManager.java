@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.sync.NetworkUtilities;
@@ -22,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class DbManager extends SQLiteOpenHelper {
 	private static final String DB_FILE = "redmine.db";
-	private static final int DB_VERSION = 18;
+	private static final int DB_VERSION = 19;
 	Context mContext;
 	Lock mLock = new ReentrantLock();
 
@@ -232,6 +233,10 @@ public class DbManager extends SQLiteOpenHelper {
 
 		if (oldVersion < 18) {
 			db.execSQL("ALTER TABLE " + IssuesDbAdapter.TABLE_ISSUES + " ADD " + IssuesDbAdapter.KEY_IS_FAVORITE);
+		}
+
+		if (oldVersion < 19) {
+			db.execSQL("ALTER TABLE "+ ProjectsDbAdapter.TABLE_PROJECTS+" ADD "+ ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED);
 		}
 	}
 
