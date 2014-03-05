@@ -44,7 +44,7 @@
     <string name="no_projects">The project list is empty</string>
 
     <string name="help_text">
-        In order to use this app, you need to setup the server connection. To do that, just add a new
+        In order to use this app, you need to setup the server connection. To do that, just add a new 
         <b>Redmine Server</b>
         account in your phone settings!\n\nYep, it is THAT easy. All the sync will be managed directly by your phone settings,
         and you will control exactly what you want to sync on which server.
@@ -353,6 +353,7 @@
     </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="pref_title_project_sync_settings">Project sync settings</string>
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
@@ -374,5 +375,9 @@
 	<string name="issue_edit_revert_crouton">Modifications discarded</string>
 	<string name="auth_cert_fingerprint">Certificate fingerprint: %1$s</string>
 	<string name="menu_changelog">Changelog</string>
+	<string name="project_sync_instructions">Please select the projects that you wish to exclude from the sync. The selected projects will be
+		hidden from the app, the related issues and wiki pages will be deleted from your device, and any incoming sync item related to them will be
+		ignored.</string>
+	<string name="project_sync_empty">There are no projects synced. Please run a full sync before going here.</string>
 
 </resources>

@@ -38,8 +38,8 @@
 	<string name="loading_sync_title">Kávészünet!</string>
 	<string name="no_projects">üres Projekt lista</string>
     <string name="help_text">
-         Hogy használni tudd az alkalmazást, be kell állítani a kapcsolat a kiszolgálóval. Ehhez meg kell adnod egy új
-         <b> Redmine Server </b>
+         Hogy használni tudd az alkalmazást, be kell állítani a kapcsolat a kiszolgálóval. Ehhez meg kell adnod egy új 
+         <b>Redmine Server</b>
          fiókot a telefon beállításainál! (Beállítások - Fiókok - Új fiók hozzáadása)
 		 \n\nNaja, ez ilyen egyszerű. Minden szinkronizálást közvetlenül a telefon kezel,
          és te állítod be pontosan mit szeretnél szinkronizálni és melyik szerverrel.

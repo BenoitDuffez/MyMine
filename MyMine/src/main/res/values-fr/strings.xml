@@ -32,7 +32,7 @@
 	<string name="loading_sync_check_button">Vérifier les paramètres de synchro</string>
 	<string name="loading_sync_title">Pause café !</string>
 	<string name="no_projects">La liste des projets est vide.</string>
-    <string name="help_text">Afin d\'utiliser cette appli, vous devez configurer la connexion à votre serveur. Pour cela, ajoutez simplement un compte
+    <string name="help_text">Afin d\'utiliser cette appli, vous devez configurer la connexion à votre serveur. Pour cela, ajoutez simplement un compte 
         <b>Serveur Redmine</b>
         dans les paramètres de votre téléphone !\n\nEt oui, c\'est AUSSI simple. Toute la synchro va être gérée directement par votre téléphone, et vous pourrez
         contrôler exactement ce que vous voulez synchroniser depuis le serveur.
@@ -344,4 +344,7 @@
 	<string name="issue_edit_revert_crouton">Modifications annulées</string>
 	<string name="auth_cert_fingerprint">Empreinte du certificat : %1$s</string>
 	<string name="menu_changelog">Changements</string>
+	<string name="project_sync_instructions">Veuillez sélectionner les projets à exclure de la synchro. Les projets sélectionnés seront cachés dans
+	l\'appli, les tickets et pages wiki en lien avec ce projet seront supprimés du téléphone et toute synchro provenant du serveur en lien avec ces
+	projets sera ignorée.</string>
 </resources>
