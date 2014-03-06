@@ -42,6 +42,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Wrapper around an {@link android.os.AsyncTask} that downloads an issue history, and parses it so that it is ready to be displayed on the UI
+ * thread.
+ */
 public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory> {
 	Issue mIssue;
 	ActionBarActivity mActivity;
@@ -49,6 +53,9 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	File mCacheFolder;
 	JsonNetworkError mError;
 
+	/**
+	 * Helper class containing human-readable property change information (property name, old and new values)
+	 */
 	private static class PropertyChange {
 		public String propName;
 		public String oldVal;
@@ -61,13 +68,26 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		}
 	}
 
+	/**
+	 * Helper class that will parse the {@link net.bicou.redmine.data.json.JournalDetail} provided in order to retrieve the previous/new ID of the
+	 * object/property that was edited by someone. The IDs are parsed into {@code long}.
+	 */
 	private static class IdPair {
 		public long oldId, newId;
 		private static IdPair instance;
 
+		/**
+		 * Prevent object construction
+		 */
 		private IdPair() {
 		}
 
+		/**
+		 * Translates the property IDs to {@code long}
+		 *
+		 * @param d the property change information
+		 * @return a new {@link net.bicou.redmine.app.issues.IssueHistoryDownloadTask.IdPair} object, containing the previous and new IDs as long.
+		 */
 		public static IdPair from(JournalDetail d) {
 			if (instance == null) {
 				instance = new IdPair();
@@ -95,11 +115,27 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		}
 	}
 
+	/**
+	 * {@link android.os.AsyncTask}-like methods called during the different steps of the background task
+	 */
 	public interface JournalsDownloadCallbacks {
+		/**
+		 * Executed on the same thread, before doing anything
+		 */
 		void onPreExecute();
 
+		/**
+		 * Executed on the same thread, after the issue history has been downloaded successfully
+		 *
+		 * @param history The downloaded and parsed issue history
+		 */
 		void onJournalsDownloaded(IssueHistory history);
 
+		/**
+		 * Executed on the same thread, after a failure in the download or the parsing of the issue history
+		 *
+		 * @param error An error describing what went wrong
+		 */
 		void onJournalsFailed(JsonNetworkError error);
 	}
 
@@ -108,6 +144,13 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		mCallbacks = callbacks;
 		mIssue = issue;
 		mCacheFolder = act.getCacheDir();
+	}
+
+	@Override
+	protected void onPreExecute() {
+		if (mCallbacks != null) {
+			mCallbacks.onPreExecute();
+		}
 	}
 
 	@Override
@@ -121,6 +164,8 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 			return null;
 		}
 
+		// Dummy DB connection that we will keep open during all the background task, in order to avoid opening/closing the DB connection all the
+		// time.
 		IssuesDbAdapter dummy = new IssuesDbAdapter(mActivity);
 		dummy.open();
 		parseJournals(history.journals, dummy);
@@ -128,6 +173,17 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		dummy.close();
 
 		return history;
+	}
+
+	@Override
+	protected void onPostExecute(final IssueHistory history) {
+		if (mCallbacks != null) {
+			if (history == null || history.journals == null) {
+				mCallbacks.onJournalsFailed(mError);
+			} else {
+				mCallbacks.onJournalsDownloaded(history);
+			}
+		}
 	}
 
 	/**
@@ -148,164 +204,62 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	}
 
 	/**
-	 * Translate a version change
+	 * Translate data in the journal into human-readable values
 	 */
-	private PropertyChange onVersionChanged(final JournalDetail d, IdPair ids, DbAdapter db) {
-		String propName, oldVal, newVal;
+	private void parseJournals(final List<Journal> journals, DbAdapter db) {
+		for (final Journal journal : journals) {
+			// Avatar
+			setAvatarUrl(journal, db);
 
-		propName = mActivity.getString(R.string.issue_target_version);
-		final VersionsDbAdapter vdb = new VersionsDbAdapter(db);
-		oldVal = vdb.getName(mIssue.server, mIssue.project, ids.oldId);
-		newVal = vdb.getName(mIssue.server, mIssue.project, ids.newId);
+			// Details
+			final StringBuilder details = new StringBuilder();
+			for (final String detail : getFormattedDetails(journal, db)) {
+				details.append("&nbsp; • ").append(detail).append("<br />\n");
+			}
+			journal.formatted_details = (SpannableStringBuilder) Html.fromHtml(details.toString(), null, new StrikeTagHandler());
 
-		return new PropertyChange(propName, oldVal, newVal);
+			// Notes
+			if (!TextUtils.isEmpty(journal.notes)) {
+				String notes = WikiUtils.htmlFromTextile(journal.notes);
+				notes = notes.replace("<pre>", "<tt>").replace("</pre>", "</tt>");
+				// Fake lists
+				notes = notes.replace("<li>", " &nbsp; &nbsp; • ").replace("</li>", "<br />");
+				journal.formatted_notes = (SpannableStringBuilder) Html.fromHtml(notes);
+			}
+		}
 	}
 
-	private PropertyChange onEstimatedHoursChange(final JournalDetail d, IdPair ids, DbAdapter db) {
-		return new PropertyChange(mActivity.getString(R.string.issue_estimated_hours), d.old_value, d.new_value); // TODO
-	}
-
-	private PropertyChange onDoneRatioChange(final JournalDetail d, IdPair ids, DbAdapter db) {
-		return new PropertyChange(mActivity.getString(R.string.issue_percent_done), d.old_value, d.new_value); // TODO
-	}
-
-	private PropertyChange onAssignedToChange(final JournalDetail d, IdPair ids, DbAdapter db) {
-		final String oldVal, newVal;
-
-		final UsersDbAdapter udb = new UsersDbAdapter(db);
-		User o, n;
-		o = udb.select(mIssue.server, ids.oldId);
-		n = udb.select(mIssue.server, ids.newId);
-
-		oldVal = o == null ? mActivity.getString(R.string.issue_journal_value_na) : o.firstname + " " + o.lastname;
-		newVal = n == null ? mActivity.getString(R.string.issue_journal_value_na) : n.firstname + " " + n.lastname;
-
-		return new PropertyChange(mActivity.getString(R.string.issue_assignee), oldVal, newVal);
-	}
-
-	private PropertyChange onPriorityChange(final JournalDetail d, IdPair ids, DbAdapter db) {
-		String oldVal, newVal;
-
-		IssuePrioritiesDbAdapter ipdb = new IssuePrioritiesDbAdapter(db);
-		IssuePriority o, n;
-		o = ipdb.select(mIssue.server, ids.oldId, null);
-		n = ipdb.select(mIssue.server, ids.newId, null);
-
-		oldVal = o == null ? mActivity.getString(R.string.issue_journal_value_na) : o.name;
-		newVal = n == null ? mActivity.getString(R.string.issue_journal_value_na) : n.name;
-
-		return new PropertyChange(mActivity.getString(R.string.issue_priority), oldVal, newVal);
-	}
-
-	private PropertyChange onStatusChange(final JournalDetail d, IdPair ids, DbAdapter db) {
-		String oldVal, newVal;
-
-		final IssueStatusesDbAdapter isdb = new IssueStatusesDbAdapter(db);
-		oldVal = isdb.getName(mIssue.server, ids.oldId);
-		newVal = isdb.getName(mIssue.server, ids.newId);
-
-		return new PropertyChange(mActivity.getString(R.string.issue_status), oldVal, newVal);
-	}
-
-	private PropertyChange onDueDateChange(final JournalDetail d, IdPair ids, DbAdapter db) {
-		return new PropertyChange(mActivity.getString(R.string.issue_due_date), d.old_value, d.new_value); // TODO
-	}
-
-	private PropertyChange onStartDateChange(final JournalDetail d, IdPair ids, DbAdapter db) {
-		return new PropertyChange(mActivity.getString(R.string.issue_start_date), d.old_value, d.new_value); // TODO
-	}
-
-	private PropertyChange onSubjectChange(final JournalDetail d, IdPair ids, DbAdapter db) {
-		return new PropertyChange(mActivity.getString(R.string.issue_subject), d.old_value, d.new_value);
-	}
-
-	private PropertyChange onTrackerChange(JournalDetail d, IdPair ids, DbAdapter db) {
-		TrackersDbAdapter tdb = new TrackersDbAdapter(db);
-		Tracker o = tdb.select(mIssue.server, ids.oldId);
-		Tracker n = tdb.select(mIssue.server, ids.newId);
-
-		String oldValue = o == null ? null : o.name;
-		String newValue = n == null ? null : n.name;
-
-		return new PropertyChange(mActivity.getString(R.string.issue_tracker), oldValue, newValue);
-	}
-
-	private PropertyChange onIssueCategoryChange(JournalDetail d, IdPair ids, DbAdapter db) {
-		IssueCategoriesDbAdapter icdb = new IssueCategoriesDbAdapter(db);
-
-		IssueCategory o = icdb.select(mIssue.server, mIssue.project, ids.oldId, null);
-		IssueCategory n = icdb.select(mIssue.server, mIssue.project, ids.newId, null);
-
-		String oldValue = o == null ? null : o.name;
-		String newValue = n == null ? null : n.name;
-
-		return new PropertyChange(mActivity.getString(R.string.issue_category), oldValue, newValue);
-	}
-
-	private void setAvatarUrl(final Journal journal, DbAdapter db) {
-		final UsersDbAdapter udb = new UsersDbAdapter(db);
-		journal.user = udb.select(mIssue.server, journal.user.id);
-
-		if (journal.user == null || TextUtils.isEmpty(journal.user.mail)) {
+	/**
+	 * Translate data in the changesets (code revisions) into human-readable values
+	 *
+	 * @param changeSets The list of code revisions
+	 * @param db         A A {@link net.bicou.redmine.data.sqlite.DbAdapter} used to keep the same DB connection
+	 */
+	private void parseChangeSets(List<ChangeSet> changeSets, DbAdapter db) {
+		if (changeSets == null || changeSets.size() <= 0) {
 			return;
 		}
 
-		journal.user.createGravatarUrl();
-	}
-
-	private PropertyChange onDescriptionChange(JournalDetail d, IdPair ids, DbAdapter db) {
-		String oldHtml = WikiUtils.htmlFromTextile(d.old_value);
-		String newHtml = WikiUtils.htmlFromTextile(d.new_value);
-		DiffMatchPatch diff = new DiffMatchPatch();
-		LinkedList<DiffMatchPatch.Diff> diffs = diff.diff_main(oldHtml, newHtml, false);
-		diff.diff_cleanupEfficiency(diffs);
-
-		StringBuilder sb = new StringBuilder("<br /><cite>");
-		for (DiffMatchPatch.Diff difference : diffs) {
-			difference.text = difference.text.replace("\n", "<br />");
-			switch (difference.operation) {
-			case DELETE:
-				sb.append("<s>").append(difference.text).append("</s>");
-				break;
-			case EQUAL:
-				sb.append(difference.text);
-				break;
-			case INSERT:
-				sb.append("<b>").append(difference.text).append("</b>");
-				break;
+		UsersDbAdapter udb = new UsersDbAdapter(db);
+		for (ChangeSet changeSet : changeSets) {
+			changeSet.commentsHtml = (SpannableStringBuilder) Html.fromHtml(changeSet.comments.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br />"));
+			// TODO: cache users?
+			if (changeSet.user != null) {
+				changeSet.user = udb.select(mIssue.server, changeSet.user.id);
+				if (changeSet.user != null) {
+					changeSet.user.createGravatarUrl();
+				}
 			}
 		}
-
-		// Force remove previous description
-		d.old_value = null;
-
-		return new PropertyChange(mActivity.getString(R.string.issue_description), null, sb.toString());
 	}
 
-	private PropertyChange onIsPrivateChange(JournalDetail d, IdPair ids, DbAdapter db) {
-		String o = mActivity.getString(ids.oldId > 0 ? R.string.yes : R.string.no);
-		String n = mActivity.getString(ids.newId > 0 ? R.string.yes : R.string.no);
-		return new PropertyChange(mActivity.getString(R.string.issue_is_private), o, n);
-	}
-
-	private PropertyChange onParentChange(JournalDetail d, IdPair ids, DbAdapter db) {
-		String o = ids.oldId > 0 ? "#" + Long.toString(ids.oldId) : null;
-		String n = ids.newId > 0 ? "#" + Long.toString(ids.newId) : null;
-		return new PropertyChange(mActivity.getString(R.string.issue_parent), o, n);
-	}
-
-	private PropertyChange onProjectChange(JournalDetail d, IdPair ids, DbAdapter db) {
-		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
-
-		Project o = pdb.select(mIssue.server, ids.oldId, null);
-		Project n = pdb.select(mIssue.server, ids.newId, null);
-
-		String oldValue = o == null ? null : o.name;
-		String newValue = n == null ? null : n.name;
-
-		return new PropertyChange(mActivity.getString(R.string.issue_project), oldValue, newValue);
-	}
-
+	/**
+	 * Will go through all the changes made in a single journal entry to get human-readable information
+	 *
+	 * @param journal The downloaded journal entry
+	 * @param db      A {@link net.bicou.redmine.data.sqlite.DbAdapter} used to keep the same DB connection
+	 * @return The list of changes as simple string sentences
+	 */
 	private List<String> getFormattedDetails(final Journal journal, DbAdapter db) {
 		final List<String> formattedDetails = new ArrayList<String>();
 		PropertyChange propChange;
@@ -316,35 +270,35 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 			if ("attr".equals(d.property) || "attribute".equals(d.property)) {
 				// Get the human readable name of the property that was changed
 				if (IssuesDbAdapter.KEY_FIXED_VERSION_ID.equals(d.name)) {
-					propChange = onVersionChanged(d, ids, db);
+					propChange = onVersionChanged(ids, db);
 				} else if (IssuesDbAdapter.KEY_ESTIMATED_HOURS.equals(d.name)) {
-					propChange = onEstimatedHoursChange(d, ids, db);
+					propChange = onEstimatedHoursChange(d);
 				} else if (IssuesDbAdapter.KEY_DONE_RATIO.equals(d.name)) {
-					propChange = onDoneRatioChange(d, ids, db);
+					propChange = onDoneRatioChange(d);
 				} else if (IssuesDbAdapter.KEY_ASSIGNED_TO_ID.equals(d.name)) {
-					propChange = onAssignedToChange(d, ids, db);
+					propChange = onAssignedToChange(ids, db);
 				} else if (IssuesDbAdapter.KEY_PRIORITY_ID.equals(d.name)) {
-					propChange = onPriorityChange(d, ids, db);
+					propChange = onPriorityChange(ids, db);
 				} else if (IssuesDbAdapter.KEY_STATUS_ID.equals(d.name)) {
-					propChange = onStatusChange(d, ids, db);
+					propChange = onStatusChange(ids, db);
 				} else if (IssuesDbAdapter.KEY_DUE_DATE.equals(d.name)) {
-					propChange = onDueDateChange(d, ids, db);
+					propChange = onDueDateChange(d);
 				} else if (IssuesDbAdapter.KEY_START_DATE.equals(d.name)) {
-					propChange = onStartDateChange(d, ids, db);
+					propChange = onStartDateChange(d);
 				} else if (IssuesDbAdapter.KEY_SUBJECT.equals(d.name)) {
-					propChange = onSubjectChange(d, ids, db);
+					propChange = onSubjectChange(d);
 				} else if (IssuesDbAdapter.KEY_TRACKER_ID.equals(d.name)) {
-					propChange = onTrackerChange(d, ids, db);
+					propChange = onTrackerChange(ids, db);
 				} else if (IssuesDbAdapter.KEY_CATEGORY_ID.equals(d.name)) {
-					propChange = onIssueCategoryChange(d, ids, db);
+					propChange = onIssueCategoryChange(ids, db);
 				} else if (IssuesDbAdapter.KEY_DESCRIPTION.equals(d.name)) {
-					propChange = onDescriptionChange(d, ids, db);
+					propChange = onDescriptionChange(d);
 				} else if (IssuesDbAdapter.KEY_IS_PRIVATE.equals(d.name)) {
-					propChange = onIsPrivateChange(d, ids, db);
+					propChange = onIsPrivateChange(ids);
 				} else if (IssuesDbAdapter.KEY_PARENT_ID.equals(d.name)) {
-					propChange = onParentChange(d, ids, db);
+					propChange = onParentChange(ids);
 				} else if (IssuesDbAdapter.KEY_PROJECT_ID.equals(d.name)) {
-					propChange = onProjectChange(d, ids, db);
+					propChange = onProjectChange(ids, db);
 				} else {
 					propChange = new PropertyChange(mActivity.getString(R.string.issue_journal_unknown_property, d.name), d.old_value, d.new_value);
 					L.e("Unknown property " + d.property + " name: " + d.name + " old=" + d.old_value + " new=" + d.new_value, null);
@@ -380,64 +334,161 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	}
 
 	/**
-	 * Translate data in the journal into human-readable values
+	 * Translate a version change
 	 */
-	private void parseJournals(final List<Journal> journals, DbAdapter db) {
-		for (final Journal journal : journals) {
-			// Avatar
-			setAvatarUrl(journal, db);
+	private PropertyChange onVersionChanged(IdPair ids, DbAdapter db) {
+		String propName, oldVal, newVal;
 
-			// Details
-			final StringBuilder details = new StringBuilder();
-			for (final String detail : getFormattedDetails(journal, db)) {
-				details.append("&nbsp; • ").append(detail).append("<br />\n");
-			}
-			journal.formatted_details = (SpannableStringBuilder) Html.fromHtml(details.toString(), null, new StrikeTagHandler());
+		propName = mActivity.getString(R.string.issue_target_version);
+		final VersionsDbAdapter vdb = new VersionsDbAdapter(db);
+		oldVal = vdb.getName(mIssue.server, mIssue.project, ids.oldId);
+		newVal = vdb.getName(mIssue.server, mIssue.project, ids.newId);
 
-			// Notes
-			if (!TextUtils.isEmpty(journal.notes)) {
-				String notes = WikiUtils.htmlFromTextile(journal.notes);
-				notes = notes.replace("<pre>", "<tt>").replace("</pre>", "</tt>");
-				// Fake lists
-				notes = notes.replace("<li>", " &nbsp; &nbsp; • ").replace("</li>", "<br />");
-				journal.formatted_notes = (SpannableStringBuilder) Html.fromHtml(notes);
-			}
-		}
+		return new PropertyChange(propName, oldVal, newVal);
 	}
 
-	private void parseChangeSets(List<ChangeSet> changeSets, DbAdapter db) {
-		if (changeSets == null || changeSets.size() <= 0) {
+	private PropertyChange onEstimatedHoursChange(final JournalDetail d) {
+		return new PropertyChange(mActivity.getString(R.string.issue_estimated_hours), d.old_value, d.new_value); // TODO
+	}
+
+	private PropertyChange onDoneRatioChange(final JournalDetail d) {
+		return new PropertyChange(mActivity.getString(R.string.issue_percent_done), d.old_value, d.new_value); // TODO
+	}
+
+	private PropertyChange onAssignedToChange(IdPair ids, DbAdapter db) {
+		final String oldVal, newVal;
+
+		final UsersDbAdapter udb = new UsersDbAdapter(db);
+		User o, n;
+		o = udb.select(mIssue.server, ids.oldId);
+		n = udb.select(mIssue.server, ids.newId);
+
+		oldVal = o == null ? mActivity.getString(R.string.issue_journal_value_na) : o.firstname + " " + o.lastname;
+		newVal = n == null ? mActivity.getString(R.string.issue_journal_value_na) : n.firstname + " " + n.lastname;
+
+		return new PropertyChange(mActivity.getString(R.string.issue_assignee), oldVal, newVal);
+	}
+
+	private PropertyChange onPriorityChange(IdPair ids, DbAdapter db) {
+		String oldVal, newVal;
+
+		IssuePrioritiesDbAdapter issuePrioritiesDb = new IssuePrioritiesDbAdapter(db);
+		IssuePriority o, n;
+		o = issuePrioritiesDb.select(mIssue.server, ids.oldId, null);
+		n = issuePrioritiesDb.select(mIssue.server, ids.newId, null);
+
+		oldVal = o == null ? mActivity.getString(R.string.issue_journal_value_na) : o.name;
+		newVal = n == null ? mActivity.getString(R.string.issue_journal_value_na) : n.name;
+
+		return new PropertyChange(mActivity.getString(R.string.issue_priority), oldVal, newVal);
+	}
+
+	private PropertyChange onStatusChange(IdPair ids, DbAdapter db) {
+		String oldVal, newVal;
+
+		final IssueStatusesDbAdapter issueStatusesDb = new IssueStatusesDbAdapter(db);
+		oldVal = issueStatusesDb.getName(mIssue.server, ids.oldId);
+		newVal = issueStatusesDb.getName(mIssue.server, ids.newId);
+
+		return new PropertyChange(mActivity.getString(R.string.issue_status), oldVal, newVal);
+	}
+
+	private PropertyChange onDueDateChange(final JournalDetail d) {
+		return new PropertyChange(mActivity.getString(R.string.issue_due_date), d.old_value, d.new_value); // TODO
+	}
+
+	private PropertyChange onStartDateChange(final JournalDetail d) {
+		return new PropertyChange(mActivity.getString(R.string.issue_start_date), d.old_value, d.new_value); // TODO
+	}
+
+	private PropertyChange onSubjectChange(final JournalDetail d) {
+		return new PropertyChange(mActivity.getString(R.string.issue_subject), d.old_value, d.new_value);
+	}
+
+	private PropertyChange onTrackerChange(IdPair ids, DbAdapter db) {
+		TrackersDbAdapter tdb = new TrackersDbAdapter(db);
+		Tracker o = tdb.select(mIssue.server, ids.oldId);
+		Tracker n = tdb.select(mIssue.server, ids.newId);
+
+		String oldValue = o == null ? null : o.name;
+		String newValue = n == null ? null : n.name;
+
+		return new PropertyChange(mActivity.getString(R.string.issue_tracker), oldValue, newValue);
+	}
+
+	private PropertyChange onIssueCategoryChange(IdPair ids, DbAdapter db) {
+		IssueCategoriesDbAdapter issueCategoriesDb = new IssueCategoriesDbAdapter(db);
+
+		IssueCategory o = issueCategoriesDb.select(mIssue.server, mIssue.project, ids.oldId, null);
+		IssueCategory n = issueCategoriesDb.select(mIssue.server, mIssue.project, ids.newId, null);
+
+		String oldValue = o == null ? null : o.name;
+		String newValue = n == null ? null : n.name;
+
+		return new PropertyChange(mActivity.getString(R.string.issue_category), oldValue, newValue);
+	}
+
+	private void setAvatarUrl(final Journal journal, DbAdapter db) {
+		final UsersDbAdapter udb = new UsersDbAdapter(db);
+		journal.user = udb.select(mIssue.server, journal.user.id);
+
+		if (journal.user == null || TextUtils.isEmpty(journal.user.mail)) {
 			return;
 		}
 
-		UsersDbAdapter udb = new UsersDbAdapter(db);
-		for (ChangeSet changeSet : changeSets) {
-			changeSet.commentsHtml = (SpannableStringBuilder) Html.fromHtml(changeSet.comments.replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br />"));
-			// TODO: cache users?
-			if (changeSet.user != null) {
-				changeSet.user = udb.select(mIssue.server, changeSet.user.id);
-				if (changeSet.user != null) {
-					changeSet.user.createGravatarUrl();
-				}
-			}
-		}
+		journal.user.createGravatarUrl();
 	}
 
-	@Override
-	protected void onPostExecute(final IssueHistory history) {
-		if (mCallbacks != null) {
-			if (history == null || history.journals == null) {
-				mCallbacks.onJournalsFailed(mError);
-			} else {
-				mCallbacks.onJournalsDownloaded(history);
+	private PropertyChange onDescriptionChange(JournalDetail d) {
+		String oldHtml = WikiUtils.htmlFromTextile(d.old_value);
+		String newHtml = WikiUtils.htmlFromTextile(d.new_value);
+		DiffMatchPatch diff = new DiffMatchPatch();
+		LinkedList<DiffMatchPatch.Diff> diffs = diff.diff_main(oldHtml, newHtml, false);
+		diff.diff_cleanupEfficiency(diffs);
+
+		StringBuilder sb = new StringBuilder("<br /><cite>");
+		for (DiffMatchPatch.Diff difference : diffs) {
+			difference.text = difference.text.replace("\n", "<br />");
+			switch (difference.operation) {
+			case DELETE:
+				sb.append("<s>").append(difference.text).append("</s>");
+				break;
+			case EQUAL:
+				sb.append(difference.text);
+				break;
+			case INSERT:
+				sb.append("<b>").append(difference.text).append("</b>");
+				break;
 			}
 		}
+
+		// Force remove previous description
+		d.old_value = null;
+
+		return new PropertyChange(mActivity.getString(R.string.issue_description), null, sb.toString());
 	}
 
-	@Override
-	protected void onPreExecute() {
-		if (mCallbacks != null) {
-			mCallbacks.onPreExecute();
-		}
+	private PropertyChange onIsPrivateChange(IdPair ids) {
+		String o = mActivity.getString(ids.oldId > 0 ? R.string.yes : R.string.no);
+		String n = mActivity.getString(ids.newId > 0 ? R.string.yes : R.string.no);
+		return new PropertyChange(mActivity.getString(R.string.issue_is_private), o, n);
+	}
+
+	private PropertyChange onParentChange(IdPair ids) {
+		String o = ids.oldId > 0 ? "#" + Long.toString(ids.oldId) : null;
+		String n = ids.newId > 0 ? "#" + Long.toString(ids.newId) : null;
+		return new PropertyChange(mActivity.getString(R.string.issue_parent), o, n);
+	}
+
+	private PropertyChange onProjectChange(IdPair ids, DbAdapter db) {
+		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
+
+		Project o = pdb.select(mIssue.server, ids.oldId, null);
+		Project n = pdb.select(mIssue.server, ids.newId, null);
+
+		String oldValue = o == null ? null : o.name;
+		String newValue = n == null ? null : n.name;
+
+		return new PropertyChange(mActivity.getString(R.string.issue_project), oldValue, newValue);
 	}
 }
