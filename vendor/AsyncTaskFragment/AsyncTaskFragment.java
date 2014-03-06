@@ -1,16 +1,16 @@
 package net.bicou.redmine.app;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-
-import java.util.HashMap;
-import java.util.Iterator;
+import android.util.SparseArray;
 
 /**
  * Created by bicou on 04/07/13.
@@ -97,7 +97,7 @@ public class AsyncTaskFragment extends Fragment {
 	private static final String TAG = "AsyncTaskFragment";
 	private static final String FRAGMENT_TAG = "net.bicou.TaskFragmentTag";
 	private TaskFragmentCallbacks mCallbacks;
-	private HashMap<Integer, Object> mTasks = new HashMap<Integer, Object>();
+	protected static SparseArray<Object> mTasks = new SparseArray<Object>();
 	private Context mAppContext;
 
 	public static void attachAsyncTaskFragment(ActionBarActivity activity) {
@@ -114,12 +114,15 @@ public class AsyncTaskFragment extends Fragment {
 		FragmentManager fm = activity.getSupportFragmentManager();
 		Fragment f = fm.findFragmentByTag(FRAGMENT_TAG);
 		if (f != null && f instanceof AsyncTaskFragment) {
-			((AsyncTaskFragment) f).mTasks.put(action, parameters);
+			mTasks.put(action, parameters);
 			((AsyncTaskFragment) f).run(action, parameters);
 		} else {
-			throw new IllegalStateException("Your activity must implement TaskFragmentCallbacks and call AsyncTaskFragment.attachAsyncTaskFragment() in its " + 
-					"onCreate method.");
+			throw new IllegalStateException("Your activity must implement TaskFragmentCallbacks and call AsyncTaskFragment.attachAsyncTaskFragment() in its " + "onCreate method.");
 		}
+	}
+
+	public static boolean isRunning(int action) {
+		return mTasks.get(action) != null;
 	}
 
 	@Override
@@ -135,10 +138,9 @@ public class AsyncTaskFragment extends Fragment {
 			throw new IllegalArgumentException("The activity that attaches a AsyncTaskFragment must implement TaskFragmentCallbacks");
 		}
 		mCallbacks = (TaskFragmentCallbacks) activity;
-		Iterator<Integer> i = mTasks.keySet().iterator();
-		Integer key;
-		while (i.hasNext()) {
-			key = i.next();
+		int key;
+		for (int i = 0; i < mTasks.size(); i++) {
+			key = mTasks.keyAt(i);
 			mCallbacks.onPreExecute(key, mTasks.get(key));
 		}
 		mAppContext = activity.getApplicationContext();
@@ -183,6 +185,7 @@ public class AsyncTaskFragment extends Fragment {
 				return null;
 			}
 
+			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 			@Override
 			protected void onCancelled(Void aVoid) {
 				super.onCancelled(aVoid);
