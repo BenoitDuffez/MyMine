@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+		  xmlns:tools="http://schemas.android.com/tools"
 		  package="net.bicou.redmine"
 		  android:versionCode="1403052319"
 		  android:versionName="0.11.2">
@@ -153,7 +154,8 @@
 		<!-- The authenticator service -->
 		<service
 			android:name="net.bicou.redmine.auth.AuthenticationService"
-			android:exported="true">
+			android:exported="true"
+			tools:ignore="ExportedService">
 			<intent-filter>
 				<action android:name="android.accounts.AccountAuthenticator"/>
 			</intent-filter>
@@ -217,18 +219,22 @@
 
 		<!-- The sync providers -->
 		<provider
+			android:exported="false"
 			android:name="net.bicou.redmine.data.ProjectsSyncContentProvider"
 			android:authorities="net.bicou.redmine.sync.Projects"
 			android:label="@string/sync_projects"/>
 		<provider
+			android:exported="false"
 			android:name="net.bicou.redmine.data.IssuesSyncContentProvider"
 			android:authorities="net.bicou.redmine.sync.Issues"
 			android:label="@string/sync_issues"/>
 		<provider
+			android:exported="false"
 			android:name="net.bicou.redmine.data.WikiSyncContentProvider"
 			android:authorities="net.bicou.redmine.sync.Wiki"
 			android:label="@string/sync_wiki"/>
 		<provider
+			android:exported="false"
 			android:name="net.bicou.redmine.data.UsersSyncContentProvider"
 			android:authorities="net.bicou.redmine.sync.Users"
 			android:label="@string/sync_users"/>
@@ -245,13 +251,14 @@
 			android:excludeFromRecents="true"
 			android:exported="true"
 			android:label="@string/setup_title"
-			android:theme="@style/Theme.MyMine"></activity>
+			android:theme="@style/Theme.MyMine"/>
 
 		<!-- Used for install referral measurement-->
 		<service android:name="com.google.analytics.tracking.android.CampaignTrackingService"/>
 		<receiver
 			android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver"
-			android:exported="true">
+			android:exported="true"
+			tools:ignore="ExportedReceiver">
 			<intent-filter>
 				<action android:name="com.android.vending.INSTALL_REFERRER"/>
 			</intent-filter>
