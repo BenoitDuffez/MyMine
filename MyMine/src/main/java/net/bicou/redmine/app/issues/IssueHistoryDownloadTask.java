@@ -440,24 +440,22 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 	}
 
 	private PropertyChange onDescriptionChange(JournalDetail d) {
-		String oldHtml = WikiUtils.htmlFromTextile(d.old_value);
-		String newHtml = WikiUtils.htmlFromTextile(d.new_value);
 		DiffMatchPatch diff = new DiffMatchPatch();
-		LinkedList<DiffMatchPatch.Diff> diffs = diff.diff_main(oldHtml, newHtml, false);
+		LinkedList<DiffMatchPatch.Diff> diffs = diff.diff_main(d.old_value, d.new_value, false);
 		diff.diff_cleanupEfficiency(diffs);
 
-		StringBuilder sb = new StringBuilder("<br /><cite>");
+		StringBuilder sb = new StringBuilder("\n");
 		for (DiffMatchPatch.Diff difference : diffs) {
-			difference.text = difference.text.replace("\n", "<br />");
+//			difference.text = difference.text.replace("\n", "<br />");
 			switch (difference.operation) {
 			case DELETE:
-				sb.append("<s>").append(difference.text).append("</s>");
+				sb.append("<font color=\"#990000\">").append(difference.text).append("</font>");
 				break;
 			case EQUAL:
 				sb.append(difference.text);
 				break;
 			case INSERT:
-				sb.append("<b>").append(difference.text).append("</b>");
+				sb.append("<font color=\"#009900\">").append(difference.text).append("</font>");
 				break;
 			}
 		}
@@ -465,7 +463,9 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		// Force remove previous description
 		d.old_value = null;
 
-		return new PropertyChange(mActivity.getString(R.string.issue_description), null, sb.toString());
+		String newValue = sb.toString();
+		newValue = newValue.replace("\n", "<br />");
+		return new PropertyChange(mActivity.getString(R.string.issue_description), null, newValue);
 	}
 
 	private PropertyChange onIsPrivateChange(IdPair ids) {
