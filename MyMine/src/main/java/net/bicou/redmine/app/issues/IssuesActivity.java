@@ -412,7 +412,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			qdb.open();
 			final List<Query> queries = qdb.selectAll(null);
 			final ProjectsDbAdapter pdb = new ProjectsDbAdapter(qdb);
-			final List<Project> projects = pdb.selectAll();
+			final List<Project> projects = pdb.selectAll(null, ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED + " != 1");
 			pdb.close();
 
 			return new IssuesMainFilterAdapter(applicationContext, queries, projects);
