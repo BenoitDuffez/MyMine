@@ -8,21 +8,40 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
+import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
+import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.SimpleCursorLoader;
+import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
+import net.bicou.redmine.data.sqlite.WikiDbAdapter;
+import net.bicou.redmine.sync.IssuesSyncAdapterService;
+import net.bicou.redmine.sync.ProjectsSyncAdapterService;
+import net.bicou.redmine.sync.WikiSyncAdapterService;
+import net.bicou.redmine.util.L;
+
+import java.util.List;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 /**
  * Lists all projects and allow them to be marked as not syncable
  * Created by bicou on 04/03/2014.
  */
-public class ProjectSyncSettingsActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ProjectSyncSettingsActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>, AsyncTaskFragment.TaskFragmentCallbacks {
 	ListView mListView;
 	ProjectsDbAdapter mDb;
 	private static final String[] FROM_COLUMNS = { ProjectsDbAdapter.KEY_NAME };
@@ -33,7 +52,11 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		supportRequestWindowFeature(Window.FEATURE_PROGRESS);
+		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_project_sync_settings);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
 		mListView = (ListView) findViewById(android.R.id.list);
 		getSupportLoaderManager().restartLoader(1, null, this);
 		mAdapter = new ProjectsListCursorAdapter(this);
@@ -51,6 +74,20 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 			}
 		});
 		mListView.setAdapter(mAdapter);
+
+		AsyncTaskFragment.attachAsyncTaskFragment(this);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 
 	/**
@@ -88,10 +125,68 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 	@Override
 	protected void onPause() {
 		super.onPause();
+
 		if (mDb != null) {
 			mDb.close();
 			mDb = null;
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		//super.onBackPressed(); // I know, it's bad.
+
+		if (!AsyncTaskFragment.isRunning(0)) {
+			AsyncTaskFragment.runTask(this, 0, getHelper());
+		}
+	}
+
+	@Override
+	public void onPreExecute(int action, Object parameters) {
+		setSupportProgressBarIndeterminateVisibility(true);
+		Crouton.makeText(this, getString(R.string.projects_sync_saving), Style.INFO).show();
+	}
+
+	@Override
+	public Object doInBackGround(Context applicationContext, int action, Object parameters) {
+		ProjectsDbAdapter db = (ProjectsDbAdapter) parameters;
+
+		L.d("started doing stuff.");
+
+		// Remove data from newly checked projects
+		List<Project> projects = db.getBlockedProjects();
+		if (projects != null && projects.size() > 0) {
+			IssuesDbAdapter issuesDb = new IssuesDbAdapter(db);
+			WikiDbAdapter wikiDb = new WikiDbAdapter(db);
+			VersionsDbAdapter versionsDb = new VersionsDbAdapter(db);
+			IssueCategoriesDbAdapter issueCategoriesDb = new IssueCategoriesDbAdapter(db);
+			for (Project project : projects) {
+				issuesDb.deleteAll(project.server, project.id);
+				wikiDb.deleteAll(project.server, project.id);
+				versionsDb.deleteAll(project.server, project.id);
+				issueCategoriesDb.deleteAll(project.server, project);
+			}
+		}
+
+		// Trigger a new sync in order to re-download newly unchecked projects
+		ServersDbAdapter serversDb = new ServersDbAdapter(db);
+		List<Server> servers = serversDb.selectAll();
+		IssuesSyncAdapterService.Synchronizer issuesSync = new IssuesSyncAdapterService.Synchronizer(this);
+		WikiSyncAdapterService.Synchronizer wikiSync = new WikiSyncAdapterService.Synchronizer(this);
+		ProjectsSyncAdapterService.Synchronizer projectsSync = new ProjectsSyncAdapterService.Synchronizer(this);
+		for (Server server : servers) {
+			issuesSync.synchronizeIssues(server, null, 0);
+			wikiSync.synchronizeWikiPages(server, 0);
+			projectsSync.synchronizeProjects(server, 0);
+		}
+
+		return null;
+	}
+
+	@Override
+	public void onPostExecute(int action, Object parameters, Object result) {
+		setSupportProgressBarIndeterminateVisibility(false);
+		finish();
 	}
 
 	private ProjectsDbAdapter getHelper() {
@@ -105,10 +200,11 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		final ProjectsDbAdapter helper = getHelper();
 		return new SimpleCursorLoader(this) {
 			@Override
 			public Cursor loadInBackground() {
-				return getHelper().selectAllCursor(0, SELECTION_COLUMNS, null);
+				return helper.selectAllCursor(0, SELECTION_COLUMNS, null);
 			}
 		};
 	}

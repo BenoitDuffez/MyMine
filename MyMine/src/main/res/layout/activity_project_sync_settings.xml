@@ -13,7 +13,7 @@
 			  android:layout_marginRight="@dimen/dialog_like_horizontal_margin">
 
 	<TextView
-		android:text="@string/project_sync_instructions"
+		android:text="@string/projects_sync_instructions"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="16dp"
@@ -27,7 +27,7 @@
 
 	<TextView
 		android:id="@android:id/empty"
-		android:text="@string/project_sync_empty"
+		android:text="@string/projects_sync_empty"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"/>
 

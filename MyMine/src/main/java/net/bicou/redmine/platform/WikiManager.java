@@ -19,9 +19,8 @@ public class WikiManager {
 		public WikiPage wiki_page;
 	}
 
-	public static synchronized long updateWiki(final Context context, final Account account, final Server server, final Project project,
-			final List<WikiPage> remoteList, final long lastSyncMarker) {
-		L.d("ctx=" + context + ", account=" + account + ", remote wiki pages count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
+	public static synchronized long updateWiki(final Context context, final Server server, final Project project, final List<WikiPage> remoteList, final long lastSyncMarker) {
+		L.d("ctx=" + context +  ", remote wiki pages count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
 		final WikiDbAdapter db = new WikiDbAdapter(context);
 		db.open();
 		final List<WikiPage> localPages = db.selectAll(server, project);

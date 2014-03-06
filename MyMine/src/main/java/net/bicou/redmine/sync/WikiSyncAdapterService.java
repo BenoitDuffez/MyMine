@@ -11,6 +11,7 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
@@ -52,8 +53,6 @@ public class WikiSyncAdapterService extends Service {
 	 * networking client.
 	 */
 	private static class SyncAdapter extends AbstractThreadedSyncAdapter {
-		private static final boolean NOTIFY_AUTH_FAILURE = true;
-
 		private final AccountManager mAccountManager;
 
 		private final Context mContext;
@@ -65,8 +64,7 @@ public class WikiSyncAdapterService extends Service {
 		}
 
 		@Override
-		public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider,
-								  final SyncResult syncResult) {
+		public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider, final SyncResult syncResult) {
 			L.d("account=" + account + " extras=" + extras + " auth=" + authority + " prov=" + provider + " result=" + syncResult);
 
 			final long lastSyncMarker = getServerSyncMarker(account);
@@ -84,24 +82,7 @@ public class WikiSyncAdapterService extends Service {
 			// Init SSL and certificates
 			SupportSSLKeyManager.init(mContext);
 
-			// Get all projects
-			final ProjectsDbAdapter pdb = new ProjectsDbAdapter(mContext);
-			pdb.open();
-			final List<Project> projects = pdb.selectAll();
-			pdb.close();
-
-			// Sync all wiki pages of all projects
-			long newSyncState = 0, tmp;
-			for (final Project project : projects) {
-				final WikiPagesIndex pages = NetworkUtilities.syncWiki(mContext, server, project, lastSyncMarker);
-				if (pages != null && pages.wiki_pages != null && pages.wiki_pages.size() > 0) {
-					tmp = WikiManager.updateWiki(mContext, account, server, project, pages.wiki_pages, lastSyncMarker);
-					if (tmp > newSyncState) {
-						newSyncState = tmp;
-					}
-				}
-			}
-
+			long newSyncState = new Synchronizer(mContext).synchronizeWikiPages(server, lastSyncMarker);
 			if (newSyncState > 0) {
 				setServerSyncMarker(account, newSyncState);
 			}
@@ -111,7 +92,6 @@ public class WikiSyncAdapterService extends Service {
 		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
 		 *
 		 * @param account the account we're syncing
-		 *
 		 * @return the change high-water-mark
 		 */
 		private long getServerSyncMarker(final Account account) {
@@ -130,6 +110,36 @@ public class WikiSyncAdapterService extends Service {
 		 */
 		private void setServerSyncMarker(final Account account, final long marker) {
 			mAccountManager.setUserData(account, SYNC_MARKER_KEY, Long.toString(marker));
+		}
+	}
+
+	public static class Synchronizer {
+		private final Context mContext;
+
+		public Synchronizer(Context context) {
+			mContext = context;
+		}
+
+		public long synchronizeWikiPages(final Server server, long lastSyncMarker) {
+			// Get all projects
+			final ProjectsDbAdapter pdb = new ProjectsDbAdapter(mContext);
+			pdb.open();
+			final List<Project> projects = pdb.selectAll();
+			pdb.close();
+
+			// Sync all wiki pages of all projects
+			long newSyncState = 0, tmp;
+			for (final Project project : projects) {
+				final WikiPagesIndex pages = NetworkUtilities.syncWiki(mContext, server, project, lastSyncMarker);
+				if (pages != null && pages.wiki_pages != null && pages.wiki_pages.size() > 0) {
+					tmp = WikiManager.updateWiki(mContext, server, project, pages.wiki_pages, lastSyncMarker);
+					if (tmp > newSyncState) {
+						newSyncState = tmp;
+					}
+				}
+			}
+
+			return newSyncState;
 		}
 	}
 }

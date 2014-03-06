@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.util.Util;
@@ -26,26 +27,13 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	public static final String KEY_SERVER_ID = "server_id";
 
-	public static final String[] PROJECT_FIELDS = new String[] {
-			KEY_ID,
-			KEY_NAME,
-			KEY_DESCRIPTION,
-			KEY_IDENTIFIER,
-			KEY_PARENT_ID,
-			KEY_CREATED_ON,
-			KEY_UPDATED_ON,
-			KEY_SERVER_ID,
-			KEY_IS_FAVORITE,
-			KEY_IS_SYNC_BLOCKED,
-	};
+	public static final String[] PROJECT_FIELDS = new String[] { KEY_ID, KEY_NAME, KEY_DESCRIPTION, KEY_IDENTIFIER, KEY_PARENT_ID, KEY_CREATED_ON, KEY_UPDATED_ON, KEY_SERVER_ID, KEY_IS_FAVORITE, KEY_IS_SYNC_BLOCKED, };
 
 	/**
 	 * Table creation statements
 	 */
 	public static String[] getCreateTablesStatements() {
-		return new String[] {
-				"CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
-		};
+		return new String[] { "CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))", };
 	}
 
 	public ProjectsDbAdapter(final Context ctx) {
@@ -151,7 +139,11 @@ public class ProjectsDbAdapter extends DbAdapter {
 	}
 
 	public List<Project> selectAll(Server server) {
-		final Cursor c = selectAllCursor(server == null ? 0 : server.rowId, null, null);
+		return selectAll(server, null);
+	}
+
+	public List<Project> selectAll(Server server, String where) {
+		final Cursor c = selectAllCursor(server == null ? 0 : server.rowId, null, where);
 		final List<Project> projects = new ArrayList<Project>();
 		if (c != null) {
 			if (c.moveToFirst()) {
@@ -175,9 +167,7 @@ public class ProjectsDbAdapter extends DbAdapter {
 	 * Removes all the projects linked to this server ID
 	 */
 	public int deleteAll(final long serverId) {
-		return mDb.delete(TABLE_PROJECTS, KEY_SERVER_ID + "=?", new String[] {
-				Long.toString(serverId)
-		});
+		return mDb.delete(TABLE_PROJECTS, KEY_SERVER_ID + "=?", new String[] { Long.toString(serverId) });
 	}
 
 	/**
@@ -198,7 +188,7 @@ public class ProjectsDbAdapter extends DbAdapter {
 	}
 
 	public int getNumProjects() {
-		final Cursor c = mDb.query(TABLE_PROJECTS, new String[] { "COUNT(*)" }, null, null, null, null, null);
+		final Cursor c = mDb.query(TABLE_PROJECTS, new String[] { "COUNT(*)" }, KEY_IS_SYNC_BLOCKED + " != 1", null, null, null, null);
 
 		int nb = 0;
 		if (c != null) {
@@ -212,6 +202,23 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 	public List<Project> getFavorites() {
 		Cursor c = selectAllCursor(0, null, KEY_IS_FAVORITE + " > 0");
+		List<Project> projects = new ArrayList<Project>();
+		if (c.moveToFirst()) {
+			do {
+				projects.add(new Project(c));
+			} while (c.moveToNext());
+			c.close();
+		}
+		return projects;
+	}
+
+	/**
+	 * Retrieve all projects which have {@link #KEY_IS_SYNC_BLOCKED} set to {@code != 0}
+	 *
+	 * @return The list of projects that are blocked from sync
+	 */
+	public List<Project> getBlockedProjects() {
+		Cursor c = selectAllCursor(0, null, KEY_IS_SYNC_BLOCKED + " > 0");
 		List<Project> projects = new ArrayList<Project>();
 		if (c.moveToFirst()) {
 			do {

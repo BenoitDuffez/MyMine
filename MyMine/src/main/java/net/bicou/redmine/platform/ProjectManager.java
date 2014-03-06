@@ -1,6 +1,5 @@
 package net.bicou.redmine.platform;
 
-import android.accounts.Account;
 import android.content.Context;
 
 import net.bicou.redmine.data.Server;
@@ -18,9 +17,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ProjectManager {
-	public static synchronized long updateProjects(final Context context, final Account account, final Server server, final List<Project> remoteList,
-			final long lastSyncMarker) {
-		L.d("ctx=" + context + ", account=" + account + ", remote issues count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
+	public static synchronized long updateProjects(final Context context, final Server server, final List<Project> remoteList, final long lastSyncMarker) {
+		L.d("ctx=" + context + ", remote issues count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
 
 		// Get local project list
 		final ProjectsDbAdapter db = new ProjectsDbAdapter(context);
@@ -51,6 +49,8 @@ public class ProjectManager {
 			if (localProject == null) {
 				db.insert(project);
 			} else {
+				project.is_sync_blocked = localProject.is_sync_blocked;
+
 				// Save this as the most recent server update
 				projectUpdateDate = Util.isEpoch(project.updated_on) ? 0 : project.updated_on.getTimeInMillis();
 				if (projectUpdateDate > currentSyncMarker) {
@@ -78,9 +78,8 @@ public class ProjectManager {
 		return currentSyncMarker;
 	}
 
-	public static synchronized long updateVersions(final Context context, final Account account, final Server server, final List<Version> remoteList,
-			final long lastSyncMarker) {
-		L.d("ctx=" + context + ", account=" + account + ", remote issues count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
+	public static synchronized long updateVersions(final Context context, final Server server, final List<Version> remoteList) {
+		L.d("ctx=" + context + ", remote versions count=" + remoteList.size());
 
 		final VersionsDbAdapter db = new VersionsDbAdapter(context);
 		db.open();
@@ -92,7 +91,9 @@ public class ProjectManager {
 		return new GregorianCalendar().getTimeInMillis();
 	}
 
-	public static synchronized long updateIssueCategories(Context context, Server server, Project project, List<IssueCategory> remoteList, long lastSyncMarker) {
+	public static synchronized long updateIssueCategories(Context context, Server server, Project project, List<IssueCategory> remoteList) {
+		L.d("ctx=" + context + ", remote categories count=" + remoteList.size());
+
 		IssueCategoriesDbAdapter db = new IssueCategoriesDbAdapter(context);
 		db.open();
 		db.deleteAll(server, project);

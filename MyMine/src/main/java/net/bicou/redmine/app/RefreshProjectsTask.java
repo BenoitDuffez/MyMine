@@ -2,6 +2,7 @@ package net.bicou.redmine.app;
 
 import android.content.Context;
 import android.os.AsyncTask;
+
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.util.L;
@@ -29,7 +30,7 @@ public class RefreshProjectsTask extends AsyncTask<Void, Void, List<Project>> {
 		L.d("");
 		final ProjectsDbAdapter db = new ProjectsDbAdapter(mContext);
 		db.open();
-		List<Project> projects = db.selectAll();
+		List<Project> projects = db.selectAll(null, ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED + " != 1");
 		db.close();
 
 		return projects;

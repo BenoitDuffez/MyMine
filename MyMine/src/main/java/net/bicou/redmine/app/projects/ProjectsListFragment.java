@@ -15,12 +15,13 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.SimpleCursorLoader;
-import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.util.L;
 
 import java.text.DateFormat;
@@ -61,9 +62,9 @@ public class ProjectsListFragment extends TrackedListFragment implements LoaderC
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-		((ActionBarActivity)getActivity()).setSupportProgressBarIndeterminate(true);
-		((ActionBarActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(true);
-		return new ProjectsListCursorLoader(getActivity(), getHelper(), args);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminate(true);
+		((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(true);
+		return new ProjectsListCursorLoader(getActivity(), getHelper());
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class ProjectsListFragment extends TrackedListFragment implements LoaderC
 		mAdapter.swapCursor(data);
 
 		if (getActivity() != null) {
-			((ActionBarActivity)getActivity()).setSupportProgressBarIndeterminateVisibility(data == null);
+			((ActionBarActivity) getActivity()).setSupportProgressBarIndeterminateVisibility(data == null);
 		}
 
 		try {
@@ -107,22 +108,22 @@ public class ProjectsListFragment extends TrackedListFragment implements LoaderC
 	public static final class ProjectsListCursorLoader extends SimpleCursorLoader {
 		private final ProjectsDbAdapter mHelper;
 
-		public ProjectsListCursorLoader(final Context context, final ProjectsDbAdapter helper, final Bundle args) {
+		public ProjectsListCursorLoader(final Context context, final ProjectsDbAdapter helper) {
 			super(context);
 			mHelper = helper;
 		}
 
 		@Override
 		public Cursor loadInBackground() {
-			return mHelper.selectAllCursor(0, new String[] {
-					ProjectsDbAdapter.KEY_ID + " AS " + DbAdapter.KEY_ROWID,
-					ProjectsDbAdapter.KEY_NAME,
-					ProjectsDbAdapter.KEY_DESCRIPTION,
-					// ProjectsDbAdapter.KEY_CREATED_ON,
-					ProjectsDbAdapter.KEY_UPDATED_ON,
-					// ProjectsDbAdapter.KEY_PARENT_ID,
-					ProjectsDbAdapter.KEY_SERVER_ID,
-			}, null);
+			return mHelper.selectAllCursor(0, new String[] { //
+					ProjectsDbAdapter.KEY_ID + " AS " + DbAdapter.KEY_ROWID, //
+					ProjectsDbAdapter.KEY_NAME, //
+					ProjectsDbAdapter.KEY_DESCRIPTION, //
+					// ProjectsDbAdapter.KEY_CREATED_ON, //
+					ProjectsDbAdapter.KEY_UPDATED_ON, //
+					// ProjectsDbAdapter.KEY_PARENT_ID, //
+					ProjectsDbAdapter.KEY_SERVER_ID, //
+			}, ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED + " != 1");
 		}
 	}
 

@@ -3,10 +3,15 @@ package net.bicou.redmine.sync;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Service;
-import android.content.*;
+import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProviderClient;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.IssueCategoriesList;
@@ -57,8 +62,7 @@ public class ProjectsSyncAdapterService extends Service {
 		}
 
 		@Override
-		public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider,
-								  final SyncResult syncResult) {
+		public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider, final SyncResult syncResult) {
 			final long lastSyncMarker = getServerSyncMarker(account);
 
 			// Get server ID
@@ -75,27 +79,8 @@ public class ProjectsSyncAdapterService extends Service {
 				return;
 			}
 
-			// Sync projects
-			final ProjectsList projects = NetworkUtilities.syncProjects(mContext, server, lastSyncMarker);
-			if (projects != null && projects.projects != null && projects.projects.size() > 0) {
-				final long newSyncState = ProjectManager.updateProjects(mContext, account, server, projects.projects, lastSyncMarker);
-
-				VersionsList vlist;
-				IssueCategoriesList categories;
-				for (final Project project : projects.projects) {
-					// Sync versions
-					vlist = NetworkUtilities.syncVersions(mContext, server, project.id, lastSyncMarker);
-					if (vlist != null && vlist.versions != null && vlist.versions.size() > 0) {
-						ProjectManager.updateVersions(mContext, account, server, vlist.versions, lastSyncMarker);
-					}
-
-					// Sync issue categories
-					categories = NetworkUtilities.syncIssueCategories(mContext, server, project, lastSyncMarker);
-					if (categories != null && categories.issue_categories != null && categories.issue_categories.size() > 0) {
-						ProjectManager.updateIssueCategories(mContext, server, project, categories.issue_categories, lastSyncMarker);
-					}
-				}
-
+			long newSyncState = new Synchronizer(mContext).synchronizeProjects(server, lastSyncMarker);
+			if (newSyncState > 0) {
 				setServerSyncMarker(account, newSyncState);
 			}
 		}
@@ -104,7 +89,6 @@ public class ProjectsSyncAdapterService extends Service {
 		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
 		 *
 		 * @param account the account we're syncing
-		 *
 		 * @return the change high-water-mark
 		 */
 		private long getServerSyncMarker(final Account account) {
@@ -123,6 +107,46 @@ public class ProjectsSyncAdapterService extends Service {
 		 */
 		private void setServerSyncMarker(final Account account, final long marker) {
 			mAccountManager.setUserData(account, SYNC_MARKER_KEY, Long.toString(marker));
+		}
+	}
+
+	public static class Synchronizer {
+		private final Context mContext;
+
+		public Synchronizer(Context context) {
+			mContext = context;
+		}
+
+		public long synchronizeProjects(final Server server, long lastSyncMarker) {
+			final long newSyncState;
+
+			// Sync projects
+			final ProjectsList projects = NetworkUtilities.syncProjects(mContext, server, lastSyncMarker);
+			if (projects != null && projects.projects != null && projects.projects.size() > 0) {
+				newSyncState = ProjectManager.updateProjects(mContext, server, projects.projects, lastSyncMarker);
+
+				VersionsList versionsList;
+				IssueCategoriesList categories;
+				for (final Project project : projects.projects) {
+					if (!project.is_sync_blocked) {
+						// Sync versions
+						versionsList = NetworkUtilities.syncVersions(mContext, server, project.id, lastSyncMarker);
+						if (versionsList != null && versionsList.versions != null && versionsList.versions.size() > 0) {
+							ProjectManager.updateVersions(mContext, server, versionsList.versions);
+						}
+
+						// Sync issue categories
+						categories = NetworkUtilities.syncIssueCategories(mContext, server, project, lastSyncMarker);
+						if (categories != null && categories.issue_categories != null && categories.issue_categories.size() > 0) {
+							ProjectManager.updateIssueCategories(mContext, server, project, categories.issue_categories);
+						}
+					}
+				}
+			} else {
+				newSyncState = 0;
+			}
+
+			return newSyncState;
 		}
 	}
 }
