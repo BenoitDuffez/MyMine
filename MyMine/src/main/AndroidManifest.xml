@@ -118,6 +118,12 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+		<activity android:name="net.bicou.redmine.app.settings.ProjectSyncSettingsActivity">
+			<intent-filter>
+				<action android:name="net.bicou.redmine.PROJECT_SYNC_SETTINGS"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
         <activity
                 android:name="net.bicou.redmine.app.settings.SettingsActivity"
                 android:configChanges="orientation|keyboardHidden"
