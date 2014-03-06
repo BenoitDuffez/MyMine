@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		  package="net.bicou.redmine"
-		  android:versionCode="1402270010"
-		  android:versionName="0.11.1">
+		  android:versionCode="1403052319"
+		  android:versionName="0.11.2">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
