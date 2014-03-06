@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
@@ -65,7 +66,7 @@ class ServerProjectPickerDialog extends AlertDialog implements DialogInterface.O
 				db.open();
 				projectsAdapter.clear();
 				int i = 0, sel = -1;
-				for (Project p : db.selectAll((Server) parent.getAdapter().getItem(position))) {
+				for (Project p : db.selectAll((Server) parent.getAdapter().getItem(position), ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED + " != 1")) {
 					projectsAdapter.add(p);
 					if (project != null && project.id == p.id) {
 						sel = i;
