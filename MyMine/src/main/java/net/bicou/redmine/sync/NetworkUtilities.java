@@ -45,7 +45,7 @@ final public class NetworkUtilities {
 				.fetchObject(ctx, server, "users/current.json");
 	}
 
-	public static ProjectsList syncProjects(final Context ctx, final Server server, final long serverSyncState) {
+	public static ProjectsList syncProjects(final Context ctx, final Server server) {
 		final List<NameValuePair> args = new ArrayList<NameValuePair>();
 		args.add(new BasicNameValuePair("include", "trackers,issue_categories"));
 		return new JsonDownloader<ProjectsList>(ProjectsList.class).fetchObject(ctx, server, "projects.json", args);
@@ -77,29 +77,29 @@ final public class NetworkUtilities {
 		return new JsonDownloader<IssuesList>(IssuesList.class).setDownloadAllIfList(false).fetchObject(ctx, server, "issues.json", args);
 	}
 
-	public static IssueStatusesList syncIssueStatuses(final Context ctx, final Server server, final long serverSyncState) {
+	public static IssueStatusesList syncIssueStatuses(final Context ctx, final Server server) {
 		return new JsonDownloader<IssueStatusesList>(IssueStatusesList.class).fetchObject(ctx, server, "issue_statuses.json");
 	}
 
-	public static VersionsList syncVersions(final Context ctx, final Server server, final long projectId, final long serverSyncState) {
+	public static VersionsList syncVersions(final Context ctx, final Server server, final long projectId) {
 		final String url = String.format(Locale.ENGLISH, "projects/%d/versions.json", projectId);
 		return new JsonDownloader<VersionsList>(VersionsList.class).fetchObject(ctx, server, url);
 	}
 
-	public static WikiPagesIndex syncWiki(final Context ctx, final Server server, final Project project, final long serverSyncState) {
+	public static WikiPagesIndex syncWiki(final Context ctx, final Server server, final Project project) {
 		final String url = String.format(Locale.ENGLISH, "projects/%d/wiki/index.json", project.id);
 		return new JsonDownloader<WikiPagesIndex>(WikiPagesIndex.class).fetchObject(ctx, server, url);
 	}
 
-	public static QueriesList syncQueriesList(final Context ctx, final Server server, final long serverSyncState) {
+	public static QueriesList syncQueriesList(final Context ctx, final Server server) {
 		return new JsonDownloader<QueriesList>(QueriesList.class).fetchObject(ctx, server, "queries.json");
 	}
 
-	public static UsersList syncUsers(final Context ctx, final Server server, final long serverSyncState) {
+	public static UsersList syncUsers(final Context ctx, final Server server) {
 		return new JsonDownloader<UsersList>(UsersList.class).fetchObject(ctx, server, "users.json");
 	}
 
-	public static UsersList syncUsersHack(Context ctx, Server server, Project project) {
+	public static UsersList syncUsersHack(Context ctx, Server server) {
 		// TODO: this fails because the page is not designed to work as a REST API so it ignores the key paramter
 		/*
 		Here's an example of the HTML code of /watchers/autocomplete_for_user:
@@ -146,16 +146,16 @@ final public class NetworkUtilities {
 		return usersList;
 	}
 
-	public static TrackersList syncTrackers(Context ctx, Server server, long serverSyncState) {
+	public static TrackersList syncTrackers(Context ctx, Server server) {
 		return new JsonDownloader<TrackersList>(TrackersList.class).setDownloadAllIfList(true).fetchObject(ctx, server, "trackers.json");
 	}
 
-	public static IssueCategoriesList syncIssueCategories(Context ctx, Server server, Project project, long serverSyncState) {
+	public static IssueCategoriesList syncIssueCategories(Context ctx, Server server, Project project) {
 		String url = "projects/" + project.id + "/issue_categories.json";
 		return new JsonDownloader<IssueCategoriesList>(IssueCategoriesList.class).setDownloadAllIfList(true).fetchObject(ctx, server, url);
 	}
 
-	public static IssuePrioritiesList syncIssuePriorities(Context ctx, Server server, long serverSyncState) {
+	public static IssuePrioritiesList syncIssuePriorities(Context ctx, Server server) {
 		String url = "enumerations/issue_priorities.json";
 		return new JsonDownloader<IssuePrioritiesList>(IssuePrioritiesList.class).setDownloadAllIfList(true).fetchObject(ctx, server, url);
 	}

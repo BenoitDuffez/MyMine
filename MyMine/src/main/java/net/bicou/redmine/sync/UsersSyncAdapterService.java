@@ -89,7 +89,7 @@ public class UsersSyncAdapterService extends Service {
 
 			// Sync all users pages of all projects
 			long newSyncState = 0, tmp;
-			UsersList users = NetworkUtilities.syncUsers(mContext, server, lastSyncMarker);
+			UsersList users = NetworkUtilities.syncUsers(mContext, server);
 			if (users != null && users.users != null && users.users.size() > 0) {
 				tmp = UsersManager.updateUsers(mContext, server, users.users, lastSyncMarker);
 				if (tmp > newSyncState) {
@@ -101,7 +101,7 @@ public class UsersSyncAdapterService extends Service {
 				List<Project> projects = pdb.selectAll();
 
 				for (Project project : projects) {
-					users = NetworkUtilities.syncUsersHack(mContext, server, project);
+					users = NetworkUtilities.syncUsersHack(mContext, server);
 					if (users != null && users.users != null && users.users.size() > 0) {
 						tmp = UsersManager.updateUsers(mContext, server, users.users, lastSyncMarker);
 						if (tmp > newSyncState) {

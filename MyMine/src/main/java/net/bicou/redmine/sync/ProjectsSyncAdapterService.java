@@ -121,7 +121,7 @@ public class ProjectsSyncAdapterService extends Service {
 			final long newSyncState;
 
 			// Sync projects
-			final ProjectsList projects = NetworkUtilities.syncProjects(mContext, server, lastSyncMarker);
+			final ProjectsList projects = NetworkUtilities.syncProjects(mContext, server);
 			if (projects != null && projects.projects != null && projects.projects.size() > 0) {
 				newSyncState = ProjectManager.updateProjects(mContext, server, projects.projects, lastSyncMarker);
 
@@ -130,13 +130,13 @@ public class ProjectsSyncAdapterService extends Service {
 				for (final Project project : projects.projects) {
 					if (!project.is_sync_blocked) {
 						// Sync versions
-						versionsList = NetworkUtilities.syncVersions(mContext, server, project.id, lastSyncMarker);
+						versionsList = NetworkUtilities.syncVersions(mContext, server, project.id);
 						if (versionsList != null && versionsList.versions != null && versionsList.versions.size() > 0) {
 							ProjectManager.updateVersions(mContext, server, versionsList.versions);
 						}
 
 						// Sync issue categories
-						categories = NetworkUtilities.syncIssueCategories(mContext, server, project, lastSyncMarker);
+						categories = NetworkUtilities.syncIssueCategories(mContext, server, project);
 						if (categories != null && categories.issue_categories != null && categories.issue_categories.size() > 0) {
 							ProjectManager.updateIssueCategories(mContext, server, project, categories.issue_categories);
 						}

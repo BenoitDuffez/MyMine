@@ -182,25 +182,25 @@ public class IssuesSyncAdapterService extends Service {
 			}
 
 			// Sync issue statuses as well
-			final IssueStatusesList issuesStatuses = NetworkUtilities.syncIssueStatuses(mContext, server, lastSyncMarker);
+			final IssueStatusesList issuesStatuses = NetworkUtilities.syncIssueStatuses(mContext, server);
 			if (issuesStatuses != null && issuesStatuses.issue_statuses != null && issuesStatuses.issue_statuses.size() > 0) {
 				IssuesManager.updateIssueStatuses(new IssueStatusesDbAdapter(db), server, issuesStatuses.issue_statuses, lastSyncMarker);
 			}
 
 			// Sync issue queries
-			final QueriesList queries = NetworkUtilities.syncQueriesList(mContext, server, lastSyncMarker);
+			final QueriesList queries = NetworkUtilities.syncQueriesList(mContext, server);
 			if (queries != null && queries.queries != null && queries.queries.size() > 0) {
 				IssuesManager.updateIssueQueries(new QueriesDbAdapter(db), server, queries.queries, lastSyncMarker);
 			}
 
 			// Sync issue trackers
-			final TrackersList trackers = NetworkUtilities.syncTrackers(mContext, server, lastSyncMarker);
+			final TrackersList trackers = NetworkUtilities.syncTrackers(mContext, server);
 			if (trackers != null && trackers.trackers != null && trackers.trackers.size() > 0) {
 				IssuesManager.updateTrackers(new TrackersDbAdapter(db), server, trackers.trackers, lastSyncMarker);
 			}
 
 			// Sync issue priorities
-			IssuePrioritiesList priorities = NetworkUtilities.syncIssuePriorities(mContext, server, lastSyncMarker);
+			IssuePrioritiesList priorities = NetworkUtilities.syncIssuePriorities(mContext, server);
 			if (priorities != null && priorities.issue_priorities != null && priorities.issue_priorities.size() > 0) {
 				IssuesManager.updatePriorities(new IssuePrioritiesDbAdapter(db), server, priorities.issue_priorities, lastSyncMarker);
 			}

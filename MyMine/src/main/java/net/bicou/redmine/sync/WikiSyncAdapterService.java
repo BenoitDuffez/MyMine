@@ -130,7 +130,7 @@ public class WikiSyncAdapterService extends Service {
 			// Sync all wiki pages of all projects
 			long newSyncState = 0, tmp;
 			for (final Project project : projects) {
-				final WikiPagesIndex pages = NetworkUtilities.syncWiki(mContext, server, project, lastSyncMarker);
+				final WikiPagesIndex pages = NetworkUtilities.syncWiki(mContext, server, project);
 				if (pages != null && pages.wiki_pages != null && pages.wiki_pages.size() > 0) {
 					tmp = WikiManager.updateWiki(mContext, server, project, pages.wiki_pages, lastSyncMarker);
 					if (tmp > newSyncState) {
