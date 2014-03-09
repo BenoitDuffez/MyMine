@@ -119,8 +119,8 @@ public class IssueCategoriesDbAdapter extends DbAdapter {
 	/**
 	 * Removes issues for a given project on a given server
 	 */
-	public int deleteAll(final Server server, Project project) {
-		String where = KEY_SERVER_ID + " = " + server.rowId + " AND " + KEY_PROJECT_ID + " = " + project.id;
+	public int deleteAll(final Server server, long projectId) {
+		String where = KEY_SERVER_ID + " = " + server.rowId + " AND " + KEY_PROJECT_ID + " = " + projectId;
 		return mDb.delete(TABLE_ISSUE_CATEGORIES, where, null);
 	}
 }

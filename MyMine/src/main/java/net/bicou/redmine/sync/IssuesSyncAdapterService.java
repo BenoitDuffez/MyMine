@@ -17,6 +17,7 @@ import android.os.Parcel;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssuesActivity;
@@ -26,14 +27,12 @@ import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.IssuePrioritiesList;
 import net.bicou.redmine.data.json.IssueStatusesList;
 import net.bicou.redmine.data.json.IssuesList;
-import net.bicou.redmine.data.json.TrackersList;
 import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesList;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
-import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.platform.IssuesManager;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.PreferencesManager;
@@ -184,25 +183,19 @@ public class IssuesSyncAdapterService extends Service {
 			// Sync issue statuses as well
 			final IssueStatusesList issuesStatuses = NetworkUtilities.syncIssueStatuses(mContext, server);
 			if (issuesStatuses != null && issuesStatuses.issue_statuses != null && issuesStatuses.issue_statuses.size() > 0) {
-				IssuesManager.updateIssueStatuses(new IssueStatusesDbAdapter(db), server, issuesStatuses.issue_statuses, lastSyncMarker);
+				IssuesManager.updateIssueStatuses(new IssueStatusesDbAdapter(db), server, issuesStatuses.issue_statuses);
 			}
 
 			// Sync issue queries
 			final QueriesList queries = NetworkUtilities.syncQueriesList(mContext, server);
 			if (queries != null && queries.queries != null && queries.queries.size() > 0) {
-				IssuesManager.updateIssueQueries(new QueriesDbAdapter(db), server, queries.queries, lastSyncMarker);
-			}
-
-			// Sync issue trackers
-			final TrackersList trackers = NetworkUtilities.syncTrackers(mContext, server);
-			if (trackers != null && trackers.trackers != null && trackers.trackers.size() > 0) {
-				IssuesManager.updateTrackers(new TrackersDbAdapter(db), server, trackers.trackers, lastSyncMarker);
+				IssuesManager.updateIssueQueries(new QueriesDbAdapter(db), server, queries.queries);
 			}
 
 			// Sync issue priorities
 			IssuePrioritiesList priorities = NetworkUtilities.syncIssuePriorities(mContext, server);
 			if (priorities != null && priorities.issue_priorities != null && priorities.issue_priorities.size() > 0) {
-				IssuesManager.updatePriorities(new IssuePrioritiesDbAdapter(db), server, priorities.issue_priorities, lastSyncMarker);
+				IssuesManager.updatePriorities(new IssuePrioritiesDbAdapter(db), server, priorities.issue_priorities);
 			}
 
 			db.close();

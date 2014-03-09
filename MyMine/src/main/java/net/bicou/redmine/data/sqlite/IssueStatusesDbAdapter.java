@@ -3,6 +3,7 @@ package net.bicou.redmine.data.sqlite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.IssueStatus;
 import net.bicou.redmine.data.json.Reference;
@@ -32,7 +33,7 @@ public class IssueStatusesDbAdapter extends DbAdapter {
 	/**
 	 * Table creation statements
 	 */
-	public static final String[] getCreateTablesStatements() {
+	public static String[] getCreateTablesStatements() {
 		return new String[] {
 				"CREATE TABLE " + TABLE_ISSUE_STATUSES //
 						+ "(" + Util.join(ISSUE_STATUS_FIELDS, ", ") //

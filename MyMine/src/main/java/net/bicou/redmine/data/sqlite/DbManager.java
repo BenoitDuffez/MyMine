@@ -240,22 +240,9 @@ public class DbManager extends SQLiteOpenHelper {
 		}
 
 		if (oldVersion < 20) {
-			String fields = Util.join(ProjectsDbAdapter.PROJECTS_TRACKERS_FIELDS, ", ");
-			String keys = Util.join(new String[] {
-					ProjectsDbAdapter.KEY_PROJECTS_TRACKERS_SERVER_ID,
-					ProjectsDbAdapter.KEY_PROJECTS_TRACKERS_PROJECT_ID,
-					ProjectsDbAdapter.KEY_PROJECTS_TRACKERS_TRACKER_ID,
-			}, ", ");
-			db.execSQL("CREATE TABLE " + ProjectsDbAdapter.TABLE_PROJECTS_TRACKERS + "(" + fields + ", PRIMARY KEY (" + keys + ")");
-
-			fields = ProjectsDbAdapter.TABLE_PROJECTS_ISSUE_CATEGORIES;
-			keys = Util.join(new String[] {
-					ProjectsDbAdapter.KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID,
-					ProjectsDbAdapter.KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID,
-					ProjectsDbAdapter.KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID,
-			}, ", ");
-			db.execSQL("CREATE TABLE " + fields + "(" + Util.join(ProjectsDbAdapter.PROJECTS_ISSUE_CATEGORIES_FIELDS, ", ") + ", " +
-					"PRIMARY KEY (" + keys + ")");
+			// OK, that's brutal.
+			db.execSQL("DROP TABLE " + TrackersDbAdapter.TABLE_TRACKERS);
+			createTables(db, TrackersDbAdapter.getCreateTablesStatements());
 		}
 	}
 

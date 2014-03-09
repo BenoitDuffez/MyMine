@@ -11,7 +11,6 @@ import net.bicou.redmine.data.json.IssueStatusesList;
 import net.bicou.redmine.data.json.IssuesList;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.ProjectsList;
-import net.bicou.redmine.data.json.TrackersList;
 import net.bicou.redmine.data.json.User;
 import net.bicou.redmine.data.json.UsersList;
 import net.bicou.redmine.data.json.VersionsList;
@@ -46,9 +45,7 @@ final public class NetworkUtilities {
 	}
 
 	public static ProjectsList syncProjects(final Context ctx, final Server server) {
-		final List<NameValuePair> args = new ArrayList<NameValuePair>();
-		args.add(new BasicNameValuePair("include", "trackers,issue_categories"));
-		return new JsonDownloader<ProjectsList>(ProjectsList.class).fetchObject(ctx, server, "projects.json", args);
+		return new JsonDownloader<ProjectsList>(ProjectsList.class).fetchObject(ctx, server, "projects.json");
 	}
 
 	public static IssuesList syncIssues(final Context ctx, final Server server, final int syncPeriod, final long serverSyncState, final int startOffset) {
@@ -146,10 +143,31 @@ final public class NetworkUtilities {
 		return usersList;
 	}
 
-	public static TrackersList syncTrackers(Context ctx, Server server) {
-		return new JsonDownloader<TrackersList>(TrackersList.class).setDownloadAllIfList(true).fetchObject(ctx, server, "trackers.json");
+	/**
+	 * Download the trackers information for that project
+	 *
+	 * @param ctx     Context, for network/SSL related stuff
+	 * @param server  The host server
+	 * @param project The target project
+	 *
+	 * @return The same project, but with its {@link net.bicou.redmine.data.json.Project#trackers} array properly filled.
+	 */
+	public static Project syncProjectTrackers(Context ctx, Server server, Project project) {
+		String uri = "projects/" + project.id + ".json";
+		NameValuePair[] args = { new BasicNameValuePair("include", "trackers") };
+		return new JsonDownloader<Project>(Project.class).setStripJsonContainer(true).fetchObject(ctx, server, uri, args);
 	}
 
+
+	/**
+	 * Download the issue categories available for that project
+	 *
+	 * @param ctx     Context, for network/SSL related stuff
+	 * @param server  The host server
+	 * @param project The target project
+	 *
+	 * @return The same project, but with its {@link net.bicou.redmine.data.json.Project#issue_categories} array properly filled.
+	 */
 	public static IssueCategoriesList syncIssueCategories(Context ctx, Server server, Project project) {
 		String url = "projects/" + project.id + "/issue_categories.json";
 		return new JsonDownloader<IssueCategoriesList>(IssueCategoriesList.class).setDownloadAllIfList(true).fetchObject(ctx, server, url);

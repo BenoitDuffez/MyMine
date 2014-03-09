@@ -25,12 +25,12 @@ import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.data.sqlite.SimpleCursorLoader;
+import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.data.sqlite.WikiDbAdapter;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.sync.ProjectsSyncAdapterService;
 import net.bicou.redmine.sync.WikiSyncAdapterService;
-import net.bicou.redmine.util.L;
 
 import java.util.List;
 
@@ -45,7 +45,13 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 	ListView mListView;
 	ProjectsDbAdapter mDb;
 	private static final String[] FROM_COLUMNS = { ProjectsDbAdapter.KEY_NAME };
-	private static final String[] SELECTION_COLUMNS = { "rowid AS " + DbAdapter.KEY_ROWID, ProjectsDbAdapter.KEY_ID, ProjectsDbAdapter.KEY_NAME, ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED, ProjectsDbAdapter.KEY_SERVER_ID };
+	private static final String[] SELECTION_COLUMNS = {
+			"rowid AS " + DbAdapter.KEY_ROWID,
+			ProjectsDbAdapter.KEY_ID,
+			ProjectsDbAdapter.KEY_NAME,
+			ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED,
+			ProjectsDbAdapter.KEY_SERVER_ID
+	};
 	private static final int[] TO_VIEWS = { android.R.id.text1 };
 	SimpleCursorAdapter mAdapter;
 
@@ -151,8 +157,6 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 	public Object doInBackGround(Context applicationContext, int action, Object parameters) {
 		ProjectsDbAdapter db = (ProjectsDbAdapter) parameters;
 
-		L.d("started doing stuff.");
-
 		// Remove data from newly checked projects
 		List<Project> projects = db.getBlockedProjects();
 		if (projects != null && projects.size() > 0) {
@@ -160,11 +164,13 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 			WikiDbAdapter wikiDb = new WikiDbAdapter(db);
 			VersionsDbAdapter versionsDb = new VersionsDbAdapter(db);
 			IssueCategoriesDbAdapter issueCategoriesDb = new IssueCategoriesDbAdapter(db);
+			TrackersDbAdapter trackersDb = new TrackersDbAdapter(db);
 			for (Project project : projects) {
 				issuesDb.deleteAll(project.server, project.id);
 				wikiDb.deleteAll(project.server, project.id);
 				versionsDb.deleteAll(project.server, project.id);
-				issueCategoriesDb.deleteAll(project.server, project);
+				issueCategoriesDb.deleteAll(project.server, project.id);
+				trackersDb.deleteAll(project.server, project.id);
 			}
 		}
 

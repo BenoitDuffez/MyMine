@@ -1,6 +1,7 @@
 package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.util.L;
@@ -10,6 +11,7 @@ import net.bicou.redmine.util.L;
  */
 public class Tracker extends Reference {
 	public Server server;
+	long projectId;
 
 	public Tracker(Server s, Cursor c) {
 		this(s, c, "");
@@ -27,6 +29,8 @@ public class Tracker extends Reference {
 				if (TrackersDbAdapter.KEY_ID.equals(col)) {
 					id = c.getInt(columnIndex);
 				} else if (TrackersDbAdapter.KEY_SERVER_ID.equals(col)) {
+				} else if (TrackersDbAdapter.KEY_PROJECT_ID.equals(col)) {
+					projectId = c.getLong(columnIndex);
 				} else if (TrackersDbAdapter.KEY_NAME.equals(col)) {
 					name = c.getString(columnIndex);
 				} else {

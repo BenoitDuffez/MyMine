@@ -1,13 +1,14 @@
 package net.bicou.redmine.platform;
 
-import android.content.Context;
-
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.IssueCategory;
 import net.bicou.redmine.data.json.Project;
+import net.bicou.redmine.data.json.Tracker;
 import net.bicou.redmine.data.json.Version;
+import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssueCategoriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
+import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.data.sqlite.VersionsDbAdapter;
 import net.bicou.redmine.util.L;
 import net.bicou.redmine.util.Util;
@@ -17,13 +18,13 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ProjectManager {
-	public static synchronized long updateProjects(final Context context, final Server server, final List<Project> remoteList, final long lastSyncMarker) {
-		L.d("ctx=" + context + ", remote issues count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
+	public static synchronized long updateProjects(final DbAdapter db, final Server server, final List<Project> remoteList, final long lastSyncMarker) {
+		L.d("remote issues count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
 
 		// Get local project list
-		final ProjectsDbAdapter db = new ProjectsDbAdapter(context);
-		db.open();
-		final List<Project> localProjects = db.selectAll();
+		final ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
+		pdb.open();
+		final List<Project> localProjects = pdb.selectAll();
 
 		// Mark last update date
 		long currentSyncMarker = lastSyncMarker;
@@ -47,7 +48,7 @@ public class ProjectManager {
 
 			// New project, add it
 			if (localProject == null) {
-				db.insert(project);
+				pdb.insert(project);
 			} else {
 				project.is_sync_blocked = localProject.is_sync_blocked;
 
@@ -59,7 +60,7 @@ public class ProjectManager {
 
 				// Project is outdated, update it
 				if (project.updated_on.after(lastKnownChange)) {
-					db.update(project);
+					pdb.update(project);
 				}
 				// Project is up to date
 				else {
@@ -71,38 +72,42 @@ public class ProjectManager {
 
 		// Removed / archived projects?
 		for (final Project p : localProjects) {
-			db.delete(server, p.id);
+			pdb.delete(server, p.id);
 		}
-		db.close();
 
 		return currentSyncMarker;
 	}
 
-	public static synchronized long updateVersions(final Context context, final Server server, final List<Version> remoteList) {
-		L.d("ctx=" + context + ", remote versions count=" + remoteList.size());
+	public static synchronized long updateVersions(final DbAdapter db, final Server server, final List<Version> remoteList) {
+		L.d("remote versions count=" + remoteList.size());
 
-		final VersionsDbAdapter db = new VersionsDbAdapter(context);
-		db.open();
-		db.deleteAll(server, remoteList.get(0).project.id);
+		final VersionsDbAdapter vdb = new VersionsDbAdapter(db);
+		vdb.deleteAll(server, remoteList.get(0).project.id);
 		for (final Version v : remoteList) {
-			db.insert(server, v);
+			vdb.insert(server, v);
 		}
-		db.close();
 		return new GregorianCalendar().getTimeInMillis();
 	}
 
-	public static synchronized long updateIssueCategories(Context context, Server server, Project project, List<IssueCategory> remoteList) {
-		L.d("ctx=" + context + ", remote categories count=" + remoteList.size());
+	public static synchronized long updateIssueCategories(DbAdapter db, Server server, Project project, List<IssueCategory> remoteList) {
+		L.d("remote categories count=" + remoteList.size());
 
-		IssueCategoriesDbAdapter db = new IssueCategoriesDbAdapter(context);
-		db.open();
-		db.deleteAll(server, project);
+		IssueCategoriesDbAdapter iscdb = new IssueCategoriesDbAdapter(db);
+		iscdb.deleteAll(server, project.id);
 		for (IssueCategory cat : remoteList) {
 			cat.server = server;
-			db.insert(cat);
+			iscdb.insert(cat);
 		}
-		db.close();
 
+		return new GregorianCalendar().getTimeInMillis();
+	}
+
+	public static synchronized long updateProjectTrackers(DbAdapter db, Server server, Project project, List<Tracker> trackers) {
+		TrackersDbAdapter trackersDbAdapter = new TrackersDbAdapter(db);
+		trackersDbAdapter.deleteAll(server, project.id);
+		for (Tracker tracker : trackers) {
+			trackersDbAdapter.insert(server, project, tracker);
+		}
 		return new GregorianCalendar().getTimeInMillis();
 	}
 }

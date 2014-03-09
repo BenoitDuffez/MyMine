@@ -39,43 +39,12 @@ public class ProjectsDbAdapter extends DbAdapter {
 			KEY_IS_SYNC_BLOCKED,
 	};
 
-	public static final String TABLE_PROJECTS_TRACKERS = "projects_trackers";
-	public static final String KEY_PROJECTS_TRACKERS_SERVER_ID = "server_id";
-	public static final String KEY_PROJECTS_TRACKERS_PROJECT_ID = "project_id";
-	public static final String KEY_PROJECTS_TRACKERS_TRACKER_ID = "tracker_id";
-	public static final String KEY_PROJECTS_TRACKERS_TRACKER_NAME = "tracker_name";
-
-	public static final String[] PROJECTS_TRACKERS_FIELDS = new String[] {
-			KEY_PROJECTS_TRACKERS_SERVER_ID,
-			KEY_PROJECTS_TRACKERS_PROJECT_ID,
-			KEY_PROJECTS_TRACKERS_TRACKER_ID,
-			KEY_PROJECTS_TRACKERS_TRACKER_NAME
-	};
-
-	public static final String TABLE_PROJECTS_ISSUE_CATEGORIES = "projects_issue_categories";
-	public static final String KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID = "server_id";
-	public static final String KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID = "project_id";
-	public static final String KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID = "issue_category_id";
-	public static final String KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_NAME = "issue_category_name";
-
-	public static final String[] PROJECTS_ISSUE_CATEGORIES_FIELDS = new String[] {
-			KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID,
-			KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID,
-			KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID,
-			KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_NAME
-	};
-
 	/**
 	 * Table creation statements
 	 */
 	public static String[] getCreateTablesStatements() {
 		return new String[] {
 				"CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
-				"CREATE TABLE " + TABLE_PROJECTS_TRACKERS + "(" + Util.join(PROJECTS_TRACKERS_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_PROJECTS_TRACKERS_SERVER_ID + ", " +
-						"" + KEY_PROJECTS_TRACKERS_PROJECT_ID + ", " + KEY_PROJECTS_TRACKERS_TRACKER_ID + "))",
-				"CREATE TABLE " + TABLE_PROJECTS_ISSUE_CATEGORIES + "(" + Util.join(PROJECTS_ISSUE_CATEGORIES_FIELDS, ", ") + ", " +
-						"" + "PRIMARY KEY (" + KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID + ", " + KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID + ", " +
-						"" + KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID + "))",
 		};
 	}
 
@@ -226,6 +195,12 @@ public class ProjectsDbAdapter extends DbAdapter {
 
 		final WikiDbAdapter wdb = new WikiDbAdapter(this);
 		nb += wdb.deleteAll(server, projectId);
+
+		IssueCategoriesDbAdapter iscdb = new IssueCategoriesDbAdapter(this);
+		nb += iscdb.deleteAll(server, projectId);
+
+		TrackersDbAdapter tdb = new TrackersDbAdapter(this);
+		nb += tdb.deleteAll(server, projectId);
 
 		return nb > 0;
 	}

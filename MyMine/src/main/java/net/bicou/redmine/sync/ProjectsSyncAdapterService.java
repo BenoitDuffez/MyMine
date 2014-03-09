@@ -18,6 +18,8 @@ import net.bicou.redmine.data.json.IssueCategoriesList;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.ProjectsList;
 import net.bicou.redmine.data.json.VersionsList;
+import net.bicou.redmine.data.sqlite.DbAdapter;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.platform.ProjectManager;
 import net.bicou.redmine.util.L;
@@ -89,6 +91,7 @@ public class ProjectsSyncAdapterService extends Service {
 		 * This helper function fetches the last known high-water-mark we received from the server - or 0 if we've never synced.
 		 *
 		 * @param account the account we're syncing
+		 *
 		 * @return the change high-water-mark
 		 */
 		private long getServerSyncMarker(final Account account) {
@@ -119,32 +122,44 @@ public class ProjectsSyncAdapterService extends Service {
 
 		public long synchronizeProjects(final Server server, long lastSyncMarker) {
 			final long newSyncState;
+			DbAdapter db = new ProjectsDbAdapter(mContext);
+			db.open();
 
 			// Sync projects
 			final ProjectsList projects = NetworkUtilities.syncProjects(mContext, server);
 			if (projects != null && projects.projects != null && projects.projects.size() > 0) {
-				newSyncState = ProjectManager.updateProjects(mContext, server, projects.projects, lastSyncMarker);
+				newSyncState = ProjectManager.updateProjects(db, server, projects.projects, lastSyncMarker);
 
 				VersionsList versionsList;
 				IssueCategoriesList categories;
+				Project projectWithTrackers;
+
 				for (final Project project : projects.projects) {
 					if (!project.is_sync_blocked) {
 						// Sync versions
 						versionsList = NetworkUtilities.syncVersions(mContext, server, project.id);
 						if (versionsList != null && versionsList.versions != null && versionsList.versions.size() > 0) {
-							ProjectManager.updateVersions(mContext, server, versionsList.versions);
+							ProjectManager.updateVersions(db, server, versionsList.versions);
+						}
+
+						// Sync project trackers
+						projectWithTrackers = NetworkUtilities.syncProjectTrackers(mContext, server, project);
+						if (projectWithTrackers != null && projectWithTrackers.trackers != null && projectWithTrackers.trackers.size() > 0) {
+							ProjectManager.updateProjectTrackers(db, server, projectWithTrackers, projectWithTrackers.trackers);
 						}
 
 						// Sync issue categories
 						categories = NetworkUtilities.syncIssueCategories(mContext, server, project);
 						if (categories != null && categories.issue_categories != null && categories.issue_categories.size() > 0) {
-							ProjectManager.updateIssueCategories(mContext, server, project, categories.issue_categories);
+							ProjectManager.updateIssueCategories(db, server, project, categories.issue_categories);
 						}
 					}
 				}
 			} else {
 				newSyncState = 0;
 			}
+
+			db.close();
 
 			return newSyncState;
 		}

@@ -237,7 +237,7 @@ public class ProjectFragment extends TrackedFragment {
 
 		// Count issues
 		StringBuilder issues = new StringBuilder();
-		List<Tracker> trackers = tdb.selectAll(server);
+		List<Tracker> trackers = tdb.selectAll(server, project.id);
 		Point nbIssues;
 		for (Tracker tracker : trackers) {
 			nbIssues = idb.countIssues(project, tracker);

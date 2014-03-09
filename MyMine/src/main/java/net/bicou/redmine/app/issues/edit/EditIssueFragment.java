@@ -313,7 +313,7 @@ public class EditIssueFragment extends TrackedFragment {
 		info.versions = (ArrayList<Version>) getArrayWithDummy(vdb.selectAllOpen(issue.server, issue.project));
 		info.priorities = pdb.selectAll(issue.server);
 		info.statuses = sdb.selectAll(issue.server);
-		info.trackers = tdb.selectAll(issue.server);
+		info.trackers = tdb.selectAll(issue.server, issue.project.id);
 
 		// Used in the loops to avoid GC
 		Version version;

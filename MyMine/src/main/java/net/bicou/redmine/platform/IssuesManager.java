@@ -1,17 +1,16 @@
 package net.bicou.redmine.platform;
 
 import android.content.SyncResult;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssuePriority;
 import net.bicou.redmine.data.json.IssueStatus;
 import net.bicou.redmine.data.json.Query;
-import net.bicou.redmine.data.json.Tracker;
 import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
-import net.bicou.redmine.data.sqlite.TrackersDbAdapter;
 import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
@@ -20,7 +19,7 @@ import java.util.List;
 
 public class IssuesManager {
 	public static synchronized long updateIssues(final IssuesDbAdapter db, final Server server, final List<Issue> remoteList, final long lastSyncMarker,
-												 final SyncResult syncResult) {
+	                                             final SyncResult syncResult) {
 		long currentSyncMarker = lastSyncMarker;
 		long issueUpdateDate;
 		Issue localIssue;
@@ -69,9 +68,8 @@ public class IssuesManager {
 		return currentSyncMarker;
 	}
 
-	public static synchronized long updateIssueStatuses(final IssueStatusesDbAdapter db, final Server server, final List<IssueStatus> remoteList,
-														final long lastSyncMarker) {
-		L.d("remote issue statuses count=" + remoteList.size() + " syncMarker=" + lastSyncMarker);
+	public static synchronized long updateIssueStatuses(final IssueStatusesDbAdapter db, final Server server, final List<IssueStatus> remoteList) {
+		L.d("remote issue statuses count=" + remoteList.size());
 		db.deleteAll(server);
 		for (final IssueStatus issueStatus : remoteList) {
 			db.insert(server, issueStatus);
@@ -80,7 +78,7 @@ public class IssuesManager {
 		return new GregorianCalendar().getTimeInMillis();
 	}
 
-	public static synchronized long updateIssueQueries(final QueriesDbAdapter db, final Server server, final List<Query> remoteQueries, final long lastSyncMarker) {
+	public static synchronized long updateIssueQueries(final QueriesDbAdapter db, final Server server, final List<Query> remoteQueries) {
 		db.deleteAll(server, 0);
 		for (final Query query : remoteQueries) {
 			query.server = server;
@@ -90,18 +88,7 @@ public class IssuesManager {
 		return new GregorianCalendar().getTimeInMillis();
 	}
 
-	public static synchronized long updateTrackers(final TrackersDbAdapter db, final Server server, final List<Tracker> remoteList, final long lastSyncMarker) {
-		db.deleteAll(server);
-		for (final Tracker tracker : remoteList) {
-			tracker.server = server;
-			db.insert(server, tracker);
-		}
-
-		return new GregorianCalendar().getTimeInMillis();
-	}
-
-	public static synchronized long updatePriorities(final IssuePrioritiesDbAdapter db, final Server server, final List<IssuePriority> remoteList,
-													 final long lastSyncMarker) {
+	public static synchronized long updatePriorities(final IssuePrioritiesDbAdapter db, final Server server, final List<IssuePriority> remoteList) {
 		db.deleteAll(server);
 		for (final IssuePriority priority : remoteList) {
 			priority.server = server;
