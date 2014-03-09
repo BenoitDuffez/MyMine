@@ -71,8 +71,11 @@ public class ProjectsDbAdapter extends DbAdapter {
 	public static String[] getCreateTablesStatements() {
 		return new String[] {
 				"CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
-				"CREATE TABLE " + TABLE_PROJECTS_TRACKERS + "(" + Util.join(PROJECTS_TRACKERS_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_PROJECTS_TRACKERS_SERVER_ID + ", " + KEY_PROJECTS_TRACKERS_PROJECT_ID + ", " + KEY_PROJECTS_TRACKERS_TRACKER_ID + "))",
-				"CREATE TABLE " + TABLE_PROJECTS_ISSUE_CATEGORIES + "(" + Util.join(PROJECTS_ISSUE_CATEGORIES_FIELDS, ", ") + ", " + "PRIMARY KEY (" + KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID + ", " + KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID + ", " + KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID + "))",
+				"CREATE TABLE " + TABLE_PROJECTS_TRACKERS + "(" + Util.join(PROJECTS_TRACKERS_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_PROJECTS_TRACKERS_SERVER_ID + ", " +
+						"" + KEY_PROJECTS_TRACKERS_PROJECT_ID + ", " + KEY_PROJECTS_TRACKERS_TRACKER_ID + "))",
+				"CREATE TABLE " + TABLE_PROJECTS_ISSUE_CATEGORIES + "(" + Util.join(PROJECTS_ISSUE_CATEGORIES_FIELDS, ", ") + ", " +
+						"" + "PRIMARY KEY (" + KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID + ", " + KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID + ", " +
+						"" + KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID + "))",
 		};
 	}
 
@@ -197,21 +200,21 @@ public class ProjectsDbAdapter extends DbAdapter {
 	}
 
 	/**
-	 * Removes absolutely all projects
+	 * Remove absolutely all projects
 	 */
 	public int deleteAll() {
 		return mDb.delete(TABLE_PROJECTS, null, null);
 	}
 
 	/**
-	 * Removes all the projects linked to this server ID
+	 * Remove all the projects linked to this server ID
 	 */
 	public int deleteAll(final long serverId) {
 		return mDb.delete(TABLE_PROJECTS, KEY_SERVER_ID + "=?", new String[] { Long.toString(serverId) });
 	}
 
 	/**
-	 * Deletes a single project
+	 * Delete a single project
 	 */
 	public boolean delete(final Server server, final long projectId) {
 		int nb = mDb.delete(TABLE_PROJECTS, KEY_ID + " = " + projectId + " AND " + KEY_SERVER_ID + " = " + server.rowId, null);
