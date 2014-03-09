@@ -46,8 +46,9 @@ final public class NetworkUtilities {
 	}
 
 	public static ProjectsList syncProjects(final Context ctx, final Server server, final long serverSyncState) {
-		final ProjectsList list = new JsonDownloader<ProjectsList>(ProjectsList.class).fetchObject(ctx, server, "projects.json");
-		return list;
+		final List<NameValuePair> args = new ArrayList<NameValuePair>();
+		args.add(new BasicNameValuePair("include", "trackers,issue_categories"));
+		return new JsonDownloader<ProjectsList>(ProjectsList.class).fetchObject(ctx, server, "projects.json", args);
 	}
 
 	public static IssuesList syncIssues(final Context ctx, final Server server, final int syncPeriod, final long serverSyncState, final int startOffset) {

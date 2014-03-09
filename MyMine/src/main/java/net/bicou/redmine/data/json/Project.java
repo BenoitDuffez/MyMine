@@ -3,6 +3,7 @@ package net.bicou.redmine.data.json;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
@@ -10,6 +11,7 @@ import net.bicou.redmine.util.L;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class Project implements Parcelable {
 	public long id;
@@ -19,6 +21,9 @@ public class Project implements Parcelable {
 	public Reference parent;
 	public Calendar created_on;
 	public Calendar updated_on;
+
+	public List<Tracker> trackers;
+	public List<IssueCategory> issue_categories;
 
 	public Server server;
 	public boolean is_favorite;

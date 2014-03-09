@@ -19,11 +19,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * Manages the DB connection, upgrades, etc.
  * Created by bicou on 15/07/13.
  */
 public class DbManager extends SQLiteOpenHelper {
 	private static final String DB_FILE = "redmine.db";
-	private static final int DB_VERSION = 19;
+	private static final int DB_VERSION = 20;
 	Context mContext;
 	Lock mLock = new ReentrantLock();
 
@@ -67,6 +68,7 @@ public class DbManager extends SQLiteOpenHelper {
 			try {
 				db.execSQL("DROP TABLE " + ProjectsDbAdapter.TABLE_PROJECTS);
 			} catch (final Exception e) {
+				L.e("Unable to drop table PROJECTS");
 			}
 			createTables(db, ProjectsDbAdapter.getCreateTablesStatements());
 		}
@@ -79,10 +81,8 @@ public class DbManager extends SQLiteOpenHelper {
 			}
 
 			try {
-				db.execSQL("UPDATE " + ProjectsDbAdapter.TABLE_PROJECTS + " SET " + ProjectsDbAdapter.KEY_SERVER_ID + " = (SELECT MIN(" + DbAdapter.KEY_ROWID +
-						")" +
-						" " +
-						"FROM " + ServersDbAdapter.TABLE_SERVERS + ")");
+				db.execSQL("UPDATE " + ProjectsDbAdapter.TABLE_PROJECTS + " SET " + ProjectsDbAdapter.KEY_SERVER_ID +
+						" = (SELECT MIN(" + DbAdapter.KEY_ROWID + ")" + " " + "FROM " + ServersDbAdapter.TABLE_SERVERS + ")");
 			} catch (final Exception e) {
 				L.e("Unable to set field " + ProjectsDbAdapter.KEY_SERVER_ID + ": " + e);
 			}
@@ -236,7 +236,26 @@ public class DbManager extends SQLiteOpenHelper {
 		}
 
 		if (oldVersion < 19) {
-			db.execSQL("ALTER TABLE "+ ProjectsDbAdapter.TABLE_PROJECTS+" ADD "+ ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED);
+			db.execSQL("ALTER TABLE " + ProjectsDbAdapter.TABLE_PROJECTS + " ADD " + ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED);
+		}
+
+		if (oldVersion < 20) {
+			String fields = Util.join(ProjectsDbAdapter.PROJECTS_TRACKERS_FIELDS, ", ");
+			String keys = Util.join(new String[] {
+					ProjectsDbAdapter.KEY_PROJECTS_TRACKERS_SERVER_ID,
+					ProjectsDbAdapter.KEY_PROJECTS_TRACKERS_PROJECT_ID,
+					ProjectsDbAdapter.KEY_PROJECTS_TRACKERS_TRACKER_ID,
+			}, ", ");
+			db.execSQL("CREATE TABLE " + ProjectsDbAdapter.TABLE_PROJECTS_TRACKERS + "(" + fields + ", PRIMARY KEY (" + keys + ")");
+
+			fields = ProjectsDbAdapter.TABLE_PROJECTS_ISSUE_CATEGORIES;
+			keys = Util.join(new String[] {
+					ProjectsDbAdapter.KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID,
+					ProjectsDbAdapter.KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID,
+					ProjectsDbAdapter.KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID,
+			}, ", ");
+			db.execSQL("CREATE TABLE " + fields + "(" + Util.join(ProjectsDbAdapter.PROJECTS_ISSUE_CATEGORIES_FIELDS, ", ") + ", " +
+					"PRIMARY KEY (" + keys + ")");
 		}
 	}
 

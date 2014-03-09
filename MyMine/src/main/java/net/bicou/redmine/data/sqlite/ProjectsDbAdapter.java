@@ -26,14 +26,54 @@ public class ProjectsDbAdapter extends DbAdapter {
 	public static final String KEY_IS_SYNC_BLOCKED = "is_sync_blocked";
 
 	public static final String KEY_SERVER_ID = "server_id";
+	public static final String[] PROJECT_FIELDS = new String[] {
+			KEY_ID,
+			KEY_NAME,
+			KEY_DESCRIPTION,
+			KEY_IDENTIFIER,
+			KEY_PARENT_ID,
+			KEY_CREATED_ON,
+			KEY_UPDATED_ON,
+			KEY_SERVER_ID,
+			KEY_IS_FAVORITE,
+			KEY_IS_SYNC_BLOCKED,
+	};
 
-	public static final String[] PROJECT_FIELDS = new String[] { KEY_ID, KEY_NAME, KEY_DESCRIPTION, KEY_IDENTIFIER, KEY_PARENT_ID, KEY_CREATED_ON, KEY_UPDATED_ON, KEY_SERVER_ID, KEY_IS_FAVORITE, KEY_IS_SYNC_BLOCKED, };
+	public static final String TABLE_PROJECTS_TRACKERS = "projects_trackers";
+	public static final String KEY_PROJECTS_TRACKERS_SERVER_ID = "server_id";
+	public static final String KEY_PROJECTS_TRACKERS_PROJECT_ID = "project_id";
+	public static final String KEY_PROJECTS_TRACKERS_TRACKER_ID = "tracker_id";
+	public static final String KEY_PROJECTS_TRACKERS_TRACKER_NAME = "tracker_name";
+
+	public static final String[] PROJECTS_TRACKERS_FIELDS = new String[] {
+			KEY_PROJECTS_TRACKERS_SERVER_ID,
+			KEY_PROJECTS_TRACKERS_PROJECT_ID,
+			KEY_PROJECTS_TRACKERS_TRACKER_ID,
+			KEY_PROJECTS_TRACKERS_TRACKER_NAME
+	};
+
+	public static final String TABLE_PROJECTS_ISSUE_CATEGORIES = "projects_issue_categories";
+	public static final String KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID = "server_id";
+	public static final String KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID = "project_id";
+	public static final String KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID = "issue_category_id";
+	public static final String KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_NAME = "issue_category_name";
+
+	public static final String[] PROJECTS_ISSUE_CATEGORIES_FIELDS = new String[] {
+			KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID,
+			KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID,
+			KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID,
+			KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_NAME
+	};
 
 	/**
 	 * Table creation statements
 	 */
 	public static String[] getCreateTablesStatements() {
-		return new String[] { "CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))", };
+		return new String[] {
+				"CREATE TABLE " + TABLE_PROJECTS + "(" + Util.join(PROJECT_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_ID + ", " + KEY_SERVER_ID + "))",
+				"CREATE TABLE " + TABLE_PROJECTS_TRACKERS + "(" + Util.join(PROJECTS_TRACKERS_FIELDS, ", ") + ", PRIMARY KEY (" + KEY_PROJECTS_TRACKERS_SERVER_ID + ", " + KEY_PROJECTS_TRACKERS_PROJECT_ID + ", " + KEY_PROJECTS_TRACKERS_TRACKER_ID + "))",
+				"CREATE TABLE " + TABLE_PROJECTS_ISSUE_CATEGORIES + "(" + Util.join(PROJECTS_ISSUE_CATEGORIES_FIELDS, ", ") + ", " + "PRIMARY KEY (" + KEY_PROJECTS_ISSUE_CATEGORIES_SERVER_ID + ", " + KEY_PROJECTS_ISSUE_CATEGORIES_PROJECT_ID + ", " + KEY_PROJECTS_ISSUE_CATEGORIES_ISSUE_CATEGORY_ID + "))",
+		};
 	}
 
 	public ProjectsDbAdapter(final Context ctx) {
