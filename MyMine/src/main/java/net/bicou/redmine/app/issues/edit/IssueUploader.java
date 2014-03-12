@@ -7,21 +7,17 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.issues.IssueFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.CalendarDeserializer;
 import net.bicou.redmine.data.json.ErrorsList;
 import net.bicou.redmine.data.json.Issue;
-import net.bicou.redmine.data.json.Version;
-import net.bicou.redmine.data.json.VersionStatusDeserializer;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.net.JsonDownloadError;
+import net.bicou.redmine.net.JsonDownloader;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.net.upload.IssueSerializer;
 import net.bicou.redmine.net.upload.JsonUploader;
@@ -31,7 +27,6 @@ import net.bicou.redmine.util.Util;
 
 import org.apache.http.HttpStatus;
 
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
@@ -256,29 +251,15 @@ public class IssueUploader {
 	}
 
 	/**
-	 * TODO: merge this with {@link net.bicou.redmine.net.JsonDownloader#parseJson(String)}
+	 * Use the {@link net.bicou.redmine.net.JsonDownloader#gsonParse(String, Class)} Gson wrapper to get an issue out of the downloaded JSON String
+	 *
+	 * @param json The JSON string
+	 *
+	 * @return An {@link net.bicou.redmine.data.json.Issue} if the JSON could be parsed, a {@link net.bicou.redmine.net.JsonNetworkError} if the JSON could not
+	 * be downloaded/parsed/etc.
 	 */
 	private static Object parseJson(String json) {
-		Issue object = null;
-
-		try {
-			final GsonBuilder builder = new GsonBuilder();
-			builder.registerTypeAdapter(Calendar.class, new CalendarDeserializer());
-			builder.registerTypeAdapter(Version.VersionStatus.class, new VersionStatusDeserializer());
-			final Gson gson = builder.create();
-
-			object = gson.fromJson(json, Issue.class);
-		} catch (final JsonSyntaxException e) {
-			L.e("Unparseable JSON is:");
-			L.e(json);
-		} catch (final IllegalStateException e) {
-			L.e("Unparseable JSON is:");
-			L.e(json);
-		} catch (final Exception e) {
-			L.e("Unparseable JSON is:");
-			L.e(json);
-			L.e("Unable to parse JSON", e);
-		}
+		Issue object = JsonDownloader.gsonParse(json, Issue.class);
 
 		if (object == null) {
 			JsonDownloadError error = new JsonDownloadError(JsonDownloadError.ErrorType.TYPE_JSON);

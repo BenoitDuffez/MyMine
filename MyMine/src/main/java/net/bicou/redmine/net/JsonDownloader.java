@@ -11,7 +11,7 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.AbsObjectList;
 import net.bicou.redmine.data.json.CalendarDeserializer;
-import net.bicou.redmine.data.json.Version.VersionStatus;
+import net.bicou.redmine.data.json.Version;
 import net.bicou.redmine.data.json.VersionStatusDeserializer;
 import net.bicou.redmine.net.JsonDownloadError.ErrorType;
 import net.bicou.redmine.util.L;
@@ -200,15 +200,34 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 			json = stripJsonContainer(json);
 		}
 
+		T object = gsonParse(json, mType);
+
+		if (object == null) {
+			mError = new JsonDownloadError(ErrorType.TYPE_JSON);
+			mError.setMessage(R.string.err_parse_error);
+		}
+
+		return object;
+	}
+
+	/**
+	 * This codes only wraps a Gson object with the required deserializers
+	 *
+	 * @param json Input JSON string
+	 * @param type Output object type
+	 *
+	 * @return The object created by the Gson API
+	 */
+	public static <T> T gsonParse(String json, Class<T> type) {
 		T object = null;
 
 		try {
 			final GsonBuilder builder = new GsonBuilder();
 			builder.registerTypeAdapter(Calendar.class, new CalendarDeserializer());
-			builder.registerTypeAdapter(VersionStatus.class, new VersionStatusDeserializer());
+			builder.registerTypeAdapter(Version.VersionStatus.class, new VersionStatusDeserializer());
 			final Gson gson = builder.create();
 
-			object = gson.fromJson(json, mType);
+			object = gson.fromJson(json, type);
 		} catch (final JsonSyntaxException e) {
 			L.e("Unparseable JSON is:");
 			L.e(json);
@@ -219,11 +238,6 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 			L.e("Unparseable JSON is:");
 			L.e(json);
 			L.e("Unable to parse JSON", e);
-		}
-
-		if (object == null) {
-			mError = new JsonDownloadError(ErrorType.TYPE_JSON);
-			mError.setMessage(R.string.err_parse_error);
 		}
 
 		return object;
