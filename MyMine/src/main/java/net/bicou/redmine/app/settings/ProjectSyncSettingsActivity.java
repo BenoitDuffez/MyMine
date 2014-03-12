@@ -44,15 +44,23 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 public class ProjectSyncSettingsActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>, AsyncTaskFragment.TaskFragmentCallbacks {
 	ListView mListView;
 	ProjectsDbAdapter mDb;
-	private static final String[] FROM_COLUMNS = { ProjectsDbAdapter.KEY_NAME };
+	private static final String[] FROM_COLUMNS = {
+			ProjectsDbAdapter.KEY_NAME,
+			ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED,
+			ProjectsDbAdapter.KEY_SERVER_ID,
+	};
+	private static final int[] TO_VIEWS = {
+			android.R.id.text1,
+			android.R.id.text1,
+			android.R.id.text1,
+	};
 	private static final String[] SELECTION_COLUMNS = {
-			"rowid AS " + DbAdapter.KEY_ROWID,
+			ProjectsDbAdapter.KEY_ID + " AS " + DbAdapter.KEY_ROWID,
 			ProjectsDbAdapter.KEY_ID,
 			ProjectsDbAdapter.KEY_NAME,
 			ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED,
-			ProjectsDbAdapter.KEY_SERVER_ID
+			ProjectsDbAdapter.KEY_SERVER_ID,
 	};
-	private static final int[] TO_VIEWS = { android.R.id.text1 };
 	SimpleCursorAdapter mAdapter;
 
 	@Override
@@ -65,20 +73,41 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 		setSupportProgressBarIndeterminateVisibility(false);
 		mListView = (ListView) findViewById(android.R.id.list);
 		getSupportLoaderManager().restartLoader(1, null, this);
-		mAdapter = new ProjectsListCursorAdapter(this);
+		mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_checked, null, FROM_COLUMNS, TO_VIEWS, 0);
+		mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+			                       @Override
+			                       public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+				                       CheckedTextView ctv = (CheckedTextView) view;
+				                       String s = cursor.getColumnName(columnIndex);
+				                       if (ProjectsDbAdapter.KEY_NAME.equals(s)) {
+					                       ctv.setText(cursor.getString(columnIndex));
+					                       return true;
+				                       } else if (ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED.equals(s)) {
+					                       ctv.setChecked(cursor.getInt(columnIndex) > 0);
+					                       return true;
+				                       } else if (ProjectsDbAdapter.KEY_SERVER_ID.equals(s)) {
+					                       ctv.setTag(cursor.getInt(columnIndex));
+					                       return true;
+				                       } else {
+					                       return false;
+				                       }
+			                       }
+		                       }
+		);
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				final CheckedTextView checkedTextView = (CheckedTextView) view;
-				checkedTextView.toggle();
+			                                 @Override
+			                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				                                 final CheckedTextView checkedTextView = (CheckedTextView) view;
+				                                 checkedTextView.toggle();
 
-				long projectId = ((ProjectsListCursorAdapter) parent.getAdapter()).getProjectId(position);
-				final long serverId = (Long) view.getTag();
-				Project project = mDb.select(serverId, projectId, null);
-				project.is_sync_blocked = checkedTextView.isChecked();
-				mDb.update(project);
-			}
-		});
+				                                 long projectId = parent.getAdapter().getItemId(position);
+				                                 final long serverId = (Long) view.getTag();
+				                                 Project project = mDb.select(serverId, projectId, null);
+				                                 project.is_sync_blocked = checkedTextView.isChecked();
+				                                 mDb.update(project);
+			                                 }
+		                                 }
+		);
 		mListView.setAdapter(mAdapter);
 
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
@@ -94,38 +123,6 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 	public void onStop() {
 		super.onStop();
 		EasyTracker.getInstance(this).activityStop(this);
-	}
-
-	/**
-	 * Simple extension to the base {@link android.support.v4.widget.SimpleCursorAdapter} that adds {@link #getProjectId(int)} in order to retrieve
-	 * the project id on the redmine server. Also, it ensures that the project is checked if it should.
-	 */
-	private class ProjectsListCursorAdapter extends SimpleCursorAdapter {
-		public ProjectsListCursorAdapter(Context context) {
-			super(context, android.R.layout.simple_list_item_checked, null, FROM_COLUMNS, TO_VIEWS, 0);
-		}
-
-		public long getProjectId(int position) {
-			if (mDataValid && mCursor != null) {
-				if (mCursor.moveToPosition(position)) {
-					return mCursor.getLong(mCursor.getColumnIndex(ProjectsDbAdapter.KEY_ID));
-				} else {
-					return 0;
-				}
-			} else {
-				return 0;
-			}
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			super.bindView(view, context, cursor);
-			if (view instanceof CheckedTextView) {
-				final boolean checked = cursor.getInt(cursor.getColumnIndex(ProjectsDbAdapter.KEY_IS_SYNC_BLOCKED)) > 0;
-				((CheckedTextView) view).setChecked(checked);
-			}
-			view.setTag(cursor.getLong(cursor.getColumnIndex(ProjectsDbAdapter.KEY_SERVER_ID)));
-		}
 	}
 
 	@Override
