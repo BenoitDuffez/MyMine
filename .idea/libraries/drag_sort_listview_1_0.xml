@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="drag-sort-listview-1.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/MyMine/build/exploded-bundles/AsiaIvityAndroidDragSortListview10.aar/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/MyMine/build/exploded-bundles/AsiaIvityAndroidDragSortListview10.aar/res" />
+      <root url="jar://$PROJECT_DIR$/MyMine/build/exploded-aar/asia.ivity.android/drag-sort-listview/1.0/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/MyMine/build/exploded-aar/asia.ivity.android/drag-sort-listview/1.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
