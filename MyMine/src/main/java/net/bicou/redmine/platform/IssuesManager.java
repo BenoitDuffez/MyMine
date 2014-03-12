@@ -10,6 +10,7 @@ import net.bicou.redmine.data.json.Query;
 import net.bicou.redmine.data.sqlite.IssuePrioritiesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssueStatusesDbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
+import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.util.L;
 
@@ -25,10 +26,15 @@ public class IssuesManager {
 		Issue localIssue;
 		final Calendar lastKnownChange = new GregorianCalendar();
 		lastKnownChange.setTimeInMillis(lastSyncMarker);
+		ProjectsDbAdapter pdb = new ProjectsDbAdapter(db);
 
 		for (final Issue issue : remoteList) {
 			localIssue = db.select(server, issue.id, null);
 			issue.server = server;
+
+			if (pdb.isSyncBlocked(server.rowId, issue.project.id)) {
+				continue;
+			}
 
 			if (localIssue == null) {
 				// New issue, add it

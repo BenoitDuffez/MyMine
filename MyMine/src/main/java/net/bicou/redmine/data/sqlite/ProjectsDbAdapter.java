@@ -246,4 +246,25 @@ public class ProjectsDbAdapter extends DbAdapter {
 		}
 		return projects;
 	}
+
+	/**
+	 * Check whether this project sync is blocked or not
+	 *
+	 * @param serverId  The host server
+	 * @param projectId The target project
+	 *
+	 * @return {@code true} if the sync is blocked for this project, {@code false} otherwise
+	 */
+	public boolean isSyncBlocked(long serverId, long projectId) {
+		String selection = KEY_SERVER_ID + " = " + serverId + " AND " + KEY_ID + " = " + projectId;
+		final Cursor c = mDb.query(TABLE_PROJECTS, new String[] { KEY_IS_SYNC_BLOCKED }, selection, null, null, null, null);
+		boolean isBlocked = false;
+		if (c != null) {
+			if (c.moveToFirst()) {
+				isBlocked = c.getInt(0) > 0;
+			}
+			c.close();
+		}
+		return isBlocked;
+	}
 }
