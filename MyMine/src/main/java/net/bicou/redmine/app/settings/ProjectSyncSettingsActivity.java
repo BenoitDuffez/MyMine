@@ -142,7 +142,9 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 	public void onBackPressed() {
 		//super.onBackPressed(); // I know, it's bad.
 
-		if (!AsyncTaskFragment.isRunning(0)) {
+		if (AsyncTaskFragment.isRunning(0)) {
+			displayCrouton();
+		} else {
 			AsyncTaskFragment.runTask(this, 0, getHelper());
 		}
 	}
@@ -150,6 +152,10 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 	@Override
 	public void onPreExecute(int action, Object parameters) {
 		setSupportProgressBarIndeterminateVisibility(true);
+		displayCrouton();
+	}
+
+	private void displayCrouton() {
 		Crouton.makeText(this, getString(R.string.projects_sync_saving), Style.INFO).show();
 	}
 
