@@ -68,6 +68,7 @@ public class IssueUploader {
 	 * @param applicationContext Required for network operations (SSL) and DB access
 	 * @param params             Bundle that contains the issue as a JSON string, the issue modification notes if it's an edit, and the issue action (see {@link
 	 *                           #ISSUE_ACTION}
+	 *
 	 * @return The server's response, or a {@link net.bicou.redmine.net.JsonNetworkError}
 	 */
 	public static Object uploadIssue(final Context applicationContext, final Bundle params) {
@@ -97,25 +98,30 @@ public class IssueUploader {
 		int action = params.getInt(ISSUE_ACTION);
 		final Bundle args = doHandleAddEdit(resultHolder, params, result);
 
-		// Re-open the edit issue activity
-		if (args.containsKey(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON)) {
-			Intent intent = new Intent(resultHolder, EditIssueActivity.class);
-			intent.putExtra(IssueFragment.KEY_ISSUE_JSON, params.getString(IssueFragment.KEY_ISSUE_JSON));
-			intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, args.getString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON));
-			resultHolder.startActivityForResult(intent, action);
-		}
-		// If we're already on the issues activity, let it handle the new issue to display
-		else if (resultHolder instanceof IssuesActivity) {
-			((IssuesActivity) resultHolder).selectContent(args);
-			final String croutonText = resultHolder.getString(action == CREATE_ISSUE ? R.string.issue_upload_successful : R.string.issue_update_successful);
-			Crouton.makeText(resultHolder, croutonText, Style.CONFIRM).show();
-		}
-		// Otherwise, start it from scratch
-		else {
-			Intent intent = new Intent(resultHolder, IssuesActivity.class);
-			intent.putExtras(args);
-			intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON, true);
-			resultHolder.startActivityForResult(intent, action);
+		// Don't fail this, it may be because the Activity has been closed while we where uploading. Doesn't matter.
+		try {
+			// Re-open the edit issue activity
+			if (args.containsKey(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON)) {
+				Intent intent = new Intent(resultHolder, EditIssueActivity.class);
+				intent.putExtra(IssueFragment.KEY_ISSUE_JSON, params.getString(IssueFragment.KEY_ISSUE_JSON));
+				intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, args.getString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON));
+				resultHolder.startActivityForResult(intent, action);
+			}
+			// If we're already on the issues activity, let it handle the new issue to display
+			else if (resultHolder instanceof IssuesActivity) {
+				((IssuesActivity) resultHolder).selectContent(args);
+				final String croutonText = resultHolder.getString(action == CREATE_ISSUE ? R.string.issue_upload_successful : R.string.issue_update_successful);
+				Crouton.makeText(resultHolder, croutonText, Style.CONFIRM).show();
+			}
+			// Otherwise, start it from scratch
+			else {
+				Intent intent = new Intent(resultHolder, IssuesActivity.class);
+				intent.putExtras(args);
+				intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_SUCCESSFUL_CROUTON, true);
+				resultHolder.startActivityForResult(intent, action);
+			}
+		} catch (Exception e) {
+			L.e("This failed, but it shouldn't have. Maybe not a problem though.", e);
 		}
 	}
 
@@ -125,6 +131,7 @@ public class IssueUploader {
 	 * @param resultHolder The activity that will receive the UI notification to the user
 	 * @param params       The task launching params
 	 * @param result       The server's response
+	 *
 	 * @return A bundle used to update the UI after this operation
 	 */
 	private static Bundle doHandleAddEdit(Activity resultHolder, Bundle params, Object result) {
@@ -243,7 +250,7 @@ public class IssueUploader {
 		else {
 			final String errorMessage = resultHolder.getString(R.string.issue_upload_successful);
 			args.putString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, errorMessage);
-			L.e("Shouldn't happen! params=" + params, null);
+			L.e("Shouldn't happen! params are null", null);
 			return args;
 		}
 	}
@@ -287,6 +294,7 @@ public class IssueUploader {
 	 *
 	 * @param applicationContext Required for network operations (SSL) and DB access
 	 * @param issue              The issue to be deleted
+	 *
 	 * @return The server's response, or a {@link net.bicou.redmine.net.JsonNetworkError}
 	 */
 	public static Object deleteIssue(final Context applicationContext, final Issue issue) {
