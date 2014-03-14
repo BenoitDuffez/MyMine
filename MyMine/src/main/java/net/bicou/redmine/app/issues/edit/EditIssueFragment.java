@@ -217,7 +217,9 @@ public class EditIssueFragment extends TrackedFragment {
 	 * Updates the {@link #mIssue} object with the values from the form widgets
 	 *
 	 * @param isSilent If true, this method will not bug the user, otherwise it may display a Crouton if the form is not properly filled
+	 *
 	 * @return true if the form could be validated, false if there is an input error
+	 *
 	 * @throws java.lang.IllegalArgumentException when the form couldn't be parsed
 	 */
 	private boolean saveIssueChanges(boolean isSilent) {
@@ -293,6 +295,7 @@ public class EditIssueFragment extends TrackedFragment {
 	 *
 	 * @param context Used to open the databases
 	 * @param issue   Used to calculate the positions in the arrays of versions, priorities, statuses and trackers
+	 *
 	 * @return An object containing all the information required to fill the spinners and correctly select the appropriate item
 	 */
 	@SuppressWarnings("unchecked")
@@ -390,6 +393,7 @@ public class EditIssueFragment extends TrackedFragment {
 	 * choose a value from a spinner (for example: no specific target version)
 	 *
 	 * @param sourceArray The remaining items
+	 *
 	 * @return The array with null + all the remaining items from the source array
 	 */
 	private static ArrayList<?> getArrayWithDummy(List<?> sourceArray) {
@@ -509,7 +513,8 @@ public class EditIssueFragment extends TrackedFragment {
 	 */
 	private void refreshUI() {
 		if (mIssue.author != null && mIssue.author.id > 0) {
-			mIssue.author = displayNameAndAvatar(getActivity(), mIssue, mAuthorName, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format), mIssue.created_on);
+			mIssue.author = displayNameAndAvatar(getActivity(), mIssue, mAuthorName, mAuthorAvatar, mIssue.author, getString(R.string.issue_author_name_format),
+					mIssue.created_on);
 		} else {
 			mAuthorName.setText("");
 			mAuthorAvatar.setVisibility(View.INVISIBLE);
