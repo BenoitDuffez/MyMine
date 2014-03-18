@@ -6,7 +6,7 @@
 			  android:layout_height="match_parent">
 
 	<FrameLayout
-		android:id="@+id/about_content"
+		android:id="@android:id/content"
 		android:layout_marginLeft="@dimen/main_horizontal_margin"
 		android:layout_marginRight="@dimen/main_horizontal_margin"
 		android:layout_marginBottom="@dimen/main_vertical_margin"

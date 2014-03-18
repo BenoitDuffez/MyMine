@@ -2,7 +2,6 @@ package net.bicou.redmine.app.misc;
 
 import android.os.Bundle;
 
-import net.bicou.redmine.R;
 import net.bicou.redmine.app.ActionBarFragmentActivity;
 
 /**
@@ -13,7 +12,7 @@ public class AboutActivity extends ActionBarFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction().add(R.id.about_content, new AboutFragment()).commit();
+			getSupportFragmentManager().beginTransaction().add(android.R.id.content, new AboutFragment()).commit();
 		}
 	}
 }
