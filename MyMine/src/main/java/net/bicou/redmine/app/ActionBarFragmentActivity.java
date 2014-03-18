@@ -10,6 +10,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import net.bicou.redmine.R;
 
 /**
+ * Generic class for holding a fragment inside {@code android.R.id.content} and having a support action bar
  * Created by bicou on 17/06/13.
  */
 public abstract class ActionBarFragmentActivity extends ActionBarActivity {
