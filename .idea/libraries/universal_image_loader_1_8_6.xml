@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="universal-image-loader-1.8.6">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.8.6/9995ba681982ca129af798c9eb21e79c4bffa45/universal-image-loader-1.8.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.8.6/566a3b94d86a1f9101d12ff0401643e7ce1c1e1/universal-image-loader-1.8.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
