@@ -1,6 +1,7 @@
 apply plugin: 'android'
 
 dependencies {
+    // Libraries from maven
     compile 'com.intellij:annotations:+@jar'
     compile 'com.nhaarman.listviewanimations:library:2.5.2'
     compile 'com.github.gabrielemariotti.changeloglib:library:1.4.0'
@@ -12,6 +13,10 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.android.support:support-v4:+'
+    compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
+        exclude module: 'support-v4'
+        compile SupportLib
+    }
     repositories {
         mavenCentral()
     }
@@ -27,21 +32,6 @@ dependencies {
 
     // Jars
     compile files('libs/libGoogleAnalyticsServices.jar')
-
-    // Libraries from maven
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
-        exclude module: 'support-v4'
-        compile SupportLib
-    }
 }
 
 android {
@@ -62,6 +52,15 @@ android {
             debuggable false
             jniDebugBuild false
             signingConfig signingConfigs.releasePlayStore
+        }
+        releaseAlpha {
+            debuggable false
+            jniDebugBuild false
+            signingConfig signingConfigs.releasePlayStore
+            lintOptions.abortOnError false
+        }
+        debug {
+            versionNameSuffix "-dev"
         }
     }
 
