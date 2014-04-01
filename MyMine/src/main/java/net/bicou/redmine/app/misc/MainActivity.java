@@ -75,6 +75,7 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 	 *
 	 * @param uri A hierarchical URI that may or may not have campaign data
 	 *            stored in query parameters.
+	 *
 	 * @return A map that may contain campaign or referrer
 	 * that may be sent with any Google Analytics hit.
 	 */
@@ -199,6 +200,10 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 		switch (item.getItemId()) {
 		case R.id.menu_main_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
+			return true;
+
+		case R.id.menu_main_donate:
+			startActivity(new Intent(this, DonateActivity.class));
 			return true;
 
 		case R.id.menu_main_about:

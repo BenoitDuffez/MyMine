@@ -8,6 +8,11 @@
 		android:title="@string/menu_about"/>
 
 	<item
+		android:id="@+id/menu_main_donate"
+		appcompat:showAsAction="never"
+		android:title="@string/menu_donate"/>
+
+	<item
 		android:id="@+id/menu_main_changelog"
 		appcompat:showAsAction="never"
 		android:title="@string/menu_changelog"/>
