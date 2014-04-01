@@ -34,6 +34,7 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 	private static final int ACTION_BUY_ITEM = 3;
 
 	private static final int IAB_API_VERSION = 3;
+	public static final String IN_APP_BILLING_SERVICE_BIND = "com.android.vending.billing.InAppBillingService.BIND";
 
 	private static final int BILLING_RESPONSE_RESULT_OK = 0;
 	private static final int BILLING_RESPONSE_RESULT_USER_CANCELED = 1;
@@ -46,19 +47,15 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 
 	public static final String KEY_BUY_INTENT = "BUY_INTENT";
 	public static final String KEY_RESPONSE_CODE = "RESPONSE_CODE";
-	public static final String KEY_INAPP_PURCHASE_DATA = "INAPP_PURCHASE_DATA";
-	public static final String KEY_INAPP_DATA_SIGNATURE = "INAPP_DATA_SIGNATURE";
+	public static final String KEY_IN_APP_PURCHASE_DATA = "INAPP_PURCHASE_DATA";
+	public static final String KEY_IN_APP_DATA_SIGNATURE = "INAPP_DATA_SIGNATURE";
 	public static final String KEY_ITEM_ID_LIST = "ITEM_ID_LIST";
 	public static final String KEY_DETAILS_LIST = "DETAILS_LIST";
-	public static final String KEY_PRODUCT_ID = "productId";
-	public static final String KEY_PRICE = "price";
 
 	private static final String PURCHASE_TYPE_IN_APP = "inapp";
 
 	public static final String DEVELOPER_PAYLOAD = "bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ";
 	private static final String SKU_DONATE_SMALL = "donate_small";
-
-	private String mDonationPrice;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +77,7 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 			}
 		};
 
-		bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND"), mServiceConn, Context.BIND_AUTO_CREATE);
+		bindService(new Intent(IN_APP_BILLING_SERVICE_BIND), mServiceConn, Context.BIND_AUTO_CREATE);
 
 		AsyncTaskFragment.attachAsyncTaskFragment(this);
 	}
@@ -183,7 +180,6 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 					for (String thisResponse : responseList) {
 						InAppSkuDetails details = new Gson().fromJson(thisResponse, InAppSkuDetails.class);
 						L.d("response: " + details);
-						mDonationPrice = details.price;
 					}
 				}
 			}
@@ -231,8 +227,8 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 			}
 
 			int responseCode = data.getIntExtra(KEY_RESPONSE_CODE, BILLING_RESPONSE_RESULT_OK);
-			String purchaseData = data.getStringExtra(KEY_INAPP_PURCHASE_DATA);
-			String dataSignature = data.getStringExtra(KEY_INAPP_DATA_SIGNATURE);
+			String purchaseData = data.getStringExtra(KEY_IN_APP_PURCHASE_DATA);
+			String dataSignature = data.getStringExtra(KEY_IN_APP_DATA_SIGNATURE);
 
 			if (resultCode == BILLING_RESPONSE_RESULT_OK) {
 				InAppPurchaseData inAppPurchaseData = new Gson().fromJson(purchaseData, InAppPurchaseData.class);
