@@ -12,12 +12,12 @@ import android.os.RemoteException;
 import android.support.v7.app.ActionBarActivity;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.google.gson.Gson;
 
 import net.bicou.redmine.app.AsyncTaskFragment;
+import net.bicou.redmine.data.json.InAppPurchaseData;
+import net.bicou.redmine.data.json.InAppSkuDetails;
 import net.bicou.redmine.util.L;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -95,6 +95,7 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 
 	@Override
 	public void onPreExecute(int action, Object parameters) {
+		L.d("starting action " + action);
 	}
 
 	@Override
@@ -148,12 +149,18 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 			purchaseItem(SKU_DONATE_SMALL);
 			break;
 		}
-		return null;
+
+		return "no action";
 	}
 
 	@Override
 	public void onPostExecute(int action, Object parameters, Object result) {
 		L.d("action " + action + " result: " + result);
+		if (result != null && result instanceof Bundle) {
+			for (String key : ((Bundle) result).keySet()) {
+				L.i(">" + key + ": " + ((Bundle) result).get(key));
+			}
+		}
 		if (action < 4) {
 			AsyncTaskFragment.runTask(this, action + 1, null);
 		}
@@ -173,22 +180,16 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 			if (response == 0) {
 				ArrayList<String> responseList = skuDetails.getStringArrayList(KEY_DETAILS_LIST);
 				if (responseList != null) {
-
 					for (String thisResponse : responseList) {
-						JSONObject object = new JSONObject(thisResponse);
-						L.d("response: " + object);
-						String sku = object.getString(KEY_PRODUCT_ID);
-						String price = object.getString(KEY_PRICE);
-						mDonationPrice = price;
+						InAppSkuDetails details = new Gson().fromJson(thisResponse, InAppSkuDetails.class);
+						L.d("response: " + details);
+						mDonationPrice = details.price;
 					}
 				}
 			}
 		} catch (RemoteException e) {
 			//TODO: handle error
 			L.e("Unable to get SKU details", e);
-		} catch (JSONException e) {
-			//TODO: handle error
-			L.e("Unable to parse server response", e);
 		}
 
 		return skuDetails;
@@ -198,9 +199,17 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 		try {
 			Bundle buyIntentBundle = mService.getBuyIntent(IAB_API_VERSION, getPackageName(), sku, PURCHASE_TYPE_IN_APP, DEVELOPER_PAYLOAD);
 			PendingIntent pendingIntent = buyIntentBundle.getParcelable(KEY_BUY_INTENT);
+			int responseCode = buyIntentBundle.getInt(KEY_RESPONSE_CODE);
 
-			assert pendingIntent != null;
-			startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), 0, 0, 0);
+			if (pendingIntent != null) {
+				startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), 0, 0, 0);
+			} else {
+				L.e("Unable to retrieve buy intent", null);
+				L.i("bundle: " + buyIntentBundle);
+				for (String key : buyIntentBundle.keySet()) {
+					L.i(">" + key + ": " + buyIntentBundle.get(key));
+				}
+			}
 		} catch (IntentSender.SendIntentException e) {
 			// TODO: handle
 			L.e("Unable to start buying activity", e);
@@ -221,19 +230,13 @@ public class DonateActivity extends ActionBarActivity implements AsyncTaskFragme
 				}
 			}
 
-			int responseCode = data.getIntExtra(KEY_RESPONSE_CODE, 0);
+			int responseCode = data.getIntExtra(KEY_RESPONSE_CODE, BILLING_RESPONSE_RESULT_OK);
 			String purchaseData = data.getStringExtra(KEY_INAPP_PURCHASE_DATA);
 			String dataSignature = data.getStringExtra(KEY_INAPP_DATA_SIGNATURE);
 
-			if (resultCode == RESULT_OK) {
-				try {
-					JSONObject jo = new JSONObject(purchaseData);
-					String sku = jo.getString("productId");
-					L.d("bought " + sku);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					L.e("couldn't buy", e);
-				}
+			if (resultCode == BILLING_RESPONSE_RESULT_OK) {
+				InAppPurchaseData inAppPurchaseData = new Gson().fromJson(purchaseData, InAppPurchaseData.class);
+				L.d("Bought " + inAppPurchaseData);
 			} else {
 				L.d("Didn't buy, code=" + responseCode + ", purchaseData=" + purchaseData + ", dataSignature=" + dataSignature);
 			}
