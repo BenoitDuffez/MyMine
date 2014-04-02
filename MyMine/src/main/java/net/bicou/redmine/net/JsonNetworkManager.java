@@ -52,21 +52,65 @@ import java.util.zip.GZIPInputStream;
 import javax.net.ssl.KeyManager;
 
 public abstract class JsonNetworkManager {
+	/**
+	 * The URI where we will send the HTTP request
+	 */
 	protected URI mURI;
+
+	/**
+	 * Used for SSL-related stuff
+	 */
 	Context mContext;
 
+	/**
+	 * Used to build the HTTP URI
+	 */
 	Server mServer;
+
+	/**
+	 * Relative part of the URI
+	 */
 	String mQueryPath;
+
+	/**
+	 * HTTP GET query arguments
+	 */
 	List<NameValuePair> mArgs;
 
+	/**
+	 * Used to create HTTPS (TLS) sockets
+	 */
 	protected MyMineSSLSocketFactory mSslSocketFactory;
+
+	/**
+	 * Used to handle self-signed certificates trustfulness
+	 */
 	protected MyMineSSLTrustManager mSSLTrustManager;
+
+	/**
+	 * Created when an error happens during the process
+	 */
 	protected JsonNetworkError mError;
 
+	/**
+	 * Set class members
+	 *
+	 * @param context   App context
+	 * @param server    Redmine server
+	 * @param queryPath Relative query path
+	 */
 	public void init(Context context, Server server, String queryPath) {
 		init(context, server, queryPath, (List<NameValuePair>) null);
 	}
 
+	/**
+	 * Set class members
+	 *
+	 * @param context   App context
+	 * @param server    Redmine server
+	 * @param queryPath Relative query path
+	 * @param args      HTTP GET arguments
+	 */
 	public void init(Context context, Server server, String queryPath, List<NameValuePair> args) {
 		mContext = context;
 		mServer = server;
@@ -74,16 +118,34 @@ public abstract class JsonNetworkManager {
 		mArgs = args;
 	}
 
+	/**
+	 * Set class members
+	 *
+	 * @param context   App context
+	 * @param server    Redmine server
+	 * @param queryPath Relative query path
+	 * @param args      HTTP GET arguments
+	 */
 	public void init(Context context, Server server, String queryPath, NameValuePair[] args) {
 		ArrayList<NameValuePair> argsList = new ArrayList<NameValuePair>();
 		Collections.addAll(argsList, args);
 		init(context, server, queryPath, argsList);
 	}
 
+	/**
+	 * Getter
+	 *
+	 * @return The current error, if any
+	 */
 	public JsonNetworkError getError() {
 		return mError;
 	}
 
+	/**
+	 * Build the list of all HTTP GET arguments. Automatically add the API key
+	 *
+	 * @return The full list of HTTP GET arguments
+	 */
 	protected List<NameValuePair> buildUriArgs() {
 		final List<NameValuePair> args = new ArrayList<NameValuePair>();
 		if (mArgs != null) {
@@ -93,6 +155,11 @@ public abstract class JsonNetworkManager {
 		return args;
 	}
 
+	/**
+	 * Build the {@link #mURI} object
+	 *
+	 * @throws URISyntaxException as defined by {@link org.apache.http.client.utils.URIUtils#createURI(String, String, int, String, String, String)}
+	 */
 	protected void buildURI() throws URISyntaxException {
 		final Uri uri = Uri.parse(mServer.serverUrl);
 
@@ -110,7 +177,7 @@ public abstract class JsonNetworkManager {
 	}
 
 	/**
-	 * Creates the {@link net.bicou.redmine.net.ssl.MyMineSSLSocketFactory} that will provide our certificates to the HTTP client
+	 * Create the {@link net.bicou.redmine.net.ssl.MyMineSSLSocketFactory} that will provide our certificates to the HTTP client
 	 */
 	protected MyMineSSLSocketFactory createAdditionalCertsSSLSocketFactory() {
 		try {
@@ -130,7 +197,7 @@ public abstract class JsonNetworkManager {
 	}
 
 	/**
-	 * Prepares the Apache HttpClient object with correct SSL handling and Basic Authentication
+	 * Prepare the Apache HttpClient object with correct SSL handling and Basic Authentication.
 	 */
 	protected HttpClient getHttpClient() {
 		final SchemeRegistry schemeRegistry = new SchemeRegistry();
@@ -156,14 +223,19 @@ public abstract class JsonNetworkManager {
 		return httpClient;
 	}
 
+	/**
+	 * Override this for custom GET/POST/etc HTTP queries
+	 *
+	 * @return The custom HTTP query, derived from {@link org.apache.http.client.methods.HttpRequestBase}
+	 */
 	protected HttpRequestBase getHttpRequest() {
 		return new HttpGet(mURI);
 	}
 
 	/**
-	 * Actually downloads the JSON from the server. In case of failure, an object will be stored in {@link JsonNetworkManager#mError}.
+	 * Actually download the server response. In case of failure, an object will be stored in {@link #mError}.
 	 *
-	 * @return the JSON, as a {@code String}
+	 * @return The server response, as a {@code String}
 	 */
 	protected String downloadJson() {
 		BufferedReader reader = null;
