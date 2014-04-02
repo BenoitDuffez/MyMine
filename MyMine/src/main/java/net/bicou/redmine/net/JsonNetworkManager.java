@@ -51,6 +51,18 @@ import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.KeyManager;
 
+/**
+ * Base class for managing HTTP requests to the server.
+ * <p/>
+ * Derived class:
+ * <ul>
+ * <li><b>must</b> call one of {@link #init(android.content.Context, net.bicou.redmine.data.Server, String)}, {@link #init(android.content.Context,
+ * net.bicou.redmine.data.Server, String, java.util.List)} or {@link #init(android.content.Context, net.bicou.redmine.data.Server, String,
+ * org.apache.http.NameValuePair[])}  methods before doing anything.</li>
+ * <li><b>must</b> call {@link #downloadJson()} in order to trigger the HTTP request and retrieve the response.</li>
+ * <li>can override {@link #getHttpRequest()} in order to customize the HTTP request to be sent to the server.</li>
+ * </ul>
+ */
 public abstract class JsonNetworkManager {
 	/**
 	 * The URI where we will send the HTTP request

@@ -15,6 +15,21 @@ import org.apache.http.entity.StringEntity;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Class used to upload data to the server, as JSON object strings. Can be used to upload a new object, update or delete an existing one.
+ * <p/>
+ * Usage:
+ * <pre>
+ * // Create a serializer (that will convert an object to a JSON string, using the base class {@link net.bicou.redmine.net.upload.ObjectSerializer})
+ * IssueSerializer serializer = new IssueSerializer(applicationContext, issue, null, true);
+ * // Build it
+ * serializer.build();
+ * // Create the relative part of the HTTP query
+ * String uri="issues/" + issue.id + ".json";
+ * // Actually upload
+ * result = new JsonUploader().uploadObject(applicationContext, issue.server, uri, serializer);
+ * </pre>
+ */
 public class JsonUploader extends JsonNetworkManager {
 	ObjectSerializer mObjectSerializer;
 	ObjectSerializer.RemoteOperation mRemoteOperation;
@@ -22,6 +37,16 @@ public class JsonUploader extends JsonNetworkManager {
 	public JsonUploader() {
 	}
 
+	/**
+	 * Actually upload an object to the server. The object is contained in the serializer, which will generate the JSON string to upload.
+	 *
+	 * @param context   Application context
+	 * @param server    The Redmine server
+	 * @param queryPath The relative HTTP query part
+	 * @param object    The {@link net.bicou.redmine.net.upload.ObjectSerializer}
+	 *
+	 * @return The JSON string returned by the server in case of success, or a {@link net.bicou.redmine.net.JsonNetworkError} in case of failure.
+	 */
 	public Object uploadObject(Context context, Server server, String queryPath, ObjectSerializer object) {
 		mObjectSerializer = object;
 
@@ -43,6 +68,11 @@ public class JsonUploader extends JsonNetworkManager {
 		return json;
 	}
 
+	/**
+	 * Custom HTTP request maker with HTTP POST/PUT/DELETE depending on the desired action.
+	 *
+	 * @return A new instance of a {@link org.apache.http.client.methods.HttpRequestBase}
+	 */
 	@Override
 	protected HttpRequestBase getHttpRequest() {
 		ObjectSerializer.RemoteOperation op = mObjectSerializer.getRemoteOperation();
