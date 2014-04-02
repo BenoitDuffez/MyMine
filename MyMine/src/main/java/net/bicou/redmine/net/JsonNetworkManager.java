@@ -152,7 +152,7 @@ public abstract class JsonNetworkManager {
 		init(context, server, queryPath, argsList);
 	}
 
-	boolean mStripJsonContainer = false;
+	private boolean mStripJsonContainer = false;
 
 	/**
 	 * Basic setter
@@ -330,8 +330,17 @@ public abstract class JsonNetworkManager {
 			final HttpClient httpClient = getHttpClient();
 			final HttpRequestBase req = getHttpRequest();
 
+			if (req == null) {
+				mError = new JsonDownloadError(JsonDownloadError.ErrorType.TYPE_UNKNOWN);
+				mError.httpResponseCode = 0;
+				mError.setMessage(R.string.err_unknown);
+				return null;
+			}
+
 			// Ask for UTF-8
-			req.setHeader("Content-Type", "application/json; charset=utf-8");
+			if (!req.containsHeader("Content-Type")) {
+				req.setHeader("Content-Type", "application/json; charset=utf-8");
+			}
 			req.setHeader("Accept-Encoding", "gzip");
 
 			// Execute request
@@ -398,6 +407,12 @@ public abstract class JsonNetworkManager {
 					e.printStackTrace();
 				}
 			}
+		}
+
+		// Edit json?
+		if (mStripJsonContainer) {
+			L.d("The JSON was striped from its main container");
+			json = stripJsonContainer(json);
 		}
 
 		return json;

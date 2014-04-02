@@ -161,6 +161,7 @@
 
     <!-- Issue edit -->
     <string name="issue_add_server_project_picker_dialog_title">Please select the target server and project</string>
+    <string name="issue_add_server_picker_dialog_title">Please select the target server</string>
     <string name="issue_edit_field_unset">Tap to set</string>
     <string name="issue_edit_edit_description_button">Edit description</string>
     <string name="issue_edit_notes">Notes</string>

@@ -179,12 +179,6 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 			return null;
 		}
 
-		// Edit json?
-		if (mStripJsonContainer) {
-			L.d("The JSON was striped from its main container");
-			json = stripJsonContainer(json);
-		}
-
 		T object = gsonParse(json, mType);
 
 		if (object == null) {

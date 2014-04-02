@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:appcompat="http://schemas.android.com/apk/res-auto">
+	  xmlns:appcompat="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/menu_issues_search"
-        appcompat:actionViewClass="android.support.v7.widget.SearchView"
-        android:icon="@android:drawable/ic_menu_search"
-        appcompat:showAsAction="ifRoom|collapseActionView"
-        android:title="@string/issues_menu_search" />
+	<item
+		android:id="@+id/menu_issues_search"
+		appcompat:actionViewClass="android.support.v7.widget.SearchView"
+		android:icon="@android:drawable/ic_menu_search"
+		appcompat:showAsAction="ifRoom|collapseActionView"
+		android:title="@string/issues_menu_search"/>
 
-    <item
-        android:id="@+id/menu_issues_add"
-        android:title="@string/menu_issues_add"
-        appcompat:showAsAction="always"
-        android:icon="@android:drawable/ic_menu_add" />
+	<item
+		android:id="@+id/menu_issues_add"
+		android:title="@string/menu_issues_add"
+		appcompat:showAsAction="always"
+		android:icon="@android:drawable/ic_menu_add"/>
+
+	<item
+		android:id="@+id/menu_issue_upload_attachment"
+		android:title="@string/menu_issue_upload_attn"
+		android:icon="@android:drawable/ic_menu_upload"
+		appcompat:showAsAction="ifRoom"/>
 
 </menu>

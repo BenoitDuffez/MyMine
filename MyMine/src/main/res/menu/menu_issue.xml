@@ -8,12 +8,6 @@
 		android:icon="@android:drawable/ic_menu_edit"
 		appcompat:showAsAction="always" />
 
-	<item
-		android:id="@+id/menu_issue_upload_attachment"
-		android:title="@string/menu_issue_upload_attn"
-		android:icon="@android:drawable/ic_menu_upload"
-		appcompat:showAsAction="always" />
-
     <item
         android:id="@+id/menu_issue_delete"
         android:title="@string/menu_issue_delete"

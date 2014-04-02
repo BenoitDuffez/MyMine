@@ -33,14 +33,17 @@ public class ServerProjectPickerDialog extends AlertDialog implements DialogInte
 
 	public ServerProjectPickerDialog(final Context context, DesiredSelection desiredSelection, final Server server, final Project project) {
 		super(context);
+		mDesiredSelection = desiredSelection;
 
 		setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
 		setIcon(0);
-		setTitle(context.getString(R.string.issue_edit_description_dialog_title));
 
 		View view = getLayoutInflater().inflate(R.layout.frag_issue_add_select_server_project, null);
 		setView(view);
-		setTitle(context.getString(R.string.issue_add_server_project_picker_dialog_title));
+		int resId = desiredSelection == DesiredSelection.SERVER_PROJECT ? //
+				R.string.issue_add_server_project_picker_dialog_title : //
+				R.string.issue_add_server_picker_dialog_title;
+		setTitle(context.getString(resId));
 
 		ServersDbAdapter db = new ServersDbAdapter(context);
 		db.open();
@@ -63,8 +66,11 @@ public class ServerProjectPickerDialog extends AlertDialog implements DialogInte
 
 		mProjectSelector = (Spinner) view.findViewById(R.id.issue_add_project_picker);
 		mProjectSelector.setAdapter(projectsAdapter);
-		mDesiredSelection = desiredSelection;
-		mProjectSelector.setVisibility(mDesiredSelection == DesiredSelection.SERVER_PROJECT ? View.VISIBLE : View.GONE);
+
+		// Show/hide the project selector
+		int visibility = mDesiredSelection == DesiredSelection.SERVER_PROJECT ? View.VISIBLE : View.GONE;
+		mProjectSelector.setVisibility(visibility);
+		view.findViewById(R.id.issue_add_project_picker_title).setVisibility(visibility);
 
 		mServerSelector = (Spinner) view.findViewById(R.id.issue_add_server_picker);
 		mServerSelector.setAdapter(serversAdapter);

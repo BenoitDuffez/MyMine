@@ -35,7 +35,6 @@ import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment.IssuesOrderSelectionListener;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.Server;
-import net.bicou.redmine.data.json.FileUpload;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
@@ -60,6 +59,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		ServerProjectPickerFragment.ServerProjectSelectionListener {
 	// Both of these are used for file uploading
 	public static final int REQUEST_FILE_CHOOSER = 1337;
+	private static final String EXTRA_FILE_PATH = "net.bicou.redmine.app.issues.UploadFilePath";
 	private Server mUploadTarget;
 
 	int mNavMode;
@@ -74,6 +74,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_UPLOAD_ISSUE = 5;
 	public static final int ACTION_ISSUE_TOGGLE_FAVORITE = 6;
 	public static final int ACTION_GET_NAVIGATION_SPINNER_DATA = 7;
+	public static final int ACTION_UPLOAD_FILE = 8;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -182,14 +183,28 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		supportInvalidateOptionsMenu();
 	}
 
+	/**
+	 * Used when creating a new issue: need to select the target server/project
+	 */
 	private void showServerProjectPickerDialog() {
 		DialogFragment newFragment = ServerProjectPickerFragment.newInstance(ServerProjectPickerDialog.DesiredSelection.SERVER_PROJECT);
 		newFragment.show(getSupportFragmentManager(), "serverProjectPicker");
 	}
 
+	/**
+	 * Used when uploading an issue attachment: need to select the target server
+	 */
 	private void showServerPickerDialog() {
 		DialogFragment newFragment = ServerProjectPickerFragment.newInstance(ServerProjectPickerDialog.DesiredSelection.SERVER);
 		newFragment.show(getSupportFragmentManager(), "serverPicker");
+	}
+
+	/**
+	 * Used when attachment was uploaded: need to link it to an issue
+	 */
+	private void showIssuePickerDialog() {
+//		DialogFragment newFragment = IssuePickerFragment.newInstance();
+//		newFragment.show(getSupportFragmentManager(), "serverPicker");
 	}
 
 	@Override
@@ -221,9 +236,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 				try {
 					String path = FileUtils.getPath(this, selectedFile);
 					if (path != null && FileUtils.isLocal(path)) {
-						File file = new File(path);
-						FileUpload fileUploader = new FileUploader(getCroutonHolder()).uploadFile(this, mUploadTarget, file);
-						L.d("Uploaded " + path + ", result: " + fileUploader);
+						Bundle args = new Bundle();
+						args.putString(EXTRA_FILE_PATH, path);
+						AsyncTaskFragment.runTask(this, ACTION_UPLOAD_FILE, args);
 					} else {
 						L.e("Invalid selected file: " + selectedFile + ", path: " + path, null);
 						Crouton.makeText(this, getString(R.string.issue_attn_select_file_invalid_path), Style.ALERT, getCroutonHolder()).show();
@@ -477,6 +492,13 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			pdb.close();
 
 			return new IssuesMainFilterAdapter(applicationContext, queries, projects);
+
+		case ACTION_UPLOAD_FILE:
+			String path = ((Bundle) parameters).getString(EXTRA_FILE_PATH);
+			File file = new File(path);
+			Object fileUpload = new FileUploader().uploadFile(this, mUploadTarget, file);
+			L.d("Uploaded " + path + ", result: " + fileUpload);
+			return fileUpload;
 		}
 
 		return null;
@@ -559,6 +581,14 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 			ab.setListNavigationCallbacks(mSpinnerAdapter, mNavigationCallbacks);
 			L.d("setlistnavigationcallbacks: " + mSpinnerAdapter + ", " + mNavigationCallbacks);
+			break;
+
+		case ACTION_UPLOAD_FILE:
+			if (result instanceof JsonNetworkError) {
+				((JsonNetworkError) result).displayCrouton(this, getCroutonHolder());
+			} else {
+				L.i("Congratulations, it's a file! " + result);
+			}
 			break;
 		}
 	}
