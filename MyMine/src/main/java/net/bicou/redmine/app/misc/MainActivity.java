@@ -22,6 +22,7 @@ import net.bicou.redmine.app.drawers.DrawerActivity;
 import net.bicou.redmine.app.drawers.main.DrawerMenuFragment;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
 import net.bicou.redmine.app.issues.edit.IssueUploader;
+import net.bicou.redmine.app.issues.edit.ServerProjectPickerDialog;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.settings.SettingsActivity;
 import net.bicou.redmine.app.welcome.OverviewCard;
@@ -220,7 +221,7 @@ public class MainActivity extends DrawerActivity implements ServerProjectPickerF
 	}
 
 	@Override
-	public void onServerProjectPicked(final Server server, final Project project) {
+	public void onServerProjectPicked(final ServerProjectPickerDialog.DesiredSelection desiredSelection, final Server server, final Project project) {
 		if (server != null && server.rowId > 0 && project != null && project.id > 0) {
 			Intent intent = new Intent(this, EditIssueActivity.class);
 			intent.putExtra(Constants.KEY_SERVER, server);

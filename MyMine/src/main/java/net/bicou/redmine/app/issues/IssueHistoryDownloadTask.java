@@ -194,7 +194,7 @@ public class IssueHistoryDownloadTask extends AsyncTask<Void, Void, IssueHistory
 		final String url = String.format(Locale.ENGLISH, "issues/%d.json", mIssue.id);
 		final NameValuePair[] args = new BasicNameValuePair[] { new BasicNameValuePair("include", "journals,changesets"), };
 
-		JsonDownloader<IssueHistory> downloader = new JsonDownloader<IssueHistory>(IssueHistory.class).setStripJsonContainer(true);
+		JsonDownloader<IssueHistory> downloader = new JsonDownloader<IssueHistory>(IssueHistory.class).stripJsonContainer(true);
 		IssueHistory history = downloader.fetchObject(mActivity, mIssue.server, url, args);
 		if (history == null) {
 			mError = downloader.getError();

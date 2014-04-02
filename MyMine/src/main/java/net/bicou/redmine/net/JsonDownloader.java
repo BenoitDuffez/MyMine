@@ -3,30 +3,21 @@ package net.bicou.redmine.net;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
-
 import net.bicou.redmine.R;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.AbsObjectList;
-import net.bicou.redmine.data.json.CalendarDeserializer;
-import net.bicou.redmine.data.json.Version;
-import net.bicou.redmine.data.json.VersionStatusDeserializer;
 import net.bicou.redmine.net.JsonDownloadError.ErrorType;
 import net.bicou.redmine.util.L;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.util.Calendar;
 import java.util.List;
 
 public class JsonDownloader<T> extends JsonNetworkManager {
 	T mObject;
 	Class<T> mType;
 	private boolean mDownloadAllIfList = true;
-	boolean mStripJsonContainer = false;
 	int mCurrentOffset;
 
 	public JsonDownloader(final Class<T> type) {
@@ -41,15 +32,9 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 		return this;
 	}
 
-	public JsonDownloader<T> setStripJsonContainer(final boolean stripJsonContainer) {
-		mStripJsonContainer = stripJsonContainer;
+	public JsonDownloader<T> stripJsonContainer(final boolean stripJsonContainer) {
+		super.setStripJsonContainer(stripJsonContainer);
 		return this;
-	}
-
-	public String stripJsonContainer(final String json) {
-		final int start = json.indexOf(":") + 1;
-		final int end = json.lastIndexOf("}");
-		return json.substring(start, end);
 	}
 
 	@Override
@@ -205,39 +190,6 @@ public class JsonDownloader<T> extends JsonNetworkManager {
 		if (object == null) {
 			mError = new JsonDownloadError(ErrorType.TYPE_JSON);
 			mError.setMessage(R.string.err_parse_error);
-		}
-
-		return object;
-	}
-
-	/**
-	 * This codes only wraps a Gson object with the required deserializers
-	 *
-	 * @param json Input JSON string
-	 * @param type Output object type
-	 *
-	 * @return The object created by the Gson API
-	 */
-	public static <T> T gsonParse(String json, Class<T> type) {
-		T object = null;
-
-		try {
-			final GsonBuilder builder = new GsonBuilder();
-			builder.registerTypeAdapter(Calendar.class, new CalendarDeserializer());
-			builder.registerTypeAdapter(Version.VersionStatus.class, new VersionStatusDeserializer());
-			final Gson gson = builder.create();
-
-			object = gson.fromJson(json, type);
-		} catch (final JsonSyntaxException e) {
-			L.e("Unparseable JSON is:");
-			L.e(json);
-		} catch (final IllegalStateException e) {
-			L.e("Unparseable JSON is:");
-			L.e(json);
-		} catch (final Exception e) {
-			L.e("Unparseable JSON is:");
-			L.e(json);
-			L.e("Unable to parse JSON", e);
 		}
 
 		return object;

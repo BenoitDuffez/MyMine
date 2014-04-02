@@ -17,6 +17,7 @@ import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ga.TrackedFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
+import net.bicou.redmine.app.issues.edit.ServerProjectPickerDialog;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.misc.HelpSetupFragment;
 import net.bicou.redmine.app.misc.MainActivity;
@@ -99,7 +100,7 @@ public class WelcomeFragment extends TrackedFragment {
 				break;
 
 			case ADD_ISSUE:
-				DialogFragment newFragment = ServerProjectPickerFragment.newInstance();
+				DialogFragment newFragment = ServerProjectPickerFragment.newInstance(ServerProjectPickerDialog.DesiredSelection.SERVER_PROJECT);
 				newFragment.show(getActivity().getSupportFragmentManager(), "serverProjectPicker");
 				break;
 

@@ -2,11 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:appcompat="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/menu_issue_edit"
-        android:title="@string/issue_menu_edit"
-        android:icon="@android:drawable/ic_menu_edit"
-        appcompat:showAsAction="always" />
+	<item
+		android:id="@+id/menu_issue_edit"
+		android:title="@string/issue_menu_edit"
+		android:icon="@android:drawable/ic_menu_edit"
+		appcompat:showAsAction="always" />
+
+	<item
+		android:id="@+id/menu_issue_upload_attachment"
+		android:title="@string/menu_issue_upload_attn"
+		android:icon="@android:drawable/ic_menu_upload"
+		appcompat:showAsAction="always" />
 
     <item
         android:id="@+id/menu_issue_delete"

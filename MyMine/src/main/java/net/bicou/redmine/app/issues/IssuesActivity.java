@@ -20,18 +20,22 @@ import android.view.Window;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
+import com.ipaulpro.afilechooser.FileChooserActivity;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
 import net.bicou.redmine.app.issues.edit.IssueUploader;
+import net.bicou.redmine.app.issues.edit.ServerProjectPickerDialog;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrder;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment.IssuesOrderSelectionListener;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.FileUpload;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
@@ -40,15 +44,24 @@ import net.bicou.redmine.data.sqlite.ProjectsDbAdapter;
 import net.bicou.redmine.data.sqlite.QueriesDbAdapter;
 import net.bicou.redmine.data.sqlite.ServersDbAdapter;
 import net.bicou.redmine.net.JsonNetworkError;
+import net.bicou.redmine.net.upload.FileUploader;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
 import net.bicou.splitactivity.SplitActivity;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks, ServerProjectPickerFragment.ServerProjectSelectionListener {
+public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks,
+		ServerProjectPickerFragment.ServerProjectSelectionListener {
+	// Both of these are used for file uploading
+	public static final int REQUEST_FILE_CHOOSER = 1337;
+	private Server mUploadTarget;
+
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
 
@@ -170,31 +183,76 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	}
 
 	private void showServerProjectPickerDialog() {
-		DialogFragment newFragment = ServerProjectPickerFragment.newInstance();
+		DialogFragment newFragment = ServerProjectPickerFragment.newInstance(ServerProjectPickerDialog.DesiredSelection.SERVER_PROJECT);
 		newFragment.show(getSupportFragmentManager(), "serverProjectPicker");
 	}
 
+	private void showServerPickerDialog() {
+		DialogFragment newFragment = ServerProjectPickerFragment.newInstance(ServerProjectPickerDialog.DesiredSelection.SERVER);
+		newFragment.show(getSupportFragmentManager(), "serverPicker");
+	}
+
 	@Override
-	public void onServerProjectPicked(final Server server, final Project project) {
-		if (server != null && server.rowId > 0 && project != null && project.id > 0) {
-			Intent intent = new Intent(this, EditIssueActivity.class);
-			intent.putExtra(Constants.KEY_SERVER, server);
-			intent.putExtra(Constants.KEY_PROJECT, project);
-			startActivityForResult(intent, IssueUploader.CREATE_ISSUE);
+	public void onServerProjectPicked(final ServerProjectPickerDialog.DesiredSelection desiredSelection, final Server server, final Project project) {
+		switch (desiredSelection) {
+		case SERVER:
+			mUploadTarget = server;
+			startActivityForResult(new Intent(this, FileChooserActivity.class), REQUEST_FILE_CHOOSER);
+			break;
+
+		case SERVER_PROJECT:
+			if (server != null && server.rowId > 0 && project != null && project.id > 0) {
+				Intent intent = new Intent(this, EditIssueActivity.class);
+				intent.putExtra(Constants.KEY_SERVER, server);
+				intent.putExtra(Constants.KEY_PROJECT, project);
+				startActivityForResult(intent, IssueUploader.CREATE_ISSUE);
+			}
+			break;
 		}
 	}
 
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		L.d("requestCode=" + requestCode + ", resultCode=" + resultCode + ", data=" + data);
-		if (resultCode == RESULT_OK) {
-			final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
-			extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
-			AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
-		} else {
-			EditIssueActivity.handleRevertCrouton(this, isSplitScreen() ? R.id.sa__right_pane : R.id.sa__left_pane, requestCode, data.getExtras());
+		switch (requestCode) {
+		case REQUEST_FILE_CHOOSER:
+			if (resultCode == RESULT_OK) {
+				Uri selectedFile = data.getData();
+				try {
+					String path = FileUtils.getPath(this, selectedFile);
+					if (path != null && FileUtils.isLocal(path)) {
+						File file = new File(path);
+						FileUpload fileUploader = new FileUploader(getCroutonHolder()).uploadFile(this, mUploadTarget, file);
+						L.d("Uploaded " + path + ", result: " + fileUploader);
+					} else {
+						L.e("Invalid selected file: " + selectedFile + ", path: " + path, null);
+						Crouton.makeText(this, getString(R.string.issue_attn_select_file_invalid_path), Style.ALERT, getCroutonHolder()).show();
+					}
+				} catch (URISyntaxException e) {
+					L.e("Couldn't get file path", e);
+					Crouton.makeText(this, getString(R.string.issue_attn_select_file_failed, e.getLocalizedMessage()), Style.ALERT, getCroutonHolder()).show();
+				}
+			}
+			break;
+
+		case IssueUploader.CREATE_ISSUE:
+		case IssueUploader.EDIT_ISSUE:
+			if (resultCode == RESULT_OK) {
+				final Bundle extras = data == null || data.getExtras() == null ? new Bundle() : data.getExtras();
+				extras.putInt(IssueUploader.ISSUE_ACTION, requestCode);
+				AsyncTaskFragment.runTask(this, ACTION_UPLOAD_ISSUE, extras);
+			} else {
+				EditIssueActivity.handleRevertCrouton(this, getCroutonHolder(), requestCode, data.getExtras());
+			}
 		}
 	}
+
+	/**
+	 * Get the correct view ID that will contain any {@link de.keyboardsurfer.android.widget.crouton.Crouton} to be displayed in this context
+	 *
+	 * @return The view ID to pass to the fourth arg of {@link Crouton#makeText(android.app.Activity, int, de.keyboardsurfer.android.widget.crouton.Style, int)}
+	 */
+	private int getCroutonHolder() {return isSplitScreen() ? R.id.sa__right_pane : R.id.sa__left_pane;}
 
 	@Override
 	public void selectContent(Bundle args) {
@@ -239,6 +297,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 					startActivityForResult(intent, IssueUploader.EDIT_ISSUE);
 				}
 			}
+			return true;
+		case R.id.menu_issue_upload_attachment:
+			showServerPickerDialog();
 			return true;
 
 		case R.id.menu_issue_delete:

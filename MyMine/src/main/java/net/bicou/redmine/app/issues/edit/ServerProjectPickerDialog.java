@@ -20,11 +20,18 @@ import java.util.List;
 /**
  * Created by bicou on 06/08/13.
  */
-class ServerProjectPickerDialog extends AlertDialog implements DialogInterface.OnClickListener {
+public class ServerProjectPickerDialog extends AlertDialog implements DialogInterface.OnClickListener {
 	ServerProjectPickerFragment.ServerProjectSelectionListener mListener;
 	Spinner mServerSelector, mProjectSelector;
 
-	public ServerProjectPickerDialog(final Context context, final Server server, final Project project) {
+	public enum DesiredSelection {
+		SERVER,
+		SERVER_PROJECT,
+	}
+
+	DesiredSelection mDesiredSelection = null;
+
+	public ServerProjectPickerDialog(final Context context, DesiredSelection desiredSelection, final Server server, final Project project) {
 		super(context);
 
 		setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
@@ -56,6 +63,8 @@ class ServerProjectPickerDialog extends AlertDialog implements DialogInterface.O
 
 		mProjectSelector = (Spinner) view.findViewById(R.id.issue_add_project_picker);
 		mProjectSelector.setAdapter(projectsAdapter);
+		mDesiredSelection = desiredSelection;
+		mProjectSelector.setVisibility(mDesiredSelection == DesiredSelection.SERVER_PROJECT ? View.VISIBLE : View.GONE);
 
 		mServerSelector = (Spinner) view.findViewById(R.id.issue_add_server_picker);
 		mServerSelector.setAdapter(serversAdapter);
@@ -104,7 +113,7 @@ class ServerProjectPickerDialog extends AlertDialog implements DialogInterface.O
 		if (which == BUTTON_POSITIVE && mListener != null) {
 			Server server = (Server) mServerSelector.getSelectedItem();
 			Project project = (Project) mProjectSelector.getSelectedItem();
-			mListener.onServerProjectPicked(server, project);
+			mListener.onServerProjectPicked(mDesiredSelection, server, project);
 		}
 	}
 

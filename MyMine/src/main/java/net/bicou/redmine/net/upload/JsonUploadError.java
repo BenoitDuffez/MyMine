@@ -2,6 +2,7 @@ package net.bicou.redmine.net.upload;
 
 import android.app.Activity;
 import android.view.ViewGroup;
+
 import net.bicou.redmine.net.JsonNetworkError;
 
 /**
@@ -26,7 +27,14 @@ public class JsonUploadError extends JsonNetworkError {
 	@Override
 	public void displayCrouton(final Activity activity, final ViewGroup viewGroup) {
 		switch (mErrorType) {
+		//TODO
+		}
+	}
 
+	@Override
+	public void displayCrouton(final Activity activity, final int viewGroup) {
+		switch (mErrorType) {
+		//TODO
 		}
 	}
 }

@@ -4,9 +4,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ssl.SupportSSLKeyManager;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.CalendarDeserializer;
+import net.bicou.redmine.data.json.Version;
+import net.bicou.redmine.data.json.VersionStatusDeserializer;
 import net.bicou.redmine.net.ssl.KeyStoreDiskStorage;
 import net.bicou.redmine.net.ssl.MyMineSSLSocketFactory;
 import net.bicou.redmine.net.ssl.MyMineSSLTrustManager;
@@ -45,6 +52,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -142,6 +150,63 @@ public abstract class JsonNetworkManager {
 		ArrayList<NameValuePair> argsList = new ArrayList<NameValuePair>();
 		Collections.addAll(argsList, args);
 		init(context, server, queryPath, argsList);
+	}
+
+	boolean mStripJsonContainer = false;
+
+	/**
+	 * Basic setter
+	 *
+	 * @param stripJsonContainer Whether the main JSON container should be stripped before any parsing attempt is made
+	 */
+	protected void setStripJsonContainer(final boolean stripJsonContainer) {
+		mStripJsonContainer = stripJsonContainer;
+	}
+
+	/**
+	 * Actually strip the JSON container
+	 *
+	 * @param json Input JSON string
+	 *
+	 * @return Output JSON string, stripped from its main container
+	 */
+	public String stripJsonContainer(final String json) {
+		final int start = json.indexOf(":") + 1;
+		final int end = json.lastIndexOf("}");
+		return json.substring(start, end);
+	}
+
+	/**
+	 * This code only wraps a Gson object with the required deserializers
+	 *
+	 * @param json Input JSON string
+	 * @param type Output object type
+	 *
+	 * @return The object created by the Gson API
+	 */
+	public static <T> T gsonParse(String json, Class<T> type) {
+		T object = null;
+
+		try {
+			final GsonBuilder builder = new GsonBuilder();
+			builder.registerTypeAdapter(Calendar.class, new CalendarDeserializer());
+			builder.registerTypeAdapter(Version.VersionStatus.class, new VersionStatusDeserializer());
+			final Gson gson = builder.create();
+
+			object = gson.fromJson(json, type);
+		} catch (final JsonSyntaxException e) {
+			L.e("Unparseable JSON is:");
+			L.e(json);
+		} catch (final IllegalStateException e) {
+			L.e("Unparseable JSON is:");
+			L.e(json);
+		} catch (final Exception e) {
+			L.e("Unparseable JSON is:");
+			L.e(json);
+			L.e("Unable to parse JSON", e);
+		}
+
+		return object;
 	}
 
 	/**

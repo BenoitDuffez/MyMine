@@ -42,6 +42,21 @@ public class JsonDownloadError extends JsonNetworkError {
 			return;
 		}
 
+		final String message = getMessage(activity);
+		Crouton.makeText(activity, message, Style.ALERT, viewGroup).show();
+	}
+
+	@Override
+	public void displayCrouton(Activity activity, int viewGroup) {
+		if (activity == null) {
+			return;
+		}
+
+		final String message = getErrorMessage(activity);
+		Crouton.makeText(activity, message, Style.ALERT, viewGroup).show();
+	}
+
+	private String getErrorMessage(Activity activity) {
 		final String message;
 		switch (errorType) {
 		case TYPE_NETWORK:
@@ -71,6 +86,6 @@ public class JsonDownloadError extends JsonNetworkError {
 			break;
 		}
 
-		Crouton.makeText(activity, message, Style.ALERT, viewGroup).show();
+		return message;
 	}
 }

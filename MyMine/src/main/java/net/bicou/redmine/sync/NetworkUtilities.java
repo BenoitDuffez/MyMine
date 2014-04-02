@@ -40,7 +40,7 @@ final public class NetworkUtilities {
 	 */
 	public static User whoAmI(final Context ctx, final Server server) {
 		return new JsonDownloader<User>(User.class) //
-				.setStripJsonContainer(true) //
+				.stripJsonContainer(true) //
 				.fetchObject(ctx, server, "users/current.json");
 	}
 
@@ -155,7 +155,7 @@ final public class NetworkUtilities {
 	public static Project syncProjectTrackers(Context ctx, Server server, Project project) {
 		String uri = "projects/" + project.id + ".json";
 		NameValuePair[] args = { new BasicNameValuePair("include", "trackers") };
-		return new JsonDownloader<Project>(Project.class).setStripJsonContainer(true).fetchObject(ctx, server, uri, args);
+		return new JsonDownloader<Project>(Project.class).stripJsonContainer(true).fetchObject(ctx, server, uri, args);
 	}
 
 

@@ -25,6 +25,8 @@ public abstract class JsonNetworkError {
 
 	public abstract void displayCrouton(Activity activity, ViewGroup viewGroup);
 
+	public abstract void displayCrouton(Activity activity, int viewGroup);
+
 	public JsonNetworkError() {
 	}
 
@@ -49,6 +51,7 @@ public abstract class JsonNetworkError {
 	 * This method will provide details regarding the error that happened
 	 *
 	 * @param ctx Used to get strings from resources
+	 *
 	 * @return Error details, if possible
 	 */
 	public

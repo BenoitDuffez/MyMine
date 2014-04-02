@@ -152,7 +152,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		IssuesDbAdapter idb = new IssuesDbAdapter(sdb);
 
 		String uri = "issues/" + args.getLong(Constants.KEY_ISSUE_ID) + ".json";
-		JsonDownloader<Issue> downloader = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true);
+		JsonDownloader<Issue> downloader = new JsonDownloader<Issue>(Issue.class).stripJsonContainer(true);
 		issue = downloader.fetchObject(context, server, uri);
 
 		if (issue != null) {
@@ -286,7 +286,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		String textile = issue.description;
 
 		JsonNetworkError error = null;
-		JsonDownloader<Issue> downloader = new JsonDownloader<Issue>(Issue.class).setStripJsonContainer(true);
+		JsonDownloader<Issue> downloader = new JsonDownloader<Issue>(Issue.class).stripJsonContainer(true);
 		Issue issueWithAttns = downloader.fetchObject(context, issue.server, url, args);
 		if (issueWithAttns != null) {
 			issueWithAttns.server = issue.server;
