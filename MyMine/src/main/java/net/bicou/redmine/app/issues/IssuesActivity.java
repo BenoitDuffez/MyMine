@@ -27,6 +27,7 @@ import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.issues.edit.EditIssueActivity;
+import net.bicou.redmine.app.issues.edit.IssuePickerFragment;
 import net.bicou.redmine.app.issues.edit.IssueUploader;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerDialog;
 import net.bicou.redmine.app.issues.edit.ServerProjectPickerFragment;
@@ -35,6 +36,7 @@ import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment.IssuesOrderSelectionListener;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.FileUpload;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
 import net.bicou.redmine.data.json.Query;
@@ -56,7 +58,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks,
-		ServerProjectPickerFragment.ServerProjectSelectionListener {
+		ServerProjectPickerFragment.ServerProjectSelectionListener, IssuePickerFragment.IssueSelectionListener {
 	// Both of these are used for file uploading
 	public static final int REQUEST_FILE_CHOOSER = 1337;
 	private static final String EXTRA_FILE_PATH = "net.bicou.redmine.app.issues.UploadFilePath";
@@ -75,6 +77,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_ISSUE_TOGGLE_FAVORITE = 6;
 	public static final int ACTION_GET_NAVIGATION_SPINNER_DATA = 7;
 	public static final int ACTION_UPLOAD_FILE = 8;
+	private FileUpload mUploadedFile;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -199,14 +202,6 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		newFragment.show(getSupportFragmentManager(), "serverPicker");
 	}
 
-	/**
-	 * Used when attachment was uploaded: need to link it to an issue
-	 */
-	private void showIssuePickerDialog() {
-//		DialogFragment newFragment = IssuePickerFragment.newInstance();
-//		newFragment.show(getSupportFragmentManager(), "serverPicker");
-	}
-
 	@Override
 	public void onServerProjectPicked(final ServerProjectPickerDialog.DesiredSelection desiredSelection, final Server server, final Project project) {
 		switch (desiredSelection) {
@@ -224,6 +219,26 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			break;
 		}
+	}
+
+	/**
+	 * Used when attachment was uploaded: need to link it to an issue
+	 */
+	private void showIssuePickerDialog() {
+		DialogFragment newFragment = IssuePickerFragment.newInstance();
+		newFragment.show(getSupportFragmentManager(), "issuePicker");
+	}
+
+	@Override
+	public void onServerProjectPicked(long issueId) {
+		Bundle args = new Bundle();
+		// TODO:
+		// put file token and issue id in the bundle
+		// launch an atf.runtask with it
+		// inside the atf load the issue db
+		// create issue serializer
+		// upload
+		// profit
 	}
 
 	@Override
@@ -588,6 +603,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 				((JsonNetworkError) result).displayCrouton(this, getCroutonHolder());
 			} else {
 				L.i("Congratulations, it's a file! " + result);
+				mUploadedFile = (FileUpload) result;
+				showIssuePickerDialog();
 			}
 			break;
 		}

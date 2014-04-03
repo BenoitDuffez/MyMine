@@ -185,9 +185,15 @@
 
     <string name="menu_issues_add">Add new issue</string>
     <string name="issue_menu_edit">Edit issue</string>
-    <string name="menu_issue_upload_attn">Upload attn.</string>
+    <string name="menu_issue_upload_attn">Upload attachment</string>
     <string name="menu_issue_delete">Delete issue</string>
     <string name="menu_issue_edit_project">Change project</string>
+
+	<!--Issue attachments-->
+	<string name="issue_attn_select_issue_dialog_title">To which issue link this attn?</string>
+	<string name="issue_attn_select_issue">Select issue:</string>
+	<string name="issue_attn_select_file_failed">Unable to select this file: %1$s</string>
+	<string name="issue_attn_select_file_invalid_path">Invalid file path. Please select a valid file.</string>
 
     <!-- Project -->
     <string name="project_created_on">
@@ -383,7 +389,5 @@
 	<string name="projects_sync_empty">There are no projects synced. Please run a full sync before going here.</string>
 	<string name="projects_sync_saving">Applying your changes&#8230;</string>
 	<string name="menu_donate">Donate</string>
-	<string name="issue_attn_select_file_failed">Unable to select this file: %1$s</string>
-	<string name="issue_attn_select_file_invalid_path">Invalid file path. Please select a valid file.</string>
 
 </resources>

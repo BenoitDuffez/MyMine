@@ -67,4 +67,8 @@ public abstract class JsonNetworkError {
 			return mErrorMessage;
 		}
 	}
+
+	public String toString() {
+		return getClass().getSimpleName() + " { message: " + mErrorMessage + ", exception: " + exception + ", HTTP response: " + httpResponseCode + ", json: " + json + " }";
+	}
 }

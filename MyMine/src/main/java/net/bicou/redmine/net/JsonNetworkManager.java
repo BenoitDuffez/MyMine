@@ -319,6 +319,7 @@ public abstract class JsonNetworkManager {
 		InputStream inputStream = null;
 		final StringBuilder builder = new StringBuilder();
 		String json = null;
+		int statusCode = 0;
 
 		try {
 			buildURI();
@@ -347,7 +348,7 @@ public abstract class JsonNetworkManager {
 			final HttpResponse resp = httpClient.execute(req);
 
 			// Check result
-			final int statusCode = resp.getStatusLine().getStatusCode();
+			statusCode = resp.getStatusLine().getStatusCode();
 			if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED) {
 				L.d("Got HTTP " + statusCode + ": " + resp.getStatusLine().getReasonPhrase());
 				mError = new JsonDownloadError(JsonDownloadError.ErrorType.TYPE_NETWORK);
@@ -409,8 +410,8 @@ public abstract class JsonNetworkManager {
 			}
 		}
 
-		// Edit json?
-		if (mStripJsonContainer) {
+		// Edit json? (only if valid response)
+		if (mStripJsonContainer && statusCode >= 200 && statusCode < 300) {
 			L.d("The JSON was striped from its main container");
 			json = stripJsonContainer(json);
 		}
