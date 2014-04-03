@@ -54,7 +54,7 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {
 		if (which == BUTTON_POSITIVE && mListener != null) {
-			mListener.onServerProjectPicked(getIssueId());
+			mListener.onIssuePicked(getIssueId());
 		}
 	}
 

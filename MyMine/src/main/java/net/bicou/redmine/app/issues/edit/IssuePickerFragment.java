@@ -11,7 +11,7 @@ import net.bicou.redmine.app.ga.TrackedDialogFragment;
  */
 public class IssuePickerFragment extends TrackedDialogFragment {
 	public interface IssueSelectionListener {
-		public void onServerProjectPicked(long issueId);
+		public void onIssuePicked(long issueId);
 	}
 
 	public static IssuePickerFragment newInstance() {

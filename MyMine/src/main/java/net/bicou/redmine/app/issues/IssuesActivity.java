@@ -53,6 +53,7 @@ import net.bicou.splitactivity.SplitActivity;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.ArrayList;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -77,6 +78,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_ISSUE_TOGGLE_FAVORITE = 6;
 	public static final int ACTION_GET_NAVIGATION_SPINNER_DATA = 7;
 	public static final int ACTION_UPLOAD_FILE = 8;
+	public static final int ACTION_LINK_UPLOADED_FILE_TO_ISSUE = 9;
 	private FileUpload mUploadedFile;
 
 	@Override
@@ -230,15 +232,13 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	}
 
 	@Override
-	public void onServerProjectPicked(long issueId) {
+	public void onIssuePicked(long issueId) {
 		Bundle args = new Bundle();
-		// TODO:
-		// put file token and issue id in the bundle
-		// launch an atf.runtask with it
-		// inside the atf load the issue db
-		// create issue serializer
-		// upload
-		// profit
+		args.putLong(Constants.KEY_ISSUE_ID, issueId);
+		args.putString(FileUpload.EXTRA_TOKEN, mUploadedFile.token);
+		args.putString(FileUpload.EXTRA_FILENAME, mUploadedFile.filename);
+		args.putParcelable(Constants.KEY_SERVER, mUploadTarget);
+		AsyncTaskFragment.runTask(this, ACTION_LINK_UPLOADED_FILE_TO_ISSUE, args);
 	}
 
 	@Override
@@ -513,7 +513,33 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			File file = new File(path);
 			Object fileUpload = new FileUploader().uploadFile(this, mUploadTarget, file);
 			L.d("Uploaded " + path + ", result: " + fileUpload);
+			// Enrich object if we can
+			if (fileUpload instanceof FileUpload) {
+				((FileUpload) fileUpload).filename = path.substring(path.lastIndexOf("/") + 1);
+			}
 			return fileUpload;
+
+		case ACTION_LINK_UPLOADED_FILE_TO_ISSUE:
+			// Retrieve FileUpload object
+			Bundle params = (Bundle) parameters;
+			FileUpload upload = new FileUpload();
+			upload.token = params.getString(FileUpload.EXTRA_TOKEN);
+			upload.filename = params.getString(FileUpload.EXTRA_FILENAME);
+
+			// Retrieve Issue object
+			Server server = (Server) params.getParcelable(Constants.KEY_SERVER);
+			IssuesDbAdapter uidb = new IssuesDbAdapter(applicationContext);
+			uidb.open();
+			Issue issueUpload = uidb.select(server, params.getLong(Constants.KEY_ISSUE_ID), null);
+			uidb.close();
+
+			// Link the two
+			issueUpload.uploads = new ArrayList<FileUpload>();
+			issueUpload.uploads.add(upload);
+
+			Bundle uploadArgs = new Bundle();
+			uploadArgs.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(issueUpload, Issue.class));
+			return IssueUploader.uploadIssue(applicationContext, uploadArgs);
 		}
 
 		return null;
@@ -580,6 +606,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			break;
 
+		case ACTION_LINK_UPLOADED_FILE_TO_ISSUE:
 		case ACTION_UPLOAD_ISSUE:
 			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
 			break;

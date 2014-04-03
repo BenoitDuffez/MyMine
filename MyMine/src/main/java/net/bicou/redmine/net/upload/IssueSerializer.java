@@ -2,6 +2,10 @@ package net.bicou.redmine.net.upload;
 
 import android.content.Context;
 import android.text.TextUtils;
+
+import com.google.gson.Gson;
+
+import net.bicou.redmine.data.json.FileUpload;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 

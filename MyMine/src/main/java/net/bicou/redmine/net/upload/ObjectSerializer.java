@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import java.util.Map;
  */
 public abstract class ObjectSerializer<T> {
 	private static final String DATE_TEMPLATE = "yyyy-MM-dd";//'T'HH:mm:ssZ";
+	SimpleDateFormat sdf = new SimpleDateFormat(DATE_TEMPLATE, Locale.ENGLISH);
 
 	private enum FieldChange {
 		NO_CHANGE,
@@ -119,7 +121,6 @@ public abstract class ObjectSerializer<T> {
 	 * Converts the HashMap of fields into a json representation
 	 */
 	private String buildJson(final HashMap<String, Object> fields) {
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_TEMPLATE, Locale.ENGLISH);
 		Iterator<String> iterator = fields.keySet().iterator();
 		Object item;
 		String key;
@@ -157,7 +158,7 @@ public abstract class ObjectSerializer<T> {
 		} else if (item instanceof Calendar) {
 			return String.format(Locale.ENGLISH, "\"%s\"", sdf.format(((Calendar) item).getTime()));
 		} else if (item instanceof Boolean) {
-			return (Boolean) item;
+			return ((Boolean) item).toString();
 		} else if (item instanceof List) {
 			String json = "[";
 			boolean isFirst = true;
@@ -174,7 +175,7 @@ public abstract class ObjectSerializer<T> {
 		} else {
 			try {
 				Field id = item.getClass().getField("id");
-				return (Long) id.get(item);
+				return ((Long) id.get(item)).toString();
 			} catch (NoSuchFieldException e) {
 				L.e("Unhandled native type: " + item.getClass(), e);
 			} catch (IllegalAccessException e) {

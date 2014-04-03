@@ -41,6 +41,11 @@ public class Issue {
 	public Project project;
 	public boolean is_favorite;
 
+	/**
+	 * Used when linking an uploaded file with this issue
+	 */
+	public List<FileUpload> uploads;
+
 	public Issue(Server server, Project project) {
 		this.server = server;
 		this.project = project;
