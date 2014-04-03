@@ -138,30 +138,50 @@ public abstract class ObjectSerializer<T> {
 
 			json += "\"" + key + "\":";
 
-			if (item instanceof Integer || item instanceof Long) {
-				json += String.format(Locale.ENGLISH, "%d", ((Number) item).longValue());
-			} else if (item instanceof Float || item instanceof Double) {
-				json += String.format(Locale.ENGLISH, "%.2f", ((Number) item).doubleValue());
-			} else if (item instanceof String) {
-				json += String.format(Locale.ENGLISH, "\"%s\"", ((String) item).replace("\"", "\\\"").replace("\n", "\\n"));
-			} else if (item instanceof Calendar) {
-				json += String.format(Locale.ENGLISH, "\"%s\"", sdf.format(((Calendar) item).getTime()));
-			} else if (item instanceof Boolean) {
-				json += (Boolean) item;
-			} else {
-				try {
-					Field id = item.getClass().getField("id");
-					json += (Long) id.get(item);
-				} catch (NoSuchFieldException e) {
-					L.e("Unhandled native type: " + item.getClass(), e);
-				} catch (IllegalAccessException e) {
-					L.e("Shouldn't happen", e);
-				}
-			}
 		}
 		json += "}}";
 
 		return json;
+	}
+
+	/**
+	 * Used to serialize one value. Override this to implement custom serialized types.
+	 */
+	protected String serializeField(Object item) {
+		if (item instanceof Integer || item instanceof Long) {
+			return String.format(Locale.ENGLISH, "%d", ((Number) item).longValue());
+		} else if (item instanceof Float || item instanceof Double) {
+			return String.format(Locale.ENGLISH, "%.2f", ((Number) item).doubleValue());
+		} else if (item instanceof String) {
+			return String.format(Locale.ENGLISH, "\"%s\"", ((String) item).replace("\"", "\\\"").replace("\n", "\\n"));
+		} else if (item instanceof Calendar) {
+			return String.format(Locale.ENGLISH, "\"%s\"", sdf.format(((Calendar) item).getTime()));
+		} else if (item instanceof Boolean) {
+			return (Boolean) item;
+		} else if (item instanceof List) {
+			String json = "[";
+			boolean isFirst = true;
+			for (Object o: (List) item) {
+				if (isFirst) {
+					isFirst = false;
+				} else {
+					json += ",";
+				}
+				json += serializeField(o);
+			}
+			json += "]";
+			return json;
+		} else {
+			try {
+				Field id = item.getClass().getField("id");
+				return (Long) id.get(item);
+			} catch (NoSuchFieldException e) {
+				L.e("Unhandled native type: " + item.getClass(), e);
+			} catch (IllegalAccessException e) {
+				L.e("Shouldn't happen", e);
+			}
+		}
+		return "\"\"";
 	}
 
 	/**

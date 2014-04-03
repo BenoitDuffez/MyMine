@@ -42,6 +42,16 @@ public class IssueSerializer extends ObjectSerializer<Issue> {
 	}
 
 	@Override
+	protected String serializeField(Object item) {
+		if (item instanceof FileUpload) {
+			// FileUpload is not complicated, just dump the fields using Gson
+			return new Gson().toJson(item);
+		} else {
+			return super.serializeField(item);
+		}
+	}
+
+	@Override
 	protected String[] getDefaultFields() {
 		return new String[] {
 				"project",
@@ -63,6 +73,8 @@ public class IssueSerializer extends ObjectSerializer<Issue> {
 				"estimated_hours",
 				"spent_hours",
 				"is_private",
+
+				"uploads",
 
 				//TODO
 				//		public List<Journal> journals;
