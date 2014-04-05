@@ -52,8 +52,8 @@ import net.bicou.splitactivity.SplitActivity;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -527,7 +527,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			upload.filename = params.getString(FileUpload.EXTRA_FILENAME);
 
 			// Retrieve Issue object
-			Server server = (Server) params.getParcelable(Constants.KEY_SERVER);
+			Server server = params.getParcelable(Constants.KEY_SERVER);
 			IssuesDbAdapter uidb = new IssuesDbAdapter(applicationContext);
 			uidb.open();
 			Issue issueUpload = uidb.select(server, params.getLong(Constants.KEY_ISSUE_ID), null);
@@ -539,7 +539,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 			Bundle uploadArgs = new Bundle();
 			uploadArgs.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(issueUpload, Issue.class));
-			return IssueUploader.uploadIssue(applicationContext, uploadArgs);
+			Object result = IssueUploader.uploadIssue(applicationContext, uploadArgs);
+			L.d("link file/issue: " + result);
+			return result;
 		}
 
 		return null;

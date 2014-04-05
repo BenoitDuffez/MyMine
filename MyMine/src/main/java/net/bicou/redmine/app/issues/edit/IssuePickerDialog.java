@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -16,7 +17,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.ActionBarFragmentActivity;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.util.L;
 
@@ -45,10 +45,16 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 		setTitle(context.getString(R.string.issue_attn_select_issue_dialog_title));
 
 		mIssueSelector = (Spinner) view.findViewById(R.id.issue_attn_issue_picker);
+	}
 
+	@Override
+	public void onAttachedToWindow() {
+		super.onAttachedToWindow();
 		mAdapter = new IssuesCursorAdapter(getOwnerActivity());
 		mIssueSelector.setAdapter(mAdapter);
-		((ActionBarFragmentActivity) getOwnerActivity()).getSupportLoaderManager().initLoader(ACTION_LOAD_ISSUES, null, this);
+		FragmentActivity ownerActivity = (FragmentActivity) getOwnerActivity();
+		LoaderManager supportLoaderManager = ownerActivity.getSupportLoaderManager();
+		supportLoaderManager.initLoader(ACTION_LOAD_ISSUES, null, this);
 	}
 
 	@Override
@@ -98,7 +104,7 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 		}
 	}
 
-	public class IssuesCursorLoader extends CursorLoader {
+	public static class IssuesCursorLoader extends CursorLoader {
 		private final IssuesDbAdapter mHelper;
 
 		public IssuesCursorLoader(Context context) {
@@ -110,8 +116,8 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 		@Override
 		public Cursor loadInBackground() {
 			return mHelper.selectAllCursor(null, new String[] {
-					IssuesDbAdapter.KEY_ID,
-					IssuesDbAdapter.KEY_SUBJECT
+					IssuesDbAdapter.KEY_ID + " AS " + IssuesDbAdapter.KEY_ROWID,
+					IssuesDbAdapter.KEY_SUBJECT,
 			}, null);
 		}
 

@@ -136,8 +136,7 @@ public abstract class ObjectSerializer<T> {
 
 			key = iterator.next();
 			item = fields.get(key);
-
-			json += "\"" + key + "\":";
+			json += "\"" + key + "\":" + serializeField(item);
 
 		}
 		json += "}}";
@@ -158,7 +157,7 @@ public abstract class ObjectSerializer<T> {
 		} else if (item instanceof Calendar) {
 			return String.format(Locale.ENGLISH, "\"%s\"", sdf.format(((Calendar) item).getTime()));
 		} else if (item instanceof Boolean) {
-			return ((Boolean) item).toString();
+			return (Boolean) item ? "true" : "false";
 		} else if (item instanceof List) {
 			String json = "[";
 			boolean isFirst = true;
