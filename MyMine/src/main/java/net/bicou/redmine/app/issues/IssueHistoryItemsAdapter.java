@@ -23,9 +23,9 @@ import net.bicou.redmine.data.json.Journal;
 import java.util.Date;
 import java.util.Locale;
 
-class IssueHistoryItemsAdapter extends BaseAdapter {
+class IssueHistoryItemsAdapter<Type extends IssueHistory> extends BaseAdapter {
 	Issue mIssue;
-	IssueHistory mHistory;
+	Type mHistory;
 	Context mContext;
 	java.text.DateFormat mDateFormat;
 	java.text.DateFormat mTimeFormat;
@@ -35,7 +35,7 @@ class IssueHistoryItemsAdapter extends BaseAdapter {
 		ImageView avatar;
 	}
 
-	public IssueHistoryItemsAdapter(final Context context, Issue issue, IssueHistory history) {
+	public IssueHistoryItemsAdapter(final Context context, Issue issue, Type history) {
 		mIssue = issue;
 		mHistory = history;
 		mContext = context;

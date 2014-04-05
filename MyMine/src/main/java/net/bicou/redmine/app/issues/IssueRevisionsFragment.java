@@ -14,9 +14,9 @@ import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnim
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ga.TrackedListFragment;
 import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
-import net.bicou.redmine.app.issues.IssueHistoryDownloadTask.JournalsDownloadCallbacks;
 import net.bicou.redmine.data.json.Issue;
-import net.bicou.redmine.data.json.IssueHistory;
+import net.bicou.redmine.data.json.IssueJournal;
+import net.bicou.redmine.data.json.IssueRevisions;
 import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.util.L;
 
@@ -28,18 +28,18 @@ import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLa
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
-public class IssueHistoryFragment extends TrackedListFragment implements FragmentActivationListener {
-	private IssueHistoryDownloadTask mUpdateTask;
+public class IssueRevisionsFragment extends TrackedListFragment implements FragmentActivationListener {
+	private IssueRevisionsDownloadTask mUpdateTask;
 	private Issue mIssue;
 	TextView mEmptyView;
 	ViewGroup mLayout;
 
-	private IssueHistory mHistory;
-	private static final String HISTORY_DATA = "net.bicou.redmine.app.issues.History";
+	private IssueRevisions mRevisions;
+	private static final String REVISIONS_DATA = "net.bicou.redmine.app.issues.History.Revisions";
 	private PullToRefreshLayout mPullToRefreshLayout;
 
-	public static IssueHistoryFragment newInstance(final Bundle args) {
-		final IssueHistoryFragment f = new IssueHistoryFragment();
+	public static IssueRevisionsFragment newInstance(final Bundle args) {
+		final IssueRevisionsFragment f = new IssueRevisionsFragment();
 		f.setArguments(args);
 		return f;
 	}
@@ -48,15 +48,15 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mIssue = new Gson().fromJson(getArguments().getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
 
-		mLayout = (ViewGroup) inflater.inflate(R.layout.frag_issue_journal, container, false);
+		mLayout = (ViewGroup) inflater.inflate(R.layout.frag_issue_journal_revisions, container, false);
 		mEmptyView = (TextView) mLayout.findViewById(android.R.id.empty);
 
 		if (savedInstanceState != null) {
 			try {
-				Type type = new TypeToken<IssueHistory>() {}.getType();
-				mHistory = new Gson().fromJson(savedInstanceState.getString(HISTORY_DATA), type);
+				Type type = new TypeToken<IssueJournal>() {}.getType();
+				mRevisions = new Gson().fromJson(savedInstanceState.getString(REVISIONS_DATA), type);
 			} catch (Exception e) {
-				L.e("Unable to deserialize saved issue history", e);
+				L.e("Unable to deserialize saved issue revisions", e);
 			}
 		}
 
@@ -80,7 +80,7 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 				.listener(new OnRefreshListener() {
 					@Override
 					public void onRefreshStarted(View view) {
-						refreshIssueHistory();
+						refreshIssueRevisions();
 					}
 				})
 						// Finally commit the setup to our PullToRefreshLayout
@@ -90,16 +90,16 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 	@Override
 	public void onResume() {
 		super.onResume();
-		setHistory(mHistory);
+		setRevisions(mRevisions);
 	}
 
-	void setHistory(final IssueHistory history) {
+	void setRevisions(final IssueRevisions revisions) {
 		mUpdateTask = null;
-		mHistory = history;
-		if (mHistory == null || mHistory.journals == null || mHistory.journals.size() <= 0) {
+		mRevisions = revisions;
+		if (mRevisions == null || mRevisions.changesets == null || mRevisions.changesets.size() <= 0) {
 			mEmptyView.setText(R.string.issue_history_none);
 		} else {
-			final IssueHistoryItemsAdapter journalAdapter = new IssueHistoryItemsAdapter(getActivity(), mIssue, mHistory);
+			final IssueHistoryItemsAdapter journalAdapter = new IssueHistoryItemsAdapter<IssueRevisions>(getActivity(), mIssue, mRevisions);
 			final SwingBottomInAnimationAdapter adapter = new SwingBottomInAnimationAdapter(journalAdapter);
 
 			try {
@@ -116,25 +116,25 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 	@Override
 	public void onFragmentActivated() {
 		if ((mIssue == null || mIssue.journals == null) && mUpdateTask == null) {
-			refreshIssueHistory();
+			refreshIssueRevisions();
 		}
 	}
 
-	private void refreshIssueHistory() {
-		mUpdateTask = new IssueHistoryDownloadTask((ActionBarActivity) getActivity(), new JournalsDownloadCallbacks() {
+	private void refreshIssueRevisions() {
+		mUpdateTask = new IssueRevisionsDownloadTask((ActionBarActivity) getActivity(), new IssueRevisionsDownloadTask.RevisionsDownloadCallbacks() {
 			@Override
 			public void onPreExecute() {
 				mEmptyView.setText(R.string.loading);
 			}
 
 			@Override
-			public void onJournalsDownloaded(final IssueHistory history) {
+			public void onRevisionsDownloaded(final IssueRevisions revisions) {
 				mPullToRefreshLayout.setRefreshComplete();
-				setHistory(history);
+				setRevisions(revisions);
 			}
 
 			@Override
-			public void onJournalsFailed(final JsonNetworkError error) {
+			public void onRevisionsDownloadFailed(final JsonNetworkError error) {
 				mPullToRefreshLayout.setRefreshComplete();
 				if (error == null) {
 					Crouton.makeText(getActivity(), R.string.issue_journal_cant_download, Style.ALERT, mLayout).show();
@@ -149,6 +149,6 @@ public class IssueHistoryFragment extends TrackedListFragment implements Fragmen
 	@Override
 	public void onSaveInstanceState(final Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putString(HISTORY_DATA, new Gson().toJson(mHistory));
+		outState.putString(REVISIONS_DATA, new Gson().toJson(mRevisions));
 	}
 }

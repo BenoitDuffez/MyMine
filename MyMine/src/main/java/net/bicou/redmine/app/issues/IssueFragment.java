@@ -35,8 +35,9 @@ public class IssueFragment extends TrackedFragment {
 
 	private static final int NB_TABS = 3;
 	public static final int FRAGMENT_OVERVIEW = 0;
-	public static final int FRAGMENT_HISTORY = 1;
-	public static final int FRAGMENT_ATTACHMENTS = 2;
+	public static final int FRAGMENT_JOURNAL = 1;
+	public static final int FRAGMENT_REVISIONS = 2;
+	public static final int FRAGMENT_ATTACHMENTS = 3;
 	private static final String[] TAB_TITLES = new String[NB_TABS];
 
 	public interface FragmentActivationListener {
@@ -93,8 +94,11 @@ public class IssueFragment extends TrackedFragment {
 			case FRAGMENT_OVERVIEW:
 				mFragments[position] = IssueOverviewFragment.newInstance(args);
 				break;
-			case FRAGMENT_HISTORY:
-				mFragments[position] = IssueHistoryFragment.newInstance(args);
+			case FRAGMENT_JOURNAL:
+				mFragments[position] = IssueJournalFragment.newInstance(args);
+				break;
+			case FRAGMENT_REVISIONS:
+				mFragments[position] = IssueRevisionsFragment.newInstance(args);
 				break;
 			case FRAGMENT_ATTACHMENTS:
 				mFragments[position] = IssueAttachmentsFragment.newInstance(args);
@@ -116,6 +120,7 @@ public class IssueFragment extends TrackedFragment {
 		int i = 0;
 		TAB_TITLES[i++] = getString(R.string.issue_overview_title);
 		TAB_TITLES[i++] = getString(R.string.issue_journal_title);
+		TAB_TITLES[i++] = getString(R.string.issue_revisions_title);
 		TAB_TITLES[i++] = getString(R.string.issue_attachments_title);
 
 		final Bundle args = new Bundle();
