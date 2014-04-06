@@ -10,8 +10,8 @@ import com.google.gson.Gson;
 
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.issue.IssueFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
+import net.bicou.redmine.app.issues.issue.IssueFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.ErrorsList;
 import net.bicou.redmine.data.json.Issue;
@@ -95,8 +95,12 @@ public class IssueUploader {
 
 		// Don't fail this, it may be because the Activity has been closed while we where uploading. Doesn't matter.
 		try {
+			// Do nothing, we expect the caller to handle an empty response by itself
+			if (args == null) {
+				L.i("The server returned an empty response, while we expected to have issue details. Nevermind.");
+			}
 			// Re-open the edit issue activity
-			if (args.containsKey(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON)) {
+			else if (args.containsKey(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON)) {
 				Intent intent = new Intent(resultHolder, EditIssueActivity.class);
 				intent.putExtra(IssueFragment.KEY_ISSUE_JSON, params.getString(IssueFragment.KEY_ISSUE_JSON));
 				intent.putExtra(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON, args.getString(KEY_SHOW_ISSUE_UPLOAD_ERROR_CROUTON));
@@ -169,6 +173,9 @@ public class IssueUploader {
 		else if (params != null) {
 			// Retrieve server (used to display the issue later on)
 			Issue uploadedIssue = new Gson().fromJson(params.getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
+			if (uploadedIssue == null) {
+				return null;
+			}
 			Server server = uploadedIssue.server;
 
 			// Retrieve the issue as understood by the server

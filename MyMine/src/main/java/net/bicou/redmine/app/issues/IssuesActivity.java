@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -265,6 +266,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		args.putString(FileUpload.EXTRA_TOKEN, mUploadedFile.token);
 		args.putString(FileUpload.EXTRA_FILENAME, mUploadedFile.filename);
 		args.putParcelable(Constants.KEY_SERVER, mUploadTarget);
+		// SERVER_ID is required because at the end we will call #selectContent with this bundle, and IssueFragment requires it
+		args.putLong(Constants.KEY_SERVER_ID, mUploadTarget.rowId);
 		AsyncTaskFragment.runTask(this, ACTION_LINK_UPLOADED_FILE_TO_ISSUE, args);
 	}
 
@@ -541,7 +544,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			Object fileUpload = new FileUploader().uploadFile(this, mUploadTarget, file);
 			L.d("Uploaded " + path + ", result: " + fileUpload);
 			// Enrich object if we can
-			if (fileUpload instanceof FileUpload) {
+			if (fileUpload instanceof FileUpload && path != null) {
 				((FileUpload) fileUpload).filename = path.substring(path.lastIndexOf("/") + 1);
 			}
 			return fileUpload;
@@ -646,8 +649,18 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			break;
 
 		case ACTION_LINK_UPLOADED_FILE_TO_ISSUE:
+			// When linking an issue with an attachment, the server doesn't send back the full issue, but an empty string
+			if (result instanceof String && TextUtils.isEmpty((String) result)) {
+				selectContent((Bundle) parameters);
+			} else if (result instanceof JsonNetworkError) {
+				((JsonNetworkError) result).displayCrouton(this, getCroutonHolder());
+			} else {
+				L.e("Unexpected app state", null);
+			}
+			break;
 		case ACTION_UPLOAD_ISSUE:
 			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
+
 			break;
 
 		case ACTION_ISSUE_TOGGLE_FAVORITE:
