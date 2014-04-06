@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.issue;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +25,7 @@ import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ga.TrackedFragment;
+import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.app.wiki.WikiPageLoader;
 import net.bicou.redmine.app.wiki.WikiUtils;
 import net.bicou.redmine.data.Server;

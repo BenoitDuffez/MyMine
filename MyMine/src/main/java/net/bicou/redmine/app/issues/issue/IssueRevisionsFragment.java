@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.issue;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -13,7 +13,7 @@ import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnim
 
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ga.TrackedListFragment;
-import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
+import net.bicou.redmine.app.issues.issue.IssueFragment.FragmentActivationListener;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueJournal;
 import net.bicou.redmine.data.json.IssueRevisions;

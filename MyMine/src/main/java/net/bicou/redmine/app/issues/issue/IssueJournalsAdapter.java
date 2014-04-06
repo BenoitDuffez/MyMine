@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.issue;
 
 import android.content.Context;
 import android.text.TextUtils;

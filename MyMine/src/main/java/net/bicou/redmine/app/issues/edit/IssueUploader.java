@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
-import net.bicou.redmine.app.issues.IssueFragment;
+import net.bicou.redmine.app.issues.issue.IssueFragment;
 import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.ErrorsList;

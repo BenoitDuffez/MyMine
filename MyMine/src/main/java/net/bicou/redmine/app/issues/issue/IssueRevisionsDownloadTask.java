@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.issue;
 
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;

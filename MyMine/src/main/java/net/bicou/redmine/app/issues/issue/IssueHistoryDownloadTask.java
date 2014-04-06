@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.issue;
 
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -55,7 +55,7 @@ public abstract class IssueHistoryDownloadTask<Type> extends AsyncTask<Void, Voi
 		 *
 		 * @param d the property change information
 		 *
-		 * @return a new {@link net.bicou.redmine.app.issues.IssueHistoryDownloadTask.IdPair} object, containing the previous and new IDs as long.
+		 * @return a new {@link IssueHistoryDownloadTask.IdPair} object, containing the previous and new IDs as long.
 		 */
 		public static IdPair from(JournalDetail d) {
 			if (instance == null) {

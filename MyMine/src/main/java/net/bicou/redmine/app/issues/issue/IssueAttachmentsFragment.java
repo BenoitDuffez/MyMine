@@ -1,4 +1,4 @@
-package net.bicou.redmine.app.issues;
+package net.bicou.redmine.app.issues.issue;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ga.TrackedListFragment;
-import net.bicou.redmine.app.issues.IssueFragment.FragmentActivationListener;
+import net.bicou.redmine.app.issues.IssuesActivity;
 import net.bicou.redmine.data.json.Attachment;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.util.Util;
@@ -30,7 +30,7 @@ import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshLa
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
-public class IssueAttachmentsFragment extends TrackedListFragment implements FragmentActivationListener {
+public class IssueAttachmentsFragment extends TrackedListFragment implements IssueFragment.FragmentActivationListener {
 	TextView mEmptyView;
 	ViewGroup mLayout;
 

@@ -29,7 +29,7 @@ import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.AsyncTaskFragment;
 import net.bicou.redmine.app.ga.TrackedFragment;
-import net.bicou.redmine.app.issues.IssueFragment;
+import net.bicou.redmine.app.issues.issue.IssueFragment;
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.IssueCategory;
