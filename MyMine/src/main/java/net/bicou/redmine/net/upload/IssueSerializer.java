@@ -41,6 +41,8 @@ public class IssueSerializer extends ObjectSerializer<Issue> {
 		IssuesDbAdapter db = new IssuesDbAdapter(mContext);
 		db.open();
 		Issue issue = db.select(mNewObject.server, mNewObject.id, null);
+		// Bug from Redmine: http://www.redmine.org/issues/10914
+		issue.is_private = false; // ignore this field, the server doesn't include in its reply (meaning it's always default - false)
 		db.close();
 		return issue;
 	}
