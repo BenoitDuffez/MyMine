@@ -70,7 +70,6 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	// Both of these are used for file uploading
 	public static final int REQUEST_FILE_CHOOSER = 1337;
 	private static final String EXTRA_FILE_PATH = "net.bicou.redmine.app.issues.UploadFilePath";
-	private Server mUploadTarget;
 
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
@@ -86,7 +85,11 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_GET_NAVIGATION_SPINNER_DATA = 7;
 	public static final int ACTION_UPLOAD_FILE = 8;
 	public static final int ACTION_LINK_UPLOADED_FILE_TO_ISSUE = 9;
+
 	private FileUpload mUploadedFile;
+	private Server mUploadServer;
+	private long mUploadToIssueId;
+
 	private List<Attachment> mAttachments;
 
 	@Override
@@ -202,6 +205,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		Gson gson = new Gson();
 		mUploadedFile = gson.fromJson(savedInstanceState.getString(FileUpload.EXTRA_FILE_UPLOAD), FileUpload.class);
 		mAttachments = gson.fromJson(savedInstanceState.getString(IssueFragment.KEY_ATTACHMENTS_JSON), Attachment.LIST_OF_ATTACHMENTS_TYPE);
+		mUploadToIssueId = savedInstanceState.getLong(Constants.KEY_ISSUE_ID);
 		mCurrentOrder = IssuesOrder.fromBundle(savedInstanceState);
 	}
 
@@ -211,6 +215,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		Gson gson = new Gson();
 		outState.putString(FileUpload.EXTRA_FILE_UPLOAD, gson.toJson(mUploadedFile, FileUpload.class));
 		outState.putString(IssueFragment.KEY_ATTACHMENTS_JSON, gson.toJson(mAttachments, Attachment.LIST_OF_ATTACHMENTS_TYPE));
+		outState.putLong(Constants.KEY_ISSUE_ID, mUploadToIssueId);
 		if (mCurrentOrder != null) {
 			mCurrentOrder.saveTo(outState);
 		}
@@ -236,7 +241,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public void onServerProjectPicked(final ServerProjectPickerDialog.DesiredSelection desiredSelection, final Server server, final Project project) {
 		switch (desiredSelection) {
 		case SERVER:
-			mUploadTarget = server;
+			mUploadServer = server;
 			startActivityForResult(new Intent(this, FileChooserActivity.class), REQUEST_FILE_CHOOSER);
 			break;
 
@@ -265,9 +270,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		args.putLong(Constants.KEY_ISSUE_ID, issueId);
 		args.putString(FileUpload.EXTRA_TOKEN, mUploadedFile.token);
 		args.putString(FileUpload.EXTRA_FILENAME, mUploadedFile.filename);
-		args.putParcelable(Constants.KEY_SERVER, mUploadTarget);
+		args.putParcelable(Constants.KEY_SERVER, mUploadServer);
 		// SERVER_ID is required because at the end we will call #selectContent with this bundle, and IssueFragment requires it
-		args.putLong(Constants.KEY_SERVER_ID, mUploadTarget.rowId);
+		args.putLong(Constants.KEY_SERVER_ID, mUploadServer.rowId);
 		AsyncTaskFragment.runTask(this, ACTION_LINK_UPLOADED_FILE_TO_ISSUE, args);
 	}
 
@@ -282,6 +287,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 					String path = FileUtils.getPath(this, selectedFile);
 					if (path != null && FileUtils.isLocal(path)) {
 						Bundle args = new Bundle();
+						args.putLong(Constants.KEY_ISSUE_ID, mUploadToIssueId);
 						args.putString(EXTRA_FILE_PATH, path);
 						AsyncTaskFragment.runTask(this, ACTION_UPLOAD_FILE, args);
 					} else {
@@ -348,7 +354,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return true;
 
 		case R.id.menu_issue_edit:
-			if (content != null && content instanceof IssueFragment) {
+			if (content != null) {
 				Issue issue = ((IssueFragment) content).getIssue();
 				if (issue != null) {
 					String json = new Gson().toJson(issue, Issue.class);
@@ -358,12 +364,25 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 				}
 			}
 			return true;
+
 		case R.id.menu_issue_upload_attachment:
-			showServerPickerDialog();
+			boolean needServerPicker = true;
+			if (content != null) {
+				Issue issue = ((IssueFragment) content).getIssue();
+				if (issue != null && issue.server != null) {
+					mUploadServer = issue.server;
+					needServerPicker = false;
+					mUploadToIssueId = issue.id;
+					startActivityForResult(new Intent(this, FileChooserActivity.class), REQUEST_FILE_CHOOSER);
+				}
+			}
+			if (needServerPicker) {
+				showServerPickerDialog();
+			}
 			return true;
 
 		case R.id.menu_issue_delete:
-			if (content != null && content instanceof IssueFragment) {
+			if (content != null) {
 				final Issue issue = ((IssueFragment) content).getIssue();
 				if (issue != null && issue.server != null && issue.id > 0) {
 					new AlertDialog.Builder(this).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -383,7 +402,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return true;
 
 		case R.id.menu_issue_browser:
-			if (content != null && content instanceof IssueFragment) {
+			if (content != null) {
 				Issue issue = ((IssueFragment) content).getIssue();
 				if (issue != null) {
 					String url = issue.server.serverUrl;
@@ -541,7 +560,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		case ACTION_UPLOAD_FILE:
 			String path = ((Bundle) parameters).getString(EXTRA_FILE_PATH);
 			File file = new File(path);
-			Object fileUpload = new FileUploader().uploadFile(this, mUploadTarget, file);
+			Object fileUpload = new FileUploader().uploadFile(this, mUploadServer, file);
 			L.d("Uploaded " + path + ", result: " + fileUpload);
 			// Enrich object if we can
 			if (fileUpload instanceof FileUpload && path != null) {
@@ -683,7 +702,12 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			} else {
 				L.i("Congratulations, it's a file! " + result);
 				mUploadedFile = (FileUpload) result;
-				showIssuePickerDialog();
+				Bundle params = (Bundle) parameters;
+				if (params.containsKey(Constants.KEY_ISSUE_ID) && params.getLong(Constants.KEY_ISSUE_ID, 0) > 0) {
+					onIssuePicked(params.getLong(Constants.KEY_ISSUE_ID));
+				} else {
+					showIssuePickerDialog();
+				}
 			}
 			break;
 		}
