@@ -49,7 +49,7 @@ public class IssueAttachmentsFragment extends TrackedListFragment implements Iss
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mIssue = new Gson().fromJson(getArguments().getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
-		mLayout = (ViewGroup) inflater.inflate(R.layout.frag_issue_journal, container, false);
+		mLayout = (ViewGroup) inflater.inflate(R.layout.frag_issue_journal_revisions, container, false);
 		mEmptyView = (TextView) mLayout.findViewById(android.R.id.empty);
 		return mLayout;
 	}

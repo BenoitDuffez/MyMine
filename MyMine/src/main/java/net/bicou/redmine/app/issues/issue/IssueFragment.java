@@ -33,7 +33,7 @@ public class IssueFragment extends TrackedFragment {
 
 	private IssueTabsAdapter mAdapter;
 
-	private static final int NB_TABS = 3;
+	private static final int NB_TABS = 4;
 	public static final int FRAGMENT_OVERVIEW = 0;
 	public static final int FRAGMENT_JOURNAL = 1;
 	public static final int FRAGMENT_REVISIONS = 2;

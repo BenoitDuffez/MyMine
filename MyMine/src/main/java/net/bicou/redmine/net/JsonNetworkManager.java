@@ -159,7 +159,7 @@ public abstract class JsonNetworkManager {
 	 *
 	 * @param stripJsonContainer Whether the main JSON container should be stripped before any parsing attempt is made
 	 */
-	protected void setStripJsonContainer(final boolean stripJsonContainer) {
+	public void setStripJsonContainer(final boolean stripJsonContainer) {
 		mStripJsonContainer = stripJsonContainer;
 	}
 

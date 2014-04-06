@@ -83,27 +83,6 @@ public class IssueJournalDownloadTask extends IssueHistoryDownloadTask<IssueJour
 	}
 
 	@Override
-	public IssueJournal doInBackground(final Void... params) {
-		if (mIssue == null || mIssue.server == null || mIssue.id <= 0) {
-			return null;
-		}
-
-		final IssueJournal history = downloadHistory();
-		if (history == null || history.journals == null) {
-			return null;
-		}
-
-		// Dummy DB connection that we will keep open during all the background task, in order to avoid opening/closing the DB connection all the
-		// time.
-		IssuesDbAdapter dummy = new IssuesDbAdapter(mActivity);
-		dummy.open();
-		parseJournals(history.journals, dummy);
-		dummy.close();
-
-		return history;
-	}
-
-	@Override
 	protected void onPostExecute(final IssueJournal history) {
 		if (mCallbacks != null) {
 			if (history == null || history.journals == null) {
@@ -132,7 +111,8 @@ public class IssueJournalDownloadTask extends IssueHistoryDownloadTask<IssueJour
 		final String url = String.format(Locale.ENGLISH, "issues/%d.json", mIssue.id);
 		final NameValuePair[] args = new BasicNameValuePair[] { new BasicNameValuePair("include", "journals"), };
 
-		JsonDownloader<IssueJournal> downloader = new JsonDownloader<IssueJournal>(IssueJournal.class).setStripJsonContainer(true);
+		JsonDownloader<IssueJournal> downloader = new JsonDownloader<IssueJournal>(IssueJournal.class);
+		downloader.setStripJsonContainer(true);
 		IssueJournal history = downloader.fetchObject(mActivity, mIssue.server, url, args);
 		if (history == null) {
 			mError = downloader.getError();

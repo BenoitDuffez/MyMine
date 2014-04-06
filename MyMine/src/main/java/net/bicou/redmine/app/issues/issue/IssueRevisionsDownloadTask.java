@@ -90,7 +90,8 @@ public class IssueRevisionsDownloadTask extends IssueHistoryDownloadTask<IssueRe
 		final String url = String.format(Locale.ENGLISH, "issues/%d.json", mIssue.id);
 		final NameValuePair[] args = new BasicNameValuePair[] { new BasicNameValuePair("include", "journals,changesets"), };
 
-		JsonDownloader<IssueRevisions> downloader = new JsonDownloader<IssueRevisions>(IssueRevisions.class).setStripJsonContainer(true);
+		JsonDownloader<IssueRevisions> downloader = new JsonDownloader<IssueRevisions>(IssueRevisions.class);
+		downloader.setStripJsonContainer(true);
 		IssueRevisions history = downloader.fetchObject(mActivity, mIssue.server, url, args);
 		if (history == null) {
 			mError = downloader.getError();
