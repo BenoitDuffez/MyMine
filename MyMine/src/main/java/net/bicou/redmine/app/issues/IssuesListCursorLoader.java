@@ -62,8 +62,6 @@ public final class IssuesListCursorLoader extends SimpleCursorLoader {
 			mFilter = IssuesListFilter.FILTER_ALL;
 		}
 
-		L.d("filter=" + mFilter + ", order=" + mColumnsOrder);
-
 		switch (mFilter.type) {
 		default:
 		case PROJECT:

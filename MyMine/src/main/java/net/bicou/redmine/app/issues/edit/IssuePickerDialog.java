@@ -66,7 +66,6 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 				Bundle args = new Bundle();
 				String searchTerms = v != null && !TextUtils.isEmpty(v) ? v.toString() : "";
 				new IssuesListFilter(searchTerms).saveTo(args);
-				L.i("Re-search all issues with query: " + searchTerms);
 				((FragmentActivity) getOwnerActivity()).getSupportLoaderManager().restartLoader(ACTION_LOAD_ISSUES, args, IssuePickerDialog.this);
 			}
 		});
