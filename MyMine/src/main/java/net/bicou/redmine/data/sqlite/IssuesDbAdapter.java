@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.text.TextUtils;
+
 import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.app.issues.IssuesListFilter.FilterType;
 import net.bicou.redmine.app.issues.order.OrderColumn;
@@ -390,15 +391,21 @@ public class IssuesDbAdapter extends DbAdapter {
 		final List<String> selArgs = new ArrayList<String>();
 
 		if (filter.type == FilterType.SEARCH) {
-			final String[] searchCols = new String[] {
-					TABLE_ISSUES + "." + KEY_DESCRIPTION + " LIKE '%' || ? || '%'",
-					TABLE_ISSUES + "." + KEY_SUBJECT + " LIKE '%' || ? || '%'",
-					TABLE_ISSUES + "." + KEY_ID + " LIKE '%' || ? || '%'",
-			};
-			selection.add(Util.join(searchCols, " OR "));
-			for (@SuppressWarnings("unused")
-			final String searchCol : searchCols) {
-				selArgs.add(filter.searchQuery);
+			if (filter.searchQuery == null) {
+				filter.searchQuery = "";
+			}
+			String[] terms = filter.searchQuery.split(" ");
+			for (String term : terms) {
+				final String[] searchCols = new String[] {
+						TABLE_ISSUES + "." + KEY_DESCRIPTION + " LIKE '%' || ? || '%'",
+						TABLE_ISSUES + "." + KEY_SUBJECT + " LIKE '%' || ? || '%'",
+						TABLE_ISSUES + "." + KEY_ID + " LIKE '%' || ? || '%'",
+				};
+				selection.add(Util.join(searchCols, " OR "));
+				for (@SuppressWarnings("unused")
+				final String searchCol : searchCols) {
+					selArgs.add(term);
+				}
 			}
 		}
 
@@ -472,8 +479,7 @@ public class IssuesDbAdapter extends DbAdapter {
 		return findMatchingIssues(selection, selectionArgs, columns, orderBy, null);
 	}
 
-	private Cursor findMatchingIssues(final List<String> selection, final List<String> selectionArgs, final String[] columns, final String orderBy,
-									  String groupBy) {
+	private Cursor findMatchingIssues(final List<String> selection, final List<String> selectionArgs, final String[] columns, final String orderBy, String groupBy) {
 		final List<String> tables = new ArrayList<String>();
 		final List<String> cols = new ArrayList<String>();
 		final List<String> onArgs = new ArrayList<String>();
@@ -513,7 +519,7 @@ public class IssuesDbAdapter extends DbAdapter {
 
 		String sql = "SELECT " + Util.join(cols.toArray(), ", ") + " FROM " + Util.join(tables.toArray(), " ");
 		if (selection.size() > 0) {
-			sql += " WHERE " + Util.join(selection.toArray(), " AND ");
+			sql += " WHERE (" + Util.join(selection.toArray(), ") AND (") + ")";
 		}
 
 		String[] selA;
