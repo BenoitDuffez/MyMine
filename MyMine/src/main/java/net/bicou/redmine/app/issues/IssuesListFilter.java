@@ -18,8 +18,6 @@ public class IssuesListFilter {
 		SEARCH,
 	}
 
-	;
-
 	public IssuesListFilter.FilterType type;
 	public long id;
 	public long serverId;
@@ -30,12 +28,9 @@ public class IssuesListFilter {
 	/**
 	 * Creates a filter that is not a FilterType.SEARCH
 	 *
-	 * @param serverId
-	 *            The Server ID
-	 * @param filterType
-	 *            The filter Type
-	 * @param itemId
-	 *            The filter row ID
+	 * @param serverId   The Server ID
+	 * @param filterType The filter Type
+	 * @param itemId     The filter row ID
 	 */
 	public IssuesListFilter(final long serverId, final FilterType filterType, final long itemId) {
 		this.serverId = serverId;
@@ -46,8 +41,7 @@ public class IssuesListFilter {
 	/**
 	 * Creates a FilterType.SEARCH filter
 	 *
-	 * @param search
-	 *            Search terms
+	 * @param search Search terms
 	 */
 	public IssuesListFilter(final String search) {
 		serverId = 0;
