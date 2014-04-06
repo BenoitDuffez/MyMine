@@ -3,6 +3,7 @@ package net.bicou.redmine.app.issues.edit;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -116,7 +117,14 @@ public class ServerProjectPickerDialog extends AlertDialog implements DialogInte
 		} else if (servers.size() == 1 && desiredSelection == DesiredSelection.SERVER && mListener != null) {
 			// If we just want to pick the server and there's only one, just do it
 			mListener.onServerProjectPicked(desiredSelection, servers.get(0), null);
-			dismiss();
+
+			// Ugly, but we can't #dissmis() right from the constructor...
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					dismiss();
+				}
+			}, 200);
 		}
 	}
 
