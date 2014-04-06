@@ -36,6 +36,7 @@ import net.bicou.redmine.app.issues.order.IssuesOrderingFragment;
 import net.bicou.redmine.app.issues.order.IssuesOrderingFragment.IssuesOrderSelectionListener;
 import net.bicou.redmine.app.misc.EmptyFragment;
 import net.bicou.redmine.data.Server;
+import net.bicou.redmine.data.json.Attachment;
 import net.bicou.redmine.data.json.FileUpload;
 import net.bicou.redmine.data.json.Issue;
 import net.bicou.redmine.data.json.Project;
@@ -50,6 +51,8 @@ import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
 import net.bicou.splitactivity.SplitActivity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -59,7 +62,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragment> implements AsyncTaskFragment.TaskFragmentCallbacks,
-		ServerProjectPickerFragment.ServerProjectSelectionListener, IssuePickerFragment.IssueSelectionListener {
+		ServerProjectPickerFragment.ServerProjectSelectionListener, IssuePickerFragment.IssueSelectionListener, IssueOverviewFragment.IssueAttachmentLoadListener {
 	// Both of these are used for file uploading
 	public static final int REQUEST_FILE_CHOOSER = 1337;
 	private static final String EXTRA_FILE_PATH = "net.bicou.redmine.app.issues.UploadFilePath";
@@ -80,6 +83,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_UPLOAD_FILE = 8;
 	public static final int ACTION_LINK_UPLOADED_FILE_TO_ISSUE = 9;
 	private FileUpload mUploadedFile;
+	private List<Attachment> mAttachments;
 
 	@Override
 	protected IssuesListFragment createMainFragment(Bundle args) {
@@ -186,6 +190,26 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		super.onBackPressed();
 		L.d("");
 		supportInvalidateOptionsMenu();
+	}
+
+	@Override
+	protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		Gson gson = new Gson();
+		mUploadedFile = gson.fromJson(savedInstanceState.getString(FileUpload.EXTRA_FILE_UPLOAD), FileUpload.class);
+		mAttachments = gson.fromJson(savedInstanceState.getString(IssueFragment.KEY_ATTACHMENTS_JSON), Attachment.LIST_OF_ATTACHMENTS_TYPE);
+		mCurrentOrder = IssuesOrder.fromBundle(savedInstanceState);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Gson gson = new Gson();
+		outState.putString(FileUpload.EXTRA_FILE_UPLOAD, gson.toJson(mUploadedFile, FileUpload.class));
+		outState.putString(IssueFragment.KEY_ATTACHMENTS_JSON, gson.toJson(mAttachments, Attachment.LIST_OF_ATTACHMENTS_TYPE));
+		if (mCurrentOrder != null) {
+			mCurrentOrder.saveTo(outState);
+		}
 	}
 
 	/**
@@ -477,7 +501,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			return IssueOverviewFragment.loadIssueOverview(applicationContext, (Issue) parameters);
 
 		case ACTION_ISSUE_LOAD_ATTACHMENTS:
-			return IssueOverviewFragment.loadIssueAttachments(applicationContext, (Issue) parameters);
+			return IssueOverviewFragment.loadIssueAttachments(applicationContext, (Issue) parameters, this);
 
 		case ACTION_DELETE_ISSUE:
 			return IssueUploader.deleteIssue(this, (Issue) parameters);
@@ -558,6 +582,10 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		if (action != ACTION_REFRESH_ISSUES) {
 			setSupportProgressBarIndeterminateVisibility(false);
 		}
+
+		Fragment frag;
+		IssueFragment content = getContentFragment();
+
 		switch (action) {
 		case ACTION_REFRESH_ISSUES:
 			if (getMainFragment() != null) {
@@ -565,12 +593,18 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			break;
 
+		case ACTION_ISSUE_LOAD_ATTACHMENTS:
+			if (content != null) {
+				frag = content.getFragmentFromViewPager(IssueFragment.FRAGMENT_OVERVIEW);
+				if (frag != null && frag instanceof IssueAttachmentsFragment) { // if frag is not null, it's likely a pull to refresh on the attachments tab
+					((IssueAttachmentsFragment) frag).onAttachmentsLoaded();
+				}
+			}
+			// don't break, the following must be executed also for ACTION_ISSUE_LOAD_ATTACHMENTS
 		case ACTION_ISSUE_LOAD_ISSUE:
 		case ACTION_ISSUE_LOAD_OVERVIEW:
-		case ACTION_ISSUE_LOAD_ATTACHMENTS:
-			IssueFragment content = getContentFragment();
 			if (content != null) {
-				Fragment frag = content.getFragmentFromViewPager(0);
+				frag = content.getFragmentFromViewPager(IssueFragment.FRAGMENT_OVERVIEW);
 				if (frag != null && frag instanceof IssueOverviewFragment) {
 					final IssueOverviewFragment issueOverviewFragment = (IssueOverviewFragment) frag;
 					switch (action) {
@@ -637,5 +671,14 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			break;
 		}
+	}
+
+	@Override
+	public void onAttachmentsLoaded(List<Attachment> attachments) {
+		mAttachments = attachments;
+	}
+
+	public List<Attachment> getAttachments() {
+		return mAttachments;
 	}
 }

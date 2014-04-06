@@ -1,14 +1,19 @@
 package net.bicou.redmine.data.json;
 
 import android.database.Cursor;
+
+import com.google.gson.reflect.TypeToken;
+
 import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.sqlite.DbAdapter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.data.sqlite.UsersDbAdapter;
 import net.bicou.redmine.util.L;
 
+import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Created by bicou on 16/07/13.
@@ -22,6 +27,8 @@ public class Attachment {
 	public String content_url;
 	public User author;
 	public Calendar created_on;
+
+	public static Type LIST_OF_ATTACHMENTS_TYPE= new TypeToken<List<Attachment>>() {}.getType();
 
 	public Attachment(Server server, DbAdapter db, final Cursor c) {
 		int colIndex;

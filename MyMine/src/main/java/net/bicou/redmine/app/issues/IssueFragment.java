@@ -11,7 +11,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.gson.Gson;
+
 import net.bicou.redmine.Constants;
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ga.TrackedFragment;
@@ -25,12 +27,16 @@ import java.util.Locale;
 
 public class IssueFragment extends TrackedFragment {
 	public static final String KEY_ISSUE_JSON = "net.bicou.redmine.Issue";
+	public static final String KEY_ATTACHMENTS_JSON = "net.bicou.redmine.Issue.Attachments";
 
 	private Issue mIssue;
 
 	private IssueTabsAdapter mAdapter;
 
-	private static final int NB_TABS = 2;
+	private static final int NB_TABS = 3;
+	public static final int FRAGMENT_OVERVIEW = 0;
+	public static final int FRAGMENT_HISTORY = 1;
+	public static final int FRAGMENT_ATTACHMENTS = 2;
 	private static final String[] TAB_TITLES = new String[NB_TABS];
 
 	public interface FragmentActivationListener {
@@ -52,7 +58,7 @@ public class IssueFragment extends TrackedFragment {
 			this.args = args;
 			Bundle hack = new Bundle();
 			try {
-				for (int i = 0; i < mFragments.length; i++) {
+				for (int i = 0; i < NB_TABS; i++) {
 					hack.putInt("hack", i);
 					mFragments[i] = fm.getFragment(hack, "hack");
 				}
@@ -63,7 +69,7 @@ public class IssueFragment extends TrackedFragment {
 
 		@Override
 		public int getCount() {
-			return 2;
+			return NB_TABS;
 		}
 
 		@Override
@@ -73,8 +79,7 @@ public class IssueFragment extends TrackedFragment {
 
 		/**
 		 * {{@link #getItem(int)} is a VERY bad name: it is not meant to retrieve the item, but it is meant to INSTANTIATE the item.<br /> Hence,
-		 * this method will simply
-		 * retrieve the item.
+		 * this method will simply retrieve the item.
 		 *
 		 * @return The {@code Fragment} at that position
 		 */
@@ -84,10 +89,16 @@ public class IssueFragment extends TrackedFragment {
 
 		@Override
 		public Fragment getItem(final int position) {
-			if (position == 0) {
+			switch (position) {
+			case FRAGMENT_OVERVIEW:
 				mFragments[position] = IssueOverviewFragment.newInstance(args);
-			} else {
+				break;
+			case FRAGMENT_HISTORY:
 				mFragments[position] = IssueHistoryFragment.newInstance(args);
+				break;
+			case FRAGMENT_ATTACHMENTS:
+				mFragments[position] = IssueAttachmentsFragment.newInstance(args);
+				break;
 			}
 			return mFragments[position];
 		}
@@ -105,6 +116,7 @@ public class IssueFragment extends TrackedFragment {
 		int i = 0;
 		TAB_TITLES[i++] = getString(R.string.issue_overview_title);
 		TAB_TITLES[i++] = getString(R.string.issue_journal_title);
+		TAB_TITLES[i++] = getString(R.string.issue_attachments_title);
 
 		final Bundle args = new Bundle();
 		if (getArguments() != null) {

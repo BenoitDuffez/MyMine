@@ -133,6 +133,7 @@
 
     <string name="issue_overview_title">Overview</string>
     <string name="issue_journal_title">History</string>
+    <string name="issue_attachments_title">Attachments</string>
     <string name="issue_history_none">Nothing</string>
 
     <string name="issue_journal_cant_download">Can\'t download, please check your Internet connection</string>
@@ -145,6 +146,7 @@
     <string name="issue_journal_user_anonymous">Anonymous</string>
 
     <string name="issue_changeset_revision">Revision r%1$s</string>
+    <string name="issue_attachment_filename_size">%1$s (%2$s)</string>
 
     <string name="issue_menu_open_browser">Open in browser</string>
     <string name="issues_menu_search">Search issues&#8230;</string>

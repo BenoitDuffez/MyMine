@@ -51,7 +51,8 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class IssueOverviewFragment extends TrackedFragment {
-	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mEstimatedHours, mAuthor, mParent;
+	TextView mTrackerAndId, mSubject, mStatus, mPriority, mAssignee, mCategory, mTargetVersion, mStartDate, mDueDate, mPercentDone, mSpentTime, mEstimatedHours, mAuthor,
+			mParent;
 	View mIsPrivate;
 	ImageView mAuthorAvatar;
 	CheckBox mFavorite;
@@ -61,6 +62,11 @@ public class IssueOverviewFragment extends TrackedFragment {
 	static java.text.DateFormat mTimeFormat;
 	WikiUtils.WikiWebViewClient mClient;
 	ViewGroup mMainLayout;
+	IssueAttachmentLoadListener mIssueAttachmentLoadListener;
+
+	public interface IssueAttachmentLoadListener {
+		public void onAttachmentsLoaded(List<Attachment> attachments);
+	}
 
 	public static IssueOverviewFragment newInstance(final Bundle args) {
 		final IssueOverviewFragment f = new IssueOverviewFragment();
@@ -263,6 +269,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		super.onAttach(activity);
 		mLongDateFormat = DateFormat.getLongDateFormat(activity);
 		mTimeFormat = DateFormat.getTimeFormat(activity);
+		mIssueAttachmentLoadListener = (IssueAttachmentLoadListener) activity;
 	}
 
 	public static String loadIssueOverview(Context context, Issue issue) {
@@ -277,7 +284,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		return WikiUtils.htmlFromTextile(textile);
 	}
 
-	public static Object loadIssueAttachments(Context context, Issue issue) {
+	public static Object loadIssueAttachments(Context context, Issue issue, IssueAttachmentLoadListener issueAttachmentLoadListener) {
 		IssuesDbAdapter db = new IssuesDbAdapter(context);
 		db.open();
 		String url = "issues/" + issue.id + ".json";
@@ -291,6 +298,7 @@ public class IssueOverviewFragment extends TrackedFragment {
 		if (issueWithAttns != null) {
 			issueWithAttns.server = issue.server;
 			if (issueWithAttns.attachments != null && issueWithAttns.attachments.size() > 0) {
+				issueAttachmentLoadListener.onAttachmentsLoaded(issueWithAttns.attachments);
 				for (Attachment attn : issueWithAttns.attachments) {
 					db.update(issueWithAttns, attn);
 				}

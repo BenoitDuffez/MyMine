@@ -5,6 +5,7 @@ package net.bicou.redmine.data.json;
  * Created by bicou on 02/04/2014.
  */
 public class FileUpload {
+	public static final String EXTRA_FILE_UPLOAD = "net.bicou.redmine.data.json.FileUpload";
 	public static final String EXTRA_TOKEN = "net.bicou.redmine.data.json.FileUpload.token";
 	public static final String EXTRA_FILENAME = "net.bicou.redmine.data.json.FileUpload.filename";
 
