@@ -28,7 +28,7 @@ public class Attachment {
 	public User author;
 	public Calendar created_on;
 
-	public static Type LIST_OF_ATTACHMENTS_TYPE= new TypeToken<List<Attachment>>() {}.getType();
+	public static Type LIST_OF_ATTACHMENTS_TYPE = new TypeToken<List<Attachment>>() {}.getType();
 
 	public Attachment(Server server, DbAdapter db, final Cursor c) {
 		int colIndex;
