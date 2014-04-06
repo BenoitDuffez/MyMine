@@ -7,16 +7,21 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import net.bicou.redmine.R;
+import net.bicou.redmine.app.issues.IssuesListCursorLoader;
+import net.bicou.redmine.app.issues.IssuesListFilter;
 import net.bicou.redmine.data.sqlite.IssuesDbAdapter;
 import net.bicou.redmine.util.L;
 
@@ -29,6 +34,7 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 	private IssuesCursorAdapter mAdapter;
 	IssuePickerFragment.IssueSelectionListener mListener;
 	Spinner mIssueSelector;
+	private IssuesDbAdapter mHelper;
 
 	public IssuePickerDialog(Context context) {
 		super(context);
@@ -45,16 +51,53 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 		setTitle(context.getString(R.string.issue_attn_select_issue_dialog_title));
 
 		mIssueSelector = (Spinner) view.findViewById(R.id.issue_attn_issue_picker);
+		EditText search = (EditText) view.findViewById(R.id.issue_attn_search);
+		search.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable v) {
+				Bundle args = new Bundle();
+				String searchTerms = v != null && !TextUtils.isEmpty(v) ? v.toString() : "";
+				new IssuesListFilter(searchTerms).saveTo(args);
+				L.i("Re-search all issues with query: " + searchTerms);
+				((FragmentActivity) getOwnerActivity()).getSupportLoaderManager().restartLoader(ACTION_LOAD_ISSUES, args, IssuePickerDialog.this);
+			}
+		});
+	}
+
+	private IssuesDbAdapter getHelper() {
+		if (mHelper == null) {
+			mHelper = new IssuesDbAdapter(getContext());
+			mHelper.open();
+		}
+		return mHelper;
 	}
 
 	@Override
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();
+		getHelper();
 		mAdapter = new IssuesCursorAdapter(getOwnerActivity());
 		mIssueSelector.setAdapter(mAdapter);
 		FragmentActivity ownerActivity = (FragmentActivity) getOwnerActivity();
 		LoaderManager supportLoaderManager = ownerActivity.getSupportLoaderManager();
 		supportLoaderManager.initLoader(ACTION_LOAD_ISSUES, null, this);
+	}
+
+	@Override
+	public void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		if (mHelper != null) {
+			mHelper.close();
+			mHelper = null;
+		}
 	}
 
 	@Override
@@ -104,33 +147,9 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 		}
 	}
 
-	public static class IssuesCursorLoader extends CursorLoader {
-		private final IssuesDbAdapter mHelper;
-
-		public IssuesCursorLoader(Context context) {
-			super(context);
-			mHelper = new IssuesDbAdapter(context);
-			mHelper.open();
-		}
-
-		@Override
-		public Cursor loadInBackground() {
-			return mHelper.selectAllCursor(null, new String[] {
-					IssuesDbAdapter.KEY_ID + " AS " + IssuesDbAdapter.KEY_ROWID,
-					IssuesDbAdapter.KEY_SUBJECT,
-			}, null);
-		}
-
-		@Override
-		protected void onStopLoading() {
-			super.onStopLoading();
-			mHelper.close();
-		}
-	}
-
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new IssuesCursorLoader(getOwnerActivity());
+		return new IssuesListCursorLoader(getOwnerActivity(), getHelper(), args);
 	}
 
 	@Override

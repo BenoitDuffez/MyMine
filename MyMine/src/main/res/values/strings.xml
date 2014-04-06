@@ -392,5 +392,6 @@
 	<string name="projects_sync_empty">There are no projects synced. Please run a full sync before going here.</string>
 	<string name="projects_sync_saving">Applying your changes&#8230;</string>
 	<string name="menu_donate">Donate</string>
+	<string name="issue_attn_search_terms_hint">Search terms</string>
 
 </resources>
