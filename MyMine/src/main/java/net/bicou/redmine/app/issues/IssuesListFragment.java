@@ -60,7 +60,7 @@ public class IssuesListFragment extends TrackedListFragment implements LoaderCal
 		else if (savedInstanceState != null) {
 			mFilter = IssuesListFilter.fromBundle(savedInstanceState);
 			mIssuesOrder = IssuesOrder.fromBundle(savedInstanceState);
-			getLoaderManager().initLoader(0, args, this);
+			getLoaderManager().initLoader(0, savedInstanceState, this);
 		}
 		// Retrieve from fragment arguments
 		else {
