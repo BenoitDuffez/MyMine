@@ -10,7 +10,7 @@ import net.bicou.redmine.data.Server;
 import net.bicou.redmine.data.json.Project;
 
 /**
- * Created by bicou on 06/08/13.
+ * Server or Server+Project picker dialog fragment
  */
 public class ServerProjectPickerFragment extends TrackedDialogFragment {
 	private static final String EXTRA_DIALOG_CONTENTS = "net.bicou.redmine.app.issues.edit.ServerProjectDialogContents";
@@ -28,8 +28,6 @@ public class ServerProjectPickerFragment extends TrackedDialogFragment {
 		return fragment;
 	}
 
-	ServerProjectSelectionListener mListener;
-
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Server server = null;
@@ -41,33 +39,25 @@ public class ServerProjectPickerFragment extends TrackedDialogFragment {
 			project = savedInstanceState.getParcelable(Constants.KEY_PROJECT);
 		}
 
-		ServerProjectPickerDialog dialog = new ServerProjectPickerDialog(getActivity(), mDesiredSelection, server, project);
-		if (mListener != null) {
-			dialog.setListener(mListener);
-		} else if (getActivity() != null && getActivity() instanceof ServerProjectSelectionListener) {
-			dialog.setListener((ServerProjectSelectionListener) getActivity());
-		} else {
-			throw new IllegalStateException("Can't bind listener!");
-		}
-
-		return dialog;
+		return new ServerProjectPickerDialog(getActivity(), mDesiredSelection, server, project, (ServerProjectSelectionListener) getActivity());
 	}
 
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
-		if (activity instanceof ServerProjectSelectionListener) {
-			mListener = (ServerProjectSelectionListener) activity;
+		setDialogListener((ServerProjectSelectionListener) activity);
+	}
+
+	private void setDialogListener(ServerProjectSelectionListener listener) {
+		if (getDialog() != null) {
+			((ServerProjectPickerDialog) getDialog()).setListener(listener);
 		}
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		if (getDialog() != null) {
-			((ServerProjectPickerDialog) getDialog()).setListener(null);
-		}
-		mListener = null;
+		setDialogListener(null);
 	}
 
 	@Override

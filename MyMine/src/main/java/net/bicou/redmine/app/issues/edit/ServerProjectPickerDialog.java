@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bicou on 06/08/13.
+ * Server or Server+Project picker dialog
  */
 public class ServerProjectPickerDialog extends AlertDialog implements DialogInterface.OnClickListener {
 	ServerProjectPickerFragment.ServerProjectSelectionListener mListener;
@@ -31,8 +31,10 @@ public class ServerProjectPickerDialog extends AlertDialog implements DialogInte
 
 	DesiredSelection mDesiredSelection = null;
 
-	public ServerProjectPickerDialog(final Context context, DesiredSelection desiredSelection, final Server server, final Project project) {
+	public ServerProjectPickerDialog(final Context context, DesiredSelection desiredSelection, final Server server, final Project project,
+	                                 ServerProjectPickerFragment.ServerProjectSelectionListener listener) {
 		super(context);
+		mListener = listener;
 		mDesiredSelection = desiredSelection;
 
 		setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
@@ -111,6 +113,10 @@ public class ServerProjectPickerDialog extends AlertDialog implements DialogInte
 				}
 				sel++;
 			}
+		} else if (servers.size() == 1 && desiredSelection == DesiredSelection.SERVER && mListener != null) {
+			// If we just want to pick the server and there's only one, just do it
+			mListener.onServerProjectPicked(desiredSelection, servers.get(0), null);
+			dismiss();
 		}
 	}
 
