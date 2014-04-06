@@ -1,7 +1,6 @@
 package net.bicou.redmine.app.issues;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,21 +9,17 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import net.bicou.redmine.R;
-import net.bicou.redmine.data.json.Attachment;
-import net.bicou.redmine.util.Util;
+import net.bicou.redmine.util.L;
 
-import java.util.Date;
+import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Locale;
 
 /**
- * Created by bicou on 06/04/2014.
+ * Adapter for listview-based issue fragment tabs
  */
-class IssueItemsAdapter extends BaseAdapter {
-	private final List<Attachment> mAttachments;
+abstract class IssueItemsAdapter<ItemType> extends BaseAdapter {
+	private final List<ItemType> mItems;
 	Context mContext;
 	java.text.DateFormat mDateFormat;
 	java.text.DateFormat mTimeFormat;
@@ -34,8 +29,8 @@ class IssueItemsAdapter extends BaseAdapter {
 		ImageView avatar;
 	}
 
-	public IssueItemsAdapter(final Context context, List<Attachment> attachments) {
-		mAttachments = attachments;
+	public IssueItemsAdapter(final Context context, List<ItemType> attachments) {
+		mItems = attachments;
 		mContext = context;
 		if (mContext != null) {
 			mDateFormat = DateFormat.getLongDateFormat(mContext);
@@ -44,23 +39,39 @@ class IssueItemsAdapter extends BaseAdapter {
 	}
 
 	public int getCount() {
-		if (mAttachments != null) {
-			return mAttachments.size();
+		if (mItems != null) {
+			return mItems.size();
 		}
 		return 0;
 	}
 
-	public Attachment getItem(int position) {
-		if (mAttachments != null) {
-			return mAttachments.get(position);
+	public ItemType getItem(int position) {
+		if (mItems != null) {
+			return mItems.get(position);
 		}
 		return null;
 	}
 
 	public long getItemId(int position) {
-		Attachment attachment = mAttachments.get(position);
-		return attachment == null ? 0 : attachment.id;
+		ItemType item = mItems.get(position);
+		if (item == null) {
+			return 0;
+		}
+		try {
+			Field id = item.getClass().getField("id");
+			if (id == null) {
+				return 0;
+			}
+			return (Long) id.get(item);
+		} catch (NoSuchFieldException e) {
+			// No failure needed
+		} catch (IllegalAccessException e) {
+			L.e("Shouldn't happen", e);
+		}
+		return 0;
 	}
+
+	protected abstract void bindData(JournalViewsHolder holder, ItemType item);
 
 	@Override
 	public View getView(final int position, View convertView, final ViewGroup parent) {
@@ -85,25 +96,9 @@ class IssueItemsAdapter extends BaseAdapter {
 			holder = (JournalViewsHolder) convertView.getTag();
 		}
 
-		Attachment attachment = getItem(position);
-		if (attachment != null) {
-			holder.user.setText(attachment.author == null ? mContext.getString(R.string.issue_journal_user_anonymous) : attachment.author.getName());
-			if (!Util.isEpoch(attachment.created_on)) {
-				Date d = attachment.created_on.getTime();
-				holder.date.setText(String.format(Locale.ENGLISH, "%s — %s", mDateFormat.format(d), mTimeFormat.format(d)));
-				holder.date.setVisibility(View.VISIBLE);
-			} else {
-				holder.date.setVisibility(View.INVISIBLE);
-			}
-			holder.details.setText(mContext.getString(R.string.issue_attachment_filename_size, attachment.filename, Util.readableFileSize(attachment.filesize)));
-			holder.notes.setText(attachment.description);
-
-			if (attachment.author == null || TextUtils.isEmpty(attachment.author.gravatarUrl)) {
-				holder.avatar.setVisibility(View.INVISIBLE);
-			} else {
-				holder.avatar.setVisibility(View.VISIBLE);
-				ImageLoader.getInstance().displayImage(attachment.author.gravatarUrl, holder.avatar);
-			}
+		ItemType item = getItem(position);
+		if (item != null) {
+			bindData(holder, item);
 		}
 
 		return convertView;

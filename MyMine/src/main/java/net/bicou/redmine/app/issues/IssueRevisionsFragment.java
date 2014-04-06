@@ -99,7 +99,7 @@ public class IssueRevisionsFragment extends TrackedListFragment implements Fragm
 		if (mRevisions == null || mRevisions.changesets == null || mRevisions.changesets.size() <= 0) {
 			mEmptyView.setText(R.string.issue_history_none);
 		} else {
-			final IssueHistoryItemsAdapter journalAdapter = new IssueHistoryItemsAdapter<IssueRevisions>(getActivity(), mIssue, mRevisions);
+			final IssueRevisionsAdapter journalAdapter = new IssueRevisionsAdapter(getActivity(), mRevisions.changesets);
 			final SwingBottomInAnimationAdapter adapter = new SwingBottomInAnimationAdapter(journalAdapter);
 
 			try {
