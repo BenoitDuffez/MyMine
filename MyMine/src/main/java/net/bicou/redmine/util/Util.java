@@ -9,7 +9,6 @@ import android.view.WindowManager;
 
 import net.bicou.redmine.R;
 
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -42,20 +41,6 @@ public class Util {
 		}
 
 		return formattedDate;
-	}
-
-	public static String readableFileSize(long size) {
-		if (size <= 0) { return "0 B"; }
-		// TODO: localize these?
-		final String[] units = new String[] {
-				"B",
-				"kiB",
-				"MiB",
-				"GiB",
-				"TiB"
-		};
-		int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
 	public static boolean isEpoch(Calendar cal) {

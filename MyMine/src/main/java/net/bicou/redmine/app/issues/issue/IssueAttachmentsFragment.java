@@ -1,12 +1,17 @@
 package net.bicou.redmine.app.issues.issue;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -51,6 +56,27 @@ public class IssueAttachmentsFragment extends TrackedListFragment implements Iss
 		mIssue = new Gson().fromJson(getArguments().getString(IssueFragment.KEY_ISSUE_JSON), Issue.class);
 		mLayout = (ViewGroup) inflater.inflate(R.layout.frag_issue_journal_revisions, container, false);
 		mEmptyView = (TextView) mLayout.findViewById(android.R.id.empty);
+
+		ListView listView = (ListView) mLayout.findViewById(android.R.id.list);
+		listView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				Attachment attachment = (Attachment) parent.getAdapter().getItem(position);
+				String attnUrl = mIssue.server.serverUrl;
+				if (!attnUrl.endsWith("/")) {
+					attnUrl += "/";
+				}
+				attnUrl += "attachments/download/" + attachment.id + "/" + attachment.filename;
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(attnUrl));
+				startActivity(i);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
+
 		return mLayout;
 	}
 
@@ -126,7 +152,8 @@ public class IssueAttachmentsFragment extends TrackedListFragment implements Iss
 				} else {
 					holder.date.setVisibility(View.INVISIBLE);
 				}
-				holder.details.setText(mContext.getString(R.string.issue_attachment_filename_size, attachment.filename, Util.readableFileSize(attachment.filesize)));
+				String fileSize = Formatter.formatShortFileSize(mContext, attachment.filesize);
+				holder.details.setText(mContext.getString(R.string.issue_attachment_filename_size, attachment.filename, fileSize));
 				holder.notes.setText(attachment.description);
 
 				if (attachment.author == null || TextUtils.isEmpty(attachment.author.gravatarUrl)) {
