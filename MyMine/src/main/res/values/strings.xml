@@ -193,7 +193,8 @@
     <string name="menu_issue_edit_project">Change project</string>
 
 	<!--Issue attachments-->
-	<string name="issue_attn_select_issue_dialog_title">To which issue link this attn?</string>
+	<string name="issue_attn_select_issue_dialog_title">To which issue link this attn with?</string>
+	<string name="issue_attn_select_issue_multitple_dialog_title">To which issue link these attn with?</string>
 	<string name="issue_attn_select_issue">Select issue:</string>
 	<string name="issue_attn_select_file_failed">Unable to select this file: %1$s</string>
 	<string name="issue_attn_select_file_invalid_path">Invalid file path. Please select a valid file.</string>
@@ -393,5 +394,8 @@
 	<string name="projects_sync_saving">Applying your changes&#8230;</string>
 	<string name="menu_donate">Donate</string>
 	<string name="issue_attn_search_terms_hint">Search terms</string>
+	<string name="issue_attn_upload_in_progress">Please wait, upload in progress&#8230;</string>
+	<string name="err_upload_no_support_for_content">Sorry, MyMine doesn\'t handle such content to be uploaded as an issue attachment.</string>
+	<string name="err_upload_file_not_found">File wasn\'t found, please try again</string>
 
 </resources>

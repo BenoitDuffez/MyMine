@@ -19,7 +19,7 @@ import java.util.List;
  * Created by bicou on 16/07/13.
  */
 public class Attachment {
-	public int id;
+	public long id;
 	public String filename;
 	public long filesize;
 	public String content_type;

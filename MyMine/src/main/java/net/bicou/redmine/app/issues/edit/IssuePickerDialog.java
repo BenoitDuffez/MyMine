@@ -36,7 +36,7 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 	Spinner mIssueSelector;
 	private IssuesDbAdapter mHelper;
 
-	public IssuePickerDialog(Context context) {
+	public IssuePickerDialog(Context context, boolean isMultipleFile) {
 		super(context);
 
 		setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
@@ -48,7 +48,7 @@ public class IssuePickerDialog extends AlertDialog implements DialogInterface.On
 			return;
 		}
 		setView(view);
-		setTitle(context.getString(R.string.issue_attn_select_issue_dialog_title));
+		setTitle(context.getString(isMultipleFile ? R.string.issue_attn_select_issue_multitple_dialog_title : R.string.issue_attn_select_issue_dialog_title));
 
 		mIssueSelector = (Spinner) view.findViewById(R.id.issue_attn_issue_picker);
 		EditText search = (EditText) view.findViewById(R.id.issue_attn_search);

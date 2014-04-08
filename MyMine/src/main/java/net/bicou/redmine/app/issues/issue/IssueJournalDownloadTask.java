@@ -336,6 +336,12 @@ public class IssueJournalDownloadTask extends IssueHistoryDownloadTask<IssueJour
 
 	private PropertyChange onDescriptionChange(JournalDetail d) {
 		DiffMatchPatch diff = new DiffMatchPatch();
+		if (d.old_value == null) {
+			d.old_value = "";
+		}
+		if (d.new_value == null) {
+			d.new_value = "";
+		}
 		LinkedList<DiffMatchPatch.Diff> diffs = diff.diff_main(d.old_value, d.new_value, false);
 		diff.diff_cleanupEfficiency(diffs);
 

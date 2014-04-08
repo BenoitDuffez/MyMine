@@ -2,6 +2,7 @@ package net.bicou.redmine.app.issues;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.view.Window;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ipaulpro.afilechooser.FileChooserActivity;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -53,11 +55,15 @@ import net.bicou.redmine.net.JsonNetworkError;
 import net.bicou.redmine.net.upload.FileUploader;
 import net.bicou.redmine.sync.IssuesSyncAdapterService;
 import net.bicou.redmine.util.L;
+import net.bicou.redmine.util.Util;
 import net.bicou.splitactivity.SplitActivity;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +76,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	// Both of these are used for file uploading
 	public static final int REQUEST_FILE_CHOOSER = 1337;
 	private static final String EXTRA_FILE_PATH = "net.bicou.redmine.app.issues.UploadFilePath";
+	private static final String EXTRA_FILES_URI = "net.bicou.redmine.app.issues.UploadFilesUri";
+	private static final String EXTRA_FILES_CROUTONS = "net.bicou.redmine.app.issues.UploadFilesCroutons";
 
 	int mNavMode;
 	IssuesOrder mCurrentOrder;
@@ -84,11 +92,15 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public static final int ACTION_ISSUE_TOGGLE_FAVORITE = 6;
 	public static final int ACTION_GET_NAVIGATION_SPINNER_DATA = 7;
 	public static final int ACTION_UPLOAD_FILE = 8;
-	public static final int ACTION_LINK_UPLOADED_FILE_TO_ISSUE = 9;
+	public static final int ACTION_UPLOAD_FILES = 9;
+	public static final int ACTION_LINK_UPLOADED_FILES_TO_ISSUE = 10;
 
-	private FileUpload mUploadedFile;
+	private List<FileUpload> mUploadedFiles;
+	private ArrayList<String> mUploadErrors;
+	ArrayList<Uri> mFilesToUpload;
 	private Server mUploadServer;
 	private long mUploadToIssueId;
+	private static final Type FILE_UPLOAD_LIST_TYPE = new TypeToken<List<FileUpload>>() {}.getType();
 
 	private List<Attachment> mAttachments;
 
@@ -163,6 +175,35 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		if (args != null && args.containsKey(Constants.KEY_ISSUE_ID)) {
 			selectContent(args);
 		}
+
+		// Get intent, action and MIME type
+		Intent intent = getIntent();
+		String action = intent.getAction();
+		String type = intent.getType();
+
+		// Handle share intent
+		if (type != null && (Intent.ACTION_SEND.equals(action) || Intent.ACTION_SEND_MULTIPLE.equals(action))) {
+			mFilesToUpload = new ArrayList<Uri>();
+			if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+				ArrayList<Uri> uris = intent.<Uri>getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+				for (Uri uri : uris) {
+					if (uri != null) {
+						mFilesToUpload.addAll(uris);
+					}
+				}
+			} else {
+				Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+				if (uri != null) {
+					mFilesToUpload.add(uri);
+				}
+			}
+			L.d("Received share intent (" + action + ") with the following mime type: " + type + ", items:");
+			for (Uri u : mFilesToUpload) {
+				L.i(">: " + u);
+			}
+			L.i("------- end share intent");
+			showServerPickerDialog();
+		}
 	}
 
 	@Override
@@ -203,7 +244,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		Gson gson = new Gson();
-		mUploadedFile = gson.fromJson(savedInstanceState.getString(FileUpload.EXTRA_FILE_UPLOAD), FileUpload.class);
+		mFilesToUpload = savedInstanceState.getParcelableArrayList(EXTRA_FILES_URI);
+		mUploadErrors = savedInstanceState.getStringArrayList(EXTRA_FILES_CROUTONS);
+		mUploadedFiles = gson.fromJson(savedInstanceState.getString(FileUpload.EXTRA_FILE_UPLOAD), FILE_UPLOAD_LIST_TYPE);
 		mAttachments = gson.fromJson(savedInstanceState.getString(IssueFragment.KEY_ATTACHMENTS_JSON), Attachment.LIST_OF_ATTACHMENTS_TYPE);
 		mUploadToIssueId = savedInstanceState.getLong(Constants.KEY_ISSUE_ID);
 		mCurrentOrder = IssuesOrder.fromBundle(savedInstanceState);
@@ -213,7 +256,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		Gson gson = new Gson();
-		outState.putString(FileUpload.EXTRA_FILE_UPLOAD, gson.toJson(mUploadedFile, FileUpload.class));
+		outState.putParcelableArrayList(EXTRA_FILES_URI, mFilesToUpload);
+		outState.putStringArrayList(EXTRA_FILES_CROUTONS, mUploadErrors);
+		outState.putString(FileUpload.EXTRA_FILE_UPLOAD, gson.toJson(mUploadedFiles, FILE_UPLOAD_LIST_TYPE));
 		outState.putString(IssueFragment.KEY_ATTACHMENTS_JSON, gson.toJson(mAttachments, Attachment.LIST_OF_ATTACHMENTS_TYPE));
 		outState.putLong(Constants.KEY_ISSUE_ID, mUploadToIssueId);
 		if (mCurrentOrder != null) {
@@ -242,7 +287,13 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 		switch (desiredSelection) {
 		case SERVER:
 			mUploadServer = server;
-			startActivityForResult(new Intent(this, FileChooserActivity.class), REQUEST_FILE_CHOOSER);
+			if (mFilesToUpload != null) {
+				Bundle args = new Bundle();
+				args.putParcelableArrayList(EXTRA_FILES_URI, mFilesToUpload);
+				AsyncTaskFragment.runTask(IssuesActivity.this, ACTION_UPLOAD_FILES, args);
+			} else {
+				startActivityForResult(new Intent(this, FileChooserActivity.class), REQUEST_FILE_CHOOSER);
+			}
 			break;
 
 		case SERVER_PROJECT:
@@ -259,8 +310,8 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	/**
 	 * Used when attachment was uploaded: need to link it to an issue
 	 */
-	private void showIssuePickerDialog() {
-		DialogFragment newFragment = IssuePickerFragment.newInstance();
+	private void showIssuePickerDialog(boolean isMultipleFileUpload) {
+		DialogFragment newFragment = IssuePickerFragment.newInstance(isMultipleFileUpload);
 		newFragment.show(getSupportFragmentManager(), "issuePicker");
 	}
 
@@ -268,12 +319,11 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 	public void onIssuePicked(long issueId) {
 		Bundle args = new Bundle();
 		args.putLong(Constants.KEY_ISSUE_ID, issueId);
-		args.putString(FileUpload.EXTRA_TOKEN, mUploadedFile.token);
-		args.putString(FileUpload.EXTRA_FILENAME, mUploadedFile.filename);
+		args.putString(FileUpload.EXTRA_FILE_UPLOAD, new Gson().toJson(mUploadedFiles, FILE_UPLOAD_LIST_TYPE));
 		args.putParcelable(Constants.KEY_SERVER, mUploadServer);
 		// SERVER_ID is required because at the end we will call #selectContent with this bundle, and IssueFragment requires it
 		args.putLong(Constants.KEY_SERVER_ID, mUploadServer.rowId);
-		AsyncTaskFragment.runTask(this, ACTION_LINK_UPLOADED_FILE_TO_ISSUE, args);
+		AsyncTaskFragment.runTask(this, ACTION_LINK_UPLOADED_FILES_TO_ISSUE, args);
 	}
 
 	@Override
@@ -501,6 +551,9 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 
 	@Override
 	public void onPreExecute(final int action, final Object parameters) {
+		if (action == ACTION_UPLOAD_FILES) {
+			Crouton.showText(this, getString(R.string.issue_attn_upload_in_progress), Style.INFO);
+		}
 		if (action != ACTION_REFRESH_ISSUES) {
 			setSupportProgressBarIndeterminateVisibility(true);
 		}
@@ -568,28 +621,68 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			return fileUpload;
 
-		case ACTION_LINK_UPLOADED_FILE_TO_ISSUE:
-			// Retrieve FileUpload object
-			Bundle params = (Bundle) parameters;
-			FileUpload upload = new FileUpload();
-			upload.token = params.getString(FileUpload.EXTRA_TOKEN);
-			upload.filename = params.getString(FileUpload.EXTRA_FILENAME);
+		case ACTION_UPLOAD_FILES:
+			List<Uri> files = ((Bundle) parameters).getParcelableArrayList(EXTRA_FILES_URI);
+			if (files != null && files.size() > 0) {
+				ContentResolver cr = getContentResolver();
+				List<FileUpload> uploads = new ArrayList<FileUpload>();
+				InputStream is;
+				String p;
+				for (Uri fileToUpload : files) {
+					try {
+						if (fileToUpload != null) {
+							is = cr.openInputStream(fileToUpload);
+							if (is != null) {
+								Object r = new FileUploader().uploadFile(this, mUploadServer, is);
+								L.d("Uploaded " + fileToUpload + ", result: " + r);
+								if (r instanceof FileUpload) {
+									// Enrich object if we can
+									if ("media".equals(fileToUpload.getHost())) {
+										p = Util.getRealPathFromURI(applicationContext, fileToUpload);
+									} else {
+										p = fileToUpload.getPath();
+									}
+									if (!TextUtils.isEmpty(p)) {
+										((FileUpload) r).filename = p.substring(p.lastIndexOf("/") + 1);
+									}
 
+									uploads.add((FileUpload) r);
+								}
+							} else {
+								if (mUploadErrors == null) {
+									mUploadErrors = new ArrayList<String>();
+								}
+								mUploadErrors.add(getString(R.string.err_upload_no_support_for_content));
+								L.e("Couldn't upload " + fileToUpload, null);
+							}
+						}
+					} catch (FileNotFoundException e) {
+						if (mUploadErrors == null) {
+							mUploadErrors = new ArrayList<String>();
+						}
+						mUploadErrors.add(getString(R.string.err_upload_file_not_found));
+						L.e("Couldn't upload " + fileToUpload, e);
+					}
+				}
+				return uploads;
+			}
+			return null;
+
+		case ACTION_LINK_UPLOADED_FILES_TO_ISSUE:
 			// Retrieve Issue object
+			Bundle params = (Bundle) parameters;
 			Server server = params.getParcelable(Constants.KEY_SERVER);
 			IssuesDbAdapter uidb = new IssuesDbAdapter(applicationContext);
 			uidb.open();
 			Issue issueUpload = uidb.select(server, params.getLong(Constants.KEY_ISSUE_ID), null);
 			uidb.close();
 
-			// Link the two
-			issueUpload.uploads = new ArrayList<FileUpload>();
-			issueUpload.uploads.add(upload);
-
+			// Link the attachment(s) with the issue
+			issueUpload.uploads = new Gson().fromJson(params.getString(FileUpload.EXTRA_FILE_UPLOAD), FILE_UPLOAD_LIST_TYPE);
 			Bundle uploadArgs = new Bundle();
 			uploadArgs.putString(IssueFragment.KEY_ISSUE_JSON, new Gson().toJson(issueUpload, Issue.class));
 			Object result = IssueUploader.uploadIssue(applicationContext, uploadArgs);
-			L.d("link file/issue: " + result);
+			L.d("link files/issue: " + result);
 			return result;
 		}
 
@@ -667,7 +760,7 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			}
 			break;
 
-		case ACTION_LINK_UPLOADED_FILE_TO_ISSUE:
+		case ACTION_LINK_UPLOADED_FILES_TO_ISSUE:
 			// When linking an issue with an attachment, the server doesn't send back the full issue, but an empty string
 			if (result instanceof String && TextUtils.isEmpty((String) result)) {
 				selectContent((Bundle) parameters);
@@ -676,7 +769,11 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 			} else {
 				L.e("Unexpected app state", null);
 			}
+
+			// Anyway, free some ram
+			mUploadedFiles = null;
 			break;
+
 		case ACTION_UPLOAD_ISSUE:
 			IssueUploader.handleAddEdit(this, (Bundle) parameters, result);
 
@@ -701,12 +798,44 @@ public class IssuesActivity extends SplitActivity<IssuesListFragment, IssueFragm
 				((JsonNetworkError) result).displayCrouton(this, getCroutonHolder());
 			} else {
 				L.i("Congratulations, it's a file! " + result);
-				mUploadedFile = (FileUpload) result;
+				mUploadedFiles = new ArrayList<FileUpload>();
+				mUploadedFiles.add((FileUpload) result);
 				Bundle params = (Bundle) parameters;
 				if (params.containsKey(Constants.KEY_ISSUE_ID) && params.getLong(Constants.KEY_ISSUE_ID, 0) > 0) {
 					onIssuePicked(params.getLong(Constants.KEY_ISSUE_ID));
 				} else {
-					showIssuePickerDialog();
+					showIssuePickerDialog(false);
+				}
+			}
+			break;
+
+		case ACTION_UPLOAD_FILES:
+			List uploads = (List) result;
+			mUploadedFiles = new ArrayList<FileUpload>();
+			for (Object upload : uploads) {
+				if (upload instanceof JsonNetworkError) {
+					((JsonNetworkError) upload).displayCrouton(this, getCroutonHolder());
+				} else {
+					L.i("Successfully uploaded file " + upload);
+					mUploadedFiles.add((FileUpload) upload);
+				}
+			}
+
+			// If none worked, don't bother to continue
+			if (mUploadedFiles.size() == 0) {
+				if (mUploadErrors != null && mUploadErrors.size() > 0) {
+					for (String error : mUploadErrors) {
+						Crouton.showText(this, error, Style.ALERT);
+					}
+				} else {
+					L.e("Failed with no error, WTF?", null);
+				}
+			} else {
+				Bundle params = (Bundle) parameters;
+				if (params.containsKey(Constants.KEY_ISSUE_ID) && params.getLong(Constants.KEY_ISSUE_ID, 0) > 0) {
+					onIssuePicked(params.getLong(Constants.KEY_ISSUE_ID));
+				} else {
+					showIssuePickerDialog(true);
 				}
 			}
 			break;
