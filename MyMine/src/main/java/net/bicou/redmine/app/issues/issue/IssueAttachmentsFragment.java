@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import net.bicou.redmine.R;
@@ -105,7 +104,7 @@ public class IssueAttachmentsFragment extends TrackedListFragment implements Iss
 		mAttachments = new ArrayList<Attachment>();
 		mAttachmentsAdapter = new IssueAttachmentsAdapter(getActivity(), mAttachments);
 
-		final SwingBottomInAnimationAdapter adapter = new SwingBottomInAnimationAdapter(mAttachmentsAdapter);
+		final com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter adapter = new com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter(mAttachmentsAdapter);
 
 		try {
 			adapter.setAbsListView(getListView());

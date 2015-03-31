@@ -18,13 +18,13 @@
         <item name="android:background">@drawable/tab_indicator_ab_mymine</item>
     </style>
 
-    <style name="Theme.MyMine.ActionBarTabTextStyle"
-           parent="@style/Widget.AppCompat.Base.ActionBar.TabText">
+    <!--style name="Theme.MyMine.ActionBarTabTextStyle"
+           parent="Widget.AppCompat.Base.ActionBar.TabText">
         <item name="android:textColor">#FFF</item>
-    </style>
+    </style-->
 
     <style name="Theme.MyMine.ActionBarStyle.TitleTextStyle"
-           parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+           parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/actionbar_text</item>
     </style>
 
@@ -73,7 +73,7 @@
         <item name="android:background">@drawable/btn_default_holo_light</item>
     </style>
 
-    <style name="Theme.MyMine.DropDownNav"
+    <!--style name="Theme.MyMine.DropDownNav"
            parent="Widget.AppCompat.Light.Base.Spinner">
         <item name="android:background">@drawable/spinner_background_ab_mymine</item>
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_mymine</item>
@@ -84,7 +84,7 @@
            parent="Widget.AppCompat.Base.Spinner">
         <item name="android:background">@drawable/spinner_background_holo_light</item>
         <item name="android:dropDownSelector">@drawable/list_selector_holo_light</item>
-    </style>
+    </style-->
 
     <style name="Theme.MyMine.SpinnerDropDownItem"
            parent="Widget.AppCompat.DropDownItem.Spinner">

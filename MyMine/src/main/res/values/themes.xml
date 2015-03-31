@@ -11,7 +11,8 @@
            parent="Theme.SplitActivity.Light.DarkActionBar">
 
         <!-- Compatible from Gingerbread -->
-        <item name="android:autoCompleteTextViewStyle">@style/Theme.MyMine.AutoCompleteTextView</item>
+        <item name="android:autoCompleteTextViewStyle">@style/Theme.MyMine.AutoCompleteTextView
+        </item>
         <item name="android:buttonStyle">@style/Theme.MyMine.Button</item>
         <item name="android:buttonStyleToggle">@style/Theme.MyMine.Toggle</item>
         <item name="android:checkboxStyle">@style/Theme.MyMine.CheckBox</item>
@@ -58,8 +59,8 @@
         <item name="actionBarTabStyle">@style/Theme.MyMine.ActionBarTabStyle</item>
         <item name="android:actionBarTabStyle">@style/Theme.MyMine.ActionBarTabStyle</item>
 
-        <item name="actionBarTabTextStyle">@style/Theme.MyMine.ActionBarTabTextStyle</item>
-        <item name="android:actionBarTabTextStyle">@style/Theme.MyMine.ActionBarTabTextStyle</item>
+        <!--item name="actionBarTabTextStyle">@style/Theme.MyMine.ActionBarTabTextStyle</item>
+        <item name="android:actionBarTabTextStyle">@style/Theme.MyMine.ActionBarTabTextStyle</item-->
 
         <item name="actionBarItemBackground">@drawable/ab_background</item>
         <item name="android:actionBarItemBackground">@drawable/ab_background</item>

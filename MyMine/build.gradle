@@ -1,48 +1,15 @@
 import java.text.SimpleDateFormat
 
-apply plugin: 'android'
-
-dependencies {
-    // Libraries from maven
-    compile 'com.intellij:annotations:+@jar'
-    compile 'com.nhaarman.listviewanimations:library:2.5.2'
-    compile 'com.github.gabrielemariotti.changeloglib:library:1.4.0'
-    compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:0.9'
-    compile 'net.java:textile-j:2.2'
-    compile 'ch.acra:acra:4.5.0'
-    compile 'com.google.code.gson:gson:2.2.4'
-    compile 'asia.ivity.android:drag-sort-listview:1.0'
-    compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
-    compile 'com.android.support:appcompat-v7:+'
-    compile 'com.android.support:support-v4:+'
-    compile('de.keyboardsurfer.android.widget:crouton:1.8.1') {
-        exclude module: 'support-v4'
-        compile SupportLib
-    }
-    repositories {
-        mavenCentral()
-    }
-
-    // Support Libraries
-    compile SupportLib
-    compile AppCompatLib
-
-    // Projects
-    compile project(':SplitActivity')
-    compile project(':aFileChooser')
-    compile project(':sgv')
-
-    // Jars
-    compile files('libs/libGoogleAnalyticsServices.jar')
-}
+apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion CompileSdkVersion
-    buildToolsVersion BuildToolsVersion
+    compileSdkVersion 22
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
-        minSdkVersion MinSdkVersion
-        targetSdkVersion TargetSdkVersion
+        applicationId "net.bicou.redmine"
+        minSdkVersion 8
+        targetSdkVersion 22
         versionCode Integer.valueOf(new SimpleDateFormat("yyMMddHHmm").format(new Date()))
     }
 
@@ -54,12 +21,10 @@ android {
     buildTypes {
         releasePlayStore {
             debuggable false
-            jniDebugBuild false
             signingConfig signingConfigs.releasePlayStore
         }
         releaseAlpha {
             debuggable false
-            jniDebugBuild false
             signingConfig signingConfigs.releasePlayStore
             lintOptions.abortOnError false
         }
@@ -67,6 +32,32 @@ android {
             versionNameSuffix "-dev"
         }
     }
+}
+
+dependencies {
+    // Libraries from maven
+    compile 'it.sephiroth.android.library.fork.listviewanimations:listviewanimations-library-extras:2.6.1'
+    compile 'com.github.gabrielemariotti.changeloglib:library:1.4.0'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:0.9'
+    compile 'net.java:textile-j:2.2'
+    compile 'ch.acra:acra:4.5.0'
+    compile 'com.google.code.gson:gson:2.3'
+    compile 'asia.ivity.android:drag-sort-listview:1.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.8.6'
+    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:support-v4:22.0.0'
+    compile 'de.keyboardsurfer.android.widget:crouton:1.8.5@aar'
+    repositories {
+        jcenter()
+    }
+    // Support Libraries
+    compile 'com.android.support:appcompat-v7:22.0.0'
+    // Projects
+    compile project(':SplitActivity')
+    compile project(':aFileChooser')
+    compile project(':sgv')
+    // Jars
+    compile files('libs/libGoogleAnalyticsServices.jar')
 }
 
 def Properties props = new Properties()

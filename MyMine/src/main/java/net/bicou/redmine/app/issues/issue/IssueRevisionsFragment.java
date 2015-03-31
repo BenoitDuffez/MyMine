@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
 import net.bicou.redmine.R;
 import net.bicou.redmine.app.ga.TrackedListFragment;
@@ -100,7 +99,7 @@ public class IssueRevisionsFragment extends TrackedListFragment implements Fragm
 			mEmptyView.setText(R.string.issue_history_none);
 		} else {
 			final IssueRevisionsAdapter journalAdapter = new IssueRevisionsAdapter(getActivity(), mRevisions.changesets);
-			final SwingBottomInAnimationAdapter adapter = new SwingBottomInAnimationAdapter(journalAdapter);
+			final com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter adapter = new com.nhaarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter(journalAdapter);
 
 			try {
 				adapter.setAbsListView(getListView());

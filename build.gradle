@@ -1,19 +1,14 @@
-ext {
-    APILevel = 19
-    BuildToolsVersion = APILevel + '.0.1'
-    CompileSdkVersion = APILevel
-    TargetSdkVersion = APILevel
-    MinSdkVersion = 8
-
-    SupportLib = 'com.android.support:support-v4:' + APILevel + '.0.+'
-    AppCompatLib = 'com.android.support:appcompat-v7:' + APILevel + '.0.+';
-}
-
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:1.1.0'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
     }
 }
