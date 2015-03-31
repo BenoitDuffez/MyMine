@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="listviewanimations-library-core-2.6.1">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/it.sephiroth.android.library.fork.listviewanimations/listviewanimations-library-core/2.6.1/res" />
+      <root url="jar://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/it.sephiroth.android.library.fork.listviewanimations/listviewanimations-library-core/2.6.1/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
