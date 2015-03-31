@@ -86,7 +86,7 @@ public class ProjectSyncSettingsActivity extends ActionBarActivity implements Lo
 					                       ctv.setChecked(cursor.getInt(columnIndex) > 0);
 					                       return true;
 				                       } else if (ProjectsDbAdapter.KEY_SERVER_ID.equals(s)) {
-					                       ctv.setTag(cursor.getInt(columnIndex));
+					                       ctv.setTag(cursor.getLong(columnIndex));
 					                       return true;
 				                       } else {
 					                       return false;
