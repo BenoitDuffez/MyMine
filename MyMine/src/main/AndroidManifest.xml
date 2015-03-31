@@ -284,6 +284,9 @@
 			</intent-filter>
 		</receiver>
 
-	</application>
+	    <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="ab18fbc78d644944a4a41367f1098b1734a74f77" />
+    </application>
 
 </manifest>

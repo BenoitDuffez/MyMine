@@ -1,7 +1,6 @@
 package net.bicou.redmine.util;
 
 import android.util.Log;
-import org.acra.ACRA;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -26,7 +25,7 @@ public class L {
 	public static void e(final String msg, final Exception e) {
 		e(msg);
 		logException(e);
-		ACRA.getErrorReporter().handleSilentException(e);
+        com.crashlytics.android.Crashlytics.logException(e);
 	}
 
 	public static void i(final String msg) {
@@ -60,11 +59,10 @@ public class L {
 		log += "| " + msg + "\n";
 
 		try {
-			ACRA.getErrorReporter().removeCustomData("TraceLog");
 			if (log.length() > 10000) {
 				log = log.substring(log.length() - 50000);
 			}
-			ACRA.getErrorReporter().putCustomData("TraceLog", log);
+            com.crashlytics.android.Crashlytics.setString("TraceLog", log);
 		} catch (final Exception e) {
 		}
 	}
