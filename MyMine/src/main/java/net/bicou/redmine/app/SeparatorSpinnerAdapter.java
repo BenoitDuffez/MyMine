@@ -1,7 +1,5 @@
 package net.bicou.redmine.app;
 
-import java.util.List;
-
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.view.LayoutInflater;
@@ -9,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+
+import java.util.List;
 
 public abstract class SeparatorSpinnerAdapter implements SpinnerAdapter {
 	Context mContext;
@@ -95,7 +95,7 @@ public abstract class SeparatorSpinnerAdapter implements SpinnerAdapter {
 
 	@Override
 	public int getViewTypeCount() {
-		return 2;
+		return 1;
 	}
 
 	@Override
