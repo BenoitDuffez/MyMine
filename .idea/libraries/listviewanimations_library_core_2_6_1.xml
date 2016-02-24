@@ -2,9 +2,11 @@
   <library name="listviewanimations-library-core-2.6.1">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/it.sephiroth.android.library.fork.listviewanimations/listviewanimations-library-core/2.6.1/res" />
-      <root url="jar://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/it.sephiroth.android.library.fork.listviewanimations/listviewanimations-library-core/2.6.1/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/it.sephiroth.android.library.fork.listviewanimations/listviewanimations-library-core/2.6.1/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/it.sephiroth.android.library.fork.listviewanimations/listviewanimations-library-core/2.6.1/8e3bde06dd5d6c9b27b2a30c47812e30257bb84d/listviewanimations-library-core-2.6.1-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

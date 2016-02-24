@@ -1,10 +1,12 @@
 <component name="libraryTable">
   <library name="library-0.9">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9/jars/classes.jar!/" />
       <root url="file://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/library/0.9/res" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.chrisbanes.actionbarpulltorefresh/library/0.9/34f2ae5d5b426df6cc94a714f02a15ed12833495/library-0.9-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

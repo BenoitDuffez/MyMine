@@ -2,9 +2,11 @@
   <library name="extra-abc-0.9">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/extra-abc/0.9/res" />
-      <root url="jar://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/extra-abc/0.9/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/MyMine/build/intermediates/exploded-aar/com.github.chrisbanes.actionbarpulltorefresh/extra-abc/0.9/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.chrisbanes.actionbarpulltorefresh/extra-abc/0.9/57a9f42e1900b728d5bc93714a460e89ef75ef0c/extra-abc-0.9-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
